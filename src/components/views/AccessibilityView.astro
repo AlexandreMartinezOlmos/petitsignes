@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import type { RoutedLocale } from '../../lib/routing.ts';
+import { REPO_ISSUES_URL } from '../../lib/site.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -49,6 +50,7 @@ const copy = {
     feedbackTitle: 'Comentaris i contacte',
     feedbackBody:
       'Si trobes una barrera d’accessibilitat, obre una incidència al repositori del projecte. Ens comprometem a revisar-la i, si escau, corregir-la.',
+    feedbackCta: 'Obre una incidència a GitHub',
     reviewed: 'Aquesta declaració es va revisar el',
   },
   es: {
@@ -81,6 +83,7 @@ const copy = {
     feedbackTitle: 'Comentarios y contacto',
     feedbackBody:
       'Si encuentras una barrera de accesibilidad, abre una incidencia en el repositorio del proyecto. Nos comprometemos a revisarla y, si procede, corregirla.',
+    feedbackCta: 'Abre una incidencia en GitHub',
     reviewed: 'Esta declaración se revisó el',
   },
 } as const;
@@ -110,7 +113,15 @@ const c = copy[language];
     </ul>
 
     <h2>{c.feedbackTitle}</h2>
-    <p class="mt-2">{c.feedbackBody}</p>
+    <p class="mt-2">
+      {c.feedbackBody}{' '}
+      <a
+        class="underline underline-offset-2"
+        href={REPO_ISSUES_URL}
+        target="_blank"
+        rel="noreferrer noopener">{c.feedbackCta}</a
+      >
+    </p>
 
     <p class="text-ink-muted mt-8 text-sm">
       {c.reviewed}

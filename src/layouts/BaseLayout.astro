@@ -11,6 +11,7 @@ import {
   localeHref,
   type RoutedLocale,
 } from '../lib/routing.ts';
+import { REPO_URL } from '../lib/site.ts';
 
 interface Props {
   /** The routed interface language of this page. */
@@ -32,6 +33,7 @@ const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
 const pageDescription = description ?? t('site.tagline');
 
 const homeHref = localeHref('/', language);
+const aboutHref = localeHref('/el-projecte/', language);
 const creditsHref = localeHref('/credits/', language);
 const accessibilityHref = localeHref('/accessibilitat/', language);
 const canonical = new URL(localeHref(path, language), Astro.site);
@@ -123,17 +125,25 @@ const canonical = new URL(localeHref(path, language), Astro.site);
 
     <footer class="border-border text-ink-muted mt-16 border-t">
       <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-10 text-sm">
-        <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label={t('nav.credits')}>
+        <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label={t('nav.footer')}>
+          <a class="hover:text-ink underline underline-offset-4" href={aboutHref}>
+            {t('nav.about')}
+          </a>
           <a class="hover:text-ink underline underline-offset-4" href={creditsHref}>
             {t('nav.credits')}
           </a>
           <a class="hover:text-ink underline underline-offset-4" href={accessibilityHref}>
             {t('nav.accessibility')}
           </a>
+          <a
+            class="hover:text-ink underline underline-offset-4"
+            href={REPO_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {t('nav.sourceCode')}
+          </a>
         </nav>
-        <p class="max-w-prose">
-          {t('notice.babyPrecision')}
-        </p>
       </div>
     </footer>
 

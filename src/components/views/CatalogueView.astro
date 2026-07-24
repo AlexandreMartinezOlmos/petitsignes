@@ -59,21 +59,6 @@ const toolbarCategories = categories.map((category) => ({
       <span class="hero__accent">{t('hero.titleAccent')}</span>
     </h1>
     <p class="text-ink-muted mt-3 max-w-prose text-base sm:mt-4 sm:text-lg">{t('hero.lead')}</p>
-
-    <dl class="mt-5 flex flex-wrap gap-x-8 gap-y-3 sm:mt-7">
-      <div>
-        <dt class="text-ink-subtle text-xs font-semibold tracking-wide uppercase">
-          {t('hero.stat.signs')}
-        </dt>
-        <dd class="text-xl font-extrabold tabular-nums">{signs.length}</dd>
-      </div>
-      <div>
-        <dt class="text-ink-subtle text-xs font-semibold tracking-wide uppercase">
-          {t('hero.stat.learned')}
-        </dt>
-        <dd class="text-xl font-extrabold tabular-nums" data-learned-count>0</dd>
-      </div>
-    </dl>
   </section>
 
   <div
@@ -89,15 +74,15 @@ const toolbarCategories = categories.map((category) => ({
     }
   </div>
 
-  <p id="no-results" class="text-ink-muted hidden py-12 text-center" role="status"></p>
+  <div id="no-results" class="empty-state hidden" role="status"></div>
 
   <SignVideoDialog language={language} client:idle />
 </BaseLayout>
 
 <script>
   import { mountCatalogue } from '../../lib/catalogue-grid.ts';
-  import { $learned, $query, $visibleCount, rememberLanguage } from '../../lib/stores.ts';
-  import { createTranslator } from '../../lib/i18n.ts';
+  import { $query, $statusFilter, $visibleCount, rememberLanguage } from '../../lib/stores.ts';
+  import { createTranslator, type MessageKey } from '../../lib/i18n.ts';
   import { isRoutedLocale } from '../../lib/routing.ts';
 
   const grid = document.getElementById('sign-grid');
@@ -106,26 +91,71 @@ const toolbarCategories = categories.map((category) => ({
   if (grid) {
     mountCatalogue(grid);
 
-    const learnedCount = document.querySelector('[data-learned-count]');
-    if (learnedCount) {
-      $learned.subscribe((learned) => {
-        learnedCount.textContent = String(learned.length);
-      });
-    }
-
     // Read the page language from the DOM so this script matches whichever
     // localised page it runs on.
     const lang = grid.dataset.lang ?? 'ca';
     if (isRoutedLocale(lang)) void rememberLanguage(lang);
 
     const t = createTranslator(isRoutedLocale(lang) ? lang : 'ca');
-    $visibleCount.subscribe((count) => {
+
+    // The empty state explains *why* the grid is empty: an empty "favourites"
+    // filter reads differently from a search that found nothing. Interpolated
+    // text is set via textContent, never innerHTML, so a query can't inject markup.
+    function renderEmptyState() {
       if (!emptyState) return;
-      const isEmpty = count === 0;
+
+      const isEmpty = $visibleCount.get() === 0;
       emptyState.classList.toggle('hidden', !isEmpty);
-      if (isEmpty) {
-        emptyState.textContent = t('search.noResults', { query: $query.get() });
+      if (!isEmpty) {
+        emptyState.replaceChildren();
+        return;
       }
-    });
+
+      const query = $query.get().trim();
+      const status = $statusFilter.get();
+
+      let emoji = '🤷';
+      let titleKey: MessageKey = 'empty.generic.title';
+      let hintKey: MessageKey = 'empty.generic.hint';
+
+      if (query !== '') {
+        emoji = '🔍';
+        titleKey = 'empty.search.title';
+        hintKey = 'empty.search.hint';
+      } else if (status === 'favorites') {
+        emoji = '💛';
+        titleKey = 'empty.favorites.title';
+        hintKey = 'empty.favorites.hint';
+      } else if (status === 'learned') {
+        emoji = '🌱';
+        titleKey = 'empty.learned.title';
+        hintKey = 'empty.learned.hint';
+      } else if (status === 'pending') {
+        emoji = '🎉';
+        titleKey = 'empty.pending.title';
+        hintKey = 'empty.pending.hint';
+      }
+
+      const emojiEl = document.createElement('span');
+      emojiEl.className = 'empty-state__emoji';
+      emojiEl.setAttribute('aria-hidden', 'true');
+      emojiEl.textContent = emoji;
+
+      const titleEl = document.createElement('p');
+      titleEl.className = 'empty-state__title';
+      titleEl.textContent = t(titleKey, { query });
+
+      const hintEl = document.createElement('p');
+      hintEl.className = 'empty-state__hint';
+      hintEl.textContent = t(hintKey);
+
+      emptyState.replaceChildren(emojiEl, titleEl, hintEl);
+    }
+
+    // Switching between two empty filters keeps the count at 0, so the count
+    // store alone would not re-fire: also react to the filters that set the reason.
+    $visibleCount.subscribe(renderEmptyState);
+    $query.subscribe(renderEmptyState);
+    $statusFilter.subscribe(renderEmptyState);
   }
 </script>
