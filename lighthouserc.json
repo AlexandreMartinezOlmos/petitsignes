@@ -5,6 +5,8 @@
       "url": [
         "http://localhost/index.html",
         "http://localhost/es/index.html",
+        "http://localhost/el-projecte/index.html",
+        "http://localhost/es/el-projecte/index.html",
         "http://localhost/credits/index.html",
         "http://localhost/es/credits/index.html"
       ],

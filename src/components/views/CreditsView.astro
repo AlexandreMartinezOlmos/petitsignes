@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { createTranslator } from '../../lib/i18n.ts';
 import type { RoutedLocale } from '../../lib/routing.ts';
+import { REPO_ISSUES_URL } from '../../lib/site.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -54,6 +55,7 @@ const copy = {
       "La LSC i la LSE són llengües completes, amb gramàtica pròpia i una comunitat que les manté vives. Aquest lloc no ensenya a signar: és una porta d'entrada perquè famílies oients puguin comunicar-se amb el seu nadó abans que parli. Per aprendre de veritat, adreceu-vos a les federacions i associacions de persones sordes.",
     report:
       'Si detectes un error en un signe o en una atribució, obre una incidència al repositori aportant-ne la font. Es revisarà.',
+    reportCta: 'Obre una incidència a GitHub',
   },
   es: {
     intro:
@@ -79,6 +81,7 @@ const copy = {
       'La LSC y la LSE son lenguas completas, con gramática propia y una comunidad que las mantiene vivas. Este sitio no enseña a signar: es una puerta de entrada para que familias oyentes puedan comunicarse con su bebé antes de que hable. Para aprender de verdad, dirígete a las federaciones y asociaciones de personas sordas.',
     report:
       'Si detectas un error en un signo o en una atribución, abre una incidencia en el repositorio aportando la fuente. Se revisará.',
+    reportCta: 'Abre una incidencia en GitHub',
   },
 } as const;
 
@@ -137,6 +140,14 @@ const c = copy[language];
     <h2 class="mt-8 text-xl font-bold">{c.respectTitle}</h2>
     <p class="mt-2">{c.respectBody}</p>
 
-    <p class="text-ink-muted mt-8 text-sm">{c.report}</p>
+    <p class="text-ink-muted mt-8 text-sm">
+      {c.report}{' '}
+      <a
+        class="underline underline-offset-2"
+        href={REPO_ISSUES_URL}
+        target="_blank"
+        rel="noreferrer noopener">{c.reportCta}</a
+      >
+    </p>
   </article>
 </BaseLayout>

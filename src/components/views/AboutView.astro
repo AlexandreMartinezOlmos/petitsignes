@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
+import { REPO_URL } from '../../lib/site.ts';
+
+interface Props {
+  language: RoutedLocale;
+}
+
+const { language } = Astro.props;
+const creditsHref = localeHref('/credits/', language);
+
+// User-facing prose (not developer docs), so it is translated by hand rather
+// than machine-fed. Mirrors the purpose stated in the repository README.
+const copy = {
+  ca: {
+    title: 'El projecte',
+    intro:
+      'Abans de dir la primera paraula, un nadó ja es pot comunicar amb les mans: demanar «més», dir «s’ha acabat» o «una altra vegada» amb un gest senzill redueix la frustració molt abans de parlar. Petits Signes recull signes reals de la llengua de signes catalana (LSC) i espanyola (LSE) perquè les famílies oients els puguin fer servir amb el seu nadó.',
+    whoTitle: 'Per a qui és',
+    whoBody:
+      'Per a mares, pares i cuidadors que volen aprendre un grapat de signes útils del dia a dia —menjar, dormir, més, gràcies— sense haver d’estudiar una llengua sencera de cop. I per a la comunitat educativa (escoles bressol, llevadores, logopedes) que el vulgui fer servir com a recurs lliure o recomanar-lo a les famílies.',
+    principlesTitle: 'En què creiem',
+    principles: [
+      'Cap signe inventat. Cada signe ve d’una font oficial verificable; si no en tenim, la fitxa es queda sense vídeo en lloc d’ensenyar-ne un de dubtós.',
+      'Mai substituïm el signe d’una llengua pel de l’altra: la LSC i la LSE són llengües diferents, amb gestos diferents.',
+      'Gratuït, sense comptes, sense publicitat i sense rastrejar ningú. El teu progrés es desa només al teu dispositiu.',
+      'És una porta d’entrada a llengües reals, no un substitut de l’aprenentatge formal ni de la comunitat sorda.',
+    ],
+    sourcesTitle: 'D’on surten els signes',
+    sourcesBody:
+      'Els vídeos no són obra del projecte: provenen de fonts oficials —el Vocabulari bàsic de la LSC de la Generalitat, amb assessorament de la FESOCA, i el DILSE de la Fundación CNSE— i cada fitxa n’indica l’origen.',
+    sourcesLink: 'Consulta les fonts i els crèdits',
+    openTitle: 'Codi obert',
+    openBody:
+      'Petits Signes és programari lliure. Qualsevol pot veure com està fet, proposar millores o avisar d’un error —en un signe, una traducció o l’accessibilitat— obrint una incidència al repositori.',
+    openCta: 'Veure el projecte a GitHub',
+  },
+  es: {
+    title: 'El proyecto',
+    intro:
+      'Antes de decir su primera palabra, un bebé ya puede comunicarse con las manos: pedir «más», decir «se acabó» u «otra vez» con un gesto sencillo reduce la frustración mucho antes de hablar. Petits Signes reúne signos reales de la lengua de signos catalana (LSC) y española (LSE) para que las familias oyentes puedan usarlos con su bebé.',
+    whoTitle: 'Para quién es',
+    whoBody:
+      'Para madres, padres y cuidadores que quieren aprender un puñado de signos útiles del día a día —comer, dormir, más, gracias— sin tener que estudiar una lengua entera de golpe. Y para la comunidad educativa (escuelas infantiles, matronas, logopedas) que quiera usarlo como recurso libre o recomendarlo a las familias.',
+    principlesTitle: 'En qué creemos',
+    principles: [
+      'Ningún signo inventado. Cada signo procede de una fuente oficial verificable; si no la tenemos, la ficha se queda sin vídeo en lugar de enseñar uno dudoso.',
+      'Nunca sustituimos el signo de una lengua por el de la otra: la LSC y la LSE son lenguas distintas, con gestos distintos.',
+      'Gratis, sin cuentas, sin publicidad y sin rastrear a nadie. Tu progreso se guarda solo en tu dispositivo.',
+      'Es una puerta de entrada a lenguas reales, no un sustituto del aprendizaje formal ni de la comunidad sorda.',
+    ],
+    sourcesTitle: 'De dónde salen los signos',
+    sourcesBody:
+      'Los vídeos no son obra del proyecto: proceden de fuentes oficiales —el Vocabulari bàsic de la LSC de la Generalitat, con asesoramiento de FESOCA, y el DILSE de la Fundación CNSE— y cada ficha indica su origen.',
+    sourcesLink: 'Consulta las fuentes y los créditos',
+    openTitle: 'Código abierto',
+    openBody:
+      'Petits Signes es software libre. Cualquiera puede ver cómo está hecho, proponer mejoras o avisar de un error —en un signo, una traducción o la accesibilidad— abriendo una incidencia en el repositorio.',
+    openCta: 'Ver el proyecto en GitHub',
+  },
+} as const;
+
+const c = copy[language];
+---
+
+<BaseLayout language={language} path="/el-projecte/" title={c.title}>
+  <article class="max-w-prose">
+    <h1 class="text-3xl font-extrabold tracking-tight">{c.title}</h1>
+
+    <p class="mt-4">{c.intro}</p>
+
+    <h2 class="mt-8 text-xl font-bold">{c.whoTitle}</h2>
+    <p class="mt-2">{c.whoBody}</p>
+
+    <h2 class="mt-8 text-xl font-bold">{c.principlesTitle}</h2>
+    <ul class="mt-2 list-disc space-y-1.5 ps-5">
+      {c.principles.map((item) => <li>{item}</li>)}
+    </ul>
+
+    <h2 class="mt-8 text-xl font-bold">{c.sourcesTitle}</h2>
+    <p class="mt-2">{c.sourcesBody}</p>
+    <p class="mt-1">
+      <a class="underline underline-offset-2" href={creditsHref}>{c.sourcesLink}</a>
+    </p>
+
+    <h2 class="mt-8 text-xl font-bold">{c.openTitle}</h2>
+    <p class="mt-2">{c.openBody}</p>
+    <p class="mt-1">
+      <a
+        class="underline underline-offset-2"
+        href={REPO_URL}
+        target="_blank"
+        rel="noreferrer noopener">{c.openCta}</a
+      >
+    </p>
+  </article>
+</BaseLayout>

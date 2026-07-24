@@ -10,6 +10,8 @@ import { expect, test } from '@playwright/test';
 const PAGES = [
   { name: 'catalogue (ca)', path: '/' },
   { name: 'catalogue (es)', path: '/es/' },
+  { name: 'about (ca)', path: '/el-projecte/' },
+  { name: 'about (es)', path: '/es/el-projecte/' },
   { name: 'credits (ca)', path: '/credits/' },
   { name: 'credits (es)', path: '/es/credits/' },
   { name: 'accessibility statement (ca)', path: '/accessibilitat/' },

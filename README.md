@@ -95,7 +95,7 @@ Al tratarse de un proyecto sobre lengua de signos, la accesibilidad no es un añ
 coherencia con el propósito. Hay una declaración de accesibilidad publicada en el propio sitio,
 en catalán y castellano.
 
-Cada cambio se comprueba con axe-core sobre las seis páginas y en modo oscuro, más un test
+Cada cambio se comprueba con axe-core sobre las ocho páginas y en modo oscuro, más un test
 específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo falla, el CI falla.
 
 ## Arquitectura en una pantalla
