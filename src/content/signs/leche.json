@@ -1,0 +1,39 @@
+{
+  "labels": {
+    "ca": "llet",
+    "es": "leche",
+    "en": "milk"
+  },
+  "category": "food",
+  "isFirstSign": true,
+  "firstSignOrder": 1,
+  "difficulty": 1,
+  "tips": {
+    "ca": "Signa'l cada vegada que li ofereixis el pit o el biberó: la repetició en el mateix moment és el que el fa evident.",
+    "es": "Sígnalo cada vez que le ofrezcas el pecho o el biberón: la repetición en el mismo momento es lo que lo hace evidente.",
+    "en": "Sign it every time you offer the breast or bottle: repeating it at the same moment is what makes it click."
+  },
+  "videos": [
+    {
+      "signLanguage": "lsc",
+      "delivery": "youtube-embed",
+      "videoUrl": "https://www.youtube.com/watch?v=j7EYGZt-CJc",
+      "source": "Gencat-VocabulariLSC",
+      "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
+      "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
+      "updatedAt": "2026-07-23",
+      "status": "draft",
+      "variant": "Llet"
+    },
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=leche",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=leche",
+      "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
+      "updatedAt": "2026-07-24",
+      "status": "draft"
+    }
+  ]
+}

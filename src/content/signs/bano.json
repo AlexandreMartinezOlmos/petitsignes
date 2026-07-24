@@ -1,0 +1,21 @@
+{
+  "labels": {
+    "ca": "bany",
+    "es": "baño",
+    "en": "bath"
+  },
+  "category": "routines",
+  "isFirstSign": false,
+  "videos": [
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=ba%C3%B1o",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=ba%C3%B1o",
+      "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
+      "updatedAt": "2026-07-24",
+      "status": "draft"
+    }
+  ]
+}

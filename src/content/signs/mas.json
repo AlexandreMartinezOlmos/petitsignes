@@ -1,0 +1,22 @@
+{
+  "labels": {
+    "ca": "més",
+    "es": "más",
+    "en": "more"
+  },
+  "category": "food",
+  "isFirstSign": true,
+  "firstSignOrder": 2,
+  "videos": [
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=m%C3%A1s",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=m%C3%A1s",
+      "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
+      "updatedAt": "2026-07-24",
+      "status": "draft"
+    }
+  ]
+}

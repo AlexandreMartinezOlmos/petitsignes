@@ -1,0 +1,156 @@
+---
+import { createTranslator } from '../lib/i18n.ts';
+import { SIGN_LANGUAGES, type Category, type Language, type SignEntry } from '../lib/types.ts';
+
+interface Props {
+  sign: SignEntry;
+  category: Category;
+  language: Language;
+  /** Position in the "first signs" path, shown as a step badge. */
+  showStep?: boolean;
+}
+
+const { sign, category, language, showStep = false } = Astro.props;
+const t = createTranslator(language);
+
+const label = sign.labels[language];
+
+/**
+ * The default face of the card is always the static poster, never the video
+ * (CLAUDE.md §4.3). Both sign languages are rendered and CSS shows the active
+ * one, so switching LSC/LSE costs no JavaScript per card.
+ */
+const byLanguage = SIGN_LANGUAGES.map((signLanguage) => ({
+  signLanguage,
+  video: sign.videos.find((item) => item.signLanguage === signLanguage),
+  fullName: signLanguage === 'lsc' ? t('signLanguage.lscFull') : t('signLanguage.lseFull'),
+  shortName: signLanguage === 'lsc' ? t('signLanguage.lsc') : t('signLanguage.lse'),
+}));
+---
+
+<article
+  class="sign-card"
+  data-sign-id={sign.id}
+  data-category={sign.category}
+  data-first-sign={sign.isFirstSign ? 'true' : 'false'}
+  data-label-ca={sign.labels.ca}
+  data-label-es={sign.labels.es}
+  data-label-en={sign.labels.en}
+>
+  {
+    showStep && sign.firstSignOrder !== undefined && (
+      <span class="sign-card__step">{t('firstSigns.step', { order: sign.firstSignOrder })}</span>
+    )
+  }
+
+  {
+    byLanguage.map(({ signLanguage, video, fullName, shortName }) => (
+      <div class="sign-card__lang contents" data-sl={signLanguage}>
+        <div class="sign-card__media">
+          {video?.posterUrl ? (
+            <img
+              src={video.posterUrl}
+              alt={`${label} — ${fullName}`}
+              width="480"
+              height="360"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <div class="sign-card__placeholder">
+              <svg class="icon-lg" aria-hidden="true" focusable="false">
+                <use href={`#i-${category.icon}`} />
+              </svg>
+              <span class="sr-only">{t('card.posterPending')}</span>
+            </div>
+          )}
+        </div>
+
+        <div class="sign-card__actions">
+          {video === undefined ? (
+            <p class="sign-card__novideo">{t('card.noVideo', { signLanguage: shortName })}</p>
+          ) : video.delivery === 'youtube-embed' ? (
+            <button
+              type="button"
+              class="sign-card__cta"
+              data-action="play"
+              data-sign-id={sign.id}
+              data-sign-language={signLanguage}
+              data-label={label}
+              data-video-url={video.videoUrl}
+              data-poster-url={video.posterUrl}
+              data-source={video.source}
+              data-source-url={video.sourceUrl}
+              data-license={video.license}
+            >
+              <svg class="icon-sm" aria-hidden="true" focusable="false">
+                <use href="#i-play" />
+              </svg>
+              {t('card.watchSign')}
+              <span class="sr-only">: {label}</span>
+            </button>
+          ) : (
+            /* This source only allows linking to its original entry, never
+                 embedding or re-hosting (docs/permisos/). */
+            <a
+              class="sign-card__cta sign-card__cta--external"
+              href={video.videoUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {t('card.watchAtSource', { source: video.source })}
+              <span class="sr-only">: {label}</span>
+              <svg class="icon-sm" aria-hidden="true" focusable="false">
+                <use href="#i-external" />
+              </svg>
+            </a>
+          )}
+        </div>
+      </div>
+    ))
+  }
+
+  <div class="sign-card__header">
+    <div class="min-w-0">
+      <h2 class="sign-card__title" title={label}>{label}</h2>
+      <span class="sign-card__chip" data-category={sign.category}>
+        <svg class="icon-sm" aria-hidden="true" focusable="false">
+          <use href={`#i-${category.icon}`}></use>
+        </svg>
+        {category.labels[language]}
+      </span>
+    </div>
+
+    <div class="flex shrink-0 gap-1">
+      <button
+        type="button"
+        class="sign-card__toggle"
+        data-action="favorite"
+        data-sign-id={sign.id}
+        aria-pressed="false"
+        aria-label={t('card.addFavorite')}
+        data-label-on={t('card.removeFavorite')}
+        data-label-off={t('card.addFavorite')}
+      >
+        <svg class="icon" aria-hidden="true" focusable="false">
+          <use href="#i-star"></use>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="sign-card__toggle"
+        data-action="learned"
+        data-sign-id={sign.id}
+        aria-pressed="false"
+        aria-label={t('card.markLearned')}
+        data-label-on={t('card.unmarkLearned')}
+        data-label-off={t('card.markLearned')}
+      >
+        <svg class="icon" aria-hidden="true" focusable="false">
+          <use href="#i-check"></use>
+        </svg>
+      </button>
+    </div>
+  </div>
+</article>

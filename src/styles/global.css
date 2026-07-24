@@ -1,0 +1,986 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design system (docs/requisitos.md §8)
+
+   Three layers, on purpose:
+   1. `@theme`        — static scales (type, radii, motion, elevation).
+   2. `@theme inline` — semantic colours that flip with the theme.
+   3. `:root` blocks  — the actual light/dark values.
+
+   Colour is authored in OKLCH so every hue lands on the same perceptual
+   lightness. That keeps contrast predictable across all 15 categories, in both
+   themes. Hue never carries meaning on its own: each category also has an icon.
+--------------------------------------------------------------------------- */
+
+@theme {
+  --font-sans:
+    'Nunito Sans Variable', 'Nunito Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    Roboto, 'Helvetica Neue', sans-serif;
+
+  /* Fluid type scale. Body never drops below 16px (§8); headings gain presence
+     on wide screens without a media query. */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.55;
+  --text-base: 1rem;
+  --text-base--line-height: 1.65;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.5;
+  --text-xl: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --text-xl--line-height: 1.35;
+  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --text-2xl--line-height: 1.25;
+  --text-display: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.02em;
+
+  /* Radii: 16–24px on cards and controls (§8). */
+  --radius-card: 1.375rem;
+  --radius-control: 0.875rem;
+  --radius-chip: 999px;
+
+  /* Motion. The 150–250ms band from §8, plus one slower step for entrances.
+     `--ease-out` decelerates; `--ease-spring` overshoots slightly for presses. */
+  --duration-fast: 140ms;
+  --duration-base: 200ms;
+  --duration-slow: 260ms;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Minimum touch target for one-handed use (§8) and WCAG 2.2 target size. */
+  --spacing-touch: 2.75rem; /* 44px */
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-inverted: var(--ink-inverted);
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ink: var(--brand-ink);
+  --color-on-brand: var(--on-brand);
+
+  --color-focus: var(--focus);
+  --color-star: var(--star);
+  --color-learned: var(--learned);
+}
+
+/* --- Light theme (default) ------------------------------------------------ */
+:root {
+  color-scheme: light;
+
+  --surface: oklch(0.985 0.008 75);
+  --surface-raised: oklch(1 0 0);
+  --surface-sunken: oklch(0.955 0.012 75);
+  --border: oklch(0.91 0.011 75);
+  --border-strong: oklch(0.78 0.018 75);
+
+  --ink: oklch(0.24 0.021 60);
+  --ink-muted: oklch(0.45 0.02 60);
+  --ink-subtle: oklch(0.58 0.017 60);
+  --ink-inverted: oklch(0.99 0.005 75);
+
+  --brand: oklch(0.55 0.16 38);
+  --brand-hover: oklch(0.48 0.16 38);
+  --brand-soft: oklch(0.955 0.028 38);
+  --brand-ink: oklch(0.42 0.15 38);
+  --on-brand: oklch(1 0 0);
+
+  --focus: oklch(0.52 0.19 255);
+  --star: oklch(0.62 0.16 70);
+  --learned: oklch(0.5 0.13 155);
+
+  /* Elevation: an ambient spread plus a tighter directional shadow. Two layers
+     read as depth; one reads as a flat drop. */
+  --elevation-1: 0 1px 2px oklch(0.3 0.04 60 / 0.05), 0 2px 8px -2px oklch(0.3 0.04 60 / 0.06);
+  --elevation-2: 0 2px 4px oklch(0.3 0.04 60 / 0.05), 0 12px 28px -8px oklch(0.3 0.04 60 / 0.14);
+  --elevation-3: 0 4px 8px oklch(0.3 0.04 60 / 0.06), 0 24px 56px -12px oklch(0.3 0.04 60 / 0.2);
+
+  /* Category surfaces: pale tint + darkened same-hue ink, both derived from a
+     single hue token so light/dark stay in sync. */
+  --cat-bg-l: 0.955;
+  --cat-bg-c: 0.045;
+  --cat-bg2-l: 0.925;
+  --cat-bg2-c: 0.058;
+  --cat-fg-l: 0.42;
+  --cat-fg-c: 0.11;
+  --cat-art-alpha: 0.5;
+
+  --page-wash: radial-gradient(120% 70% at 50% -10%, oklch(0.97 0.03 38 / 0.7) 0%, transparent 60%);
+}
+
+/* --- Dark theme ----------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --surface: oklch(0.185 0.015 65);
+    --surface-raised: oklch(0.235 0.017 65);
+    --surface-sunken: oklch(0.15 0.014 65);
+    --border: oklch(0.32 0.018 65);
+    --border-strong: oklch(0.46 0.022 65);
+
+    --ink: oklch(0.96 0.01 75);
+    --ink-muted: oklch(0.78 0.015 75);
+    --ink-subtle: oklch(0.66 0.015 75);
+    --ink-inverted: oklch(0.2 0.02 60);
+
+    --brand: oklch(0.78 0.13 45);
+    --brand-hover: oklch(0.84 0.13 45);
+    --brand-soft: oklch(0.3 0.05 45);
+    --brand-ink: oklch(0.86 0.1 45);
+    --on-brand: oklch(0.18 0.02 60);
+
+    --focus: oklch(0.78 0.15 255);
+    --star: oklch(0.82 0.14 80);
+    --learned: oklch(0.76 0.14 155);
+
+    --elevation-1: 0 1px 2px oklch(0 0 0 / 0.4), 0 2px 8px -2px oklch(0 0 0 / 0.45);
+    --elevation-2: 0 2px 4px oklch(0 0 0 / 0.4), 0 12px 28px -8px oklch(0 0 0 / 0.55);
+    --elevation-3: 0 4px 8px oklch(0 0 0 / 0.45), 0 24px 56px -12px oklch(0 0 0 / 0.65);
+
+    --cat-bg-l: 0.3;
+    --cat-bg-c: 0.045;
+    --cat-bg2-l: 0.26;
+    --cat-bg2-c: 0.05;
+    --cat-fg-l: 0.87;
+    --cat-fg-c: 0.08;
+    --cat-art-alpha: 0.42;
+
+    --page-wash: radial-gradient(
+      120% 70% at 50% -10%,
+      oklch(0.35 0.06 38 / 0.35) 0%,
+      transparent 60%
+    );
+  }
+}
+
+/* An explicit choice must win over the media query in both directions. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --surface: oklch(0.185 0.015 65);
+  --surface-raised: oklch(0.235 0.017 65);
+  --surface-sunken: oklch(0.15 0.014 65);
+  --border: oklch(0.32 0.018 65);
+  --border-strong: oklch(0.46 0.022 65);
+
+  --ink: oklch(0.96 0.01 75);
+  --ink-muted: oklch(0.78 0.015 75);
+  --ink-subtle: oklch(0.66 0.015 75);
+  --ink-inverted: oklch(0.2 0.02 60);
+
+  --brand: oklch(0.78 0.13 45);
+  --brand-hover: oklch(0.84 0.13 45);
+  --brand-soft: oklch(0.3 0.05 45);
+  --brand-ink: oklch(0.86 0.1 45);
+  --on-brand: oklch(0.18 0.02 60);
+
+  --focus: oklch(0.78 0.15 255);
+  --star: oklch(0.82 0.14 80);
+  --learned: oklch(0.76 0.14 155);
+
+  --elevation-1: 0 1px 2px oklch(0 0 0 / 0.4), 0 2px 8px -2px oklch(0 0 0 / 0.45);
+  --elevation-2: 0 2px 4px oklch(0 0 0 / 0.4), 0 12px 28px -8px oklch(0 0 0 / 0.55);
+  --elevation-3: 0 4px 8px oklch(0 0 0 / 0.45), 0 24px 56px -12px oklch(0 0 0 / 0.65);
+
+  --cat-bg-l: 0.3;
+  --cat-bg-c: 0.045;
+  --cat-bg2-l: 0.26;
+  --cat-bg2-c: 0.05;
+  --cat-fg-l: 0.87;
+  --cat-fg-c: 0.08;
+  --cat-art-alpha: 0.42;
+
+  --page-wash: radial-gradient(
+    120% 70% at 50% -10%,
+    oklch(0.35 0.06 38 / 0.35) 0%,
+    transparent 60%
+  );
+}
+
+/* --- Category hues --------------------------------------------------------
+   Each category sets one hue; the tint, its gradient partner and the ink are
+   derived from it, so a new category is a single number.
+-------------------------------------------------------------------------- */
+[data-category] {
+  --cat-bg: oklch(var(--cat-bg-l) var(--cat-bg-c) var(--cat-hue, 60));
+  --cat-bg2: oklch(var(--cat-bg2-l) var(--cat-bg2-c) var(--cat-hue, 60));
+  --cat-fg: oklch(var(--cat-fg-l) var(--cat-fg-c) var(--cat-hue, 60));
+}
+
+[data-category='food'] {
+  --cat-hue: 70;
+}
+[data-category='routines'] {
+  --cat-hue: 250;
+}
+[data-category='family'] {
+  --cat-hue: 340;
+}
+[data-category='emotions'] {
+  --cat-hue: 20;
+}
+[data-category='animals'] {
+  --cat-hue: 140;
+}
+[data-category='objects'] {
+  --cat-hue: 290;
+}
+[data-category='actions'] {
+  --cat-hue: 200;
+}
+[data-category='qualities'] {
+  --cat-hue: 100;
+}
+[data-category='nature'] {
+  --cat-hue: 170;
+}
+[data-category='courtesy'] {
+  --cat-hue: 320;
+}
+[data-category='body'] {
+  --cat-hue: 10;
+}
+[data-category='clothing'] {
+  --cat-hue: 270;
+}
+[data-category='colors'] {
+  --cat-hue: 220;
+}
+[data-category='numbers'] {
+  --cat-hue: 120;
+}
+[data-category='time'] {
+  --cat-hue: 300;
+}
+
+/* --- Base ----------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* The header is sticky: keep anchored and focused elements clear of it
+       (WCAG 2.2 §2.4.11 Focus Not Obscured). */
+    scroll-padding-top: 9rem;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    background-image: var(--page-wash);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible focus everywhere (WCAG 2.2 AA). */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-soft);
+    color: var(--color-brand-ink);
+  }
+}
+
+/* --- Motion preferences ---------------------------------------------------
+   Everything below is decorative; none of it conveys information, so it is
+   safe to switch off entirely.
+-------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Skip link ------------------------------------------------------------ */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -100%;
+  z-index: 100;
+  border-radius: var(--radius-control);
+  background-color: var(--color-brand);
+  color: var(--color-on-brand);
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--elevation-2);
+  transition: top var(--duration-fast) var(--ease-out);
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+/* --- App shell ------------------------------------------------------------ */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid transparent;
+  background-color: color-mix(in oklab, var(--color-surface) 82%, transparent);
+  transition:
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .app-header {
+    backdrop-filter: blur(16px) saturate(1.4);
+  }
+}
+
+/* Set by a scroll observer: the header only grows a shadow once content is
+   actually behind it. */
+.app-header[data-scrolled='true'] {
+  border-color: var(--color-border);
+  box-shadow: var(--elevation-1);
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-brand-ink);
+  border-radius: var(--radius-control);
+}
+
+.brand-mark__dot {
+  display: grid;
+  place-items: center;
+  block-size: 1.75rem;
+  inline-size: 1.75rem;
+  border-radius: 999px;
+  background: linear-gradient(140deg, var(--color-brand), var(--color-brand-hover));
+  color: var(--color-on-brand);
+  box-shadow: var(--elevation-1);
+}
+
+/* --- Language selector ---------------------------------------------------- */
+.lang-switch {
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-chip);
+  background-color: var(--color-surface-raised);
+  box-shadow: var(--elevation-1);
+}
+
+.lang-switch__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 2.25rem;
+  padding-inline: 0.75rem;
+  border-radius: var(--radius-chip);
+  line-height: 1.1;
+  color: var(--color-ink-muted);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.lang-switch__option:hover {
+  color: var(--color-ink);
+  background-color: var(--color-surface-sunken);
+}
+
+.lang-switch__option[aria-current] {
+  background: linear-gradient(140deg, var(--color-brand), var(--color-brand-hover));
+  color: var(--color-on-brand);
+  box-shadow: var(--elevation-1);
+}
+
+.lang-switch__name {
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.lang-switch__sign {
+  margin-block-start: 0.1rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* --- Hero ----------------------------------------------------------------- */
+.hero__title {
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  letter-spacing: var(--text-display--letter-spacing);
+  font-weight: 800;
+}
+
+.hero__accent {
+  background: linear-gradient(120deg, var(--color-brand), oklch(0.62 0.14 12));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* --- Chips ---------------------------------------------------------------- */
+.chip {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.375rem;
+  min-block-size: var(--spacing-touch);
+  padding-inline: 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-chip);
+  background-color: var(--color-surface-raised);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.chip:hover {
+  background-color: var(--color-surface-sunken);
+  border-color: var(--color-border-strong);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip[aria-pressed='true'] {
+  background: linear-gradient(140deg, var(--color-brand), var(--color-brand-hover));
+  border-color: transparent;
+  color: var(--color-on-brand);
+  box-shadow: var(--elevation-1);
+}
+
+/* The category row scrolls horizontally on every screen size. Fading the
+   trailing edge signals there is more to reach, without adding a control. */
+.chip-row {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent 100%);
+}
+
+.chip-row::-webkit-scrollbar {
+  display: none;
+}
+
+.chip-row > * {
+  scroll-snap-align: start;
+}
+
+/* Quieter row: status filters read as text until chosen. */
+.chip-quiet {
+  min-block-size: 2.25rem;
+  padding-inline: 0.75rem;
+  border-radius: var(--radius-chip);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.chip-quiet:hover {
+  color: var(--color-ink);
+  background-color: var(--color-surface-sunken);
+}
+
+.chip-quiet[aria-pressed='true'] {
+  background-color: var(--color-surface-sunken);
+  color: var(--color-ink);
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+/* --- Search --------------------------------------------------------------- */
+.search-field {
+  inline-size: 100%;
+  min-block-size: var(--spacing-touch);
+  padding-inline: 2.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-surface-raised);
+  color: var(--color-ink);
+  font-size: var(--text-base);
+  box-shadow: var(--elevation-1);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.search-field::placeholder {
+  color: var(--color-ink-subtle);
+}
+
+.search-field:hover {
+  border-color: var(--color-border-strong);
+}
+
+.search-field:focus {
+  border-color: var(--color-brand);
+  box-shadow: var(--elevation-2);
+}
+
+/* --- Sign cards -----------------------------------------------------------
+   The grid repeats this component ~229 times, so the repeated styling lives
+   here rather than as utility strings in the markup: it is paid once in the
+   stylesheet instead of once per card in the DOM.
+-------------------------------------------------------------------------- */
+.sign-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background-color: var(--color-surface-raised);
+  box-shadow: var(--elevation-1);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .sign-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--elevation-2);
+    border-color: color-mix(in oklab, var(--color-border-strong) 60%, transparent);
+  }
+}
+
+.sign-card:focus-within {
+  box-shadow: var(--elevation-2);
+}
+
+.sign-card[hidden] {
+  display: none;
+}
+
+/* Each card carries the block for both sign languages; the page's own language
+   decides which one is shown. This is what guarantees a sign is never displayed
+   under the other language's label (docs/requisitos.md §4.2) — they are separate
+   markup, so no substitution is possible. */
+[data-sign-language='lsc'] .sign-card__lang[data-sl='lse'],
+[data-sign-language='lse'] .sign-card__lang[data-sl='lsc'] {
+  display: none;
+}
+
+.sign-card__media {
+  order: 1;
+  position: relative;
+  aspect-ratio: 3 / 2;
+  inline-size: 100%;
+  overflow: hidden;
+  background-color: var(--color-surface-sunken);
+}
+
+/* A hairline of shade where the media meets the card body, so the two planes
+   read as separate surfaces rather than one flat block. */
+.sign-card__media::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 2.5rem;
+  background: linear-gradient(to bottom, transparent, oklch(0 0 0 / 0.06));
+  pointer-events: none;
+}
+
+.sign-card__media img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .sign-card:hover .sign-card__media img {
+    transform: scale(1.04);
+  }
+}
+
+/* Shown while a sign has no still image: a category-tinted panel with its icon.
+   Never an invented depiction of the gesture (CLAUDE.md §2.1). */
+.sign-card__placeholder {
+  position: relative;
+  display: grid;
+  block-size: 100%;
+  inline-size: 100%;
+  place-items: center;
+  background-image: linear-gradient(150deg, var(--cat-bg) 0%, var(--cat-bg2) 100%);
+  color: color-mix(in oklab, var(--cat-fg) calc(var(--cat-art-alpha) * 100%), transparent);
+}
+
+/* A soft halo gives the mark somewhere to sit, so the panel does not read as
+   an empty box waiting for an image that is never coming. */
+.sign-card__placeholder::before {
+  content: '';
+  position: absolute;
+  inline-size: 7.5rem;
+  block-size: 7.5rem;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--cat-fg) 12%, transparent) 0%,
+    transparent 68%
+  );
+}
+
+.sign-card__placeholder .icon-lg {
+  position: relative;
+  transition: transform var(--duration-slow) var(--ease-spring);
+}
+
+@media (hover: hover) {
+  .sign-card:hover .sign-card__placeholder .icon-lg {
+    transform: scale(1.08) rotate(-3deg);
+  }
+}
+
+.sign-card__header {
+  order: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem 0.5rem;
+}
+
+.sign-card__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.sign-card__chip {
+  margin-block-start: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: var(--radius-chip);
+  padding: 0.15rem 0.55rem;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  background-color: var(--cat-bg);
+  color: var(--cat-fg);
+}
+
+.sign-card__actions {
+  order: 3;
+  margin-block-start: auto;
+  padding: 0 1rem 1rem;
+}
+
+.sign-card__cta {
+  display: flex;
+  min-block-size: var(--spacing-touch);
+  inline-size: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-control);
+  padding-inline: 1rem;
+  font-weight: 650;
+  color: var(--color-on-brand);
+  background: linear-gradient(140deg, var(--color-brand), var(--color-brand-hover));
+  box-shadow: var(--elevation-1);
+  transition:
+    filter var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.sign-card__cta:hover {
+  filter: brightness(1.06);
+  box-shadow: var(--elevation-2);
+}
+
+.sign-card__cta:active {
+  transform: scale(0.98);
+}
+
+/* Leaving the site for the source dictionary reads as a quieter, outlined
+   action than playing a video in place. */
+.sign-card__cta--external {
+  background: transparent;
+  color: var(--color-brand-ink);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: none;
+}
+
+.sign-card__cta--external:hover {
+  background-color: var(--color-brand-soft);
+  filter: none;
+}
+
+.sign-card__novideo {
+  display: flex;
+  min-block-size: var(--spacing-touch);
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-control);
+  padding-inline: 0.75rem;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.sign-card__toggle {
+  display: grid;
+  block-size: var(--spacing-touch);
+  inline-size: var(--spacing-touch);
+  place-items: center;
+  border-radius: 999px;
+  color: var(--color-ink-subtle);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring);
+}
+
+.sign-card__toggle:hover {
+  background-color: var(--color-surface-sunken);
+  color: var(--color-ink);
+}
+
+.sign-card__toggle:active {
+  transform: scale(0.9);
+}
+
+.sign-card__toggle[aria-pressed='true'][data-action='favorite'] {
+  color: var(--color-star);
+}
+
+.sign-card__toggle[aria-pressed='true'][data-action='favorite'] .icon {
+  fill: currentColor;
+  animation: pop var(--duration-slow) var(--ease-spring);
+}
+
+.sign-card__toggle[aria-pressed='true'][data-action='learned'] {
+  color: var(--color-learned);
+  background-color: color-mix(in oklab, var(--color-learned) 16%, transparent);
+}
+
+.sign-card__toggle[aria-pressed='true'][data-action='learned'] .icon {
+  animation: pop var(--duration-slow) var(--ease-spring);
+}
+
+/* A learned sign stays recognisable at a glance across the grid. */
+.sign-card[data-learned='true'] {
+  border-color: color-mix(in oklab, var(--color-learned) 45%, var(--color-border));
+}
+
+.sign-card[data-learned='true']::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-learned) 80%, transparent),
+    transparent
+  );
+}
+
+.sign-card__step {
+  position: absolute;
+  inset-inline-start: 0.75rem;
+  inset-block-start: 0.75rem;
+  z-index: 10;
+  border-radius: 999px;
+  background: linear-gradient(140deg, var(--color-brand), var(--color-brand-hover));
+  padding: 0.2rem 0.6rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-on-brand);
+  box-shadow: var(--elevation-1);
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.7);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* --- Icons ---------------------------------------------------------------- */
+.icon,
+.icon-sm,
+.icon-lg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.icon {
+  block-size: 1.25rem;
+  inline-size: 1.25rem;
+}
+
+.icon-sm {
+  block-size: 0.9rem;
+  inline-size: 0.9rem;
+}
+
+.icon-lg {
+  block-size: 3.5rem;
+  inline-size: 3.5rem;
+  stroke-width: 1.2;
+}
+
+/* --- Video dialog --------------------------------------------------------- */
+.player-dialog {
+  margin: auto;
+  inline-size: min(34rem, 92vw);
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background-color: var(--color-surface-raised);
+  color: var(--color-ink);
+  box-shadow: var(--elevation-3);
+}
+
+.player-dialog::backdrop {
+  background-color: oklch(0.15 0.02 60 / 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.player-dialog[open] {
+  animation: dialog-in var(--duration-slow) var(--ease-out);
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.player-dialog__stage {
+  aspect-ratio: 16 / 9;
+  inline-size: 100%;
+  background-color: var(--color-surface-sunken);
+}
+
+.player-dialog__stage > iframe {
+  block-size: 100%;
+  inline-size: 100%;
+  border: 0;
+}
+
+.icon-button {
+  display: grid;
+  block-size: var(--spacing-touch);
+  inline-size: var(--spacing-touch);
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--color-ink-muted);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.icon-button:hover {
+  background-color: var(--color-surface-sunken);
+  color: var(--color-ink);
+}
+
+/* --- Prose ---------------------------------------------------------------- */
+.prose-page h2 {
+  margin-block-start: 2rem;
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+.prose-page p + p {
+  margin-block-start: 0.75rem;
+}
+
+.prose-page a {
+  color: var(--color-brand-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.prose-page a:hover {
+  text-decoration-thickness: 2px;
+}

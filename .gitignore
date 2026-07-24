@@ -1,0 +1,39 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+*.log
+npm-debug.log*
+
+# environment
+.env
+.env.production
+
+# macOS
+.DS_Store
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Claude Code local config and project instructions (not for the public repo)
+.claude/
+CLAUDE.md
+
+# internal docs: spec, content methodology, permissions correspondence.
+# Kept locally; not part of the public repo (may reference contacts and
+# working notes not meant for redistribution). The generated vocabulary
+# catalogue is the exception: it's meant for the public repo.
+docs/*
+!docs/vocabulari.md
+
+# test artifacts
+coverage/
+test-results/
+playwright-report/
+.lighthouseci/

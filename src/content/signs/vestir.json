@@ -1,0 +1,21 @@
+{
+  "labels": {
+    "ca": "vestir",
+    "es": "vestir",
+    "en": "get dressed"
+  },
+  "category": "routines",
+  "isFirstSign": false,
+  "videos": [
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=vestir",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=vestir",
+      "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
+      "updatedAt": "2026-07-24",
+      "status": "draft"
+    }
+  ]
+}

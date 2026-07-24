@@ -1,0 +1,32 @@
+{
+  "labels": {
+    "ca": "buit",
+    "es": "vacío",
+    "en": "empty"
+  },
+  "category": "qualities",
+  "isFirstSign": false,
+  "videos": [
+    {
+      "signLanguage": "lsc",
+      "delivery": "youtube-embed",
+      "videoUrl": "https://www.youtube.com/watch?v=B3-s226vfrQ",
+      "source": "Gencat-VocabulariLSC",
+      "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
+      "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
+      "updatedAt": "2026-07-24",
+      "status": "draft",
+      "variant": "Buit / buida"
+    },
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=vac%C3%ADo",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=vac%C3%ADo",
+      "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
+      "updatedAt": "2026-07-24",
+      "status": "draft"
+    }
+  ]
+}

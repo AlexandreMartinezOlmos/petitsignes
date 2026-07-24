@@ -1,0 +1,54 @@
+{
+  "labels": {
+    "ca": "ràpid",
+    "es": "rápido",
+    "en": "fast"
+  },
+  "category": "qualities",
+  "isFirstSign": false,
+  "videos": [
+    {
+      "signLanguage": "lsc",
+      "delivery": "youtube-embed",
+      "videoUrl": "https://www.youtube.com/watch?v=mdLJoa60EWs",
+      "source": "Gencat-VocabulariLSC",
+      "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
+      "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
+      "updatedAt": "2026-07-24",
+      "status": "draft",
+      "variant": "Ràpid / ràpida (1)"
+    },
+    {
+      "signLanguage": "lsc",
+      "delivery": "youtube-embed",
+      "videoUrl": "https://www.youtube.com/watch?v=uoAyNjWOEJU",
+      "source": "Gencat-VocabulariLSC",
+      "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
+      "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
+      "updatedAt": "2026-07-24",
+      "status": "draft",
+      "variant": "Ràpid / ràpida (2)"
+    },
+    {
+      "signLanguage": "lsc",
+      "delivery": "youtube-embed",
+      "videoUrl": "https://www.youtube.com/watch?v=ykgtIV5l_m4",
+      "source": "Gencat-VocabulariLSC",
+      "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
+      "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
+      "updatedAt": "2026-07-24",
+      "status": "draft",
+      "variant": "Ràpid / ràpida (3)"
+    },
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=r%C3%A1pido",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=r%C3%A1pido",
+      "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
+      "updatedAt": "2026-07-24",
+      "status": "draft"
+    }
+  ]
+}

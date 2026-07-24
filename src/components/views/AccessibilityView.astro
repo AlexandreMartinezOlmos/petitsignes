@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { RoutedLocale } from '../../lib/routing.ts';
+
+interface Props {
+  language: RoutedLocale;
+}
+
+const { language } = Astro.props;
+
+/**
+ * Accessibility statement.
+ *
+ * The European Accessibility Act (Directive (EU) 2019/882) points at the
+ * harmonised standard EN 301 549, whose web clause is WCAG 2.1 level AA. This
+ * project targets WCAG 2.2 AA, which supersedes it, and publishes the state of
+ * conformance here as the directive expects.
+ */
+const REVIEWED = '2026-07-24';
+
+const copy = {
+  ca: {
+    title: 'Declaració d’accessibilitat',
+    intro:
+      'Aquest lloc vol ser utilitzable per tothom. En un projecte sobre llengua de signes, l’accessibilitat no és un extra: és coherència.',
+    statusTitle: 'Grau de compliment',
+    statusBody:
+      'Aquest lloc és conforme amb les WCAG 2.2, nivell AA. Aquest és el nivell que exigeix la norma harmonitzada EN 301 549, referenciada per la Directiva (UE) 2019/882 (Acta Europea d’Accessibilitat), que en demana el nivell AA de les WCAG 2.1; les 2.2 el superen.',
+    measuresTitle: 'Què hem fet',
+    measures: [
+      'Navegació completa amb teclat i focus sempre visible, amb un enllaç per saltar al contingut.',
+      'La capçalera fixa mai no tapa l’element enfocat (WCAG 2.2, criteri 2.4.11).',
+      'Objectius tàctils de 44 px com a mínim, per sobre dels 24 px que exigeix el criteri 2.5.8.',
+      'Contrast AA comprovat en tema clar i fosc; el color mai no és l’única manera de distingir una categoria, que sempre porta icona.',
+      'Text que es pot ampliar fins al 200 % sense pèrdua de contingut, i cos de lletra mai per sota de 16 px.',
+      'Es respecta prefers-reduced-motion: tota l’animació és decorativa i es desactiva.',
+      'Els vídeos incrustats no s’autoreprodueixen amb so i es poden posar a càmera lenta.',
+      'Cada pàgina declara el seu idioma i té títol i estructura d’encapçalaments correctes.',
+    ],
+    testingTitle: 'Com ho comprovem',
+    testingBody:
+      'Cada canvi passa per una bateria automàtica amb axe-core (regles WCAG 2.0, 2.1 i 2.2 de nivell A i AA) sobre totes les pàgines i en tema fosc, més auditories Lighthouse. Si baixa del llindar, la integració contínua falla i el canvi no entra. Les proves automàtiques detecten aproximadament un terç dels problemes reals, així que les complementem amb revisió manual amb teclat.',
+    limitsTitle: 'Limitacions conegudes',
+    limits: [
+      'El reproductor de vídeo és de YouTube i no en controlem la interfície interna. Mentre el focus és dins del reproductor, la tecla Escape no tanca la finestra: fes servir el botó de tancar o fes clic a fora.',
+      'Els vídeos no porten subtítols perquè no tenen àudio: mostren únicament la realització del signe.',
+      'Les fitxes sense vídeo verificat mostren un marcador de categoria en lloc d’una imatge del gest. És intencionat: mai no inventem la representació d’un signe.',
+    ],
+    feedbackTitle: 'Comentaris i contacte',
+    feedbackBody:
+      'Si trobes una barrera d’accessibilitat, obre una incidència al repositori del projecte. Ens comprometem a revisar-la i, si escau, corregir-la.',
+    reviewed: 'Aquesta declaració es va revisar el',
+  },
+  es: {
+    title: 'Declaración de accesibilidad',
+    intro:
+      'Este sitio quiere ser utilizable por todo el mundo. En un proyecto sobre lengua de signos, la accesibilidad no es un extra: es coherencia.',
+    statusTitle: 'Grado de cumplimiento',
+    statusBody:
+      'Este sitio es conforme con las WCAG 2.2, nivel AA. Es el nivel que exige la norma armonizada EN 301 549, referenciada por la Directiva (UE) 2019/882 (Acta Europea de Accesibilidad), que pide el nivel AA de las WCAG 2.1; las 2.2 lo superan.',
+    measuresTitle: 'Qué hemos hecho',
+    measures: [
+      'Navegación completa con teclado y foco siempre visible, con un enlace para saltar al contenido.',
+      'La cabecera fija nunca tapa el elemento enfocado (WCAG 2.2, criterio 2.4.11).',
+      'Objetivos táctiles de 44 px como mínimo, por encima de los 24 px que exige el criterio 2.5.8.',
+      'Contraste AA comprobado en tema claro y oscuro; el color nunca es la única forma de distinguir una categoría, que siempre lleva icono.',
+      'Texto ampliable hasta el 200 % sin pérdida de contenido, y cuerpo de letra nunca por debajo de 16 px.',
+      'Se respeta prefers-reduced-motion: toda la animación es decorativa y se desactiva.',
+      'Los vídeos incrustados no se autorreproducen con sonido y se pueden poner a cámara lenta.',
+      'Cada página declara su idioma y tiene título y estructura de encabezados correctos.',
+    ],
+    testingTitle: 'Cómo lo comprobamos',
+    testingBody:
+      'Cada cambio pasa por una batería automática con axe-core (reglas WCAG 2.0, 2.1 y 2.2 de nivel A y AA) sobre todas las páginas y en tema oscuro, más auditorías Lighthouse. Si baja del umbral, la integración continua falla y el cambio no entra. Las pruebas automáticas detectan aproximadamente un tercio de los problemas reales, así que las complementamos con revisión manual con teclado.',
+    limitsTitle: 'Limitaciones conocidas',
+    limits: [
+      'El reproductor de vídeo es de YouTube y no controlamos su interfaz interna. Mientras el foco está dentro del reproductor, la tecla Escape no cierra la ventana: usa el botón de cerrar o haz clic fuera.',
+      'Los vídeos no llevan subtítulos porque no tienen audio: muestran únicamente la realización del signo.',
+      'Las fichas sin vídeo verificado muestran un marcador de categoría en lugar de una imagen del gesto. Es intencionado: nunca inventamos la representación de un signo.',
+    ],
+    feedbackTitle: 'Comentarios y contacto',
+    feedbackBody:
+      'Si encuentras una barrera de accesibilidad, abre una incidencia en el repositorio del proyecto. Nos comprometemos a revisarla y, si procede, corregirla.',
+    reviewed: 'Esta declaración se revisó el',
+  },
+} as const;
+
+const c = copy[language];
+---
+
+<BaseLayout language={language} path="/accessibilitat/" title={c.title}>
+  <article class="prose-page max-w-prose">
+    <h1 class="text-2xl font-extrabold tracking-tight">{c.title}</h1>
+    <p class="mt-4">{c.intro}</p>
+
+    <h2>{c.statusTitle}</h2>
+    <p class="mt-2">{c.statusBody}</p>
+
+    <h2>{c.measuresTitle}</h2>
+    <ul class="mt-2 list-disc space-y-1.5 ps-5">
+      {c.measures.map((item) => <li>{item}</li>)}
+    </ul>
+
+    <h2>{c.testingTitle}</h2>
+    <p class="mt-2">{c.testingBody}</p>
+
+    <h2>{c.limitsTitle}</h2>
+    <ul class="mt-2 list-disc space-y-1.5 ps-5">
+      {c.limits.map((item) => <li>{item}</li>)}
+    </ul>
+
+    <h2>{c.feedbackTitle}</h2>
+    <p class="mt-2">{c.feedbackBody}</p>
+
+    <p class="text-ink-muted mt-8 text-sm">
+      {c.reviewed}
+      <time datetime={REVIEWED}>{REVIEWED}</time>.
+    </p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,21 @@
+{
+  "labels": {
+    "ca": "pantalons",
+    "es": "pantalón",
+    "en": "trousers"
+  },
+  "category": "clothing",
+  "isFirstSign": false,
+  "videos": [
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=pantal%C3%B3n",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=pantal%C3%B3n",
+      "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
+      "updatedAt": "2026-07-24",
+      "status": "draft"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "labels": {
+    "ca": "abraçada",
+    "es": "abrazo",
+    "en": "hug"
+  },
+  "category": "emotions",
+  "isFirstSign": false,
+  "videos": [
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=abrazo",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=abrazo",
+      "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
+      "updatedAt": "2026-07-24",
+      "status": "draft"
+    }
+  ]
+}

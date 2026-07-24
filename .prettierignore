@@ -1,0 +1,15 @@
+dist/
+.astro/
+node_modules/
+coverage/
+playwright-report/
+test-results/
+package-lock.json
+public/media/
+
+# Hand-written specification documents: Prettier must not rewrite their prose.
+CLAUDE.md
+docs/**/*.md
+
+# Local tooling state, not part of the project.
+.claude/

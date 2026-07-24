@@ -1,0 +1,152 @@
+---
+import '@fontsource-variable/nunito-sans';
+import '../styles/global.css';
+import IconSprite from '../components/IconSprite.astro';
+import { createTranslator } from '../lib/i18n.ts';
+import { signLanguageOf } from '../lib/types.ts';
+import {
+  DEFAULT_LOCALE,
+  LOCALE_NAMES,
+  ROUTED_LOCALES,
+  localeHref,
+  type RoutedLocale,
+} from '../lib/routing.ts';
+
+interface Props {
+  /** The routed interface language of this page. */
+  language: RoutedLocale;
+  /** Locale-independent path of this page, always `/…/` (e.g. `/`, `/credits/`). */
+  path: string;
+  title?: string;
+  description?: string;
+}
+
+const { language, path, title, description } = Astro.props;
+const t = createTranslator(language);
+
+// The sign language is derived here, at build time, and baked into the markup.
+// Nothing on the client changes it, so there is no hydration mismatch.
+const signLanguage = signLanguageOf(language);
+
+const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
+const pageDescription = description ?? t('site.tagline');
+
+const homeHref = localeHref('/', language);
+const creditsHref = localeHref('/credits/', language);
+const accessibilityHref = localeHref('/accessibilitat/', language);
+const canonical = new URL(localeHref(path, language), Astro.site);
+---
+
+<!doctype html>
+<html lang={language} data-sign-language={signLanguage}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+    {/* Tell search engines about the other language versions of this page. */}
+    {
+      ROUTED_LOCALES.map((locale) => (
+        <link
+          rel="alternate"
+          hreflang={locale}
+          href={new URL(localeHref(path, locale), Astro.site)}
+        />
+      ))
+    }
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(localeHref(path, DEFAULT_LOCALE), Astro.site)}
+    />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={language} />
+  </head>
+
+  <body class="min-h-dvh">
+    <IconSprite />
+    <a class="skip-link" href="#main">{t('nav.skipToContent')}</a>
+
+    <header class="app-header" id="app-header">
+      <div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+        <a href={homeHref} class="brand-mark shrink-0 text-base sm:text-lg">
+          <span class="brand-mark__dot" aria-hidden="true">
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href="#i-wave"></use>
+            </svg>
+          </span>
+          {t('site.title')}
+        </a>
+
+        {
+          /*
+          The language selector doubles as the sign-language selector: each
+          locale is coupled to one (ca → LSC, es → LSE). It is a plain set of
+          links, so it works without JavaScript and its active state is
+          server-rendered — no hydration, no flash of the wrong choice.
+        */
+        }
+        <nav class="lang-switch ms-auto shrink-0" aria-label={t('nav.language')}>
+          {
+            ROUTED_LOCALES.map((locale) => {
+              const active = locale === language;
+              const localeSign = signLanguageOf(locale);
+              return (
+                <a
+                  href={localeHref(path, locale)}
+                  hreflang={locale}
+                  aria-current={active ? 'true' : undefined}
+                  class="lang-switch__option"
+                >
+                  <span class="lang-switch__name">{LOCALE_NAMES[locale]}</span>
+                  <span class="lang-switch__sign">
+                    {t(localeSign === 'lsc' ? 'signLanguage.lsc' : 'signLanguage.lse')}
+                  </span>
+                </a>
+              );
+            })
+          }
+        </nav>
+      </div>
+
+      <slot name="toolbar" />
+    </header>
+
+    <main id="main" class="mx-auto max-w-6xl px-4 py-6">
+      <slot />
+    </main>
+
+    <footer class="border-border text-ink-muted mt-16 border-t">
+      <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-10 text-sm">
+        <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label={t('nav.credits')}>
+          <a class="hover:text-ink underline underline-offset-4" href={creditsHref}>
+            {t('nav.credits')}
+          </a>
+          <a class="hover:text-ink underline underline-offset-4" href={accessibilityHref}>
+            {t('nav.accessibility')}
+          </a>
+        </nav>
+        <p class="max-w-prose">
+          {t('notice.babyPrecision')}
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Give the sticky header a shadow only once content sits behind it.
+      const header = document.getElementById('app-header');
+      if (header) {
+        const onScroll = () => {
+          header.dataset.scrolled = String(window.scrollY > 4);
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+    </script>
+  </body>
+</html>

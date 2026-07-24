@@ -1,0 +1,142 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { createTranslator } from '../../lib/i18n.ts';
+import type { RoutedLocale } from '../../lib/routing.ts';
+
+interface Props {
+  language: RoutedLocale;
+}
+
+const { language } = Astro.props;
+const t = createTranslator(language);
+
+// The reuse terms of the Generalitat require stating when the content was last
+// updated (docs/requisitos.md §5.3), so it is derived from the data itself.
+const signEntries = await getCollection('signs');
+const updateDates = signEntries
+  .flatMap((entry) => entry.data.videos.map((video) => video.updatedAt))
+  .sort();
+const lastUpdated = updateDates.at(-1);
+
+const verifiedCount = signEntries.filter((entry) =>
+  entry.data.videos.some((video) => video.status === 'verified'),
+).length;
+const total = signEntries.length;
+
+const LSC_URL =
+  'https://llengua.gencat.cat/ca/serveis/informacio_i_difusio/publicacions_en_linia/classific_temes/temes_llengua_signes_catalana/';
+const LSE_URL = 'https://fundacioncnse-dilse.org/';
+
+// Attribution prose is legal text, so it is translated rather than machine-fed.
+const copy = {
+  ca: {
+    intro:
+      "Els vídeos d'aquest lloc no són obra del projecte. Provenen de diccionaris i recursos oficials, i cada fitxa n'indica la font. Aquest projecte només els recull i els organitza pensant en famílies amb nadons.",
+    lscTitle: 'Llengua de Signes Catalana (LSC)',
+    lscBody:
+      'Vocabulari bàsic de la LSC — Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA (Federació de Persones Sordes de Catalunya).',
+    lscTerms:
+      "Reutilitzat segons la Llei 19/2014, de transparència, accés a la informació pública i bon govern (art. 17.1), citant-ne la font i la data d'actualització i sense desnaturalitzar-ne el contingut. Els vídeos s'incrusten des del canal oficial de YouTube.",
+    lseTitle: 'Lengua de Signos Española (LSE)',
+    lseBody:
+      'DILSE — Diccionario normativo de la lengua de signos española, Fundación CNSE para la Supresión de las Barreras de la Comunicación. Enllacem a la fitxa original; no allotgem ni transformem els vídeos.',
+    licTitle: 'Llicències',
+    licCode: 'Codi',
+    licData: 'Dades curades (llista de paraules, categories, metadades)',
+    licVideos:
+      'Vídeos i imatges dels signes: propietat de les fonts respectives, sota les seves condicions de reutilització. Cada fitxa n’enllaça l’origen.',
+    statusTitle: 'Estat del contingut',
+    statusBody: `${verifiedCount} de ${total} conceptes tenen almenys un vídeo verificat contra el diccionari oficial.`,
+    updated: 'Última actualització del contingut:',
+    respectTitle: 'Respecte a la comunitat sorda',
+    respectBody:
+      "La LSC i la LSE són llengües completes, amb gramàtica pròpia i una comunitat que les manté vives. Aquest lloc no ensenya a signar: és una porta d'entrada perquè famílies oients puguin comunicar-se amb el seu nadó abans que parli. Per aprendre de veritat, adreceu-vos a les federacions i associacions de persones sordes.",
+    report:
+      'Si detectes un error en un signe o en una atribució, obre una incidència al repositori aportant-ne la font. Es revisarà.',
+  },
+  es: {
+    intro:
+      'Los vídeos de este sitio no son obra del proyecto. Proceden de diccionarios y recursos oficiales, y cada ficha indica su fuente. Este proyecto solo los recopila y los organiza pensando en familias con bebés.',
+    lscTitle: 'Lengua de Signos Catalana (LSC)',
+    lscBody:
+      'Vocabulari bàsic de la LSC — Generalitat de Catalunya, Departament de Cultura, con el asesoramiento de FESOCA (Federació de Persones Sordes de Catalunya).',
+    lscTerms:
+      'Reutilizado según la Ley 19/2014, de transparencia, acceso a la información pública y buen gobierno (art. 17.1), citando la fuente y la fecha de actualización y sin desnaturalizar el contenido. Los vídeos se incrustan desde el canal oficial de YouTube.',
+    lseTitle: 'Lengua de Signos Española (LSE)',
+    lseBody:
+      'DILSE — Diccionario normativo de la lengua de signos española, Fundación CNSE para la Supresión de las Barreras de la Comunicación. Enlazamos a la ficha original; no alojamos ni transformamos los vídeos.',
+    licTitle: 'Licencias',
+    licCode: 'Código',
+    licData: 'Datos curados (lista de palabras, categorías, metadatos)',
+    licVideos:
+      'Vídeos e imágenes de los signos: propiedad de las fuentes respectivas, bajo sus condiciones de reutilización. Cada ficha enlaza su origen.',
+    statusTitle: 'Estado del contenido',
+    statusBody: `${verifiedCount} de ${total} conceptos tienen al menos un vídeo verificado contra el diccionario oficial.`,
+    updated: 'Última actualización del contenido:',
+    respectTitle: 'Respeto a la comunidad sorda',
+    respectBody:
+      'La LSC y la LSE son lenguas completas, con gramática propia y una comunidad que las mantiene vivas. Este sitio no enseña a signar: es una puerta de entrada para que familias oyentes puedan comunicarse con su bebé antes de que hable. Para aprender de verdad, dirígete a las federaciones y asociaciones de personas sordas.',
+    report:
+      'Si detectas un error en un signo o en una atribución, abre una incidencia en el repositorio aportando la fuente. Se revisará.',
+  },
+} as const;
+
+const c = copy[language];
+---
+
+<BaseLayout language={language} path="/credits/" title={t('nav.credits')}>
+  <article class="max-w-prose">
+    <h1 class="text-3xl font-extrabold tracking-tight">{t('nav.credits')}</h1>
+
+    <p class="mt-4">{c.intro}</p>
+
+    <h2 class="mt-8 text-xl font-bold">{c.lscTitle}</h2>
+    <p class="mt-2">{c.lscBody}</p>
+    <p class="text-ink-muted mt-1 text-sm">{c.lscTerms}</p>
+    <p class="mt-1">
+      <a
+        class="underline underline-offset-2"
+        href={LSC_URL}
+        target="_blank"
+        rel="noreferrer noopener">llengua.gencat.cat</a
+      >
+    </p>
+
+    <h2 class="mt-8 text-xl font-bold">{c.lseTitle}</h2>
+    <p class="mt-2">{c.lseBody}</p>
+    <p class="mt-1">
+      <a
+        class="underline underline-offset-2"
+        href={LSE_URL}
+        target="_blank"
+        rel="noreferrer noopener">fundacioncnse-dilse.org</a
+      >
+    </p>
+
+    <h2 class="mt-8 text-xl font-bold">{c.licTitle}</h2>
+    <ul class="mt-2 list-disc space-y-1 ps-5">
+      <li><strong>{c.licCode}</strong>: MIT.</li>
+      <li><strong>{c.licData}</strong>: CC BY-SA 4.0.</li>
+      <li>{c.licVideos}</li>
+    </ul>
+
+    <h2 class="mt-8 text-xl font-bold">{c.statusTitle}</h2>
+    <p class="mt-2">
+      {c.statusBody}
+      {
+        lastUpdated && (
+          <>
+            {' '}
+            {c.updated} <time datetime={lastUpdated}>{lastUpdated}</time>.
+          </>
+        )
+      }
+    </p>
+
+    <h2 class="mt-8 text-xl font-bold">{c.respectTitle}</h2>
+    <p class="mt-2">{c.respectBody}</p>
+
+    <p class="text-ink-muted mt-8 text-sm">{c.report}</p>
+  </article>
+</BaseLayout>
