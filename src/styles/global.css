@@ -499,6 +499,75 @@
   max-width: 34ch;
 }
 
+/* --- Progress data (export / import / reset) ------------------------------ */
+.progress-data__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-block-start: 1.5rem;
+}
+
+/* The label is the visible control for the file input, so both need the same
+   affordance — including the focus ring, which follows the hidden input. */
+.progress-data__action {
+  display: inline-flex;
+  min-block-size: var(--spacing-touch);
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  padding-inline: 1rem;
+  font-weight: 650;
+  color: var(--color-brand-ink);
+  cursor: pointer;
+}
+
+.progress-data__action:hover {
+  background-color: var(--color-surface);
+}
+
+/* Visually hidden, but still focusable and still in the accessibility tree:
+   `display: none` or `visibility: hidden` would take the control off the
+   keyboard path entirely. */
+.progress-data__file {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Focus lands on the hidden input, so the ring has to be drawn on the label
+   that stands in for it — otherwise keyboard users get no focus indicator at
+   all on this control. Same ring as the global one. */
+.progress-data__file:focus-visible {
+  outline: none;
+}
+
+.progress-data__action:has(+ .progress-data__file:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.progress-data__hint {
+  margin-block-start: 0.4rem;
+  color: var(--color-ink-muted);
+  font-size: 0.9375rem;
+  max-inline-size: 46ch;
+}
+
+.progress-data__feedback:empty {
+  display: none;
+}
+
+.progress-data__feedback {
+  margin-block-start: 1rem;
+  font-weight: 600;
+}
+
 /* --- Chips ---------------------------------------------------------------- */
 .chip {
   display: inline-flex;

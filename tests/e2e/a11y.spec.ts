@@ -22,6 +22,13 @@ for (const { name, path } of PAGES) {
   test(`${name} has no detectable accessibility violations`, async ({ page }) => {
     await page.goto(path);
 
+    // Scan the hydrated DOM, not the snapshot before it: islands add controls,
+    // and a `client:visible` one mounts only once it has been scrolled to.
+    // Waiting also keeps a mid-scan hydration from destroying axe's context.
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+    await page.evaluate(() => window.scrollTo(0, 0));
+
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();
