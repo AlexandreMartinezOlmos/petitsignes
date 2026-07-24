@@ -25,8 +25,7 @@ const MESSAGES = {
 
     'hero.title': "Comunica't amb el teu nadó",
     'hero.titleAccent': 'molt abans de la primera paraula',
-    'hero.lead':
-      'Signes reals de la llengua de signes catalana per al dia a dia: menjar, dormir, més, gràcies. Gratis i sense comptes. Comença pels dotze essencials.',
+    'hero.lead': 'Signes reals de la llengua de signes catalana per al dia a dia amb el teu nadó.',
     'hero.stat.signs': 'signes',
     'hero.stat.learned': 'apresos',
 
@@ -92,8 +91,7 @@ const MESSAGES = {
 
     'hero.title': 'Comunícate con tu bebé',
     'hero.titleAccent': 'mucho antes de la primera palabra',
-    'hero.lead':
-      'Signos reales de la lengua de signos española para el día a día: comer, dormir, más, gracias. Gratis y sin cuentas. Empieza por los doce esenciales.',
+    'hero.lead': 'Signos reales de la lengua de signos española para el día a día con tu bebé.',
     'hero.stat.signs': 'signos',
     'hero.stat.learned': 'aprendidos',
 
@@ -159,8 +157,7 @@ const MESSAGES = {
 
     'hero.title': 'Connect with your baby',
     'hero.titleAccent': 'long before their first word',
-    'hero.lead':
-      'Real signs for everyday moments: eat, sleep, more, thank you. Free, no sign-up. Start with the twelve essentials.',
+    'hero.lead': 'Real signs for everyday moments with your baby.',
     'hero.stat.signs': 'signs',
     'hero.stat.learned': 'learned',
 
