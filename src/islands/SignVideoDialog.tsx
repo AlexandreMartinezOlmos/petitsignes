@@ -216,7 +216,10 @@ export default function SignVideoDialog({ language }: Props) {
             <div
               className="border-border flex rounded-(--radius-chip) border p-0.5"
               role="group"
-              aria-label={t('player.speedNormal')}
+              /* The group is not one of its own options: labelling it
+                 "Normal speed" made the container and a button inside it
+                 announce the same name. */
+              aria-label={t('player.speed')}
             >
               {SPEEDS.map((value) => (
                 <button

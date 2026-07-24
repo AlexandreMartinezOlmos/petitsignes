@@ -44,7 +44,8 @@ const MESSAGES = {
     'empty.generic.title': 'Cap signe aquí',
     'empty.generic.hint': 'Prova de treure algun filtre.',
 
-    'filter.categories': 'Categories',
+    'filter.categories': 'Filtra per categoria',
+    'filter.status': 'Filtra pel teu progrés',
     'filter.all': 'Tots',
     'filter.firstSigns': 'Primers signes',
     'filter.favorites': 'Preferits',
@@ -67,6 +68,7 @@ const MESSAGES = {
     'signLanguage.lseFull': 'Llengua de Signes Espanyola',
 
     'player.close': 'Tanca el vídeo',
+    'player.speed': 'Velocitat de reproducció',
     'player.speedNormal': 'Velocitat normal',
     'player.speedSlow': 'Càmera lenta',
     'player.source': 'Font d’aquest signe',
@@ -126,7 +128,8 @@ const MESSAGES = {
     'empty.generic.title': 'Ningún signo aquí',
     'empty.generic.hint': 'Prueba a quitar algún filtro.',
 
-    'filter.categories': 'Categorías',
+    'filter.categories': 'Filtrar por categoría',
+    'filter.status': 'Filtrar por tu progreso',
     'filter.all': 'Todos',
     'filter.firstSigns': 'Primeros signos',
     'filter.favorites': 'Favoritos',
@@ -149,6 +152,7 @@ const MESSAGES = {
     'signLanguage.lseFull': 'Lengua de Signos Española',
 
     'player.close': 'Cerrar el vídeo',
+    'player.speed': 'Velocidad de reproducción',
     'player.speedNormal': 'Velocidad normal',
     'player.speedSlow': 'Cámara lenta',
     'player.source': 'Fuente de este signo',
@@ -208,7 +212,8 @@ const MESSAGES = {
     'empty.generic.title': 'No signs here',
     'empty.generic.hint': 'Try clearing a filter.',
 
-    'filter.categories': 'Categories',
+    'filter.categories': 'Filter by category',
+    'filter.status': 'Filter by your progress',
     'filter.all': 'All',
     'filter.firstSigns': 'First signs',
     'filter.favorites': 'Favourites',
@@ -231,6 +236,7 @@ const MESSAGES = {
     'signLanguage.lseFull': 'Spanish Sign Language',
 
     'player.close': 'Close the video',
+    'player.speed': 'Playback speed',
     'player.speedNormal': 'Normal speed',
     'player.speedSlow': 'Slow motion',
     'player.source': 'Source of this sign',

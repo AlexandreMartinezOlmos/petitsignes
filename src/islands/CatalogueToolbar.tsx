@@ -26,13 +26,12 @@ interface Props {
   initialCount: number;
 }
 
-const STATUS_FILTERS: { value: StatusFilter; key: 'all' | 'favorites' | 'learned' | 'pending' }[] =
-  [
-    { value: 'all', key: 'all' },
-    { value: 'favorites', key: 'favorites' },
-    { value: 'learned', key: 'learned' },
-    { value: 'pending', key: 'pending' },
-  ];
+/**
+ * Each filter's label is `filter.<value>`, so the value alone is enough — a
+ * parallel key field could only ever drift from it. `src/lib/i18n.test.ts`
+ * pins the fact that every value here has a message.
+ */
+const STATUS_FILTERS: readonly StatusFilter[] = ['all', 'favorites', 'learned', 'pending'];
 
 export default function CatalogueToolbar({ categories, language, initialCount }: Props) {
   const t = createTranslator(language);
@@ -162,8 +161,11 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
 
         {/* Status filters + live result count */}
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          <div className="flex gap-1" role="group" aria-label={t('filter.categories')}>
-            {STATUS_FILTERS.map(({ value, key }) => {
+          {/* Its own label: two groups called "Categories" are indistinguishable
+              when navigating by region, and axe cannot catch that — both had a
+              label, they were just the wrong one. */}
+          <div className="flex gap-1" role="group" aria-label={t('filter.status')}>
+            {STATUS_FILTERS.map((value) => {
               const active = statusFilter === value;
               return (
                 <button
@@ -173,7 +175,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                   aria-pressed={active}
                   className="chip-quiet"
                 >
-                  {t(`filter.${key}`)}
+                  {t(`filter.${value}`)}
                 </button>
               );
             })}
