@@ -167,6 +167,17 @@ npm run dev
 | `npm run test:e2e`                          | Tests end-to-end y accesibilidad (Playwright + axe) |
 | `npm run content:export` / `content:import` | Ida y vuelta con la hoja de vocabulario             |
 
+## Dominio y URLs canónicas
+
+El origen desde el que se construyen los enlaces canónicos, los `hreflang` y las URL de Open
+Graph vive en [`src/lib/site.ts`](src/lib/site.ts) (`SITE_ORIGIN`), no en el panel del hosting.
+**Al cambiar de dominio hay que editar esa constante**: si no, todo el sitio seguiría declarando
+como canónico el dominio anterior, sin ningún error visible.
+
+La variable `SITE_URL` lo sobrescribe para los despliegues de vista previa, que necesitan su
+propio origen y no se indexan. Debe ser un origen escueto (`https://ejemplo.org`): el build falla
+si trae ruta, query o fragmento.
+
 ## Calidad
 
 El CI (Ubuntu) es la fuente de verdad. Se ejecuta en cada push a `main`, a `develop` y a cualquier
