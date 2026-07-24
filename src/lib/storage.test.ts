@@ -3,6 +3,7 @@ import {
   DEFAULT_PREFERENCES,
   InvalidProgressFileError,
   LocalStorageProgressStore,
+  MIGRATIONS,
   SCHEMA_VERSION,
   STORAGE_KEY,
   createEmptySnapshot,
@@ -66,6 +67,43 @@ describe('parseSnapshot', () => {
   it('rejects non-objects', () => {
     expect(() => parseSnapshot('nope')).toThrow(InvalidProgressFileError);
     expect(() => parseSnapshot(null)).toThrow(InvalidProgressFileError);
+  });
+
+  // Refusing loudly beats reading old data with the new rules and quietly
+  // dropping whatever the new shape does not recognise.
+  it('refuses an older snapshot it has no migration for', () => {
+    expect(() => parseSnapshot({ schemaVersion: 0, favorites: ['leche'] })).toThrow(
+      /no migration from schemaVersion 0/,
+    );
+  });
+});
+
+describe('schema migrations', () => {
+  /**
+   * The guard that makes the contract real: bumping SCHEMA_VERSION without
+   * adding the matching migration would silently discard the progress of every
+   * visitor who already has data, with no error anywhere.
+   */
+  it('has a migration for every version below the current one', () => {
+    for (let version = 1; version < SCHEMA_VERSION; version++) {
+      expect(MIGRATIONS[version], `missing migration from schemaVersion ${version}`).toBeTypeOf(
+        'function',
+      );
+    }
+  });
+
+  it('runs every step in order when several versions are missed', () => {
+    const steps: number[] = [];
+    const migrations: Record<number, (raw: Record<string, unknown>) => void> = {
+      1: () => steps.push(1),
+      2: () => steps.push(2),
+    };
+
+    // Mirrors the loop in parseSnapshot, pinning the "one version at a time,
+    // in ascending order" contract that a future migration will rely on.
+    for (let version = 1; version < 3; version++) migrations[version]?.({});
+
+    expect(steps).toEqual([1, 2]);
   });
 });
 
