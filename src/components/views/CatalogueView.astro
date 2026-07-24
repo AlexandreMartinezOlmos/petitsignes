@@ -5,7 +5,7 @@ import SignCard from '../SignCard.astro';
 import CatalogueToolbar from '../../islands/CatalogueToolbar.tsx';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
 import { createTranslator } from '../../lib/i18n.ts';
-import { signLanguageOf, type Category, type SignEntry } from '../../lib/types.ts';
+import { type Category, type SignEntry } from '../../lib/types.ts';
 import type { RoutedLocale } from '../../lib/routing.ts';
 
 interface Props {
@@ -42,12 +42,6 @@ const toolbarCategories = categories.map((category) => ({
   id: category.id,
   label: category.labels[language],
 }));
-
-// How many concepts can actually be watched in this page's sign language.
-const signLanguage = signLanguageOf(language);
-const withVideoCount = signs.filter((sign) =>
-  sign.videos.some((video) => video.signLanguage === signLanguage),
-).length;
 ---
 
 <BaseLayout language={language} path="/">
@@ -60,7 +54,7 @@ const withVideoCount = signs.filter((sign) =>
   />
 
   <section class="pt-1 pb-6 sm:pt-6 sm:pb-10">
-    <h1 class="hero__title max-w-3xl">
+    <h1 class="hero__title max-w-5xl">
       {t('hero.title')}{' '}
       <span class="hero__accent">{t('hero.titleAccent')}</span>
     </h1>
@@ -72,12 +66,6 @@ const withVideoCount = signs.filter((sign) =>
           {t('hero.stat.signs')}
         </dt>
         <dd class="text-xl font-extrabold tabular-nums">{signs.length}</dd>
-      </div>
-      <div>
-        <dt class="text-ink-subtle text-xs font-semibold tracking-wide uppercase">
-          {t('hero.stat.withVideo')}
-        </dt>
-        <dd class="text-xl font-extrabold tabular-nums">{withVideoCount}</dd>
       </div>
       <div>
         <dt class="text-ink-subtle text-xs font-semibold tracking-wide uppercase">
