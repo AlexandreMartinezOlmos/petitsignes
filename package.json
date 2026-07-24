@@ -20,7 +20,8 @@
     "test:e2e": "playwright test",
     "content:export": "node --experimental-strip-types scripts/vocabulary-export.ts",
     "content:import": "node --experimental-strip-types scripts/vocabulary-import.ts",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "test:coverage": "vitest run --coverage"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,astro}": [

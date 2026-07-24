@@ -41,8 +41,10 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Unit tests
-        run: npm test
+      # Coverage is enforced here rather than reported for someone to read: the
+      # thresholds in vitest.config.ts fail the run when coverage drops.
+      - name: Unit tests and coverage
+        run: npm run test:coverage
 
       - name: Build
         run: npm run build
