@@ -163,6 +163,7 @@ npm run dev
 | `npm run lint`                              | ESLint + Prettier                                   |
 | `npm run typecheck`                         | `astro check` + `tsc --noEmit`                      |
 | `npm test`                                  | Tests unitarios (Vitest)                            |
+| `npm run test:coverage`                     | Tests unitarios con cobertura y umbrales            |
 | `npm run test:e2e`                          | Tests end-to-end y accesibilidad (Playwright + axe) |
 | `npm run content:export` / `content:import` | Ida y vuelta con la hoja de vocabulario             |
 
