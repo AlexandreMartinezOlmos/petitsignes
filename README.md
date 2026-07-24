@@ -101,14 +101,18 @@ específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo 
 ## Arquitectura en una pantalla
 
 - **Astro** genera el catálogo entero como HTML estático en el build.
-- Dos **islas de React** aportan la interactividad: la barra de herramientas (búsqueda y
-  filtros) y el reproductor de vídeo.
+- Tres **islas de React** aportan la interactividad: la barra de herramientas (búsqueda y
+  filtros), el reproductor de vídeo y la gestión de tus datos en la página del proyecto.
 - Un controlador ligero conecta esas islas con la rejilla estática mostrando y ocultando
   tarjetas, de modo que el JavaScript enviado **no crece con el número de signos**.
 - El **idioma vive en la URL** (`/` catalán, `/es/` castellano) y arrastra la lengua de signos
-  correspondiente (ca → LSC, es → LSE). Se decide en el build, nunca en el cliente.
+  correspondiente (ca → LSC, es → LSE). Se decide en el build, nunca en el cliente. Cada página
+  envía **solo** la lengua de signos que le toca: el gesto de la otra lengua ni siquiera llega
+  al navegador.
 - Todo el progreso (favoritos, aprendidos) vive en `localStorage` del navegador, detrás de una
-  interfaz `ProgressStore` — nada se envía a ningún servidor.
+  interfaz `ProgressStore` — nada se envía a ningún servidor. Puedes **exportarlo, importarlo o
+  borrarlo** desde [la página del proyecto](https://petitsignes.pages.dev/el-projecte/): es la
+  única manera de llevártelo a otro dispositivo, porque no hay cuentas.
 
 ## Gestionar el vocabulario
 
