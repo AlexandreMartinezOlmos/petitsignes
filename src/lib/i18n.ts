@@ -15,12 +15,9 @@ const MESSAGES = {
   ca: {
     'site.title': 'Petits Signes',
     'site.tagline': 'Aprèn signes per comunicar-te amb el teu nadó abans que parli',
-    'nav.catalogue': 'Catàleg',
-    'nav.firstSigns': 'Primers signes',
     'nav.credits': 'Fonts i crèdits',
     'nav.skipToContent': 'Vés al contingut',
     'nav.language': 'Idioma i llengua de signes',
-    'nav.home': 'Inici',
     'nav.accessibility': 'Accessibilitat',
     'nav.about': 'El projecte',
     'nav.sourceCode': 'Codi font',
@@ -64,7 +61,6 @@ const MESSAGES = {
     'card.watchAtSource': 'Veure a {source}',
     'card.posterPending': 'Encara no tenim la imatge d’aquest signe',
 
-    'signLanguage.label': 'Llengua de signes',
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Llengua de Signes Catalana',
@@ -96,22 +92,14 @@ const MESSAGES = {
       'Esborra preferits i signes apresos d’aquest navegador. No es pot desfer.',
     'progress.resetDone': 'S’ha esborrat el progrés d’aquest navegador.',
     'progress.resetConfirm': 'Segur que vols esborrar preferits i signes apresos?',
-
-    'firstSigns.title': 'Primers signes',
-    'firstSigns.intro':
-      'Dotze signes per començar, en l’ordre que sol funcionar millor. No cal fer-los tots alhora: amb dos o tres ja n’hi ha prou per començar.',
-    'firstSigns.step': 'Pas {order}',
   },
 
   es: {
     'site.title': 'Petits Signes',
     'site.tagline': 'Aprende signos para comunicarte con tu bebé antes de que hable',
-    'nav.catalogue': 'Catálogo',
-    'nav.firstSigns': 'Primeros signos',
     'nav.credits': 'Fuentes y créditos',
     'nav.skipToContent': 'Ir al contenido',
     'nav.language': 'Idioma y lengua de signos',
-    'nav.home': 'Inicio',
     'nav.accessibility': 'Accesibilidad',
     'nav.about': 'El proyecto',
     'nav.sourceCode': 'Código fuente',
@@ -155,7 +143,6 @@ const MESSAGES = {
     'card.watchAtSource': 'Ver en {source}',
     'card.posterPending': 'Todavía no tenemos la imagen de este signo',
 
-    'signLanguage.label': 'Lengua de signos',
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Lengua de Signos Catalana',
@@ -187,22 +174,14 @@ const MESSAGES = {
       'Borra favoritos y signos aprendidos de este navegador. No se puede deshacer.',
     'progress.resetDone': 'Se ha borrado el progreso de este navegador.',
     'progress.resetConfirm': '¿Seguro que quieres borrar favoritos y signos aprendidos?',
-
-    'firstSigns.title': 'Primeros signos',
-    'firstSigns.intro':
-      'Doce signos para empezar, en el orden que suele funcionar mejor. No hace falta hacerlos todos a la vez: con dos o tres ya es suficiente para empezar.',
-    'firstSigns.step': 'Paso {order}',
   },
 
   en: {
     'site.title': 'Petits Signes',
     'site.tagline': 'Learn signs to communicate with your baby before they can speak',
-    'nav.catalogue': 'Catalogue',
-    'nav.firstSigns': 'First signs',
     'nav.credits': 'Sources and credits',
     'nav.skipToContent': 'Skip to content',
     'nav.language': 'Language and sign language',
-    'nav.home': 'Home',
     'nav.accessibility': 'Accessibility',
     'nav.about': 'The project',
     'nav.sourceCode': 'Source code',
@@ -246,7 +225,6 @@ const MESSAGES = {
     'card.watchAtSource': 'Watch at {source}',
     'card.posterPending': 'We do not have the image for this sign yet',
 
-    'signLanguage.label': 'Sign language',
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Catalan Sign Language',
@@ -278,11 +256,6 @@ const MESSAGES = {
       'Deletes favourites and learned signs from this browser. This cannot be undone.',
     'progress.resetDone': 'The progress in this browser has been deleted.',
     'progress.resetConfirm': 'Delete favourites and learned signs?',
-
-    'firstSigns.title': 'First signs',
-    'firstSigns.intro':
-      'Twelve signs to start with, in the order that usually works best. You do not need all of them at once: two or three is enough to begin.',
-    'firstSigns.step': 'Step {order}',
   },
 } as const satisfies Record<Language, Record<string, string>>;
 
