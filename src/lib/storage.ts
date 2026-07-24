@@ -17,8 +17,27 @@ import {
 
 export const STORAGE_KEY = 'petitsignes:progress';
 
-/** Bump when the persisted shape changes, and add a migration below. */
+/**
+ * Version of the persisted shape.
+ *
+ * Bumping this WITHOUT adding the matching entry to `MIGRATIONS` silently
+ * discards the progress of everyone who already has data — `parseSnapshot`
+ * would keep only the fields the new shape recognises, with no error and no
+ * way back. The test suite enforces the pairing.
+ */
 export const SCHEMA_VERSION = 1;
+
+/**
+ * How to bring a snapshot from version N up to N+1. Keyed by the version being
+ * migrated FROM, so upgrading runs `MIGRATIONS[1]`, then `MIGRATIONS[2]`, and
+ * so on until the stored data reaches `SCHEMA_VERSION`.
+ *
+ * Empty today because version 1 is the first shape there has ever been. It
+ * exists so that the day someone bumps the version, the place the migration
+ * belongs is already here and already tested — that is cheaper than writing
+ * speculative migrations for versions that do not exist yet.
+ */
+export const MIGRATIONS: Readonly<Record<number, (raw: Record<string, unknown>) => void>> = {};
 
 export interface Preferences {
   /** Interface text language. */
@@ -97,6 +116,20 @@ export function parseSnapshot(value: unknown): ProgressSnapshot {
     );
   }
 
+  // Older data is brought forward one version at a time. Refusing loudly when a
+  // step is missing is the point: silently reading an old snapshot with the new
+  // rules would drop whatever the new shape does not recognise, and the visitor
+  // would just find their favourites gone.
+  for (let version = raw.schemaVersion; version < SCHEMA_VERSION; version++) {
+    const migrate = MIGRATIONS[version];
+    if (!migrate) {
+      throw new InvalidProgressFileError(
+        `no migration from schemaVersion ${version} to ${version + 1}`,
+      );
+    }
+    migrate(raw);
+  }
+
   const favorites = isStringArray(raw.favorites) ? uniqueStrings(raw.favorites) : [];
   const learned = isStringArray(raw.learned) ? uniqueStrings(raw.learned) : [];
 
@@ -131,7 +164,7 @@ function toggle(list: string[], id: string): string[] {
 function getAvailableStorage(): Storage | null {
   try {
     if (typeof localStorage === 'undefined') return null;
-    const probe = '__sxn_probe__';
+    const probe = `${STORAGE_KEY}:probe`;
     localStorage.setItem(probe, probe);
     localStorage.removeItem(probe);
     return localStorage;

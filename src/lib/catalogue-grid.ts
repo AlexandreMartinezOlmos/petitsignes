@@ -7,7 +7,7 @@
  */
 
 import type Fuse from 'fuse.js';
-import { createSearchIndex, searchSigns, type SearchableSign } from './search.ts';
+import { createSearchIndex, isSearchable, searchSigns, type SearchableSign } from './search.ts';
 import {
   $category,
   $favorites,
@@ -88,8 +88,13 @@ export function filterCards(
 
   // A search is a global lookup: it ignores the category chips so that finding
   // a word never depends on which chip happens to be selected.
+  //
+  // `isSearchable`, not `!== ''`: the index cannot answer a one-character
+  // query, so treating it as an active search would empty the grid on the first
+  // keystroke of every search. Below that length the visitor has not expressed
+  // an intent yet, and the honest state is the full catalogue.
   const searchMatches =
-    trimmedQuery !== '' && index !== null
+    isSearchable(trimmedQuery) && index !== null
       ? new Set(searchSigns(index, trimmedQuery, cards.length))
       : null;
 

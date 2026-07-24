@@ -1,9 +1,20 @@
 name: CI
 
+# Every branch of the Gitflow tree is verified, not just `main`. Work is merged
+# locally with `--no-ff` rather than through pull requests, so a trigger limited
+# to `main` would leave `develop` and the feature branches unchecked until the
+# code was already in production.
 on:
   push:
-    branches: [main]
+    branches: [main, develop, 'feature/**', 'release/**', 'hotfix/**']
   pull_request:
+    branches: [main, develop]
+
+# One run per branch: pushing again supersedes the previous run instead of
+# queueing behind it. `main` is exempt — its history is the release record.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 # The CI runner is the source of truth: if it fails here, it is broken
 # (CLAUDE.md §2.3).
@@ -30,8 +41,10 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Unit tests
-        run: npm test
+      # Coverage is enforced here rather than reported for someone to read: the
+      # thresholds in vitest.config.ts fail the run when coverage drops.
+      - name: Unit tests and coverage
+        run: npm run test:coverage
 
       - name: Build
         run: npm run build
@@ -74,17 +87,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: quality
     steps:
+      # Only the Lighthouse config is needed from the repo: the budgets are
+      # measured against the artifact `quality` already built, so the numbers
+      # describe the exact bytes that passed lint, types and tests — and the
+      # pipeline builds the site once instead of twice.
       - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v5
+      - name: Download the build from the quality job
+        uses: actions/download-artifact@v4
         with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - run: npm ci
-
-      - name: Build
-        run: npm run build
+          name: dist
+          path: dist/
 
       # Budgets are assertions: dropping below the threshold fails the build
       # (docs/requisitos.md §4.9, §9).

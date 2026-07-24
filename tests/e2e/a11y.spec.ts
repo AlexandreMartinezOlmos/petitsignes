@@ -22,6 +22,23 @@ for (const { name, path } of PAGES) {
   test(`${name} has no detectable accessibility violations`, async ({ page }) => {
     await page.goto(path);
 
+    // Scan the hydrated DOM, not the snapshot before it: islands add controls,
+    // and a `client:visible` one mounts only once it has been scrolled to.
+    // Waiting also keeps a mid-scan hydration from destroying axe's context.
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+    await page.evaluate(() => window.scrollTo(0, 0));
+
+    // Two frames after hydration: the `ssr` attribute drops when the island
+    // mounts, but React may still be committing. Scanning into that window is
+    // what made this sweep fail intermittently on the pages that have islands.
+    await page.evaluate(
+      () =>
+        new Promise((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)));
+        }),
+    );
+
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();
@@ -29,6 +46,24 @@ for (const { name, path } of PAGES) {
     expect(results.violations).toEqual([]);
   });
 }
+
+/**
+ * axe cannot catch this: every group had an accessible name, they were just
+ * wrong. Two groups sharing a name are indistinguishable when navigating by
+ * region, and a group named after one of its own buttons announces twice.
+ */
+test('each control group has its own accessible name', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const names = await page
+    .locator('[role="group"]')
+    .evaluateAll((groups) => groups.map((group) => group.getAttribute('aria-label') ?? ''));
+
+  expect(names.length).toBeGreaterThan(1);
+  expect(names).not.toContain('');
+  expect(new Set(names).size, `duplicate group names: ${names.join(', ')}`).toBe(names.length);
+});
 
 test('colour contrast holds in dark mode', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });

@@ -111,6 +111,18 @@ describe('filterCards', () => {
     expect(filterCards(CARDS, state({ query: 'helicoptero' }), index).size).toBe(0);
   });
 
+  // Regression: a one-character query is shorter than the index can answer, so
+  // reading its empty result as "no matches" hid the whole catalogue on the
+  // first keystroke of every search.
+  it('treats a query too short to search as no search at all', () => {
+    expect(filterCards(CARDS, state({ query: 'a' }), index).size).toBe(CARDS.length);
+  });
+
+  it('still honours the other filters while the query is too short', () => {
+    const visible = filterCards(CARDS, state({ query: 'a', category: 'food' }), index);
+    expect(visible.size).toBe(3);
+  });
+
   it('falls back to plain filtering when there is no index', () => {
     const visible = filterCards(CARDS, state({ category: 'food' }), null);
     expect(visible.size).toBe(3);

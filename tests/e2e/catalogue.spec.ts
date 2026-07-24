@@ -38,6 +38,16 @@ test.describe('catalogue', () => {
     await expect(page.locator('.sign-card[data-sign-id="platano"]')).toBeVisible();
   });
 
+  // Regression: the index needs two characters, so the first keystroke of every
+  // search used to empty the grid.
+  test('a single typed character does not empty the grid', async ({ page }) => {
+    const before = await visibleCards(page);
+    await page.getByPlaceholder(/cerca un signe/i).fill('g');
+
+    expect(await visibleCards(page)).toBe(before);
+    await expect(page.getByRole('status')).toBeHidden();
+  });
+
   test('shows an empty state when nothing matches', async ({ page }) => {
     await page.getByPlaceholder(/cerca un signe/i).fill('zzzzzz');
 
@@ -111,10 +121,12 @@ test.describe('interface language', () => {
     );
 
     // A card must never show the LSC block on the LSE route: the signs are
-    // different gestures (docs/requisitos.md §4.2).
+    // different gestures (docs/requisitos.md §4.2). The block is not merely
+    // hidden — it is not rendered, so no style override can surface it.
     await expect(
       page.locator('.sign-card[data-sign-id="leche"] .sign-card__lang[data-sl="lsc"]'),
-    ).toBeHidden();
+    ).toHaveCount(0);
+    await expect(page.locator('.sign-card__lang[data-sl="lsc"]')).toHaveCount(0);
   });
 
   test('the header no longer carries redundant catalogue navigation', async ({ page }) => {

@@ -15,12 +15,9 @@ const MESSAGES = {
   ca: {
     'site.title': 'Petits Signes',
     'site.tagline': 'Aprèn signes per comunicar-te amb el teu nadó abans que parli',
-    'nav.catalogue': 'Catàleg',
-    'nav.firstSigns': 'Primers signes',
     'nav.credits': 'Fonts i crèdits',
     'nav.skipToContent': 'Vés al contingut',
     'nav.language': 'Idioma i llengua de signes',
-    'nav.home': 'Inici',
     'nav.accessibility': 'Accessibilitat',
     'nav.about': 'El projecte',
     'nav.sourceCode': 'Codi font',
@@ -47,7 +44,8 @@ const MESSAGES = {
     'empty.generic.title': 'Cap signe aquí',
     'empty.generic.hint': 'Prova de treure algun filtre.',
 
-    'filter.categories': 'Categories',
+    'filter.categories': 'Filtra per categoria',
+    'filter.status': 'Filtra pel teu progrés',
     'filter.all': 'Tots',
     'filter.firstSigns': 'Primers signes',
     'filter.favorites': 'Preferits',
@@ -64,37 +62,46 @@ const MESSAGES = {
     'card.watchAtSource': 'Veure a {source}',
     'card.posterPending': 'Encara no tenim la imatge d’aquest signe',
 
-    'signLanguage.label': 'Llengua de signes',
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Llengua de Signes Catalana',
     'signLanguage.lseFull': 'Llengua de Signes Espanyola',
 
     'player.close': 'Tanca el vídeo',
+    'player.speed': 'Velocitat de reproducció',
     'player.speedNormal': 'Velocitat normal',
     'player.speedSlow': 'Càmera lenta',
     'player.source': 'Font d’aquest signe',
+    'player.unavailable':
+      'No hem pogut carregar el reproductor. Pot ser una extensió del navegador o la connexió: el signe també es pot veure al lloc original.',
 
+    'progress.title': 'Les teves dades',
+    'progress.intro':
+      'El teu progrés es desa només en aquest navegador: no hi ha comptes ni servidor. Si canvies de dispositiu o esborres les dades del navegador, es perd. Amb aquests botons te’l pots endur.',
+    'progress.favoritesCount': '{count} preferits',
+    'progress.favoritesCountOne': '1 preferit',
+    'progress.learnedCount': '{count} signes apresos',
+    'progress.learnedCountOne': '1 signe après',
     'progress.export': 'Exporta el progrés',
+    'progress.exportHint': 'Descarrega un fitxer JSON amb els teus preferits i signes apresos.',
     'progress.import': 'Importa el progrés',
+    'progress.importHint':
+      'Tria un fitxer exportat abans. Substituirà el progrés d’aquest navegador.',
+    'progress.imported': 'Progrés importat: {summary}.',
+    'progress.importError': 'Aquest fitxer no sembla una exportació de Petits Signes.',
     'progress.reset': 'Reinicia el progrés',
+    'progress.resetHint':
+      'Esborra preferits i signes apresos d’aquest navegador. No es pot desfer.',
+    'progress.resetDone': 'S’ha esborrat el progrés d’aquest navegador.',
     'progress.resetConfirm': 'Segur que vols esborrar preferits i signes apresos?',
-
-    'firstSigns.title': 'Primers signes',
-    'firstSigns.intro':
-      'Dotze signes per començar, en l’ordre que sol funcionar millor. No cal fer-los tots alhora: amb dos o tres ja n’hi ha prou per començar.',
-    'firstSigns.step': 'Pas {order}',
   },
 
   es: {
     'site.title': 'Petits Signes',
     'site.tagline': 'Aprende signos para comunicarte con tu bebé antes de que hable',
-    'nav.catalogue': 'Catálogo',
-    'nav.firstSigns': 'Primeros signos',
     'nav.credits': 'Fuentes y créditos',
     'nav.skipToContent': 'Ir al contenido',
     'nav.language': 'Idioma y lengua de signos',
-    'nav.home': 'Inicio',
     'nav.accessibility': 'Accesibilidad',
     'nav.about': 'El proyecto',
     'nav.sourceCode': 'Código fuente',
@@ -121,7 +128,8 @@ const MESSAGES = {
     'empty.generic.title': 'Ningún signo aquí',
     'empty.generic.hint': 'Prueba a quitar algún filtro.',
 
-    'filter.categories': 'Categorías',
+    'filter.categories': 'Filtrar por categoría',
+    'filter.status': 'Filtrar por tu progreso',
     'filter.all': 'Todos',
     'filter.firstSigns': 'Primeros signos',
     'filter.favorites': 'Favoritos',
@@ -138,37 +146,46 @@ const MESSAGES = {
     'card.watchAtSource': 'Ver en {source}',
     'card.posterPending': 'Todavía no tenemos la imagen de este signo',
 
-    'signLanguage.label': 'Lengua de signos',
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Lengua de Signos Catalana',
     'signLanguage.lseFull': 'Lengua de Signos Española',
 
     'player.close': 'Cerrar el vídeo',
+    'player.speed': 'Velocidad de reproducción',
     'player.speedNormal': 'Velocidad normal',
     'player.speedSlow': 'Cámara lenta',
     'player.source': 'Fuente de este signo',
+    'player.unavailable':
+      'No hemos podido cargar el reproductor. Puede ser una extensión del navegador o la conexión: el signo también se puede ver en el sitio original.',
 
+    'progress.title': 'Tus datos',
+    'progress.intro':
+      'Tu progreso se guarda solo en este navegador: no hay cuentas ni servidor. Si cambias de dispositivo o borras los datos del navegador, se pierde. Con estos botones puedes llevártelo.',
+    'progress.favoritesCount': '{count} favoritos',
+    'progress.favoritesCountOne': '1 favorito',
+    'progress.learnedCount': '{count} signos aprendidos',
+    'progress.learnedCountOne': '1 signo aprendido',
     'progress.export': 'Exportar el progreso',
+    'progress.exportHint': 'Descarga un archivo JSON con tus favoritos y signos aprendidos.',
     'progress.import': 'Importar el progreso',
+    'progress.importHint':
+      'Elige un archivo exportado antes. Sustituirá el progreso de este navegador.',
+    'progress.imported': 'Progreso importado: {summary}.',
+    'progress.importError': 'Este archivo no parece una exportación de Petits Signes.',
     'progress.reset': 'Reiniciar el progreso',
+    'progress.resetHint':
+      'Borra favoritos y signos aprendidos de este navegador. No se puede deshacer.',
+    'progress.resetDone': 'Se ha borrado el progreso de este navegador.',
     'progress.resetConfirm': '¿Seguro que quieres borrar favoritos y signos aprendidos?',
-
-    'firstSigns.title': 'Primeros signos',
-    'firstSigns.intro':
-      'Doce signos para empezar, en el orden que suele funcionar mejor. No hace falta hacerlos todos a la vez: con dos o tres ya es suficiente para empezar.',
-    'firstSigns.step': 'Paso {order}',
   },
 
   en: {
     'site.title': 'Petits Signes',
     'site.tagline': 'Learn signs to communicate with your baby before they can speak',
-    'nav.catalogue': 'Catalogue',
-    'nav.firstSigns': 'First signs',
     'nav.credits': 'Sources and credits',
     'nav.skipToContent': 'Skip to content',
     'nav.language': 'Language and sign language',
-    'nav.home': 'Home',
     'nav.accessibility': 'Accessibility',
     'nav.about': 'The project',
     'nav.sourceCode': 'Source code',
@@ -195,7 +212,8 @@ const MESSAGES = {
     'empty.generic.title': 'No signs here',
     'empty.generic.hint': 'Try clearing a filter.',
 
-    'filter.categories': 'Categories',
+    'filter.categories': 'Filter by category',
+    'filter.status': 'Filter by your progress',
     'filter.all': 'All',
     'filter.firstSigns': 'First signs',
     'filter.favorites': 'Favourites',
@@ -212,26 +230,38 @@ const MESSAGES = {
     'card.watchAtSource': 'Watch at {source}',
     'card.posterPending': 'We do not have the image for this sign yet',
 
-    'signLanguage.label': 'Sign language',
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Catalan Sign Language',
     'signLanguage.lseFull': 'Spanish Sign Language',
 
     'player.close': 'Close the video',
+    'player.speed': 'Playback speed',
     'player.speedNormal': 'Normal speed',
     'player.speedSlow': 'Slow motion',
     'player.source': 'Source of this sign',
+    'player.unavailable':
+      'The player could not be loaded. It may be a browser extension or the connection: the sign can also be watched at its original site.',
 
+    'progress.title': 'Your data',
+    'progress.intro':
+      'Your progress is stored in this browser only: there are no accounts and no server. Change device or clear your browser data and it is gone. These buttons let you take it with you.',
+    'progress.favoritesCount': '{count} favourites',
+    'progress.favoritesCountOne': '1 favourite',
+    'progress.learnedCount': '{count} learned signs',
+    'progress.learnedCountOne': '1 learned sign',
     'progress.export': 'Export progress',
+    'progress.exportHint': 'Downloads a JSON file with your favourites and learned signs.',
     'progress.import': 'Import progress',
+    'progress.importHint':
+      'Pick a file you exported earlier. It replaces the progress in this browser.',
+    'progress.imported': 'Progress imported: {summary}.',
+    'progress.importError': 'This file does not look like a Petits Signes export.',
     'progress.reset': 'Reset progress',
+    'progress.resetHint':
+      'Deletes favourites and learned signs from this browser. This cannot be undone.',
+    'progress.resetDone': 'The progress in this browser has been deleted.',
     'progress.resetConfirm': 'Delete favourites and learned signs?',
-
-    'firstSigns.title': 'First signs',
-    'firstSigns.intro':
-      'Twelve signs to start with, in the order that usually works best. You do not need all of them at once: two or three is enough to begin.',
-    'firstSigns.step': 'Step {order}',
   },
 } as const satisfies Record<Language, Record<string, string>>;
 

@@ -101,14 +101,18 @@ específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo 
 ## Arquitectura en una pantalla
 
 - **Astro** genera el catálogo entero como HTML estático en el build.
-- Dos **islas de React** aportan la interactividad: la barra de herramientas (búsqueda y
-  filtros) y el reproductor de vídeo.
+- Tres **islas de React** aportan la interactividad: la barra de herramientas (búsqueda y
+  filtros), el reproductor de vídeo y la gestión de tus datos en la página del proyecto.
 - Un controlador ligero conecta esas islas con la rejilla estática mostrando y ocultando
   tarjetas, de modo que el JavaScript enviado **no crece con el número de signos**.
 - El **idioma vive en la URL** (`/` catalán, `/es/` castellano) y arrastra la lengua de signos
-  correspondiente (ca → LSC, es → LSE). Se decide en el build, nunca en el cliente.
+  correspondiente (ca → LSC, es → LSE). Se decide en el build, nunca en el cliente. Cada página
+  envía **solo** la lengua de signos que le toca: el gesto de la otra lengua ni siquiera llega
+  al navegador.
 - Todo el progreso (favoritos, aprendidos) vive en `localStorage` del navegador, detrás de una
-  interfaz `ProgressStore` — nada se envía a ningún servidor.
+  interfaz `ProgressStore` — nada se envía a ningún servidor. Puedes **exportarlo, importarlo o
+  borrarlo** desde [la página del proyecto](https://petitsignes.pages.dev/el-projecte/): es la
+  única manera de llevártelo a otro dispositivo, porque no hay cuentas.
 
 ## Gestionar el vocabulario
 
@@ -163,14 +167,29 @@ npm run dev
 | `npm run lint`                              | ESLint + Prettier                                   |
 | `npm run typecheck`                         | `astro check` + `tsc --noEmit`                      |
 | `npm test`                                  | Tests unitarios (Vitest)                            |
+| `npm run test:coverage`                     | Tests unitarios con cobertura y umbrales            |
 | `npm run test:e2e`                          | Tests end-to-end y accesibilidad (Playwright + axe) |
 | `npm run content:export` / `content:import` | Ida y vuelta con la hoja de vocabulario             |
 
+## Dominio y URLs canónicas
+
+El origen desde el que se construyen los enlaces canónicos, los `hreflang` y las URL de Open
+Graph vive en [`src/lib/site.ts`](src/lib/site.ts) (`SITE_ORIGIN`), no en el panel del hosting.
+**Al cambiar de dominio hay que editar esa constante**: si no, todo el sitio seguiría declarando
+como canónico el dominio anterior, sin ningún error visible.
+
+La variable `SITE_URL` lo sobrescribe para los despliegues de vista previa, que necesitan su
+propio origen y no se indexan. Debe ser un origen escueto (`https://ejemplo.org`): el build falla
+si trae ruta, query o fragmento.
+
 ## Calidad
 
-El CI (Ubuntu) es la fuente de verdad. En cada push se ejecutan lint, typecheck, tests unitarios,
-end-to-end, accesibilidad con axe y presupuestos de Lighthouse que **fallan el build** si bajan
-de 95 en cualquiera de las cuatro categorías (rendimiento, accesibilidad, buenas prácticas, SEO).
+El CI (Ubuntu) es la fuente de verdad. Se ejecuta en cada push a `main`, a `develop` y a cualquier
+rama `feature/`, `release/` o `hotfix/`, además de en cada pull request: lint, typecheck, tests
+unitarios, end-to-end, accesibilidad con axe y presupuestos de Lighthouse que **fallan el build**
+si bajan de 95 en cualquiera de las cuatro categorías (rendimiento, accesibilidad, buenas
+prácticas, SEO). Lighthouse mide el mismo artefacto que produce el trabajo de calidad, no una
+segunda compilación.
 
 ## Contribuir
 

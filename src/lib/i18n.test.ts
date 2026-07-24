@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { MESSAGES, createTranslator, isLanguage } from './i18n.ts';
+import type { StatusFilter } from './stores.ts';
 import { LANGUAGES } from './types.ts';
 
 describe('createTranslator', () => {
@@ -10,16 +11,16 @@ describe('createTranslator', () => {
   });
 
   it('defaults to Catalan', () => {
-    expect(createTranslator()('nav.catalogue')).toBe('Catàleg');
+    expect(createTranslator()('nav.credits')).toBe('Fonts i crèdits');
   });
 
   it('interpolates placeholders', () => {
     expect(createTranslator('es')('empty.search.title', { query: 'perro' })).toContain('perro');
-    expect(createTranslator('es')('firstSigns.step', { order: 3 })).toBe('Paso 3');
+    expect(createTranslator('es')('search.resultCount', { count: 3 })).toBe('3 signos');
   });
 
   it('leaves a placeholder untouched when no value is given', () => {
-    expect(createTranslator('es')('firstSigns.step')).toBe('Paso {order}');
+    expect(createTranslator('es')('search.resultCount')).toBe('{count} signos');
   });
 });
 
@@ -30,6 +31,22 @@ describe('message catalogue', () => {
     for (const language of LANGUAGES) {
       expect(Object.keys(MESSAGES[language]).sort(), `missing keys in ${language}`).toEqual(
         reference,
+      );
+    }
+  });
+
+  /**
+   * These labels are built as t(`filter.${key}`), so searching the source for
+   * the literal key finds nothing and a cleanup sweep would read them as dead.
+   * Pinning the contract here is what keeps that from happening — a generic
+   * "unused key" detector cannot see a key that is never written out in full.
+   */
+  it('has a filter label for every status filter', () => {
+    const statuses: StatusFilter[] = ['all', 'favorites', 'learned', 'pending'];
+
+    for (const status of statuses) {
+      expect(Object.keys(MESSAGES.ca), `filter.${status} is built dynamically`).toContain(
+        `filter.${status}`,
       );
     }
   });

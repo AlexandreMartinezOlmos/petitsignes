@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProgressData from '../../islands/ProgressData.tsx';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { REPO_URL } from '../../lib/site.ts';
 
@@ -83,6 +84,13 @@ const c = copy[language];
     <p class="mt-1">
       <a class="underline underline-offset-2" href={creditsHref}>{c.sourcesLink}</a>
     </p>
+
+    {
+      /* Directly after the "no accounts, nothing leaves your device" promise
+         above: this is where that promise has to become something the visitor
+         can act on. `client:visible` keeps it off the catalogue's JS budget. */
+    }
+    <ProgressData language={language} client:visible />
 
     <h2 class="mt-8 text-xl font-bold">{c.openTitle}</h2>
     <p class="mt-2">{c.openBody}</p>

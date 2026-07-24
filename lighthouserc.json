@@ -8,7 +8,9 @@
         "http://localhost/el-projecte/index.html",
         "http://localhost/es/el-projecte/index.html",
         "http://localhost/credits/index.html",
-        "http://localhost/es/credits/index.html"
+        "http://localhost/es/credits/index.html",
+        "http://localhost/accessibilitat/index.html",
+        "http://localhost/es/accessibilitat/index.html"
       ],
       "numberOfRuns": 3,
       "settings": {
