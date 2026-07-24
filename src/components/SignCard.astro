@@ -1,6 +1,11 @@
 ---
 import { createTranslator } from '../lib/i18n.ts';
-import { SIGN_LANGUAGES, type Category, type Language, type SignEntry } from '../lib/types.ts';
+import {
+  LANGUAGE_TO_SIGN_LANGUAGE,
+  type Category,
+  type Language,
+  type SignEntry,
+} from '../lib/types.ts';
 
 interface Props {
   sign: SignEntry;
@@ -17,15 +22,21 @@ const label = sign.labels[language];
 
 /**
  * The default face of the card is always the static poster, never the video
- * (CLAUDE.md §4.3). Both sign languages are rendered and CSS shows the active
- * one, so switching LSC/LSE costs no JavaScript per card.
+ * (CLAUDE.md §4.3).
+ *
+ * Only the page's own sign language is rendered. The interface language is
+ * fixed at build time and lives in the URL (`/` → LSC, `/es/` → LSE), so the
+ * other language's block could never be reached anyway — shipping it and
+ * hiding it with CSS cost 23% of the page for markup no visitor can see, and
+ * put the wrong gesture one style override away from being shown. Leaving it
+ * out is what makes the substitution ban of docs/requisitos.md §4.2 structural
+ * rather than a convention.
  */
-const byLanguage = SIGN_LANGUAGES.map((signLanguage) => ({
-  signLanguage,
-  video: sign.videos.find((item) => item.signLanguage === signLanguage),
-  fullName: signLanguage === 'lsc' ? t('signLanguage.lscFull') : t('signLanguage.lseFull'),
-  shortName: signLanguage === 'lsc' ? t('signLanguage.lsc') : t('signLanguage.lse'),
-}));
+const signLanguage = LANGUAGE_TO_SIGN_LANGUAGE[language];
+const video = sign.videos.find((item) => item.signLanguage === signLanguage);
+const isLsc = signLanguage === 'lsc';
+const fullName = isLsc ? t('signLanguage.lscFull') : t('signLanguage.lseFull');
+const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
 ---
 
 <article
@@ -43,72 +54,72 @@ const byLanguage = SIGN_LANGUAGES.map((signLanguage) => ({
     )
   }
 
-  {
-    byLanguage.map(({ signLanguage, video, fullName, shortName }) => (
-      <div class="sign-card__lang contents" data-sl={signLanguage}>
-        <div class="sign-card__media">
-          {video?.posterUrl ? (
-            <img
-              src={video.posterUrl}
-              alt={`${label} — ${fullName}`}
-              width="480"
-              height="360"
-              loading="lazy"
-              decoding="async"
-            />
-          ) : (
-            <div class="sign-card__placeholder">
-              <svg class="icon-lg" aria-hidden="true" focusable="false">
-                <use href={`#i-${category.icon}`} />
-              </svg>
-              <span class="sr-only">{t('card.posterPending')}</span>
-            </div>
-          )}
-        </div>
+  <div class="sign-card__lang contents" data-sl={signLanguage}>
+    <div class="sign-card__media">
+      {
+        video?.posterUrl ? (
+          <img
+            src={video.posterUrl}
+            alt={`${label} — ${fullName}`}
+            width="480"
+            height="360"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div class="sign-card__placeholder">
+            <svg class="icon-lg" aria-hidden="true" focusable="false">
+              <use href={`#i-${category.icon}`} />
+            </svg>
+            <span class="sr-only">{t('card.posterPending')}</span>
+          </div>
+        )
+      }
+    </div>
 
-        <div class="sign-card__actions">
-          {video === undefined ? (
-            <p class="sign-card__novideo">{t('card.noVideo', { signLanguage: shortName })}</p>
-          ) : video.delivery === 'youtube-embed' ? (
-            <button
-              type="button"
-              class="sign-card__cta"
-              data-action="play"
-              data-sign-id={sign.id}
-              data-sign-language={signLanguage}
-              data-label={label}
-              data-video-url={video.videoUrl}
-              data-poster-url={video.posterUrl}
-              data-source={video.source}
-              data-source-url={video.sourceUrl}
-              data-license={video.license}
-            >
-              <svg class="icon-sm" aria-hidden="true" focusable="false">
-                <use href="#i-play" />
-              </svg>
-              {t('card.watchSign')}
-              <span class="sr-only">: {label}</span>
-            </button>
-          ) : (
-            /* This source only allows linking to its original entry, never
-                 embedding or re-hosting (docs/permisos/). */
-            <a
-              class="sign-card__cta sign-card__cta--external"
-              href={video.videoUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              {t('card.watchAtSource', { source: video.source })}
-              <span class="sr-only">: {label}</span>
-              <svg class="icon-sm" aria-hidden="true" focusable="false">
-                <use href="#i-external" />
-              </svg>
-            </a>
-          )}
-        </div>
-      </div>
-    ))
-  }
+    <div class="sign-card__actions">
+      {
+        video === undefined ? (
+          <p class="sign-card__novideo">{t('card.noVideo', { signLanguage: shortName })}</p>
+        ) : video.delivery === 'youtube-embed' ? (
+          <button
+            type="button"
+            class="sign-card__cta"
+            data-action="play"
+            data-sign-id={sign.id}
+            data-sign-language={signLanguage}
+            data-label={label}
+            data-video-url={video.videoUrl}
+            data-poster-url={video.posterUrl}
+            data-source={video.source}
+            data-source-url={video.sourceUrl}
+            data-license={video.license}
+          >
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href="#i-play" />
+            </svg>
+            {t('card.watchSign')}
+            <span class="sr-only">: {label}</span>
+          </button>
+        ) : (
+          /* This source only allows linking to its original entry, never
+             embedding or re-hosting (docs/permisos/). */
+          <a
+            class="sign-card__cta sign-card__cta--external"
+            href={video.videoUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {t('card.watchAtSource', { source: video.source })}
+            <span class="sr-only">: {label}</span>
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href="#i-external" />
+            </svg>
+          </a>
+        )
+      }
+    </div>
+  </div>
 
   <div class="sign-card__header">
     <div class="min-w-0">

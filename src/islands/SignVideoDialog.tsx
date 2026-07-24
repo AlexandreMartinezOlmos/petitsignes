@@ -35,6 +35,10 @@ export default function SignVideoDialog({ language }: Props) {
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [request, setRequest] = useState<PlayRequestDetail | null>(null);
   const [speed, setSpeed] = useState<Speed>(1);
+  // The API can be blocked by an extension or a filtered network. Without this
+  // the dialog would sit blank forever, so a failure degrades to the same
+  // affordance the other sign language already uses: a link to the source.
+  const [loadFailed, setLoadFailed] = useState(false);
 
   // Read inside the player's `onReady` callback without making the player
   // effect depend on speed (kept in sync by the speed effect below).
@@ -50,6 +54,7 @@ export default function SignVideoDialog({ language }: Props) {
       const detail = (event as CustomEvent<PlayRequestDetail>).detail;
       if (!detail?.videoUrl || youtubeId(detail.videoUrl) === null) return;
       setSpeed(1);
+      setLoadFailed(false);
       setRequest(detail);
     }
 
@@ -91,42 +96,46 @@ export default function SignVideoDialog({ language }: Props) {
 
     let cancelled = false;
 
-    void loadYouTubeIframeApi().then((YT) => {
-      if (cancelled || !mountRef.current) return;
+    void loadYouTubeIframeApi()
+      .then((YT) => {
+        if (cancelled || !mountRef.current) return;
 
-      // YT replaces the element it is given with an <iframe>, so hand it a
-      // throwaway child rather than the React-owned container.
-      const host = document.createElement('div');
-      mountRef.current.appendChild(host);
+        // YT replaces the element it is given with an <iframe>, so hand it a
+        // throwaway child rather than the React-owned container.
+        const host = document.createElement('div');
+        mountRef.current.appendChild(host);
 
-      playerRef.current = new YT.Player(host, {
-        host: YOUTUBE_NOCOOKIE_HOST,
-        videoId,
-        playerVars: {
-          autoplay: 1,
-          // Muted autoplay is the only kind browsers allow unprompted; sign
-          // videos carry no audio, so nothing is lost.
-          mute: 1,
-          controls: 1,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-        },
-        events: {
-          onReady: (event) => {
-            event.target.setPlaybackRate(speedRef.current);
-            event.target.getIframe().setAttribute('title', videoTitle);
+        playerRef.current = new YT.Player(host, {
+          host: YOUTUBE_NOCOOKIE_HOST,
+          videoId,
+          playerVars: {
+            autoplay: 1,
+            // Muted autoplay is the only kind browsers allow unprompted; sign
+            // videos carry no audio, so nothing is lost.
+            mute: 1,
+            controls: 1,
+            rel: 0,
+            modestbranding: 1,
+            playsinline: 1,
           },
-          onStateChange: (event) => {
-            // Loop in place: restart instead of showing YouTube's end screen.
-            if (event.data === YT.PlayerState.ENDED) {
-              event.target.seekTo(0, true);
-              event.target.playVideo();
-            }
+          events: {
+            onReady: (event) => {
+              event.target.setPlaybackRate(speedRef.current);
+              event.target.getIframe().setAttribute('title', videoTitle);
+            },
+            onStateChange: (event) => {
+              // Loop in place: restart instead of showing YouTube's end screen.
+              if (event.data === YT.PlayerState.ENDED) {
+                event.target.seekTo(0, true);
+                event.target.playVideo();
+              }
+            },
           },
-        },
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setLoadFailed(true);
       });
-    });
 
     return () => {
       cancelled = true;
@@ -183,8 +192,25 @@ export default function SignVideoDialog({ language }: Props) {
             </button>
           </div>
 
-          {/* The IFrame API replaces a child of this container with the player. */}
-          <div ref={mountRef} className="player-dialog__stage" />
+          {loadFailed ? (
+            /* The player could not load. Rather than a blank box, offer the
+               source's own page — the same escape hatch an LSE sign uses. */
+            <div className="player-dialog__stage player-dialog__fallback" role="alert">
+              <p>{t('player.unavailable')}</p>
+              <a
+                className="player-dialog__fallback-link"
+                href={request.videoUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {t('card.watchAtSource', { source: 'YouTube' })}
+                <span className="sr-only">: {request.label}</span>
+              </a>
+            </div>
+          ) : (
+            /* The IFrame API replaces a child of this container with the player. */
+            <div ref={mountRef} className="player-dialog__stage" />
+          )}
 
           <div className="flex flex-wrap items-center gap-2 px-4 py-3">
             <div
