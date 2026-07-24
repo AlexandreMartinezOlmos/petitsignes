@@ -22,21 +22,30 @@ const MESSAGES = {
     'nav.language': 'Idioma i llengua de signes',
     'nav.home': 'Inici',
     'nav.accessibility': 'Accessibilitat',
+    'nav.about': 'El projecte',
+    'nav.sourceCode': 'Codi font',
+    'nav.footer': 'Peu de pàgina',
 
-    'hero.title': 'Parla amb el teu nadó',
-    'hero.titleAccent': 'abans que parli',
-    'hero.lead':
-      'Signes bàsics en llengua de signes catalana, triats per al dia a dia amb un nadó. Comença pels dotze primers.',
-    'hero.stat.signs': 'signes',
-    'hero.stat.withVideo': 'amb vídeo',
-    'hero.stat.learned': 'apresos',
+    'hero.title': "Comunica't amb el teu nadó",
+    'hero.titleAccent': 'molt abans de la primera paraula',
+    'hero.lead': 'Signes reals de la llengua de signes catalana per al dia a dia amb el teu nadó.',
 
     'search.label': 'Cerca un signe',
     'search.placeholder': 'Cerca un signe…',
     'search.clear': 'Esborra la cerca',
-    'search.noResults': 'Cap signe coincideix amb «{query}».',
     'search.resultCount': '{count} signes',
     'search.resultCountOne': '1 signe',
+
+    'empty.search.title': 'Cap signe per «{query}»',
+    'empty.search.hint': 'Prova amb una altra paraula o mira totes les categories.',
+    'empty.favorites.title': 'Encara no tens preferits',
+    'empty.favorites.hint': 'Toca el cor d’una targeta per desar-la aquí i tenir-la a mà.',
+    'empty.learned.title': 'Encara no has après cap signe',
+    'empty.learned.hint': 'Marca’ls com a apresos a mesura que els vagis fent servir amb el nadó.',
+    'empty.pending.title': 'Ho tens tot après!',
+    'empty.pending.hint': 'No et queda cap signe pendent. Quin crac.',
+    'empty.generic.title': 'Cap signe aquí',
+    'empty.generic.hint': 'Prova de treure algun filtre.',
 
     'filter.categories': 'Categories',
     'filter.all': 'Tots',
@@ -75,9 +84,6 @@ const MESSAGES = {
     'firstSigns.intro':
       'Dotze signes per començar, en l’ordre que sol funcionar millor. No cal fer-los tots alhora: amb dos o tres ja n’hi ha prou per començar.',
     'firstSigns.step': 'Pas {order}',
-
-    'notice.babyPrecision':
-      'Els primers signes que faci el nadó seran imprecisos, igual que les primeres paraules. És normal: el reconeixeràs pel context.',
   },
 
   es: {
@@ -90,21 +96,30 @@ const MESSAGES = {
     'nav.language': 'Idioma y lengua de signos',
     'nav.home': 'Inicio',
     'nav.accessibility': 'Accesibilidad',
+    'nav.about': 'El proyecto',
+    'nav.sourceCode': 'Código fuente',
+    'nav.footer': 'Pie de página',
 
-    'hero.title': 'Habla con tu bebé',
-    'hero.titleAccent': 'antes de que hable',
-    'hero.lead':
-      'Signos básicos en lengua de signos española, elegidos para el día a día con un bebé. Empieza por los doce primeros.',
-    'hero.stat.signs': 'signos',
-    'hero.stat.withVideo': 'con vídeo',
-    'hero.stat.learned': 'aprendidos',
+    'hero.title': 'Comunícate con tu bebé',
+    'hero.titleAccent': 'mucho antes de la primera palabra',
+    'hero.lead': 'Signos reales de la lengua de signos española para el día a día con tu bebé.',
 
     'search.label': 'Buscar un signo',
     'search.placeholder': 'Buscar un signo…',
     'search.clear': 'Borrar la búsqueda',
-    'search.noResults': 'Ningún signo coincide con «{query}».',
     'search.resultCount': '{count} signos',
     'search.resultCountOne': '1 signo',
+
+    'empty.search.title': 'Ningún signo para «{query}»',
+    'empty.search.hint': 'Prueba con otra palabra o mira todas las categorías.',
+    'empty.favorites.title': 'Aún no tienes favoritos',
+    'empty.favorites.hint': 'Toca el corazón de una tarjeta para guardarla aquí y tenerla a mano.',
+    'empty.learned.title': 'Aún no has aprendido ningún signo',
+    'empty.learned.hint': 'Márcalos como aprendidos a medida que los vayas usando con el bebé.',
+    'empty.pending.title': '¡Lo tienes todo aprendido!',
+    'empty.pending.hint': 'No te queda ningún signo pendiente. Qué crack.',
+    'empty.generic.title': 'Ningún signo aquí',
+    'empty.generic.hint': 'Prueba a quitar algún filtro.',
 
     'filter.categories': 'Categorías',
     'filter.all': 'Todos',
@@ -143,9 +158,6 @@ const MESSAGES = {
     'firstSigns.intro':
       'Doce signos para empezar, en el orden que suele funcionar mejor. No hace falta hacerlos todos a la vez: con dos o tres ya es suficiente para empezar.',
     'firstSigns.step': 'Paso {order}',
-
-    'notice.babyPrecision':
-      'Los primeros signos que haga el bebé serán imprecisos, igual que las primeras palabras. Es normal: lo reconocerás por el contexto.',
   },
 
   en: {
@@ -158,20 +170,30 @@ const MESSAGES = {
     'nav.language': 'Language and sign language',
     'nav.home': 'Home',
     'nav.accessibility': 'Accessibility',
+    'nav.about': 'The project',
+    'nav.sourceCode': 'Source code',
+    'nav.footer': 'Footer',
 
-    'hero.title': 'Talk with your baby',
-    'hero.titleAccent': 'before they can speak',
-    'hero.lead': 'Basic signs chosen for everyday life with a baby. Start with the first twelve.',
-    'hero.stat.signs': 'signs',
-    'hero.stat.withVideo': 'with video',
-    'hero.stat.learned': 'learned',
+    'hero.title': 'Connect with your baby',
+    'hero.titleAccent': 'long before their first word',
+    'hero.lead': 'Real signs for everyday moments with your baby.',
 
     'search.label': 'Search for a sign',
     'search.placeholder': 'Search for a sign…',
     'search.clear': 'Clear the search',
-    'search.noResults': 'No sign matches “{query}”.',
     'search.resultCount': '{count} signs',
     'search.resultCountOne': '1 sign',
+
+    'empty.search.title': 'No signs for “{query}”',
+    'empty.search.hint': 'Try another word or browse the categories.',
+    'empty.favorites.title': 'No favourites yet',
+    'empty.favorites.hint': 'Tap the heart on a card to keep it here.',
+    'empty.learned.title': 'Nothing learned yet',
+    'empty.learned.hint': 'Mark signs as learned as you start using them with your baby.',
+    'empty.pending.title': 'You’ve learned them all!',
+    'empty.pending.hint': 'Nothing left to learn. Nice.',
+    'empty.generic.title': 'No signs here',
+    'empty.generic.hint': 'Try clearing a filter.',
 
     'filter.categories': 'Categories',
     'filter.all': 'All',
@@ -210,9 +232,6 @@ const MESSAGES = {
     'firstSigns.intro':
       'Twelve signs to start with, in the order that usually works best. You do not need all of them at once: two or three is enough to begin.',
     'firstSigns.step': 'Step {order}',
-
-    'notice.babyPrecision':
-      'The first signs your baby makes will be imprecise, just like first words. That is normal: you will recognise them from context.',
   },
 } as const satisfies Record<Language, Record<string, string>>;
 

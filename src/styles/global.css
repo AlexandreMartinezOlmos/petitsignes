@@ -465,6 +465,32 @@
   color: transparent;
 }
 
+/* --- Empty state ---------------------------------------------------------- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 3.5rem 1rem;
+  text-align: center;
+}
+
+.empty-state__emoji {
+  font-size: 2.75rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.empty-state__title {
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.empty-state__hint {
+  color: var(--color-ink-muted);
+  max-width: 34ch;
+}
+
 /* --- Chips ---------------------------------------------------------------- */
 .chip {
   display: inline-flex;

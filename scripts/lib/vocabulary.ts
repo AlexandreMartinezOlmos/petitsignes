@@ -74,7 +74,7 @@ export function dilseSearchUrl(term: string): string {
 /** Reads the YouTube id back out of a stored watch URL (null if it is not one). */
 export function youTubeIdFromUrl(url: string): string | null {
   const match = url.match(/[?&]v=([\w-]{6,})/);
-  return match ? match[1] : null;
+  return match?.[1] ?? null;
 }
 
 /** Reads the DILSE search term back out of a stored search URL. */
@@ -205,9 +205,10 @@ export function parseTsv(text: string): VocabularyRow[] {
     .replace(/\r\n/g, '\n')
     .split('\n')
     .filter((l) => l.trim() !== '');
-  if (lines.length === 0) throw new TsvError('The manifest is empty');
+  const headerLine = lines[0];
+  if (headerLine === undefined) throw new TsvError('The manifest is empty');
 
-  const header = lines[0].split('\t');
+  const header = headerLine.split('\t');
   if (header.join('\t') !== TSV_COLUMNS.join('\t')) {
     throw new TsvError(`Unexpected header. Expected: ${TSV_COLUMNS.join(', ')}`);
   }
@@ -215,7 +216,17 @@ export function parseTsv(text: string): VocabularyRow[] {
   const seen = new Set<string>();
   return lines.slice(1).map((line) => {
     const cells = line.split('\t');
-    const [id, category, order, difficulty, ca, es, en, lsc, lse] = cells.map((c) => c ?? '');
+    const [
+      id = '',
+      category = '',
+      order = '',
+      difficulty = '',
+      ca = '',
+      es = '',
+      en = '',
+      lsc = '',
+      lse = '',
+    ] = cells.map((c) => c ?? '');
 
     if (!id.trim()) throw new TsvError('A row has no id');
     if (seen.has(id)) throw new TsvError(`Duplicate id "${id}"`);

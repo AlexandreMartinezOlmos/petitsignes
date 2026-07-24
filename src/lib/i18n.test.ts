@@ -14,7 +14,7 @@ describe('createTranslator', () => {
   });
 
   it('interpolates placeholders', () => {
-    expect(createTranslator('es')('search.noResults', { query: 'perro' })).toContain('perro');
+    expect(createTranslator('es')('empty.search.title', { query: 'perro' })).toContain('perro');
     expect(createTranslator('es')('firstSigns.step', { order: 3 })).toBe('Paso 3');
   });
 
