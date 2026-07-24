@@ -168,9 +168,12 @@ npm run dev
 
 ## Calidad
 
-El CI (Ubuntu) es la fuente de verdad. En cada push se ejecutan lint, typecheck, tests unitarios,
-end-to-end, accesibilidad con axe y presupuestos de Lighthouse que **fallan el build** si bajan
-de 95 en cualquiera de las cuatro categorías (rendimiento, accesibilidad, buenas prácticas, SEO).
+El CI (Ubuntu) es la fuente de verdad. Se ejecuta en cada push a `main`, a `develop` y a cualquier
+rama `feature/`, `release/` o `hotfix/`, además de en cada pull request: lint, typecheck, tests
+unitarios, end-to-end, accesibilidad con axe y presupuestos de Lighthouse que **fallan el build**
+si bajan de 95 en cualquiera de las cuatro categorías (rendimiento, accesibilidad, buenas
+prácticas, SEO). Lighthouse mide el mismo artefacto que produce el trabajo de calidad, no una
+segunda compilación.
 
 ## Contribuir
 
