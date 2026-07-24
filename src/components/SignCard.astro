@@ -11,11 +11,9 @@ interface Props {
   sign: SignEntry;
   category: Category;
   language: Language;
-  /** Position in the "first signs" path, shown as a step badge. */
-  showStep?: boolean;
 }
 
-const { sign, category, language, showStep = false } = Astro.props;
+const { sign, category, language } = Astro.props;
 const t = createTranslator(language);
 
 const label = sign.labels[language];
@@ -48,12 +46,6 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
   data-label-es={sign.labels.es}
   data-label-en={sign.labels.en}
 >
-  {
-    showStep && sign.firstSignOrder !== undefined && (
-      <span class="sign-card__step">{t('firstSigns.step', { order: sign.firstSignOrder })}</span>
-    )
-  }
-
   <div class="sign-card__lang contents" data-sl={signLanguage}>
     <div class="sign-card__media">
       {
