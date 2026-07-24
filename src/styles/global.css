@@ -466,6 +466,14 @@
 }
 
 /* --- Empty state ---------------------------------------------------------- */
+/* The live region stays in the document at all times so its announcements are
+   reliable; having no children is what makes it take no space. A utility class
+   could not do this job: these component rules are unlayered and would win over
+   it, which is how an empty 7rem block used to sit under the grid unnoticed. */
+.empty-state:empty {
+  display: none;
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -637,15 +645,6 @@
 }
 
 .sign-card[hidden] {
-  display: none;
-}
-
-/* Each card carries the block for both sign languages; the page's own language
-   decides which one is shown. This is what guarantees a sign is never displayed
-   under the other language's label (docs/requisitos.md §4.2) — they are separate
-   markup, so no substitution is possible. */
-[data-sign-language='lsc'] .sign-card__lang[data-sl='lse'],
-[data-sign-language='lse'] .sign-card__lang[data-sl='lsc'] {
   display: none;
 }
 
@@ -969,6 +968,36 @@
   block-size: 100%;
   inline-size: 100%;
   border: 0;
+}
+
+/* Shown when the YouTube player cannot load at all: the sign is still one
+   click away at the source, so the dialog is never a dead end. */
+.player-dialog__fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--color-ink-muted);
+}
+
+.player-dialog__fallback-link {
+  display: inline-flex;
+  min-block-size: var(--spacing-touch);
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  padding-inline: 1rem;
+  font-weight: 650;
+  color: var(--color-brand-ink);
+}
+
+.player-dialog__fallback-link:hover {
+  background-color: var(--color-surface);
 }
 
 .icon-button {

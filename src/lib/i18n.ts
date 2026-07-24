@@ -74,6 +74,8 @@ const MESSAGES = {
     'player.speedNormal': 'Velocitat normal',
     'player.speedSlow': 'Càmera lenta',
     'player.source': 'Font d’aquest signe',
+    'player.unavailable':
+      'No hem pogut carregar el reproductor. Pot ser una extensió del navegador o la connexió: el signe també es pot veure al lloc original.',
 
     'progress.export': 'Exporta el progrés',
     'progress.import': 'Importa el progrés',
@@ -148,6 +150,8 @@ const MESSAGES = {
     'player.speedNormal': 'Velocidad normal',
     'player.speedSlow': 'Cámara lenta',
     'player.source': 'Fuente de este signo',
+    'player.unavailable':
+      'No hemos podido cargar el reproductor. Puede ser una extensión del navegador o la conexión: el signo también se puede ver en el sitio original.',
 
     'progress.export': 'Exportar el progreso',
     'progress.import': 'Importar el progreso',
@@ -222,6 +226,8 @@ const MESSAGES = {
     'player.speedNormal': 'Normal speed',
     'player.speedSlow': 'Slow motion',
     'player.source': 'Source of this sign',
+    'player.unavailable':
+      'The player could not be loaded. It may be a browser extension or the connection: the sign can also be watched at its original site.',
 
     'progress.export': 'Export progress',
     'progress.import': 'Import progress',

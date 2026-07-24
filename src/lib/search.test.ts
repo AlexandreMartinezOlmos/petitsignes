@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { createSearchIndex, normalizeText, searchSigns, type SearchableSign } from './search.ts';
+import {
+  MIN_QUERY_LENGTH,
+  createSearchIndex,
+  isSearchable,
+  normalizeText,
+  searchSigns,
+  type SearchableSign,
+} from './search.ts';
 
 const SIGNS: SearchableSign[] = [
   { id: 'leche', labels: { ca: 'llet', es: 'leche', en: 'milk' }, category: 'food' },
@@ -71,6 +78,44 @@ describe('searchSigns', () => {
   });
 
   it('respects the result limit', () => {
-    expect(searchSigns(index, 'a', 2).length).toBeLessThanOrEqual(2);
+    // A dedicated index, so the assertion does not depend on how many entries
+    // of the shared fixture happen to be near-matches.
+    const many = createSearchIndex(
+      Array.from({ length: 5 }, (_, i) => ({
+        id: `sign-${i}`,
+        labels: { ca: `gat${i}`, es: `gato${i}`, en: `cat${i}` },
+        category: 'animals' as const,
+      })),
+    );
+
+    expect(searchSigns(many, 'gat').length).toBeGreaterThan(2);
+    expect(searchSigns(many, 'gat', 2)).toHaveLength(2);
+  });
+
+  // Regression: the index cannot answer a query shorter than MIN_QUERY_LENGTH,
+  // and a caller that read the empty result as "no matches" emptied the grid on
+  // the first keystroke of every search.
+  it('returns nothing for a query shorter than the minimum', () => {
+    expect(searchSigns(index, 'a')).toEqual([]);
+    expect(isSearchable('a')).toBe(false);
+  });
+});
+
+describe('isSearchable', () => {
+  it('rejects a query with nothing to search for', () => {
+    expect(isSearchable('')).toBe(false);
+    expect(isSearchable('   ')).toBe(false);
+  });
+
+  it('accepts a query at the minimum length', () => {
+    expect(isSearchable('ag')).toBe(true);
+    expect(searchSigns(index, 'ag')).toContain('agua');
+  });
+
+  it('measures the normalised query, so an accent does not count twice', () => {
+    // NFD splits "á" into a letter plus a combining mark; counting the raw
+    // string would make a one-letter query look long enough.
+    expect(isSearchable('á')).toBe(false);
+    expect(MIN_QUERY_LENGTH).toBe(2);
   });
 });

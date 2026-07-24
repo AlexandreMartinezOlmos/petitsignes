@@ -74,7 +74,7 @@ const toolbarCategories = categories.map((category) => ({
     }
   </div>
 
-  <div id="no-results" class="empty-state hidden" role="status"></div>
+  <div id="no-results" class="empty-state" role="status"></div>
 
   <SignVideoDialog language={language} client:idle />
 </BaseLayout>
@@ -84,6 +84,7 @@ const toolbarCategories = categories.map((category) => ({
   import { $query, $statusFilter, $visibleCount, rememberLanguage } from '../../lib/stores.ts';
   import { createTranslator, type MessageKey } from '../../lib/i18n.ts';
   import { isRoutedLocale } from '../../lib/routing.ts';
+  import { isSearchable } from '../../lib/search.ts';
 
   const grid = document.getElementById('sign-grid');
   const emptyState = document.getElementById('no-results');
@@ -104,9 +105,11 @@ const toolbarCategories = categories.map((category) => ({
     function renderEmptyState() {
       if (!emptyState) return;
 
-      const isEmpty = $visibleCount.get() === 0;
-      emptyState.classList.toggle('hidden', !isEmpty);
-      if (!isEmpty) {
+      // Emptying the element is what hides it (`.empty-state:empty`). The live
+      // region itself is never removed or hidden, so it is already registered
+      // with assistive technology when its content appears — a region that is
+      // revealed and filled in the same frame is announced unreliably.
+      if ($visibleCount.get() !== 0) {
         emptyState.replaceChildren();
         return;
       }
@@ -118,7 +121,9 @@ const toolbarCategories = categories.map((category) => ({
       let titleKey: MessageKey = 'empty.generic.title';
       let hintKey: MessageKey = 'empty.generic.hint';
 
-      if (query !== '') {
+      // Same gate as the filter (`isSearchable`, not `!== ''`), or a query too
+      // short to search would blame the empty grid on a search that never ran.
+      if (isSearchable(query)) {
         emoji = '🔍';
         titleKey = 'empty.search.title';
         hintKey = 'empty.search.hint';
