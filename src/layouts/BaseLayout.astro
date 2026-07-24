@@ -1,6 +1,10 @@
 ---
 import '@fontsource-variable/nunito-sans';
 import '../styles/global.css';
+// The one subset every page actually needs: Catalan, Spanish and English all
+// live inside `latin`. Imported as a URL so the preload below points at the
+// same hashed asset the stylesheet requests, instead of a second copy.
+import nunitoSansLatin from '@fontsource-variable/nunito-sans/files/nunito-sans-latin-wght-normal.woff2?url';
 import IconSprite from '../components/IconSprite.astro';
 import { createTranslator } from '../lib/i18n.ts';
 import { signLanguageOf } from '../lib/types.ts';
@@ -47,6 +51,20 @@ const canonical = new URL(localeHref(path, language), Astro.site);
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
     <meta name="color-scheme" content="light dark" />
+    {
+      /*
+      Without this the browser paints in the system font, the web font arrives
+      and every line of text reflows: a 0.167 layout shift on the text-only
+      pages, which is a visible jump for the reader and the one metric that
+      failed the performance budget. Preloading gets the font in before first
+      paint, so `font-display: swap` has nothing left to swap.
+
+      `crossorigin` is not optional: fonts are fetched in CORS mode even from
+      our own origin, and without it the preload is simply ignored and the file
+      downloaded a second time.
+    */
+    }
+    <link rel="preload" href={nunitoSansLatin} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={canonical} />
     {/* Tell search engines about the other language versions of this page. */}
