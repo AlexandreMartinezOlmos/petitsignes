@@ -2,10 +2,13 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import { SITE_ORIGIN, assertOrigin } from './src/lib/site.ts';
 
-// The canonical origin is only needed for absolute URLs (sitemap, Open Graph).
-// Override it per environment so the build stays portable across machines.
-const site = process.env.SITE_URL ?? 'https://petitsignes.pages.dev';
+// The canonical origin (canonical links, hreflang, Open Graph). It is defined
+// in src/lib/site.ts so that changing domain is a reviewed commit rather than a
+// hosting-dashboard setting nobody can see; SITE_URL overrides it for preview
+// deployments, which need their own origin and are not indexed.
+const site = assertOrigin(process.env.SITE_URL ?? SITE_ORIGIN);
 
 export default defineConfig({
   site,
