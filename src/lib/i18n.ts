@@ -77,9 +77,24 @@ const MESSAGES = {
     'player.unavailable':
       'No hem pogut carregar el reproductor. Pot ser una extensió del navegador o la connexió: el signe també es pot veure al lloc original.',
 
+    'progress.title': 'Les teves dades',
+    'progress.intro':
+      'El teu progrés es desa només en aquest navegador: no hi ha comptes ni servidor. Si canvies de dispositiu o esborres les dades del navegador, es perd. Amb aquests botons te’l pots endur.',
+    'progress.favoritesCount': '{count} preferits',
+    'progress.favoritesCountOne': '1 preferit',
+    'progress.learnedCount': '{count} signes apresos',
+    'progress.learnedCountOne': '1 signe après',
     'progress.export': 'Exporta el progrés',
+    'progress.exportHint': 'Descarrega un fitxer JSON amb els teus preferits i signes apresos.',
     'progress.import': 'Importa el progrés',
+    'progress.importHint':
+      'Tria un fitxer exportat abans. Substituirà el progrés d’aquest navegador.',
+    'progress.imported': 'Progrés importat: {summary}.',
+    'progress.importError': 'Aquest fitxer no sembla una exportació de Petits Signes.',
     'progress.reset': 'Reinicia el progrés',
+    'progress.resetHint':
+      'Esborra preferits i signes apresos d’aquest navegador. No es pot desfer.',
+    'progress.resetDone': 'S’ha esborrat el progrés d’aquest navegador.',
     'progress.resetConfirm': 'Segur que vols esborrar preferits i signes apresos?',
 
     'firstSigns.title': 'Primers signes',
@@ -153,9 +168,24 @@ const MESSAGES = {
     'player.unavailable':
       'No hemos podido cargar el reproductor. Puede ser una extensión del navegador o la conexión: el signo también se puede ver en el sitio original.',
 
+    'progress.title': 'Tus datos',
+    'progress.intro':
+      'Tu progreso se guarda solo en este navegador: no hay cuentas ni servidor. Si cambias de dispositivo o borras los datos del navegador, se pierde. Con estos botones puedes llevártelo.',
+    'progress.favoritesCount': '{count} favoritos',
+    'progress.favoritesCountOne': '1 favorito',
+    'progress.learnedCount': '{count} signos aprendidos',
+    'progress.learnedCountOne': '1 signo aprendido',
     'progress.export': 'Exportar el progreso',
+    'progress.exportHint': 'Descarga un archivo JSON con tus favoritos y signos aprendidos.',
     'progress.import': 'Importar el progreso',
+    'progress.importHint':
+      'Elige un archivo exportado antes. Sustituirá el progreso de este navegador.',
+    'progress.imported': 'Progreso importado: {summary}.',
+    'progress.importError': 'Este archivo no parece una exportación de Petits Signes.',
     'progress.reset': 'Reiniciar el progreso',
+    'progress.resetHint':
+      'Borra favoritos y signos aprendidos de este navegador. No se puede deshacer.',
+    'progress.resetDone': 'Se ha borrado el progreso de este navegador.',
     'progress.resetConfirm': '¿Seguro que quieres borrar favoritos y signos aprendidos?',
 
     'firstSigns.title': 'Primeros signos',
@@ -229,9 +259,24 @@ const MESSAGES = {
     'player.unavailable':
       'The player could not be loaded. It may be a browser extension or the connection: the sign can also be watched at its original site.',
 
+    'progress.title': 'Your data',
+    'progress.intro':
+      'Your progress is stored in this browser only: there are no accounts and no server. Change device or clear your browser data and it is gone. These buttons let you take it with you.',
+    'progress.favoritesCount': '{count} favourites',
+    'progress.favoritesCountOne': '1 favourite',
+    'progress.learnedCount': '{count} learned signs',
+    'progress.learnedCountOne': '1 learned sign',
     'progress.export': 'Export progress',
+    'progress.exportHint': 'Downloads a JSON file with your favourites and learned signs.',
     'progress.import': 'Import progress',
+    'progress.importHint':
+      'Pick a file you exported earlier. It replaces the progress in this browser.',
+    'progress.imported': 'Progress imported: {summary}.',
+    'progress.importError': 'This file does not look like a Petits Signes export.',
     'progress.reset': 'Reset progress',
+    'progress.resetHint':
+      'Deletes favourites and learned signs from this browser. This cannot be undone.',
+    'progress.resetDone': 'The progress in this browser has been deleted.',
     'progress.resetConfirm': 'Delete favourites and learned signs?',
 
     'firstSigns.title': 'First signs',
