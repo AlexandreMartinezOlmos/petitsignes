@@ -23,12 +23,11 @@ const MESSAGES = {
     'nav.home': 'Inici',
     'nav.accessibility': 'Accessibilitat',
 
-    'hero.title': 'Parla amb el teu nadó',
-    'hero.titleAccent': 'abans que parli',
+    'hero.title': "Comunica't amb el teu nadó",
+    'hero.titleAccent': 'molt abans de la primera paraula',
     'hero.lead':
-      'Signes bàsics en llengua de signes catalana, triats per al dia a dia amb un nadó. Comença pels dotze primers.',
+      'Signes reals de la llengua de signes catalana per al dia a dia: menjar, dormir, més, gràcies. Gratis i sense comptes. Comença pels dotze essencials.',
     'hero.stat.signs': 'signes',
-    'hero.stat.withVideo': 'amb vídeo',
     'hero.stat.learned': 'apresos',
 
     'search.label': 'Cerca un signe',
@@ -91,12 +90,11 @@ const MESSAGES = {
     'nav.home': 'Inicio',
     'nav.accessibility': 'Accesibilidad',
 
-    'hero.title': 'Habla con tu bebé',
-    'hero.titleAccent': 'antes de que hable',
+    'hero.title': 'Comunícate con tu bebé',
+    'hero.titleAccent': 'mucho antes de la primera palabra',
     'hero.lead':
-      'Signos básicos en lengua de signos española, elegidos para el día a día con un bebé. Empieza por los doce primeros.',
+      'Signos reales de la lengua de signos española para el día a día: comer, dormir, más, gracias. Gratis y sin cuentas. Empieza por los doce esenciales.',
     'hero.stat.signs': 'signos',
-    'hero.stat.withVideo': 'con vídeo',
     'hero.stat.learned': 'aprendidos',
 
     'search.label': 'Buscar un signo',
@@ -159,11 +157,11 @@ const MESSAGES = {
     'nav.home': 'Home',
     'nav.accessibility': 'Accessibility',
 
-    'hero.title': 'Talk with your baby',
-    'hero.titleAccent': 'before they can speak',
-    'hero.lead': 'Basic signs chosen for everyday life with a baby. Start with the first twelve.',
+    'hero.title': 'Connect with your baby',
+    'hero.titleAccent': 'long before their first word',
+    'hero.lead':
+      'Real signs for everyday moments: eat, sleep, more, thank you. Free, no sign-up. Start with the twelve essentials.',
     'hero.stat.signs': 'signs',
-    'hero.stat.withVideo': 'with video',
     'hero.stat.learned': 'learned',
 
     'search.label': 'Search for a sign',
