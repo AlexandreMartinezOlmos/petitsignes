@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ANALYTICS_EVENTS, countEvent } from '../lib/analytics.ts';
 import { createTranslator } from '../lib/i18n.ts';
 import { PLAY_EVENT, type PlayRequestDetail } from '../lib/catalogue-grid.ts';
 import {
@@ -134,7 +135,11 @@ export default function SignVideoDialog({ language }: Props) {
         });
       })
       .catch(() => {
-        if (!cancelled) setLoadFailed(true);
+        if (cancelled) return;
+        // Worth measuring: if this is common, the embedded delivery is failing
+        // a real share of visitors and the fallback is carrying the feature.
+        countEvent(ANALYTICS_EVENTS.playerUnavailable);
+        setLoadFailed(true);
       });
 
     return () => {

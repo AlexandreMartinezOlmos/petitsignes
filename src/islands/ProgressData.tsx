@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useState } from 'react';
+import { ANALYTICS_EVENTS, countEvent } from '../lib/analytics.ts';
 import { createTranslator, type MessageKey, type Translator } from '../lib/i18n.ts';
 import { downloadJson, progressFileName } from '../lib/progress-file.ts';
 import { getProgressStore } from '../lib/stores.ts';
@@ -63,6 +64,7 @@ export default function ProgressData({ language }: Props) {
     void (async () => {
       const contents = await getProgressStore().export();
       downloadJson(contents, progressFileName());
+      countEvent(ANALYTICS_EVENTS.progressExported);
     })();
   }, []);
 
@@ -82,6 +84,7 @@ export default function ProgressData({ language }: Props) {
             store.getFavorites(),
             store.getLearned(),
           ]);
+          countEvent(ANALYTICS_EVENTS.progressImported);
           setFeedback({
             kind: 'status',
             message: t('progress.imported', {
@@ -105,6 +108,7 @@ export default function ProgressData({ language }: Props) {
 
     void (async () => {
       await getProgressStore().reset();
+      countEvent(ANALYTICS_EVENTS.progressReset);
       setFeedback({ kind: 'status', message: t('progress.resetDone') });
     })();
   }, [t]);

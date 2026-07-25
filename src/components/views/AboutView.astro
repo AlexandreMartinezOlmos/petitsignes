@@ -25,13 +25,16 @@ const copy = {
     principles: [
       'Cap signe inventat. Cada signe ve d’una font oficial verificable; si no en tenim, la fitxa es queda sense vídeo en lloc d’ensenyar-ne un de dubtós.',
       'Mai substituïm el signe d’una llengua pel de l’altra: la LSC i la LSE són llengües diferents, amb gestos diferents.',
-      'Gratuït, sense comptes, sense publicitat i sense rastrejar ningú. El teu progrés es desa només al teu dispositiu.',
+      'Gratuït, sense comptes, sense publicitat i sense galetes. El teu progrés es desa només al teu dispositiu.',
       'És una porta d’entrada a llengües reals, no un substitut de l’aprenentatge formal ni de la comunitat sorda.',
     ],
     sourcesTitle: 'D’on surten els signes',
     sourcesBody:
       'Els vídeos no són obra del projecte: provenen de fonts oficials —el Vocabulari bàsic de la LSC de la Generalitat, amb assessorament de la FESOCA, i el DILSE de la Fundación CNSE— i cada fitxa n’indica l’origen.',
     sourcesLink: 'Consulta les fonts i els crèdits',
+    privacyTitle: 'Què mesurem (i què no)',
+    privacyBody:
+      'Per saber si el projecte serveix d’alguna cosa comptem visites de manera anònima i agregada amb GoatCounter: quines pàgines es visiten i quantes vegades es fa servir cada funció. Sense galetes, sense identificadors i sense seguir ningú entre visites — per això no cal cap avís de galetes. No es desa mai el que cerques ni cap dada personal, i el teu progrés no surt del teu dispositiu.',
     openTitle: 'Codi obert',
     openBody:
       'Petits Signes és programari lliure. Qualsevol pot veure com està fet, proposar millores o avisar d’un error —en un signe, una traducció o l’accessibilitat— obrint una incidència al repositori.',
@@ -48,13 +51,16 @@ const copy = {
     principles: [
       'Ningún signo inventado. Cada signo procede de una fuente oficial verificable; si no la tenemos, la ficha se queda sin vídeo en lugar de enseñar uno dudoso.',
       'Nunca sustituimos el signo de una lengua por el de la otra: la LSC y la LSE son lenguas distintas, con gestos distintos.',
-      'Gratis, sin cuentas, sin publicidad y sin rastrear a nadie. Tu progreso se guarda solo en tu dispositivo.',
+      'Gratis, sin cuentas, sin publicidad y sin cookies. Tu progreso se guarda solo en tu dispositivo.',
       'Es una puerta de entrada a lenguas reales, no un sustituto del aprendizaje formal ni de la comunidad sorda.',
     ],
     sourcesTitle: 'De dónde salen los signos',
     sourcesBody:
       'Los vídeos no son obra del proyecto: proceden de fuentes oficiales —el Vocabulari bàsic de la LSC de la Generalitat, con asesoramiento de FESOCA, y el DILSE de la Fundación CNSE— y cada ficha indica su origen.',
     sourcesLink: 'Consulta las fuentes y los créditos',
+    privacyTitle: 'Qué medimos (y qué no)',
+    privacyBody:
+      'Para saber si el proyecto sirve de algo contamos visitas de forma anónima y agregada con GoatCounter: qué páginas se visitan y cuántas veces se usa cada función. Sin cookies, sin identificadores y sin seguir a nadie entre visitas — por eso no hace falta ningún aviso de cookies. Nunca se guarda lo que buscas ni ningún dato personal, y tu progreso no sale de tu dispositivo.',
     openTitle: 'Código abierto',
     openBody:
       'Petits Signes es software libre. Cualquiera puede ver cómo está hecho, proponer mejoras o avisar de un error —en un signo, una traducción o la accesibilidad— abriendo una incidencia en el repositorio.',
@@ -91,6 +97,9 @@ const c = copy[language];
          can act on. `client:visible` keeps it off the catalogue's JS budget. */
     }
     <ProgressData language={language} client:visible />
+
+    <h2 class="mt-8 text-xl font-bold">{c.privacyTitle}</h2>
+    <p class="mt-2">{c.privacyBody}</p>
 
     <h2 class="mt-8 text-xl font-bold">{c.openTitle}</h2>
     <p class="mt-2">{c.openBody}</p>

@@ -15,7 +15,7 @@ import {
   localeHref,
   type RoutedLocale,
 } from '../lib/routing.ts';
-import { REPO_URL } from '../lib/site.ts';
+import { ANALYTICS_ENDPOINT, ANALYTICS_SCRIPT, REPO_URL, analyticsHost } from '../lib/site.ts';
 
 interface Props {
   /** The routed interface language of this page. */
@@ -86,6 +86,33 @@ const canonical = new URL(localeHref(path, language), Astro.site);
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={language} />
+
+    {
+      /*
+      Anonymous, cookieless hit counting (see src/lib/analytics.ts).
+
+      Loaded from a script rather than a plain <script> tag because the same
+      build is served from production and from every branch preview: without
+      the host check, my own testing on `develop.…pages.dev` would be counted
+      as real usage. Localhost needs no guard — GoatCounter ignores local
+      addresses on its own.
+
+      `is:inline` keeps this out of the bundle: it must run as-is, before any
+      island hydrates.
+    */
+    }
+    <script
+      is:inline
+      define:vars={{ host: analyticsHost(), endpoint: ANALYTICS_ENDPOINT, src: ANALYTICS_SCRIPT }}
+    >
+      if (location.hostname === host) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = src;
+        script.dataset.goatcounter = endpoint;
+        document.head.appendChild(script);
+      }
+    </script>
   </head>
 
   <body class="min-h-dvh">
