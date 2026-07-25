@@ -18,7 +18,7 @@ describe('youtubeId', () => {
     expect(youtubeId('https://www.youtube-nocookie.com/watch?v=j7EYGZt-CJc')).toBe('j7EYGZt-CJc');
   });
 
-  // A malformed entry must not play something arbitrary (CLAUDE.md §2.1).
+  // A malformed entry must not play something arbitrary.
   it('returns null for a non-YouTube URL', () => {
     expect(youtubeId('https://fundacioncnse-dilse.org/?buscar=leche')).toBeNull();
   });

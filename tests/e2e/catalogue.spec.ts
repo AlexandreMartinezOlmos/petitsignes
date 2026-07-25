@@ -172,7 +172,7 @@ test.describe('video delivery', () => {
       .click();
 
   // Nothing is ever served from our own domain: LSC embeds the source's YouTube
-  // player, LSE only links out (docs/permisos/).
+  // player, LSE only links out.
   test('an LSC sign embeds the nocookie player, and nothing loads YouTube up front', async ({
     page,
   }) => {

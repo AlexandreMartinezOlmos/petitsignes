@@ -19,8 +19,7 @@ const t = createTranslator(language);
 const label = sign.labels[language];
 
 /**
- * The default face of the card is always the static poster, never the video
- * (CLAUDE.md §4.3).
+ * The default face of the card is always the static poster, never the video.
  *
  * Only the page's own sign language is rendered. The interface language is
  * fixed at build time and lives in the URL (`/` → LSC, `/es/` → LSE), so the
@@ -96,7 +95,7 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
           </button>
         ) : (
           /* This source only allows linking to its original entry, never
-             embedding or re-hosting (docs/permisos/). */
+             embedding or re-hosting. */
           <a
             class="sign-card__cta sign-card__cta--external"
             href={video.videoUrl}

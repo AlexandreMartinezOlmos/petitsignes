@@ -1,8 +1,7 @@
 # Arquitectura
 
 Decisiones estructurales y por qué. Para añadir o corregir contenido, ver
-[`contenido.md`](contenido.md); para las condiciones de uso de los vídeos,
-[`permisos/`](permisos/README.md).
+[`contenido.md`](contenido.md).
 
 ## El problema de fondo
 
@@ -177,14 +176,31 @@ en tema oscuro, más Lighthouse con presupuestos que rompen el CI.
 
 ## Entrega de vídeo: nada se aloja aquí
 
-Las condiciones de las dos fuentes no permiten descargar, transformar ni realojar los vídeos
-(el análisis está en [`permisos/`](permisos/README.md)), así que cada realización declara en el
-dato **cómo puede mostrarse legalmente**:
+Los vídeos **no son del proyecto** y ninguna de las dos fuentes permite descargarlos,
+transformarlos ni realojarlos:
+
+- **DILSE (Fundación CNSE, LSE).** Su [aviso legal](https://fundacioncnse-dilse.org/aviso-legal.php)
+  autoriza la descarga solo para uso «personal y privado», y prohíbe expresamente la distribución,
+  la comunicación pública, la transformación y instalar los contenidos en un servidor accesible
+  por terceros. Los ficheros son `.mov`, que habría que transcodificar para la web — y transformar
+  también está prohibido. El pie de su web, en cambio, muestra una licencia CC BY-NC-SA 3.0, que sí
+  permitiría compartir: **las dos cosas se contradicen**, y ante la contradicción se aplica lo más
+  restrictivo.
+- **Vocabulari bàsic de la LSC (Generalitat / FESOCA).** Los vídeos están en YouTube. Descargarlos
+  va contra las condiciones de YouTube, al margen de la licencia del contenido. El uso previsto es
+  incrustarlos.
+
+Por eso cada realización declara en el dato **cómo puede mostrarse legalmente**:
 
 | `delivery` | Qué hace la tarjeta | Se usa en |
 |---|---|---|
 | `youtube-embed` | Abre el reproductor incrustado en un modal | LSC (Gencat publicó los vídeos en YouTube) |
 | `external-link` | Enlaza a la ficha original, sin reproducir | LSE (DILSE solo permite enlazar) |
+
+Ninguno de los dos usos requiere autorización por escrito: incrustar es para lo que Gencat activó
+la inserción al publicar en YouTube, y enlazar a una página pública nunca la ha necesitado. Sí
+haría falta —y habría que archivarla antes de tocar nada— para descargar, transcodificar, realojar
+o extraer fotogramas.
 
 El reproductor usa la **IFrame Player API** de YouTube (ver [`../src/lib/youtube.ts`](../src/lib/youtube.ts)),
 cargada **solo al abrir el modal** y contra el host `youtube-nocookie.com`: navegar el catálogo
@@ -205,3 +221,7 @@ Consecuencia asumida: sin derecho a extraer fotogramas, `posterUrl` es opcional 
 en todas las fichas. La cara de la tarjeta es el marcador neutro de categoría. El campo sigue en
 el esquema porque si algún día se consigue el permiso, rellenarlo es un cambio de datos y no de
 código.
+
+**Nunca se sustituye por una ilustración del gesto.** Enseñaría configuraciones de mano
+incorrectas, que es el daño exacto que este proyecto existe para evitar. Una tarjeta sin imagen
+no es trabajo pendiente: es la decisión correcta.
