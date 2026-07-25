@@ -114,17 +114,15 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
   </div>
 
   <div class="sign-card__header">
-    <div class="min-w-0">
-      <h2 class="sign-card__title" title={label}>{label}</h2>
-      <span class="sign-card__chip" data-category={sign.category}>
-        <svg class="icon-sm" aria-hidden="true" focusable="false">
-          <use href={`#i-${category.icon}`}></use>
-        </svg>
-        {category.labels[language]}
-      </span>
-    </div>
+    <h2 class="sign-card__title">{label}</h2>
+    <span class="sign-card__chip" data-category={sign.category}>
+      <svg class="icon-sm" aria-hidden="true" focusable="false">
+        <use href={`#i-${category.icon}`}></use>
+      </svg>
+      {category.labels[language]}
+    </span>
 
-    <div class="flex shrink-0 gap-1">
+    <div class="sign-card__toggles">
       <button
         type="button"
         class="sign-card__toggle"
