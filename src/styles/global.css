@@ -789,23 +789,37 @@
   }
 }
 
+/* The word stacks above its toggles rather than sharing a row with them.
+   Side by side, the two 44px targets took 92px of a 132px content box on a
+   375px screen, leaving 32px for the title: "dormir" and even "més" were
+   ellipsised. The word is the whole point of the card, so it gets the full
+   width, and the toggles drop to where a thumb actually reaches. */
 .sign-card__header {
   order: 2;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.5rem;
   padding: 0.875rem 1rem 0.5rem;
 }
 
 .sign-card__title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-size: var(--text-lg);
   font-weight: 700;
   letter-spacing: -0.015em;
   line-height: 1.25;
+  /* Long entries ("una altra vegada") wrap onto a second line. Truncating
+     would hide the one thing the visitor came to read. */
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Pulled left by the buttons' own padding (44px target around a 20px icon),
+   so the star lines up with the first letter of the word above it. */
+.sign-card__toggles {
+  display: flex;
+  gap: 0.25rem;
+  margin-block-start: 0.15rem;
+  margin-inline-start: -0.75rem;
 }
 
 .sign-card__chip {
