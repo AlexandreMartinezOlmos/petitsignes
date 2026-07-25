@@ -1,5 +1,7 @@
 # Petits Signes
 
+**[petitsignes.cat](https://petitsignes.cat)**
+
 Web **gratuita y de código abierto** para que madres, padres, cuidadores y educadores oyentes
 aprendan vocabulario básico de **LSC** (Llengua de Signes Catalana) y **LSE** (Lengua de Signos
 Española) y lo usen con bebés antes de que hablen (aprox. 6–24 meses).
@@ -148,7 +150,7 @@ específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo 
   al navegador.
 - Todo el progreso (favoritos, aprendidos) vive en `localStorage` del navegador, detrás de una
   interfaz `ProgressStore` — nada se envía a ningún servidor. Puedes **exportarlo, importarlo o
-  borrarlo** desde [la página del proyecto](https://petitsignes.pages.dev/el-projecte/): es la
+  borrarlo** desde [la página del proyecto](https://petitsignes.cat/el-projecte/): es la
   única manera de llevártelo a otro dispositivo, porque no hay cuentas.
 
 ## Gestionar el vocabulario
@@ -227,6 +229,13 @@ unitarios, end-to-end, accesibilidad con axe y presupuestos de Lighthouse que **
 si bajan de 95 en cualquiera de las cuatro categorías (rendimiento, accesibilidad, buenas
 prácticas, SEO). Lighthouse mide el mismo artefacto que produce el trabajo de calidad, no una
 segunda compilación.
+
+**`main` está protegida.** No se puede empujar directamente: todo entra por pull request y con los
+tres trabajos del CI en verde, la rama tiene que estar al día con `main`, y no se admiten
+force-push ni borrado. La regla se aplica también a quien administra el repositorio — de lo
+contrario, siendo un proyecto con un solo mantenedor, no protegería de nada.
+
+El flujo es Gitflow: `feature/*` → `develop` → pull request → `main`.
 
 ## Contribuir
 

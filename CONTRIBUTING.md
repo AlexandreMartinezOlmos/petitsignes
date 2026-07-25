@@ -36,6 +36,14 @@ npm ci
 npm run dev
 ```
 
+### Ramas
+
+El proyecto usa Gitflow: `feature/*` → `develop` → pull request → `main`. Parte siempre de
+`develop`, nunca de `main`, y dirige tu pull request a `develop`.
+
+`main` está protegida: solo entra por pull request, con los tres trabajos del CI en verde, y sin
+force-push ni borrado. Es la rama que sirve producción.
+
 Antes de abrir el PR:
 
 ```bash
