@@ -12,13 +12,15 @@ export const REPO_ISSUES_URL = `${REPO_URL}/issues`;
  * It lives here, in the repository, and not only in a hosting dashboard: this
  * is the value that decides which domain search engines are told is the real
  * one. Pointing a new domain at the site without changing it would leave the
- * whole site declaring `pages.dev` as canonical — a failure with no error
- * message, visible only weeks later in the index.
+ * whole site declaring the previous domain as canonical — a failure with no
+ * error message, visible only weeks later in the index. That is exactly what
+ * happened when `petitsignes.cat` went live: the site served fine on the new
+ * domain while still pointing search engines at `pages.dev`.
  *
  * Changing domain is therefore a reviewed commit. `SITE_URL` still overrides it
  * for preview deployments, which need their own origin and are not indexed.
  */
-export const SITE_ORIGIN = 'https://petitsignes.pages.dev';
+export const SITE_ORIGIN = 'https://petitsignes.cat';
 
 /**
  * Where anonymous hit counts are sent, and the only host they are sent from.
