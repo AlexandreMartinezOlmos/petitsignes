@@ -228,6 +228,13 @@ si bajan de 95 en cualquiera de las cuatro categorías (rendimiento, accesibilid
 prácticas, SEO). Lighthouse mide el mismo artefacto que produce el trabajo de calidad, no una
 segunda compilación.
 
+**`main` está protegida.** No se puede empujar directamente: todo entra por pull request y con los
+tres trabajos del CI en verde, la rama tiene que estar al día con `main`, y no se admiten
+force-push ni borrado. La regla se aplica también a quien administra el repositorio — de lo
+contrario, siendo un proyecto con un solo mantenedor, no protegería de nada.
+
+El flujo es Gitflow: `feature/*` → `develop` → pull request → `main`.
+
 ## Contribuir
 
 Se aceptan correcciones de signos **aportando siempre la fuente oficial** — no hace falta saber
