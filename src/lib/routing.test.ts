@@ -53,7 +53,7 @@ describe('routed locale metadata', () => {
   });
 
   // Adding a locale without mapping it to a sign language would render cards
-  // with no video block at all (CLAUDE.md §4.2).
+  // with no video block at all.
   it('maps every routed locale to a sign language', () => {
     for (const locale of ROUTED_LOCALES) {
       expect(LANGUAGE_TO_SIGN_LANGUAGE[locale]).toBeDefined();

@@ -192,4 +192,4 @@ vídeos cargados están en `draft` a la espera de que alguien vea cada clip. El 
 con los enlaces clicables, se genera en [`vocabulari.md`](vocabulari.md).
 
 Las condiciones de reutilización de cada fuente están analizadas en
-[`permisos/`](permisos/README.md).
+[`arquitectura.md`](arquitectura.md#entrega-de-vídeo-nada-se-aloja-aquí).

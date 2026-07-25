@@ -14,7 +14,7 @@
  *   every call here has to be a silent no-op in that case. Analytics may never
  *   be load-bearing for a feature.
  *
- * See CLAUDE.md §2.2 and the project page, which describe this to visitors.
+ * The project page describes all of this to visitors, in these terms.
  */
 
 /**

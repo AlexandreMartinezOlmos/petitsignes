@@ -5,8 +5,7 @@
  * already goes through this module so that adding the routes later is a change
  * to pages only — not to every component.
  *
- * This is the TEXT axis. It is unrelated to the sign language of the videos
- * (CLAUDE.md §4.2).
+ * This is the TEXT axis. It is unrelated to the sign language of the videos.
  */
 
 import { DEFAULT_LANGUAGE, LANGUAGES, type Language } from './types.ts';

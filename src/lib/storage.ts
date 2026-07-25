@@ -2,7 +2,7 @@
  * Local progress persistence.
  *
  * Everything goes through the `ProgressStore` interface — no component touches
- * `localStorage` directly (CLAUDE.md §4.1). The methods are async from day one
+ * `localStorage` directly. The methods are async from day one
  * so that a future remote implementation is a new class, not a rewrite.
  */
 
@@ -42,7 +42,7 @@ export const MIGRATIONS: Readonly<Record<number, (raw: Record<string, unknown>) 
 export interface Preferences {
   /** Interface text language. */
   language: Language;
-  /** Sign language of the videos. Independent axis (CLAUDE.md §4.2). */
+  /** Sign language of the videos. Independent axis. */
   signLanguage: SignLanguage;
 }
 

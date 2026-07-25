@@ -752,7 +752,7 @@
 }
 
 /* Shown while a sign has no still image: a category-tinted panel with its icon.
-   Never an invented depiction of the gesture (CLAUDE.md §2.1). */
+   Never an invented depiction of the gesture. */
 .sign-card__placeholder {
   position: relative;
   display: grid;

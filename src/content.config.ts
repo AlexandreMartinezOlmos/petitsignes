@@ -25,7 +25,7 @@ void _allLanguagesCovered;
 
 /**
  * One signed realisation of a concept. Attribution fields are required: a video
- * without a verifiable source cannot ship (CLAUDE.md §2.1, §2.4).
+ * without a verifiable source cannot ship.
  */
 const signVideo = z
   .object({

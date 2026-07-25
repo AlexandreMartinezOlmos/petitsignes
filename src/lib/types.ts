@@ -2,7 +2,7 @@
  * Core domain types.
  *
  * The two language axes are deliberately separate and must never be derived
- * from one another (CLAUDE.md §4.2):
+ * from one another:
  *   - `Language`     — the language of the interface TEXT.
  *   - `SignLanguage` — the SIGN language of the video.
  */
@@ -76,7 +76,7 @@ export type VideoStatus = (typeof VIDEO_STATUSES)[number];
 
 /**
  * How a video may legally be shown. The sources do not allow re-hosting, so
- * nothing is ever served from our own domain (see docs/permisos/).
+ * nothing is ever served from our own domain.
  *
  * - `youtube-embed` — the source published it on YouTube; embedding is the
  *   intended use. Loaded only after the user asks for it.
@@ -95,7 +95,7 @@ export interface SignVideo {
   videoUrl: string;
   /**
    * Still image of the gesture. Optional: without re-hosting rights we cannot
-   * extract a frame, and inventing one is forbidden (CLAUDE.md §2.1). When it is
+   * extract a frame, and inventing one is forbidden. When it is
    * missing the card shows a neutral category marker.
    */
   posterUrl?: string;

@@ -16,8 +16,7 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
-# The CI runner is the source of truth: if it fails here, it is broken
-# (CLAUDE.md §2.3).
+# The CI runner is the source of truth: if it fails here, it is broken.
 env:
   ASTRO_TELEMETRY_DISABLED: '1'
 

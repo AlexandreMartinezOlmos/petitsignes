@@ -29,5 +29,6 @@ This licence covers the SOURCE CODE only.
 - The curated data (word list, categories, metadata) is licensed CC BY-SA 4.0.
 - The sign VIDEOS and IMAGES are NOT covered by this licence. They belong to
   their respective sources (Fundación CNSE / DILSE, Generalitat de Catalunya)
-  and are governed by each source's own reuse terms. See docs/permisos/ and the
-  credits page of the site.
+  and are governed by each source's own reuse terms. Nothing is re-hosted here:
+  LSC is embedded from the source's own YouTube channel and LSE is only linked.
+  See docs/arquitectura.md and the credits page of the site.
