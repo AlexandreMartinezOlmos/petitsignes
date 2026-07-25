@@ -20,6 +20,29 @@ export const REPO_ISSUES_URL = `${REPO_URL}/issues`;
  */
 export const SITE_ORIGIN = 'https://petitsignes.pages.dev';
 
+/**
+ * Where anonymous hit counts are sent, and the only host they are sent from.
+ *
+ * The same build is deployed to production and to every branch preview, so the
+ * decision has to be made in the browser: counting from `develop.…pages.dev`
+ * would mix my own testing into the real numbers. Localhost needs no guard —
+ * GoatCounter's script ignores local addresses unless told otherwise.
+ */
+export const ANALYTICS_ENDPOINT = 'https://petitsignes.goatcounter.com/count';
+export const ANALYTICS_SCRIPT = 'https://gc.zgo.at/count.js';
+
+/**
+ * The single host allowed to report analytics.
+ *
+ * Deliberately reads `SITE_ORIGIN` and **not** the `SITE_URL` override: a
+ * preview built with its own origin must still refuse to count, or every
+ * branch deployment would report as production. Analytics follows the
+ * canonical domain, which only changes through a reviewed commit.
+ */
+export function analyticsHost(origin: string = SITE_ORIGIN): string {
+  return new URL(origin).hostname;
+}
+
 /** Trailing slashes and paths break `new URL(path, origin)`; reject them early. */
 export function assertOrigin(value: string): string {
   const url = new URL(value);

@@ -4,7 +4,9 @@ Web **gratuita y de código abierto** para que madres, padres, cuidadores y educ
 aprendan vocabulario básico de **LSC** (Llengua de Signes Catalana) y **LSE** (Lengua de Signos
 Española) y lo usen con bebés antes de que hablen (aprox. 6–24 meses).
 
-Sitio 100% estático. Sin backend, sin cuentas, sin cookies de seguimiento, sin publicidad.
+Sitio 100% estático. Sin backend, sin cuentas, sin cookies, sin publicidad. La única medición
+es un recuento anónimo y agregado de visitas ([GoatCounter](https://www.goatcounter.com/)), sin
+identificadores y sin seguir a nadie entre visitas — por eso no hay aviso de cookies.
 
 > **Estado:** MVP funcional. Catálogo, búsqueda, filtros, progreso local, reproductor e interfaz
 > en catalán y castellano. **180 conceptos con vídeo LSC y 225 con enlace LSE**, de 229 en total.
