@@ -1,5 +1,5 @@
 /**
- * Core domain types (docs/requisitos.md §6.2).
+ * Core domain types.
  *
  * The two language axes are deliberately separate and must never be derived
  * from one another (CLAUDE.md §4.2):

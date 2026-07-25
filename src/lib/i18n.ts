@@ -1,5 +1,5 @@
 /**
- * Interface translations (docs/requisitos.md §4.7).
+ * Interface translations.
  *
  * The routing side of i18n (`/ca`, `/es`, `/en`) is Phase 2, but every string
  * already goes through this module so that adding the routes later is a change

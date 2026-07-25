@@ -13,7 +13,8 @@ const { language } = Astro.props;
 const t = createTranslator(language);
 
 // The reuse terms of the Generalitat require stating when the content was last
-// updated (docs/requisitos.md §5.3), so it is derived from the data itself.
+// updated, so it is derived from the data itself rather than hardcoded: a date
+// typed by hand goes stale silently and breaks the attribution.
 const signEntries = await getCollection('signs');
 const updateDates = signEntries
   .flatMap((entry) => entry.data.videos.map((video) => video.updatedAt))

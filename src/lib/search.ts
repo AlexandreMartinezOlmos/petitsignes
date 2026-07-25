@@ -1,5 +1,5 @@
 /**
- * Client-side search (docs/requisitos.md §4.3).
+ * Client-side search.
  *
  * Accent- and case-insensitive, partial matches, and it looks in every
  * interface language at once so "llet", "leche" and "milk" all find the entry.

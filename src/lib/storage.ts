@@ -1,5 +1,5 @@
 /**
- * Local progress persistence (docs/requisitos.md §4.5).
+ * Local progress persistence.
  *
  * Everything goes through the `ProgressStore` interface — no component touches
  * `localStorage` directly (CLAUDE.md §4.1). The methods are async from day one

@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /* ---------------------------------------------------------------------------
-   Design system (docs/requisitos.md §8)
+   Design system
 
    Three layers, on purpose:
    1. `@theme`        — static scales (type, radii, motion, elevation).

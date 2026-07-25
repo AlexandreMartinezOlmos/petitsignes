@@ -27,8 +27,9 @@ const label = sign.labels[language];
  * other language's block could never be reached anyway — shipping it and
  * hiding it with CSS cost 23% of the page for markup no visitor can see, and
  * put the wrong gesture one style override away from being shown. Leaving it
- * out is what makes the substitution ban of docs/requisitos.md §4.2 structural
- * rather than a convention.
+ * out is what makes the ban structural rather than a convention: LSC and LSE
+ * are different languages with different gestures, and a card must never show
+ * one under the other's label.
  */
 const signLanguage = LANGUAGE_TO_SIGN_LANGUAGE[language];
 const video = sign.videos.find((item) => item.signLanguage === signLanguage);
