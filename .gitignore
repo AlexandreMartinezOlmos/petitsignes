@@ -25,12 +25,10 @@ npm-debug.log*
 .claude/
 CLAUDE.md
 
-# internal docs: spec, content methodology, permissions correspondence.
-# Kept locally; not part of the public repo (may reference contacts and
-# working notes not meant for redistribution). The generated vocabulary
-# catalogue is the exception: it's meant for the public repo.
-docs/*
-!docs/vocabulari.md
+# docs/ is public by default: the code and CI point at these files, so a
+# contributor who clones the repo has to be able to open them. The exception is
+# my own working list, which is personal planning and not project reference.
+docs/pendientes.md
 
 # test artifacts
 coverage/

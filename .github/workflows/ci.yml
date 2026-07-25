@@ -99,8 +99,9 @@ jobs:
           name: dist
           path: dist/
 
-      # Budgets are assertions: dropping below the threshold fails the build
-      # (docs/requisitos.md §4.9, §9).
+      # Budgets are assertions, not reports: dropping below 95 in any of the
+      # four categories fails the build. The target audience browses on
+      # mid-range phones over mobile data, so performance is a requirement.
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12
         with:
