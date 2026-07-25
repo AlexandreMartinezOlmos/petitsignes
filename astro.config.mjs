@@ -12,7 +12,8 @@ const site = assertOrigin(process.env.SITE_URL ?? SITE_ORIGIN);
 
 export default defineConfig({
   site,
-  // Fully static output: no server, no backend (see docs/requisitos.md §3).
+  // Fully static output: no server, no backend, no accounts. All progress is
+  // kept in the visitor's own browser, so there is nothing to run server-side.
   output: 'static',
   // The interface language lives in the URL: `ca` at the root, `es` under
   // `/es/`. Each locale couples to a sign language (see src/lib/routing.ts).

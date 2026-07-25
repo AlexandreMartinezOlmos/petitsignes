@@ -121,8 +121,8 @@ test.describe('interface language', () => {
     );
 
     // A card must never show the LSC block on the LSE route: the signs are
-    // different gestures (docs/requisitos.md §4.2). The block is not merely
-    // hidden — it is not rendered, so no style override can surface it.
+    // different gestures. The block is not merely hidden — it is not rendered,
+    // so no style override can surface it.
     await expect(
       page.locator('.sign-card[data-sign-id="leche"] .sign-card__lang[data-sl="lsc"]'),
     ).toHaveCount(0);

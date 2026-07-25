@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 /**
- * Automated accessibility checks (docs/requisitos.md §4.8).
+ * Automated accessibility checks.
  *
  * axe catches roughly a third of real issues, so this complements — never
  * replaces — manual keyboard and screen reader review.

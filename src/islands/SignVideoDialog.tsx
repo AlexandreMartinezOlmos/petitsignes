@@ -18,7 +18,7 @@ const SPEEDS = [0.5, 1] as const;
 type Speed = (typeof SPEEDS)[number];
 
 /**
- * Full-screen sign player (docs/requisitos.md §4.1, §8).
+ * Full-screen sign player, opened on demand from a card.
  *
  * The videos are not ours and may not be re-hosted, so this embeds the source's
  * own YouTube player through the IFrame API (see `lib/youtube.ts`). Using the
@@ -239,7 +239,8 @@ export default function SignVideoDialog({ language }: Props) {
               ))}
             </div>
 
-            {/* Per-entry attribution is required (docs/requisitos.md §5.3). */}
+            {/* Every sign credits its own source: the videos belong to the
+                dictionaries, and attribution is a condition of using them. */}
             <a
               href={request.sourceUrl}
               target="_blank"
