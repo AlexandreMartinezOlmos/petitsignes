@@ -7,6 +7,7 @@
  */
 
 import type Fuse from 'fuse.js';
+import { ANALYTICS_EVENTS, countEvent } from './analytics.ts';
 import { createSearchIndex, isSearchable, searchSigns, type SearchableSign } from './search.ts';
 import {
   $category,
@@ -174,6 +175,13 @@ export function mountCatalogue(root: HTMLElement): () => void {
     const target = event.target;
     if (!(target instanceof Element)) return;
 
+    // Leaving for the source dictionary is the LSE equivalent of playing a
+    // video, and the only way to tell whether that delivery gets used at all.
+    if (target.closest('a.sign-card__cta--external')) {
+      countEvent(ANALYTICS_EVENTS.openLse);
+      return;
+    }
+
     const button = target.closest<HTMLButtonElement>('button[data-action]');
     if (!button) return;
 
@@ -182,12 +190,21 @@ export function mountCatalogue(root: HTMLElement): () => void {
 
     switch (button.dataset.action) {
       case 'favorite':
+        // Only the additions: a count of removals says little, and the pair
+        // would start to look like a per-visitor history.
+        if (button.getAttribute('aria-pressed') !== 'true') {
+          countEvent(ANALYTICS_EVENTS.addFavorite);
+        }
         void toggleFavorite(signId);
         break;
       case 'learned':
+        if (button.getAttribute('aria-pressed') !== 'true') {
+          countEvent(ANALYTICS_EVENTS.markLearned);
+        }
         void toggleLearned(signId);
         break;
       case 'play':
+        countEvent(ANALYTICS_EVENTS.playLsc);
         root.dispatchEvent(
           new CustomEvent<PlayRequestDetail>(PLAY_EVENT, {
             bubbles: true,
