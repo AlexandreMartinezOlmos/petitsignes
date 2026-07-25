@@ -40,7 +40,7 @@ export default defineConfig([
       globals: { ...globals.browser },
     },
     rules: {
-      // `any` needs an explicit justification (CLAUDE.md §5).
+      // `any` needs an explicit justification.
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': [
         'error',
