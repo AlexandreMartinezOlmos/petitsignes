@@ -26,9 +26,10 @@ npm-debug.log*
 CLAUDE.md
 
 # docs/ is public by default: the code and CI point at these files, so a
-# contributor who clones the repo has to be able to open them. The exception is
-# my own working list, which is personal planning and not project reference.
+# contributor who clones the repo has to be able to open them. The exceptions
+# are my own working notes: personal planning, not project reference.
 docs/pendientes.md
+docs/diseno-glassmorphism.md
 
 # test artifacts
 coverage/
