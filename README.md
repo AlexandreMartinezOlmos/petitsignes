@@ -1,5 +1,7 @@
 # Petits Signes
 
+**[petitsignes.cat](https://petitsignes.cat)**
+
 Web **gratuita y de código abierto** para que madres, padres, cuidadores y educadores oyentes
 aprendan vocabulario básico de **LSC** (Llengua de Signes Catalana) y **LSE** (Lengua de Signos
 Española) y lo usen con bebés antes de que hablen (aprox. 6–24 meses).
@@ -148,7 +150,7 @@ específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo 
   al navegador.
 - Todo el progreso (favoritos, aprendidos) vive en `localStorage` del navegador, detrás de una
   interfaz `ProgressStore` — nada se envía a ningún servidor. Puedes **exportarlo, importarlo o
-  borrarlo** desde [la página del proyecto](https://petitsignes.pages.dev/el-projecte/): es la
+  borrarlo** desde [la página del proyecto](https://petitsignes.cat/el-projecte/): es la
   única manera de llevártelo a otro dispositivo, porque no hay cuentas.
 
 ## Gestionar el vocabulario
