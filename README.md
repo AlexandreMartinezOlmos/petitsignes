@@ -40,9 +40,44 @@ Está pensado para dos públicos:
 2. **Móvil primero.** El uso real es con el bebé en brazos y el móvil en la otra mano.
 3. **Un vistazo basta.** La cara de la tarjeta es una imagen estática; el vídeo es opcional y
    nunca se reproduce solo.
-4. **Sin fricción.** Sin registro, sin muros de pago, sin cuentas.
+4. **Sin fricción.** Sin registro, sin muros de pago, sin cuentas. Y sin rastrear a nadie: la
+   única medición es un recuento anónimo y agregado, detallado en
+   [Privacidad](#privacidad-qué-se-mide-y-qué-no).
 5. **Respeto a la comunidad sorda.** Esto es una puerta de entrada a lenguas reales, no un
    sustituto del aprendizaje formal ni una simplificación de la lengua de signos.
+
+## Privacidad: qué se mide y qué no
+
+Sin cuentas, sin cookies, sin publicidad y sin ningún identificador de visitante. Tu progreso
+(favoritos y signos aprendidos) vive solo en el `localStorage` de tu navegador y **nunca sale de
+tu dispositivo**.
+
+La única medición es un recuento **anónimo y agregado** con
+[GoatCounter](https://www.goatcounter.com/): páginas vistas y cuántas veces se usa cada función.
+No usa cookies ni sigue a nadie entre visitas, por eso el sitio no necesita aviso de cookies.
+
+Estos son **todos** los eventos que se cuentan — la lista completa está en
+[`src/lib/analytics.ts`](src/lib/analytics.ts):
+
+| Evento                      | Qué cuenta                                                   |
+| --------------------------- | ------------------------------------------------------------ |
+| `video-lsc`                 | Se ha reproducido un signo en LSC                            |
+| `enllac-lse`                | Se ha abierto un signo LSE en el diccionario de origen       |
+| `reproductor-no-disponible` | El reproductor no pudo cargar y se ofreció el enlace externo |
+| `preferit-afegit`           | Se ha añadido un signo a favoritos                           |
+| `apres-marcat`              | Se ha marcado un signo como aprendido                        |
+| `progres-exportat`          | Se ha exportado el progreso a un fichero                     |
+| `progres-importat`          | Se ha importado un fichero de progreso                       |
+| `progres-reiniciat`         | Se ha borrado el progreso de este navegador                  |
+
+Lo que **nunca** se envía: lo que escribes en el buscador, qué signo concreto marcas, ni ningún
+dato personal. Tampoco se cuenta cuando _quitas_ un favorito o desmarcas un signo — contar las
+dos direcciones empezaría a parecerse a un historial por persona en lugar de a una medida
+agregada.
+
+Esto no es solo una promesa: `countEvent()` acepta un tipo cerrado de eventos, no una cadena
+libre, así que enviar un término de búsqueda **no compila**. Y la medición solo se activa en el
+dominio de producción, nunca en desarrollo ni en los despliegues de prueba.
 
 ## Fuentes del vocabulario
 
