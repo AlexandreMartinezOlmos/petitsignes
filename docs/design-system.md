@@ -176,20 +176,49 @@ Ver §6. Se combina con la clase del componente: `class="app-header glass"`.
 
 ### `.toolbar` — buscador y filtros
 
-Tres filas: buscador, chips de categoría (scroll horizontal) y filtros de estado. En móvil, todo
-lo que va tras el buscador vive en `.toolbar__filters` y **se pliega al bajar** por el catálogo,
-recuperando ~68 px de un viewport de 812.
+Tres filas: buscador, chips de categoría y filtros de estado. En móvil, todo lo que va tras el
+buscador vive en `.toolbar__filters` y **se pliega al bajar** por el catálogo, recuperando ~68 px
+de un viewport de 812.
 
 Se ocultan de verdad (`visibility: hidden`), no solo se encogen, para que sus controles **salgan
 del orden de tabulación** en vez de convertirse en cosas invisibles a las que tabular. Y
 `:focus-within` en la cabecera los mantiene abiertos mientras el foco esté dentro, así que
 filtrar con teclado nunca cierra los controles bajo los dedos.
 
-### `.chip` y `.chip-quiet` — filtros
+El plegado usa una fila de rejilla animada entre `1fr` y `0fr`, no un `max-block-size`: el
+contenido puede crecer (la lista de categorías se despliega) y un techo fijo lo recortaría. El
+recorte ocurre en `.toolbar__filters-inner`.
+
+### `.chip`, `.chip-quiet` y `.chip--more` — filtros
 
 Botones con `aria-pressed`. Cada grupo necesita **su propio `aria-label`**: dos grupos llamados
 igual son indistinguibles navegando por regiones, y axe no lo detecta porque ambos *tienen*
 etiqueta.
+
+**`.chip-row` envuelve, nunca hace scroll lateral.** Con 17 filtros en una fila desplazable solo
+se veían 3 en una pantalla de 375 px, y los otros 14 quedaban tras cinco pantallas de arrastre
+sin nada que delatara su existencia.
+
+`.chip--more` (borde discontinuo, para que se lea como control y no como un filtro más) despliega
+el resto. Plegado se muestran «Tots», «Primers signes» y **la categoría activa**: sin ella,
+filtrar y seguir leyendo dejaba el catálogo recortado sin explicación a la vista.
+
+> **Los chips ocultos no se renderizan**, no se recortan. Un control invisible pero enfocable es
+> peor que uno ausente. Vale para cualquier cosa que se pliegue en este sistema.
+
+### `.grid-section` — encabezado de grupo
+
+Un `<h2>` que ocupa toda la fila de la rejilla y nombra el grupo que viene: primero la ruta
+curada, después cada categoría. El orden ya existía en el dato; esto solo lo hace visible.
+
+Los encabezados **se quedan cuando hay un filtro activo** y el controlador oculta los que se
+quedan sin tarjetas. Así una búsqueda devuelve resultados agrupados por su categoría en vez de
+una lista plana, y la jerarquía de encabezados no se rompe nunca — por eso el título de la
+tarjeta es `h3`: pertenece a la sección, no va al lado.
+
+Al añadir una sección hay que emitirla desde el mismo listado ya ordenado
+(`CatalogueView.astro`), no declararla aparte: dos fuentes para el mismo agrupamiento solo
+pueden acabar discrepando.
 
 ### `.sign-card__cta` — acción principal
 
