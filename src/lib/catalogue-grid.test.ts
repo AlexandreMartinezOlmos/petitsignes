@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { filterCards, type CardData, type FilterState } from './catalogue-grid.ts';
+import {
+  FIRST_SIGNS_SECTION,
+  filterCards,
+  readCardData,
+  sectionOf,
+  type CardData,
+  type FilterState,
+} from './catalogue-grid.ts';
 import { createSearchIndex } from './search.ts';
 
 const CARDS: CardData[] = [
@@ -126,5 +133,86 @@ describe('filterCards', () => {
   it('falls back to plain filtering when there is no index', () => {
     const visible = filterCards(CARDS, state({ category: 'food' }), null);
     expect(visible.size).toBe(3);
+  });
+});
+
+/**
+ * The grid prints a heading before each run of signs, and the controller uses
+ * this to decide which of those headings still has anything under it. The rule
+ * has to match the order CatalogueView sorts by, or a heading would end up
+ * over the wrong group — or over nothing at all.
+ */
+describe('sectionOf', () => {
+  it('puts a curated first sign under the guided route, not its category', () => {
+    const leche = CARDS.find((card) => card.id === 'leche')!;
+
+    expect(leche.category).toBe('food');
+    expect(sectionOf(leche)).toBe(FIRST_SIGNS_SECTION);
+  });
+
+  it('puts every other sign under its own category', () => {
+    expect(sectionOf(CARDS.find((card) => card.id === 'pan')!)).toBe('food');
+    expect(sectionOf(CARDS.find((card) => card.id === 'perro')!)).toBe('animals');
+  });
+
+  it('assigns every card to exactly one section', () => {
+    // A card in two runs would be printed twice; a card in none would sit
+    // under whichever heading happened to come before it.
+    for (const card of CARDS) {
+      expect(sectionOf(card)).toBeTruthy();
+    }
+    expect(new Set(CARDS.map(sectionOf))).toEqual(
+      new Set([FIRST_SIGNS_SECTION, 'food', 'animals']),
+    );
+  });
+});
+
+/**
+ * The boundary between the static grid and everything that reads it. The
+ * catalogue is never shipped as JSON — it is recovered from the cards' data
+ * attributes — so a card whose markup is incomplete has to be dropped rather
+ * than turned into an entry with holes in it.
+ */
+describe('readCardData', () => {
+  function card(attributes: Record<string, string>): HTMLElement {
+    const element = document.createElement('article');
+    for (const [name, value] of Object.entries(attributes)) {
+      element.dataset[name] = value;
+    }
+    return element;
+  }
+
+  const complete = {
+    signId: 'leche',
+    category: 'food',
+    firstSign: 'true',
+    labelCa: 'llet',
+    labelEs: 'leche',
+    labelEn: 'milk',
+  };
+
+  it('reads a card back out of its attributes', () => {
+    expect(readCardData(card(complete))).toEqual({
+      id: 'leche',
+      category: 'food',
+      isFirstSign: true,
+      labels: { ca: 'llet', es: 'leche', en: 'milk' },
+    });
+  });
+
+  it('treats anything but "true" as not being a first sign', () => {
+    expect(readCardData(card({ ...complete, firstSign: 'false' }))?.isFirstSign).toBe(false);
+
+    // The attribute is always written, but a missing one must not be read as
+    // membership of the curated route.
+    const { firstSign: _omitted, ...withoutFlag } = complete;
+    expect(readCardData(card(withoutFlag))?.isFirstSign).toBe(false);
+  });
+
+  it('drops a card that is missing any field it needs', () => {
+    for (const field of ['signId', 'category', 'labelCa', 'labelEs', 'labelEn'] as const) {
+      const { [field]: _removed, ...rest } = complete;
+      expect(readCardData(card(rest)), `missing ${field}`).toBeNull();
+    }
   });
 });
