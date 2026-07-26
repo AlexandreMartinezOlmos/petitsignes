@@ -773,6 +773,29 @@
 
 /* The category row scrolls horizontally on every screen size. Fading the
    trailing edge signals there is more to reach, without adding a control. */
+/* --- Grid sections ---------------------------------------------------------
+   The catalogue is grouped — the curated route, then one category after
+   another — and these say so. Spans every column so a heading never shares a
+   row with the cards it introduces, and the first one skips its top margin
+   because the hero already provides that space.
+-------------------------------------------------------------------------- */
+.grid-section {
+  grid-column: 1 / -1;
+  margin-block-start: 1.5rem;
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-heavy);
+  letter-spacing: -0.01em;
+  color: var(--color-ink-muted);
+}
+
+.grid-section:first-child {
+  margin-block-start: 0;
+}
+
+.grid-section[hidden] {
+  display: none;
+}
+
 /* Wraps rather than scrolls sideways. A scrolling row put 14 of 17 filters
    off-screen with nothing to suggest they existed; wrapping means the list is
    as long as it is, and the component only renders the chips it is currently

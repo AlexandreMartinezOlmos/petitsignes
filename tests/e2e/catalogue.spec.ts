@@ -380,3 +380,54 @@ test.describe('category filters', () => {
     expect(await overflows()).toBe(false);
   });
 });
+
+/**
+ * The catalogue was already grouped — the curated route, then one category
+ * after another — but nothing said so: thirty-two food words went by with no
+ * indication of where they ended.
+ */
+test.describe('grid sections', () => {
+  const sections = (page: Page) => page.locator('[data-section]:not([hidden])');
+
+  test('every run of signs is introduced by a heading', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    // The curated route plus one per category.
+    await expect(sections(page)).toHaveCount(16);
+    await expect(sections(page).first()).toHaveText('Primers signes');
+  });
+
+  test('a search keeps its results grouped by where they came from', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+    await page.getByPlaceholder(/cerca un signe/i).fill('gos');
+
+    // Not a flat run of matches, and not a wall of empty headings either.
+    await expect(sections(page)).toHaveCount(1);
+    await expect(sections(page)).toHaveText('Animals');
+  });
+
+  test('headings do not survive a filter that empties them', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+    await page.getByPlaceholder(/cerca un signe/i).fill('zzzzzz');
+
+    await expect(sections(page)).toHaveCount(0);
+  });
+
+  test('the heading levels stay in order', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    // A card belongs to a section rather than sitting beside it, so the words
+    // are a level below the headings that introduce them.
+    const levels = await page.evaluate(() =>
+      [...document.querySelectorAll('h1, h2, h3')].map((el) => el.tagName),
+    );
+    expect(levels[0]).toBe('H1');
+    expect(levels[1]).toBe('H2');
+    expect(levels).toContain('H3');
+    expect(levels).not.toContain('H4');
+  });
+});

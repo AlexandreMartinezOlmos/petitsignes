@@ -122,7 +122,11 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
     */
     }
     <div class="sign-card__label">
-      <h2 class="sign-card__title">{label}</h2>
+      {
+        /* h3: the grid is grouped under section headings, and a card belongs to
+          one of them rather than sitting beside it. */
+      }
+      <h3 class="sign-card__title">{label}</h3>
       <span class="sign-card__chip" data-category={sign.category}>
         <svg class="icon-sm" aria-hidden="true" focusable="false">
           <use href={`#i-${category.icon}`}></use>

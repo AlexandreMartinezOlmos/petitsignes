@@ -114,6 +114,17 @@ export function filterCards(
   return visible;
 }
 
+/**
+ * Which run of the grid a card sits under. The curated route comes first and
+ * is its own section, so a first sign is listed there and not again under its
+ * category. Kept in step with the section headings emitted by CatalogueView.
+ */
+export const FIRST_SIGNS_SECTION = 'first-signs';
+
+export function sectionOf(card: CardData): string {
+  return card.isFirstSign ? FIRST_SIGNS_SECTION : card.category;
+}
+
 function setToggleState(button: HTMLButtonElement, pressed: boolean): void {
   button.setAttribute('aria-pressed', String(pressed));
   const label = pressed ? button.dataset.labelOn : button.dataset.labelOff;
@@ -134,11 +145,34 @@ export function mountCatalogue(root: HTMLElement): () => void {
   // Built once from the DOM, so the catalogue is never duplicated in the bundle.
   const index = createSearchIndex(cards);
 
+  // Headings printed between the runs of signs. Which run a card belongs to is
+  // derived rather than stored on the element: the grouping is already implied
+  // by `isFirstSign` and the category, and a third attribute on 229 cards
+  // could only ever disagree with them.
+  const sectionElements = new Map<string, HTMLElement>();
+  for (const element of root.querySelectorAll<HTMLElement>('[data-section]')) {
+    const id = element.dataset.section;
+    if (id) sectionElements.set(id, element);
+  }
+
   function applyFilters(): void {
     const visible = filterCards(cards, readFilterState(), index);
 
     for (const [id, element] of byId) {
       element.hidden = !visible.has(id);
+    }
+
+    // A heading with nothing under it reads as an empty category rather than
+    // as a filtered one, so the populated sections are collected first and the
+    // rest are hidden.
+    if (sectionElements.size > 0) {
+      const populated = new Set<string>();
+      for (const card of cards) {
+        if (visible.has(card.id)) populated.add(sectionOf(card));
+      }
+      for (const [id, element] of sectionElements) {
+        element.hidden = !populated.has(id);
+      }
     }
 
     $visibleCount.set(visible.size);
