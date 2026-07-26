@@ -325,11 +325,7 @@ test.describe('condensing toolbar', () => {
 test.describe('category filters', () => {
   const toggle = (page: Page) => page.locator('.chip--more');
 
-  test('collapsed, the catalogue can still be filtered once expanded', async ({
-    page,
-    viewport,
-  }) => {
-    test.skip((viewport?.width ?? 0) >= 640, 'the list only collapses on phones');
+  test('collapsed, the catalogue can still be filtered once expanded', async ({ page }) => {
     await page.goto('/');
     await waitForHydration(page);
 
@@ -346,11 +342,7 @@ test.describe('category filters', () => {
     expect(after).toBeGreaterThan(0);
   });
 
-  test('the chosen category stays on screen after the list collapses', async ({
-    page,
-    viewport,
-  }) => {
-    test.skip((viewport?.width ?? 0) >= 640, 'the list only collapses on phones');
+  test('the chosen category stays on screen after the list collapses', async ({ page }) => {
     await page.goto('/');
     await waitForHydration(page);
 
@@ -364,11 +356,7 @@ test.describe('category filters', () => {
     await expect(page.getByRole('button', { name: 'Emocions', exact: true })).toBeHidden();
   });
 
-  test('hidden categories are not rendered rather than merely invisible', async ({
-    page,
-    viewport,
-  }) => {
-    test.skip((viewport?.width ?? 0) >= 640, 'the list only collapses on phones');
+  test('hidden categories are not rendered rather than merely invisible', async ({ page }) => {
     await page.goto('/');
     await waitForHydration(page);
 

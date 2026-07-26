@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { createTranslator } from '../lib/i18n.ts';
 import {
@@ -33,9 +33,6 @@ interface Props {
  */
 const STATUS_FILTERS: readonly StatusFilter[] = ['all', 'favorites', 'learned', 'pending'];
 
-/** Matches the `sm` breakpoint the card layout switches at. */
-const WIDE_SCREEN = '(min-width: 40rem)';
-
 export default function CatalogueToolbar({ categories, language, initialCount }: Props) {
   const t = createTranslator(language);
 
@@ -49,29 +46,12 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
 
   const searchInput = useRef<HTMLInputElement>(null);
 
-  // Collapsing the category list buys back vertical space on a phone. On a
-  // wide screen the full list is two lines, so hiding it would cost a click
-  // and save nothing — it starts open there instead.
-  //
-  // `useSyncExternalStore` rather than reading `matchMedia` during render: the
-  // page is built once at build time, so a viewport-dependent first render is
-  // the hydration mismatch this project keeps out of its components. The
-  // server snapshot is `false`, and React reconciles to the real value.
-  const wideScreen = useSyncExternalStore(
-    (onChange) => {
-      const query = window.matchMedia(WIDE_SCREEN);
-      query.addEventListener('change', onChange);
-      return () => query.removeEventListener('change', onChange);
-    },
-    () => window.matchMedia(WIDE_SCREEN).matches,
-    () => false,
-  );
-
-  // Null while the visitor has not expressed a preference, so the viewport
-  // decides; once they open or close it by hand, that wins and a resize does
-  // not undo it.
-  const [openOverride, setOpenOverride] = useState<boolean | null>(null);
-  const categoriesOpen = openOverride ?? wideScreen;
+  // Closed everywhere, not just on phones. Opening it on a wide screen and
+  // then collapsing it the moment a category was picked meant the control
+  // behaved one way on arrival and another way for the rest of the visit —
+  // the same list, two different rules. One rule is easier to trust, and the
+  // toolbar keeps its resting height on every screen.
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   // Collapsed, the list still has to show the category doing the filtering —
   // otherwise picking one and scrolling on leaves the catalogue visibly cut
@@ -211,7 +191,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                       $category.set(active ? null : option.id);
                       $onlyFirstSigns.set(false);
                       // Choosing one answers the question the list was open for.
-                      setOpenOverride(false);
+                      setCategoriesOpen(false);
                     }}
                     aria-pressed={active}
                     className="chip"
@@ -226,7 +206,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                 whole change exists to protect. */}
               <button
                 type="button"
-                onClick={() => setOpenOverride(!categoriesOpen)}
+                onClick={() => setCategoriesOpen(!categoriesOpen)}
                 aria-expanded={categoriesOpen}
                 aria-label={
                   categoriesOpen
