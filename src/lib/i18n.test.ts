@@ -51,6 +51,30 @@ describe('message catalogue', () => {
     }
   });
 
+  /**
+   * WCAG 2.2 §2.5.3 (Label in Name), enforced at the source of the two strings
+   * rather than only on the rendered page.
+   *
+   * The categories button shows `filter.showCategories` and announces
+   * `filter.showCategoriesLabel`. If the announced name does not contain what
+   * is written on the button, speech control cannot activate it — which is
+   * exactly what happened when the button read "+15 més" and announced "Mostra
+   * les 15 categories". Translating one of the pair without the other is the
+   * easy way to reintroduce it, and a translator has no reason to guess the
+   * rule, so it is pinned here in every language.
+   */
+  it('announces the categories button starting with what it shows', () => {
+    for (const language of LANGUAGES) {
+      const visible = MESSAGES[language]['filter.showCategories'];
+      const announced = MESSAGES[language]['filter.showCategoriesLabel'];
+
+      expect(
+        announced.startsWith(visible),
+        `${language}: "${announced}" must start with the visible "${visible}"`,
+      ).toBe(true);
+    }
+  });
+
   it('has no empty strings', () => {
     for (const language of LANGUAGES) {
       for (const [key, value] of Object.entries(MESSAGES[language])) {
