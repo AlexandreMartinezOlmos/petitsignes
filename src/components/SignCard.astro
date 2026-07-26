@@ -72,7 +72,16 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
     <div class="sign-card__actions">
       {
         video === undefined ? (
-          <p class="sign-card__novideo">{t('card.noVideo', { signLanguage: shortName })}</p>
+          /* A statement of fact, not a control. It used to wear the CTA's
+             silhouette — 44px tall, rounded, dashed outline — which reads as a
+             disabled button, so it promised an action that does not exist and
+             by §2.1 never will. */
+          <p class="sign-card__novideo">
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href="#i-video-off" />
+            </svg>
+            {t('card.noVideo', { signLanguage: shortName })}
+          </p>
         ) : video.delivery === 'youtube-embed' ? (
           <button
             type="button"

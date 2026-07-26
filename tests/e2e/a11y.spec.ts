@@ -201,6 +201,11 @@ test('every control meets the touch target floor', async ({ page }) => {
   const undersized = await page.evaluate(() =>
     [...document.querySelectorAll('a[href], button, input, [role="button"]')]
       .map((el) => ({ el, box: el.getBoundingClientRect() }))
+      // A control clipped to a pixel is one that only exists once focused —
+      // the skip and bypass links. Measuring them at rest would report a 1px
+      // target for something nobody can point at; their real size is asserted
+      // in the tests that focus them.
+      .filter(({ el }) => getComputedStyle(el).clipPath === 'none')
       .filter(({ box }) => box.width > 0 && (box.width < 24 || box.height < 24))
       .map(
         ({ el, box }) =>
@@ -243,6 +248,160 @@ test('both card toggles answer a press with more than a hue', async ({ page }) =
     const filled = after.background !== before.background || after.iconFill !== before.iconFill;
     expect(filled, `${action} changed nothing but its colour`).toBe(true);
   }
+});
+
+/**
+ * WCAG 2.4.1 (Bypass Blocks). The grid holds 638 of the page's 654 focus
+ * stops, so the footer — and on a phone the only route to the other pages —
+ * sat 650 Tab presses behind it. The bypass link is the escape hatch; this
+ * pins both halves of it, because a skip link that does not move focus is the
+ * classic way for one to rot unnoticed.
+ */
+test('the catalogue can be skipped from the keyboard', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const bypass = page.locator('.bypass-link');
+  await expect(bypass).toHaveAttribute('href', '#footer-nav');
+
+  // Hidden until focused: it sits between the hero and the grid, so reserving
+  // space for it the rest of the time would be a permanent gap.
+  expect(await bypass.evaluate((el) => el.getBoundingClientRect().width)).toBeLessThan(2);
+
+  await bypass.focus();
+  expect(await bypass.evaluate((el) => el.getBoundingClientRect().width)).toBeGreaterThan(80);
+
+  await bypass.press('Enter');
+  // The target takes focus itself (`tabindex="-1"`), so the next Tab is
+  // already the first footer link rather than the top of the document.
+  await expect(page.locator('#footer-nav')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.footer-link').first()).toBeFocused();
+});
+
+/**
+ * The header carries the rest of the site from `sm` up. Below that it does
+ * not, on purpose — the mobile header is already 62% of the first screen —
+ * so this asserts the boundary in both directions rather than only the half
+ * that works.
+ */
+test('the header carries the site navigation on wide screens', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/credits/');
+
+  const links = page.locator('.site-nav__link');
+  await expect(links).toHaveCount(3);
+
+  // Reached before the catalogue rather than after it: three Tabs from the
+  // top of the document, past the skip link and the wordmark.
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await expect(links.first()).toBeFocused();
+
+  // Which page you are on is underlined, not only recoloured (WCAG 1.4.1).
+  const current = page.locator('.site-nav__link[aria-current="page"]');
+  await expect(current).toHaveCount(1);
+  await expect(current).toHaveText(/crèdits/i);
+  expect(await current.evaluate((el) => getComputedStyle(el).textDecorationLine)).toBe('underline');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(links.first()).toBeHidden();
+});
+
+/**
+ * A search is a global lookup and ignores the category chips by design, but
+ * nothing un-pressed them: picking `Primers signes` and then searching left
+ * the chip `aria-pressed="true"` over results that are not first signs. The
+ * interface lied to the eye and to the screen reader at once.
+ */
+test('the chips stop claiming a filter the search is not applying', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const firstSigns = page.locator('.chip', { hasText: 'Primers signes' });
+  await firstSigns.click();
+  await expect(firstSigns).toHaveAttribute('aria-pressed', 'true');
+
+  await page.locator('#sign-search').fill('gos');
+  await expect(page.locator('.sign-card:not([hidden])')).not.toHaveCount(0);
+  await expect(firstSigns).toHaveAttribute('aria-pressed', 'false');
+  // Un-pressing without saying why would just be a different puzzle.
+  await expect(page.locator('.toolbar__note')).toBeVisible();
+
+  // The choice is suspended, not thrown away.
+  await page.locator('#sign-search').fill('');
+  await expect(firstSigns).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.toolbar__note')).toHaveCount(0);
+});
+
+/**
+ * The live region announced "22 signes" — a number with no subject. Sighted
+ * visitors read the lit chip; nobody else had anything.
+ */
+test('the result count says what it counted', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const count = page.locator('[aria-live="polite"]');
+  await expect(count).toContainText('tot el catàleg');
+
+  await page.locator('.chip', { hasText: 'Primers signes' }).click();
+  await expect(count).toContainText('Primers signes');
+
+  await page.locator('.chip-quiet', { hasText: 'Pendents' }).click();
+  await expect(count).toContainText('Pendents');
+
+  await page.locator('#sign-search').fill('gos');
+  await expect(count).toContainText('gos');
+});
+
+/**
+ * 49 of 229 cards have no video, and the note saying so wore the CTA's
+ * silhouette: 44px tall, rounded, dashed outline. That is a disabled button,
+ * which promises an action that cannot exist (§2.1).
+ */
+test('the missing-video note does not look like a disabled button', async ({ page }) => {
+  await page.goto('/');
+
+  const note = page.locator('.sign-card__novideo').first();
+  await expect(note).toBeVisible();
+
+  const shape = await note.evaluate((el) => {
+    const style = getComputedStyle(el);
+    return {
+      borderWidth: style.borderTopWidth,
+      radius: style.borderTopLeftRadius,
+      // Still as tall as the CTA, which is what keeps a row of cards aligned.
+      height: el.getBoundingClientRect().height,
+    };
+  });
+
+  expect(shape.borderWidth).toBe('0px');
+  expect(shape.radius).toBe('0px');
+  expect(shape.height).toBeGreaterThanOrEqual(44);
+});
+
+/**
+ * Print. Nurseries and midwives want a sheet of the signs they are working
+ * on; the grid already hides filtered-out cards, so filtering and printing is
+ * the feature. What must not come out is the chrome.
+ */
+test('printing drops the chrome and keeps the signs', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+  await page.emulateMedia({ media: 'print' });
+
+  for (const selector of ['#app-header', '.bypass-link', '.sign-card__media']) {
+    await expect(page.locator(selector).first()).toBeHidden();
+  }
+
+  await expect(page.locator('.sign-card').first()).toBeVisible();
+  await expect(page.locator('.sign-card__title').first()).toBeVisible();
+
+  // A card split across a page break is unreadable.
+  const card = page.locator('.sign-card').first();
+  expect(await card.evaluate((el) => getComputedStyle(el).breakInside)).toBe('avoid');
 });
 
 /**

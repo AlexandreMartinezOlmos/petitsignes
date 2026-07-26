@@ -48,7 +48,12 @@ function summarise(t: Translator, counts: Counts): string {
 export default function ProgressData({ language }: Props) {
   const t = createTranslator(language);
 
-  const [counts, setCounts] = useState<Counts>({ favorites: 0, learned: 0 });
+  // `null` until the store answers, not `{0, 0}`. Rendered on the server, that
+  // placeholder read as "0 preferits · 0 signes apresos" — a rotund and false
+  // number sitting right next to the export button, until the island hydrated.
+  // The store calls back synchronously on subscribe, so the gap is the
+  // `client:visible` wait and nothing more.
+  const [counts, setCounts] = useState<Counts | null>(null);
   const [feedback, setFeedback] = useState<Feedback>(null);
   const fileInputId = useId();
 
@@ -117,7 +122,11 @@ export default function ProgressData({ language }: Props) {
     <section className="progress-data">
       <h2 className="mt-8 text-xl font-bold">{t('progress.title')}</h2>
       <p className="mt-2">{t('progress.intro')}</p>
-      <p className="text-ink-muted mt-2 text-sm">{summarise(t, counts)}</p>
+      {/* The class reserves the line so the summary appearing does not shift
+          the buttons under it. */}
+      <p className="progress-data__summary text-ink-muted mt-2 text-sm">
+        {counts === null ? null : summarise(t, counts)}
+      </p>
 
       <ul className="progress-data__actions">
         <li>

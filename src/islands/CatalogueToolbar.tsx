@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { createTranslator } from '../lib/i18n.ts';
+import { isSearchable } from '../lib/search.ts';
 import {
   $category,
   $hasActiveFilters,
@@ -45,6 +46,37 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
   const hasActiveFilters = useStore($hasActiveFilters);
 
   const searchInput = useRef<HTMLInputElement>(null);
+
+  /**
+   * A search is a global lookup: `filterCards` deliberately ignores the
+   * category chips so that finding a word never depends on which chip happens
+   * to be selected. Nothing un-pressed them, though, so the toolbar claimed a
+   * filter it was not applying — `⭐ Primers signes` stayed `aria-pressed`
+   * while the results included signs that are not first signs. Same lie to the
+   * eye and to the screen reader.
+   *
+   * The stored choice is kept, not cleared: clearing it would be destructive,
+   * and this way the chip lights up again the moment the search is emptied.
+   * `isSearchable`, not a non-empty string, so the toolbar's idea of "a search
+   * is running" is exactly the grid's.
+   */
+  const searchActive = isSearchable(query);
+  const filtersSuspended = searchActive && (category !== null || onlyFirstSigns);
+
+  /**
+   * What the live region announces after the count. "22 signes" alone is a
+   * number with no subject: correct, and useless to anyone who cannot see
+   * which chip is lit. Visually the chips already say it, so this rides along
+   * as screen-reader-only text rather than costing a line of the header.
+   */
+  const scopeParts = [
+    searchActive ? t('search.scopeSearch', { query: query.trim() }) : null,
+    !searchActive && onlyFirstSigns ? t('filter.firstSigns') : null,
+    !searchActive ? (categories.find((option) => option.id === category)?.label ?? null) : null,
+    statusFilter !== 'all' ? t(`filter.${statusFilter}`) : null,
+  ].filter((part): part is string => part !== null);
+
+  const scope = scopeParts.length > 0 ? scopeParts.join(' · ') : t('search.scopeAll');
 
   // Closed everywhere, not just on phones. Opening it on a wide screen and
   // then collapsing it the moment a category was picked meant the control
@@ -175,7 +207,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                   $onlyFirstSigns.set(!onlyFirstSigns);
                   $category.set(null);
                 }}
-                aria-pressed={onlyFirstSigns}
+                aria-pressed={onlyFirstSigns && !searchActive}
                 className="chip"
               >
                 ⭐ {t('filter.firstSigns')}
@@ -193,7 +225,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                       // Choosing one answers the question the list was open for.
                       setCategoriesOpen(false);
                     }}
-                    aria-pressed={active}
+                    aria-pressed={active && !searchActive}
                     className="chip"
                   >
                     {option.label}
@@ -259,6 +291,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                 {visibleCount === 1
                   ? t('search.resultCountOne')
                   : t('search.resultCount', { count: visibleCount })}
+                <span className="sr-only"> · {scope}</span>
               </p>
 
               {hasActiveFilters && (
@@ -271,6 +304,11 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                 </button>
               )}
             </div>
+
+            {/* Only while the chips are actually suspended, which is rare —
+                so it explains the un-pressing without costing height the rest
+                of the time. */}
+            {filtersSuspended && <p className="toolbar__note">{t('filter.searchScope')}</p>}
           </div>
         </div>
       </div>

@@ -171,7 +171,14 @@ diseño.
   criterio 2.5.8.
 - `scroll-padding-top` en `html` mantiene el elemento enfocado fuera de la cabecera fija
   (criterio 2.4.11). Hay un test e2e que lo comprueba midiendo geometría real.
+- La rejilla concentra **638 de los 654 focos** de la página, así que hay un bloque de omisión
+  (criterio 2.4.1) justo antes de ella que salta al pie: 650 tabulaciones pasan a 16. El destino
+  lleva `tabindex="-1"` para recibir el foco de verdad, no solo el hash.
 - Toda la animación es decorativa y se apaga con `prefers-reduced-motion`.
+- **Ningún estado de la interfaz afirma algo que no esté ocurriendo.** La búsqueda ignora los
+  chips de categoría por diseño, así que mientras hay búsqueda esos chips van a
+  `aria-pressed="false"` y una nota lo explica; el recuento en directo lleva el ámbito, no solo
+  la cifra; y la página del proyecto no renderiza un `0` que la hidratación va a corregir.
 - El sitio publica una **declaración de accesibilidad** en `/accessibilitat/` y `/es/accessibilitat/`,
   como espera la directiva.
 

@@ -274,8 +274,59 @@ pueden acabar discrepando.
 
 ### `.sign-card__cta` — acción principal
 
-Tres variantes según cómo se puede mostrar legalmente el vídeo: botón (incrusta el reproductor),
-enlace externo (solo enlaza a la fuente) y un estado inerte cuando no hay vídeo en esa lengua.
+Dos variantes según cómo se puede mostrar legalmente el vídeo: botón (incrusta el reproductor) y
+enlace externo (solo enlaza a la fuente).
+
+### `.sign-card__novideo` — cuando no hay vídeo en esa lengua
+
+**No es un control y no puede parecerlo.** Llevaba borde discontinuo, radio y 44 px centrados: la
+silueta exacta de un botón desactivado, en 49 de las 229 tarjetas, prometiendo una acción que no
+existe y que por §2.1 nunca existirá.
+
+Ahora es una nota: icono `#i-video-off`, texto alineado al inicio, sin borde ni radio. **La altura
+se queda** —es lo que mantiene cuadradas las tarjetas de una misma fila—, pero la forma ya no es
+la de algo pulsable.
+
+### `.site-nav` — el resto del sitio, desde la cabecera
+
+`El projecte`, `Fonts i crèdits` y `Accessibilitat` vivían **solo en el pie**: a 650 pulsaciones de
+Tab y 38,6 pantallas de scroll, con la declaración de accesibilidad que obliga la EAA al final del
+recorrido. Desde `sm` la fila de la cabecera tiene ~800 px sin usar, así que estos enlaces **no
+cuestan ni un píxel de altura** (227 px antes y después, medido a 1280).
+
+Por debajo de `sm` se ocultan a propósito: la cabecera móvil ya es el 62 % de la primera pantalla
+y una segunda fila lo empeoraría. Ahí el camino es el pie más `.bypass-link`.
+
+La página actual se marca con `aria-current="page"` y **se subraya**, no solo se recolorea: saber
+dónde estás no puede depender de distinguir dos grises (WCAG 1.4.1).
+
+### `.bypass-link` — saltar el catálogo
+
+Bloque de omisión (WCAG 2.4.1), justo antes de la rejilla. De los 654 focos de la página, **638
+están dentro del catálogo**, así que todo lo que viene después quedaba a 650 tabulaciones. Ahora
+está a 16.
+
+Se oculta como `.sr-only` (recortado, no desplazado) porque vive **en el flujo**, entre el héroe y
+la rejilla: reservarle sitio dejaría un hueco permanente. Al enfocarse pasa a `position: static` y
+a 44 px. Apunta a `#footer-nav`, que lleva `tabindex="-1"` para recibir el foco de verdad: la
+siguiente tabulación ya es el primer enlace del pie.
+
+### `.toolbar__note` — por qué los chips se han apagado
+
+La búsqueda mira todo el catálogo e **ignora los chips de categoría a propósito**, pero nadie los
+despresurizaba: elegir `Primers signes` y buscar `gos` devolvía una tarjeta que no es un primer
+signo con el chip todavía en `aria-pressed="true"`. La interfaz mentía a la vista y al lector de
+pantalla a la vez.
+
+Ahora, mientras hay búsqueda, esos chips van a `aria-pressed="false"` y esta nota explica por qué.
+**La elección no se borra**: al vaciar el buscador el chip se vuelve a encender. La nota solo se
+renderiza en ese caso, así que no es altura permanente.
+
+### La región viva del recuento
+
+Decía «22 signes»: un número sin sujeto. Quien ve la pantalla lee el chip encendido; quien no,
+no tenía nada. Ahora lleva un `sr-only` con el ámbito —categoría, filtro de estado, o la búsqueda
+y su término—, que cuesta 0 px de cabecera porque para quien ve la pantalla ya está dicho.
 
 ### `.player-dialog` — el reproductor
 
@@ -303,6 +354,20 @@ pedían 315 px de un presupuesto de 288, y el documento se iba a 330 px con scro
 espaciado estrecho es lo que los hace caber; **el `wrap` es lo que garantiza que siempre quepan**,
 haga lo que haga una traducción futura con la longitud de las cadenas. Un diseño que no puede
 desbordar vale más que uno ajustado a las cadenas de hoy.
+
+### Impresión
+
+Imprimir daba 229 tarjetas bajo una cabecera fija sobre fondo crema. Escuelas infantiles y
+matronas quieren **una hoja** de los signos que están trabajando, y el catálogo ya sabe
+producirla: el controlador oculta con `hidden` lo que no pasa el filtro, así que **lo que hay en
+pantalla es lo que sale**. Se filtra y se imprime.
+
+El bloque `@media print` quita el cromo, los controles que no se pueden pulsar en papel y el
+marcador de medio —que no tiene póster ni lo tendrá (§2.1), así que en papel es un rectángulo en
+blanco—, encoge el titular del héroe y pasa la rejilla a tres columnas con `break-inside: avoid`.
+
+**El enlace a la fuente se queda, y gana su URL.** Es la atribución que pide la licencia y lo
+único de una tarjeta impresa que sigue siendo accionable.
 
 ## 8. Cómo añadir una categoría
 
@@ -346,6 +411,12 @@ Antes de dar por terminado un componente:
       comprueba; si falla, baja la croma, no el listón.
 - [ ] Nombres accesibles correctos, no solo presentes (§7, `.chip`).
 - [ ] Nada de información transmitida solo por color.
+- [ ] **Si no es un control, no tiene silueta de control**: nada de bordes, radios y 44 px
+      centrados en un `<p>` (§7, `.sign-card__novideo`).
+- [ ] **Ningún `aria-pressed` afirma un filtro que no se está aplicando** (§7, `.toolbar__note`).
+- [ ] No se afirma una cifra que todavía no se conoce: el servidor no renderiza un `0` que la
+      hidratación va a corregir (`.progress-data__summary`).
+- [ ] Si el componente sale en el catálogo, mirar cómo **se imprime** (§7, Impresión).
 - [ ] Se comporta con `prefers-reduced-motion` y con `prefers-reduced-transparency`.
 - [ ] Sin valores sueltos: todo sale de tokens.
 - [ ] Lo que se repite es una clase de componente, no una cadena de utilidades.
