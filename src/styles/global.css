@@ -651,6 +651,14 @@
   }
 }
 
+/* Why the category chips went quiet. Rendered only while a search actually
+   suspends them, so it is never permanent header height. */
+.toolbar__note {
+  margin-block-start: 0.5rem;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
 .brand-mark {
   display: inline-flex;
   align-items: center;
@@ -925,6 +933,12 @@
   outline-offset: 2px;
 }
 
+/* Empty until the store answers (see ProgressData). Holding one line of height
+   means the summary arriving does not push the buttons down. */
+.progress-data__summary {
+  min-block-size: 1lh;
+}
+
 .progress-data__hint {
   margin-block-start: 0.4rem;
   color: var(--color-ink-muted);
@@ -1069,6 +1083,15 @@
 
 .search-field::placeholder {
   color: var(--color-ink-subtle);
+}
+
+/* `type="search"` grows a second clear button of its own in every Blink and
+   WebKit browser: two controls doing the same job, side by side, and the
+   native one is ~14px with no accessible name. Ours is 36px, labelled, and
+   returns focus to the field. The sweep in `a11y.spec.ts` cannot catch this
+   one — it lives in the shadow DOM — so it is removed here explicitly. */
+.search-field::-webkit-search-cancel-button {
+  appearance: none;
 }
 
 @media (hover: hover) {

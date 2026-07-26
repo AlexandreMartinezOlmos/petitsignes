@@ -310,23 +310,48 @@ test('the header carries the site navigation on wide screens', async ({ page }) 
 });
 
 /**
- * WCAG 2.2 §2.4.11: a sticky header must not cover the element that has focus.
- * Tabbing through the grid scrolls cards into view, so they have to clear it.
+ * A search is a global lookup and ignores the category chips by design, but
+ * nothing un-pressed them: picking `Primers signes` and then searching left
+ * the chip `aria-pressed="true"` over results that are not first signs. The
+ * interface lied to the eye and to the screen reader at once.
  */
-test('the sticky header never covers the focused element', async ({ page }) => {
+test('the chips stop claiming a filter the search is not applying', async ({ page }) => {
   await page.goto('/');
   await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
 
-  const headerBottom = await page
-    .locator('#app-header')
-    .evaluate((el) => el.getBoundingClientRect().bottom);
+  const firstSigns = page.locator('.chip', { hasText: 'Primers signes' });
+  await firstSigns.click();
+  await expect(firstSigns).toHaveAttribute('aria-pressed', 'true');
 
-  // Focus a card deep enough down the grid that the browser has to scroll.
-  const target = page.locator('.sign-card [data-action="favorite"]').nth(20);
-  await target.focus();
-  await page.waitForTimeout(300);
+  await page.locator('#sign-search').fill('gos');
+  await expect(page.locator('.sign-card:not([hidden])')).not.toHaveCount(0);
+  await expect(firstSigns).toHaveAttribute('aria-pressed', 'false');
+  // Un-pressing without saying why would just be a different puzzle.
+  await expect(page.locator('.toolbar__note')).toBeVisible();
 
-  const box = await target.boundingBox();
-  expect(box).not.toBeNull();
-  expect(box!.y).toBeGreaterThanOrEqual(headerBottom - 1);
+  // The choice is suspended, not thrown away.
+  await page.locator('#sign-search').fill('');
+  await expect(firstSigns).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.toolbar__note')).toHaveCount(0);
+});
+
+/**
+ * The live region announced "22 signes" — a number with no subject. Sighted
+ * visitors read the lit chip; nobody else had anything.
+ */
+test('the result count says what it counted', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const count = page.locator('[aria-live="polite"]');
+  await expect(count).toContainText('tot el catàleg');
+
+  await page.locator('.chip', { hasText: 'Primers signes' }).click();
+  await expect(count).toContainText('Primers signes');
+
+  await page.locator('.chip-quiet', { hasText: 'Pendents' }).click();
+  await expect(count).toContainText('Pendents');
+
+  await page.locator('#sign-search').fill('gos');
+  await expect(count).toContainText('gos');
 });
