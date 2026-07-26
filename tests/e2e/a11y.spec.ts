@@ -355,3 +355,29 @@ test('the result count says what it counted', async ({ page }) => {
   await page.locator('#sign-search').fill('gos');
   await expect(count).toContainText('gos');
 });
+
+/**
+ * 49 of 229 cards have no video, and the note saying so wore the CTA's
+ * silhouette: 44px tall, rounded, dashed outline. That is a disabled button,
+ * which promises an action that cannot exist (§2.1).
+ */
+test('the missing-video note does not look like a disabled button', async ({ page }) => {
+  await page.goto('/');
+
+  const note = page.locator('.sign-card__novideo').first();
+  await expect(note).toBeVisible();
+
+  const shape = await note.evaluate((el) => {
+    const style = getComputedStyle(el);
+    return {
+      borderWidth: style.borderTopWidth,
+      radius: style.borderTopLeftRadius,
+      // Still as tall as the CTA, which is what keeps a row of cards aligned.
+      height: el.getBoundingClientRect().height,
+    };
+  });
+
+  expect(shape.borderWidth).toBe('0px');
+  expect(shape.radius).toBe('0px');
+  expect(shape.height).toBeGreaterThanOrEqual(44);
+});

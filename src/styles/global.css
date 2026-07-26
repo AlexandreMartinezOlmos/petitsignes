@@ -1404,17 +1404,24 @@
   }
 }
 
+/* Not a control, and it must not look like one. The dashed outline plus the
+   CTA's height, radius and centring gave it the exact silhouette of a disabled
+   button — 49 of 229 cards offering an action that cannot exist (§2.1).
+   The height stays: it is what keeps the cards in a row the same height. The
+   outline, the radius and the centring go, and the icon says in one glance
+   what the sentence says in five words. */
 .sign-card__novideo {
   display: flex;
   min-block-size: var(--spacing-touch);
   align-items: center;
-  justify-content: center;
-  border: 1px dashed var(--color-border-strong);
-  border-radius: var(--radius-control);
-  padding-inline: 0.75rem;
-  text-align: center;
+  gap: 0.4rem;
   font-size: var(--text-sm);
   color: var(--color-ink-muted);
+}
+
+.sign-card__novideo .icon-sm {
+  flex-shrink: 0;
+  color: var(--color-ink-subtle);
 }
 
 .sign-card__toggle {
