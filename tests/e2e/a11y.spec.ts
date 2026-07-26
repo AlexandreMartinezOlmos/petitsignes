@@ -381,3 +381,25 @@ test('the missing-video note does not look like a disabled button', async ({ pag
   expect(shape.radius).toBe('0px');
   expect(shape.height).toBeGreaterThanOrEqual(44);
 });
+
+/**
+ * Print. Nurseries and midwives want a sheet of the signs they are working
+ * on; the grid already hides filtered-out cards, so filtering and printing is
+ * the feature. What must not come out is the chrome.
+ */
+test('printing drops the chrome and keeps the signs', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+  await page.emulateMedia({ media: 'print' });
+
+  for (const selector of ['#app-header', '.bypass-link', '.sign-card__media']) {
+    await expect(page.locator(selector).first()).toBeHidden();
+  }
+
+  await expect(page.locator('.sign-card').first()).toBeVisible();
+  await expect(page.locator('.sign-card__title').first()).toBeVisible();
+
+  // A card split across a page break is unreadable.
+  const card = page.locator('.sign-card').first();
+  expect(await card.evaluate((el) => getComputedStyle(el).breakInside)).toBe('avoid');
+});

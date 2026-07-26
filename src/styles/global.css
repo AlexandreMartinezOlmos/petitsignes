@@ -1673,3 +1673,107 @@
     text-decoration-thickness: 2px;
   }
 }
+
+/* --- Print -----------------------------------------------------------------
+   Printing gave 229 cards under a sticky glass header on a cream background.
+   Nurseries and midwives want a sheet of the signs they are working on, and
+   the catalogue already knows how to produce one: the grid controller hides
+   filtered-out cards with `hidden`, so whatever is on screen is what comes
+   out. Filter first, then print.
+
+   Everything removed here is either chrome, a control that cannot be pressed
+   on paper, or the empty media placeholder — which has no poster and never
+   will (§2.1), so on paper it is a blank rectangle costing a third of the
+   page. The link to the source dictionary stays, and gains its URL: that link
+   is the attribution the licence asks for (§2.4), and it is the only part of
+   a printed card that is still actionable.
+-------------------------------------------------------------------------- */
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .app-header,
+  .skip-link,
+  .bypass-link,
+  .empty-state,
+  .hero__title + p,
+  .progress-data__actions,
+  .sign-card__media,
+  .sign-card__toggles,
+  button.sign-card__cta,
+  dialog {
+    display: none !important;
+  }
+
+  /* `!important` because the width and padding come from utility classes on
+     the element, which a bare element selector cannot outrank. Overriding
+     layout for paper is what a print sheet is for. */
+  main {
+    max-inline-size: none !important;
+    padding: 0 !important;
+  }
+
+  #sign-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4cm;
+  }
+
+  /* A card split across a page break is unreadable, and a heading stranded at
+     the foot of a page introduces nothing. */
+  .sign-card {
+    break-inside: avoid;
+    border: 1px solid #999;
+    background: none;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .grid-section {
+    break-after: avoid;
+    color: #000;
+  }
+
+  /* On screen the headline is the invitation; on paper it is a label at the
+     top of a reference sheet, and at 52px it ate a third of the first page. */
+  .hero__title {
+    font-size: 1.5rem;
+    color: #000;
+  }
+
+  .hero__accent {
+    color: inherit;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  /* Category colour survives as a hairline rather than a filled chip: colour
+     printing is not a given, and a grey block behind grey text is worse than
+     no block at all. */
+  .sign-card__chip {
+    background: none;
+    border: 1px solid #999;
+    color: #000;
+  }
+
+  /* Non-breaking spaces: a leading space in generated content is collapsed
+     away, which ran the URL straight into the link text. */
+  .sign-card__cta--external::after {
+    content: '\00a0— ' attr(href);
+    font-weight: var(--font-weight-normal);
+    word-break: break-all;
+  }
+
+  .footer-link[href^='http']::after {
+    content: '\00a0(' attr(href) ')';
+  }
+}
