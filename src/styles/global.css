@@ -577,9 +577,11 @@
     color var(--duration-fast) var(--ease-out);
 }
 
-.lang-switch__option:hover {
-  color: var(--color-ink);
-  background-color: var(--color-surface-sunken);
+@media (hover: hover) {
+  .lang-switch__option:hover {
+    color: var(--color-ink);
+    background-color: var(--color-surface-sunken);
+  }
 }
 
 .lang-switch__option[aria-current] {
@@ -674,8 +676,10 @@
   cursor: pointer;
 }
 
-.progress-data__action:hover {
-  background-color: var(--color-surface);
+@media (hover: hover) {
+  .progress-data__action:hover {
+    background-color: var(--color-surface);
+  }
 }
 
 /* Visually hidden, but still focusable and still in the accessibility tree:
@@ -742,9 +746,11 @@
     transform var(--duration-fast) var(--ease-out);
 }
 
-.chip:hover {
-  background-color: var(--color-surface-sunken);
-  border-color: var(--color-border-strong);
+@media (hover: hover) {
+  .chip:hover {
+    background-color: var(--color-surface-sunken);
+    border-color: var(--color-border-strong);
+  }
 }
 
 .chip:active {
@@ -768,6 +774,11 @@
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent 100%);
+  /* Snapping aligns a chip with the edge of the scrollport, which ignores the
+     row's own padding. Without this the browser scrolled the row by exactly
+     that padding on load, parking the first chip under the screen edge with
+     its rounded corner clipped. Matches the `px-4` the row is laid out with. */
+  scroll-padding-inline: 1rem;
 }
 
 .chip-row::-webkit-scrollbar {
@@ -791,9 +802,11 @@
     color var(--duration-fast) var(--ease-out);
 }
 
-.chip-quiet:hover {
-  color: var(--color-ink);
-  background-color: var(--color-surface-sunken);
+@media (hover: hover) {
+  .chip-quiet:hover {
+    color: var(--color-ink);
+    background-color: var(--color-surface-sunken);
+  }
 }
 
 .chip-quiet[aria-pressed='true'] {
@@ -823,8 +836,10 @@
   color: var(--color-ink-subtle);
 }
 
-.search-field:hover {
-  border-color: var(--color-border-strong);
+@media (hover: hover) {
+  .search-field:hover {
+    border-color: var(--color-border-strong);
+  }
 }
 
 .search-field:focus {
@@ -1104,9 +1119,11 @@
     transform var(--duration-fast) var(--ease-out);
 }
 
-.sign-card__cta:hover {
-  filter: brightness(1.06);
-  box-shadow: var(--elevation-2);
+@media (hover: hover) {
+  .sign-card__cta:hover {
+    filter: brightness(1.06);
+    box-shadow: var(--elevation-2);
+  }
 }
 
 .sign-card__cta:active {
@@ -1122,9 +1139,11 @@
   box-shadow: none;
 }
 
-.sign-card__cta--external:hover {
-  background-color: var(--color-brand-soft);
-  filter: none;
+@media (hover: hover) {
+  .sign-card__cta--external:hover {
+    background-color: var(--color-brand-soft);
+    filter: none;
+  }
 }
 
 .sign-card__novideo {
@@ -1153,9 +1172,11 @@
     transform var(--duration-fast) var(--ease-spring);
 }
 
-.sign-card__toggle:hover {
-  background-color: var(--color-surface-sunken);
-  color: var(--color-ink);
+@media (hover: hover) {
+  .sign-card__toggle:hover {
+    background-color: var(--color-surface-sunken);
+    color: var(--color-ink);
+  }
 }
 
 .sign-card__toggle:active {
@@ -1316,8 +1337,10 @@
   color: var(--color-brand-ink);
 }
 
-.player-dialog__fallback-link:hover {
-  background-color: var(--color-surface);
+@media (hover: hover) {
+  .player-dialog__fallback-link:hover {
+    background-color: var(--color-surface);
+  }
 }
 
 .icon-button {
@@ -1333,9 +1356,11 @@
     color var(--duration-fast) var(--ease-out);
 }
 
-.icon-button:hover {
-  background-color: var(--color-surface-sunken);
-  color: var(--color-ink);
+@media (hover: hover) {
+  .icon-button:hover {
+    background-color: var(--color-surface-sunken);
+    color: var(--color-ink);
+  }
 }
 
 /* --- Prose ---------------------------------------------------------------- */
@@ -1356,6 +1381,8 @@
   text-decoration-thickness: 1px;
 }
 
-.prose-page a:hover {
-  text-decoration-thickness: 2px;
+@media (hover: hover) {
+  .prose-page a:hover {
+    text-decoration-thickness: 2px;
+  }
 }

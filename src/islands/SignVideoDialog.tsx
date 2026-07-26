@@ -32,6 +32,7 @@ export default function SignVideoDialog({ language }: Props) {
   const t = createTranslator(language);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [request, setRequest] = useState<PlayRequestDetail | null>(null);
@@ -67,8 +68,19 @@ export default function SignVideoDialog({ language }: Props) {
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (request && !dialog.open) dialog.showModal();
-    else if (!request && dialog.open) dialog.close();
+
+    if (request && !dialog.open) {
+      dialog.showModal();
+
+      // `showModal()` hands focus to the first focusable descendant, which is
+      // the close button, and the browser treats that as keyboard focus — so
+      // opening the player by tapping a card still drew a focus ring around
+      // the X. Moving focus to the title instead means a screen reader
+      // announces the sign rather than "close", and nothing looks pre-pressed.
+      titleRef.current?.focus();
+    } else if (!request && dialog.open) {
+      dialog.close();
+    }
   }, [request]);
 
   // Escape (when focus is not trapped in the iframe) fires `cancel`; keep the
@@ -175,7 +187,11 @@ export default function SignVideoDialog({ language }: Props) {
       {request && videoId && (
         <div className="flex flex-col">
           <div className="flex items-center gap-2 px-4 py-3">
-            <h2 className="min-w-0 flex-1 truncate text-lg font-bold">{request.label}</h2>
+            {/* `tabIndex={-1}` so the dialog can hand it focus on open without
+                adding a stop to the tab order. */}
+            <h2 ref={titleRef} tabIndex={-1} className="min-w-0 flex-1 truncate text-lg font-bold">
+              {request.label}
+            </h2>
             <button
               type="button"
               onClick={close}

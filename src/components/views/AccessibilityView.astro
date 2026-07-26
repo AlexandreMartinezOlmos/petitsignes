@@ -16,8 +16,15 @@ const { language } = Astro.props;
  * harmonised standard EN 301 549, whose web clause is WCAG 2.1 level AA. This
  * project targets WCAG 2.2 AA, which supersedes it, and publishes the state of
  * conformance here as the directive expects.
+ *
+ * The review date is ISO here and in `datetime`, because that is the
+ * machine-readable form the `<time>` element exists for, and day-first for the
+ * reader, which is how a date is written in both languages this page is
+ * published in.
  */
 const REVIEWED = '2026-07-24';
+const [reviewedYear, reviewedMonth, reviewedDay] = REVIEWED.split('-');
+const REVIEWED_LABEL = `${reviewedDay}/${reviewedMonth}/${reviewedYear}`;
 
 const copy = {
   ca: {
@@ -123,9 +130,13 @@ const c = copy[language];
       >
     </p>
 
+    {
+      /* The space is explicit: Astro collapses the newline between an
+        expression and the tag after it, which ran the sentence into the date. */
+    }
     <p class="text-ink-muted mt-8 text-sm">
-      {c.reviewed}
-      <time datetime={REVIEWED}>{REVIEWED}</time>.
+      {c.reviewed}{' '}
+      <time datetime={REVIEWED}>{REVIEWED_LABEL}</time>.
     </p>
   </article>
 </BaseLayout>
