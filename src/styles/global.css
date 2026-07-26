@@ -117,15 +117,20 @@
   --ink-subtle: oklch(0.58 0.017 60);
   --ink-inverted: oklch(0.99 0.005 75);
 
+  /* Every chroma below is the most the sRGB gamut can hold at that lightness
+     and hue. Ask for more and the browser clips — silently, per channel, and
+     differently on a wide-gamut screen than on a plain one, which is how a
+     palette ends up looking like two different palettes. The richer values a
+     P3 display can actually show are added further down, as an uplift. */
   --brand: oklch(0.55 0.16 38);
-  --brand-hover: oklch(0.48 0.16 38);
-  --brand-soft: oklch(0.955 0.028 38);
-  --brand-ink: oklch(0.42 0.15 38);
+  --brand-hover: oklch(0.48 0.152 38);
+  --brand-soft: oklch(0.955 0.022 38);
+  --brand-ink: oklch(0.42 0.133 38);
   --on-brand: oklch(1 0 0);
 
-  --focus: oklch(0.52 0.19 255);
-  --star: oklch(0.62 0.16 70);
-  --learned: oklch(0.5 0.13 155);
+  --focus: oklch(0.52 0.166 255);
+  --star: oklch(0.62 0.13 70);
+  --learned: oklch(0.5 0.12 155);
 
   /* How opaque a glass surface stays. This is a contrast floor, not a taste
      setting: text on glass has to pass AA over the WORST thing that can scroll
@@ -148,16 +153,26 @@
   --elevation-3: 0 4px 8px oklch(0.3 0.04 60 / 0.06), 0 24px 56px -12px oklch(0.3 0.04 60 / 0.2);
 
   /* Category surfaces: pale tint + darkened same-hue ink, both derived from a
-     single hue token so light/dark stay in sync. */
-  --cat-bg-l: 0.955;
-  --cat-bg-c: 0.045;
-  --cat-bg2-l: 0.925;
-  --cat-bg2-c: 0.058;
+     single hue token so light/dark stay in sync.
+
+     The tint sits lower than it used to (0.925, not 0.955). At 0.955 the gamut
+     only holds a chroma of 0.021 at the bluest hue, so the old 0.045 was twice
+     what the screen could render: the excess was clipped away and the families
+     converged on the same near-white. Coming down 0.03 in lightness buys the
+     chroma back honestly. */
+  --cat-bg-l: 0.925;
+  --cat-bg-c: 0.035;
+  --cat-bg2-l: 0.885;
+  --cat-bg2-c: 0.054;
   --cat-fg-l: 0.42;
-  --cat-fg-c: 0.11;
+  --cat-fg-c: 0.067;
   --cat-art-alpha: 0.5;
 
-  --page-wash: radial-gradient(120% 70% at 50% -10%, oklch(0.97 0.03 38 / 0.7) 0%, transparent 60%);
+  --page-wash: radial-gradient(
+    120% 70% at 50% -10%,
+    oklch(0.97 0.015 38 / 0.7) 0%,
+    transparent 60%
+  );
 }
 
 /* --- Dark theme ----------------------------------------------------------- */
@@ -177,12 +192,12 @@
     --ink-inverted: oklch(0.2 0.02 60);
 
     --brand: oklch(0.78 0.13 45);
-    --brand-hover: oklch(0.84 0.13 45);
+    --brand-hover: oklch(0.84 0.091 45);
     --brand-soft: oklch(0.3 0.05 45);
-    --brand-ink: oklch(0.86 0.1 45);
+    --brand-ink: oklch(0.86 0.079 45);
     --on-brand: oklch(0.18 0.02 60);
 
-    --focus: oklch(0.78 0.15 255);
+    --focus: oklch(0.78 0.11 255);
     --star: oklch(0.82 0.14 80);
     --learned: oklch(0.76 0.14 155);
 
@@ -194,20 +209,16 @@
        than as light. */
     --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.07);
 
-    /* Barely there: on a dark surface a bright edge reads as glare rather
-     than as light. */
-    --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.07);
-
     --elevation-1: 0 1px 2px oklch(0 0 0 / 0.4), 0 2px 8px -2px oklch(0 0 0 / 0.45);
     --elevation-2: 0 2px 4px oklch(0 0 0 / 0.4), 0 12px 28px -8px oklch(0 0 0 / 0.55);
     --elevation-3: 0 4px 8px oklch(0 0 0 / 0.45), 0 24px 56px -12px oklch(0 0 0 / 0.65);
 
-    --cat-bg-l: 0.3;
-    --cat-bg-c: 0.045;
-    --cat-bg2-l: 0.26;
-    --cat-bg2-c: 0.05;
+    --cat-bg-l: 0.305;
+    --cat-bg-c: 0.048;
+    --cat-bg2-l: 0.265;
+    --cat-bg2-c: 0.042;
     --cat-fg-l: 0.87;
-    --cat-fg-c: 0.08;
+    --cat-fg-c: 0.062;
     --cat-art-alpha: 0.42;
 
     --page-wash: radial-gradient(
@@ -234,12 +245,12 @@
   --ink-inverted: oklch(0.2 0.02 60);
 
   --brand: oklch(0.78 0.13 45);
-  --brand-hover: oklch(0.84 0.13 45);
+  --brand-hover: oklch(0.84 0.091 45);
   --brand-soft: oklch(0.3 0.05 45);
-  --brand-ink: oklch(0.86 0.1 45);
+  --brand-ink: oklch(0.86 0.079 45);
   --on-brand: oklch(0.18 0.02 60);
 
-  --focus: oklch(0.78 0.15 255);
+  --focus: oklch(0.78 0.11 255);
   --star: oklch(0.82 0.14 80);
   --learned: oklch(0.76 0.14 155);
 
@@ -247,16 +258,20 @@
      same translucency eats more of it. */
   --glass-tint: 86%;
 
+  /* Barely there: on a dark surface a bright edge reads as glare rather
+     than as light. */
+  --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.07);
+
   --elevation-1: 0 1px 2px oklch(0 0 0 / 0.4), 0 2px 8px -2px oklch(0 0 0 / 0.45);
   --elevation-2: 0 2px 4px oklch(0 0 0 / 0.4), 0 12px 28px -8px oklch(0 0 0 / 0.55);
   --elevation-3: 0 4px 8px oklch(0 0 0 / 0.45), 0 24px 56px -12px oklch(0 0 0 / 0.65);
 
-  --cat-bg-l: 0.3;
-  --cat-bg-c: 0.045;
-  --cat-bg2-l: 0.26;
-  --cat-bg2-c: 0.05;
+  --cat-bg-l: 0.305;
+  --cat-bg-c: 0.048;
+  --cat-bg2-l: 0.265;
+  --cat-bg2-c: 0.042;
   --cat-fg-l: 0.87;
-  --cat-fg-c: 0.08;
+  --cat-fg-c: 0.062;
   --cat-art-alpha: 0.42;
 
   --page-wash: radial-gradient(
@@ -267,8 +282,26 @@
 }
 
 /* --- Category hues --------------------------------------------------------
-   Each category sets one hue; the tint, its gradient partner and the ink are
-   derived from it, so a new category is a single number.
+   Six families, not fifteen hues.
+
+   Fifteen categories once had fifteen hues, 10 degrees apart at the tightest.
+   Ten degrees is invisible: measured in OKLab, nine of the 105 tint pairs sat
+   below the just-noticeable difference, the closest at dE 0.008 — a third of
+   the threshold. The colour was promising to tell "Cos" from "Emocions" and
+   could not. Worse, the tints differed from plain white by about as much as
+   they differed from each other, so the whole scheme read as noise.
+
+   So the promise now matches what colour can deliver: categories are grouped
+   into six families whose hues are at least 50 degrees apart, and the family
+   says something true — this is food and care, this is people, this is the
+   living world. Which of the three a card belongs to is carried by its icon
+   and by the section heading above it, as it always was; hue never had to
+   carry an identity on its own, and now it does not pretend to.
+
+   Chroma is deliberately uniform across families rather than pushed to each
+   hue's own ceiling. Green can hold nearly four times the chroma of blue at
+   this lightness, and letting it would make the greens shout across the grid.
+   Equal chroma is what makes six colours read as one palette.
 -------------------------------------------------------------------------- */
 [data-category] {
   --cat-bg: oklch(var(--cat-bg-l) var(--cat-bg-c) var(--cat-hue, 60));
@@ -276,50 +309,97 @@
   --cat-fg: oklch(var(--cat-fg-l) var(--cat-fg-c) var(--cat-hue, 60));
 }
 
-[data-category='food'] {
-  --cat-hue: 70;
-}
-[data-category='routines'] {
-  --cat-hue: 250;
-}
-[data-category='family'] {
-  --cat-hue: 340;
-}
-[data-category='emotions'] {
-  --cat-hue: 20;
-}
-[data-category='animals'] {
-  --cat-hue: 140;
-}
-[data-category='objects'] {
-  --cat-hue: 290;
-}
-[data-category='actions'] {
-  --cat-hue: 200;
-}
-[data-category='qualities'] {
-  --cat-hue: 100;
-}
-[data-category='nature'] {
-  --cat-hue: 170;
-}
-[data-category='courtesy'] {
-  --cat-hue: 320;
-}
+/* Food and care: what you do to and for the body. */
+[data-category='food'],
+[data-category='routines'],
 [data-category='body'] {
+  --cat-hue: 65;
+}
+
+/* People and what passes between them. */
+[data-category='family'],
+[data-category='emotions'],
+[data-category='courtesy'] {
   --cat-hue: 10;
 }
-[data-category='clothing'] {
-  --cat-hue: 270;
+
+/* The living world. */
+[data-category='animals'],
+[data-category='nature'] {
+  --cat-hue: 145;
 }
-[data-category='colors'] {
-  --cat-hue: 220;
+
+/* Doing and describing. */
+[data-category='actions'],
+[data-category='qualities'] {
+  --cat-hue: 195;
 }
-[data-category='numbers'] {
-  --cat-hue: 120;
-}
+
+/* Abstractions you count, name or measure. */
+[data-category='colors'],
+[data-category='numbers'],
 [data-category='time'] {
+  --cat-hue: 250;
+}
+
+/* Things you hold and wear. */
+[data-category='objects'],
+[data-category='clothing'] {
   --cat-hue: 300;
+}
+
+/* --- Wide-gamut uplift -----------------------------------------------------
+   Everything above is capped at what sRGB can render, so a plain display shows
+   the palette exactly as designed instead of a clipped approximation of it.
+   Most phones and laptops sold in the last few years can do better than sRGB,
+   and this is the only honest way to let them: same lightness, same hue, more
+   chroma — never a different colour, just a less compressed one.
+
+   A display that does not report P3 never sees these rules, so nothing here
+   can degrade the guaranteed rendering. Every value has been checked to sit
+   inside the P3 boundary and to keep its contrast ratio.
+-------------------------------------------------------------------------- */
+@media (color-gamut: p3) {
+  :root {
+    --brand-hover: oklch(0.48 0.16 38);
+    --brand-soft: oklch(0.955 0.028 38);
+    --brand-ink: oklch(0.42 0.147 38);
+    --focus: oklch(0.52 0.19 255);
+    --star: oklch(0.62 0.146 70);
+    --learned: oklch(0.5 0.13 155);
+
+    --cat-bg-c: 0.038;
+    --cat-bg2-c: 0.058;
+    --cat-fg-c: 0.088;
+
+    --page-wash: radial-gradient(
+      120% 70% at 50% -10%,
+      oklch(0.97 0.019 38 / 0.7) 0%,
+      transparent 60%
+    );
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --brand-hover: oklch(0.84 0.115 45);
+      --brand-ink: oklch(0.86 0.099 45);
+      --focus: oklch(0.78 0.117 255);
+
+      --cat-bg-c: 0.064;
+      --cat-bg2-c: 0.055;
+      --cat-fg-c: 0.066;
+    }
+  }
+
+  :root[data-theme='dark'] {
+    --brand-hover: oklch(0.84 0.115 45);
+    --brand-ink: oklch(0.86 0.099 45);
+    --focus: oklch(0.78 0.117 255);
+
+    --cat-bg-c: 0.064;
+    --cat-bg2-c: 0.055;
+    --cat-fg-c: 0.066;
+  }
 }
 
 /* --- Base ----------------------------------------------------------------- */

@@ -134,9 +134,18 @@ Todo el diseño vive en [`../src/styles/global.css`](../src/styles/global.css), 
 **Elevación de dos capas.** Cada sombra combina una difusa ambiental y otra direccional más
 cerrada. Una sola capa se lee como un borde caído; dos se leen como profundidad.
 
-**Color en OKLCH.** Cada categoría aporta un único número (su tono) y de ahí se derivan el
-degradado del panel y la tinta del texto, con la misma luminosidad perceptual en las 15
-categorías y en ambos temas. El tono nunca es la única señal: cada categoría lleva icono.
+**Color en OKLCH, dentro de la gama que se renderiza.** Las 15 categorías se agrupan en **seis
+familias de tono** separadas ≥50°; cada familia aporta un único número y de ahí se derivan el
+degradado del panel y la tinta, con la misma luminosidad perceptual en ambos temas. Quince tonos
+distintos no eran distinguibles: los pares más próximos quedaban a 10°, por debajo del umbral
+perceptible. El tono nunca es la única señal — cada categoría lleva icono y va bajo su
+encabezado de sección.
+
+Cada croma es además **el máximo que sRGB admite** a esa luminosidad y tono. OKLCH sabe nombrar
+colores que ninguna pantalla muestra, y entonces el navegador recorta en silencio, canal a canal
+y distinto según la pantalla; era lo que hacía converger tonos separados sobre el papel. Lo que
+una pantalla P3 sí puede mostrar se añade aparte, con `@media (color-gamut: p3)`, a igual
+luminosidad y tono.
 
 **El CSS repetido vive en CSS.** La tarjeta se repite 229 veces, así que las cadenas largas de
 clases de utilidad se pagarían una vez por tarjeta en el DOM. Las partes repetidas
@@ -155,7 +164,9 @@ por la Directiva (UE) 2019/882. No es una capa que se añade al final: condicion
 diseño.
 
 - Los tokens de color se escogen para cumplir contraste AA en claro y oscuro **antes** de
-  usarlos. La derivación en OKLCH es lo que hace ese cumplimiento predecible al añadir categorías.
+  usarlos. La derivación en OKLCH es lo que hace ese cumplimiento predecible al añadir categorías,
+  y `src/lib/color.test.ts` lo comprueba en CI leyendo la hoja de estilos publicada: gama,
+  separación entre familias y contraste del chip en claro, oscuro y P3.
 - `--spacing-touch` (44 px) es el tamaño mínimo de todo control, por encima de los 24 px del
   criterio 2.5.8.
 - `scroll-padding-top` en `html` mantiene el elemento enfocado fuera de la cabecera fija

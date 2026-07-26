@@ -17,7 +17,9 @@ Para *por qué* la web está construida así (rejilla estática, islas, entrega 
    cumple no está terminado. En un proyecto sobre lengua de signos esto además es coherencia.
 2. **Móvil primero de verdad.** El uso real es un bebé en brazos y el móvil en la otra mano.
    Objetivo táctil mínimo 44 px, texto nunca por debajo de 16 px.
-3. **El color nunca es la única señal.** Cada categoría lleva icono además de tono.
+3. **El color nunca es la única señal.** Seis familias de tono cubren quince categorías, así que
+   el tono dice a qué familia pertenece una tarjeta, nunca cuál es: eso lo dicen su icono y el
+   encabezado de sección que tiene encima. El icono no es decoración, es la señal.
 4. **Mínimo JavaScript.** Si algo se puede hacer con HTML y CSS, se hace con HTML y CSS.
 5. **El diseño vive en `src/styles/global.css`.** Con 229 tarjetas, una cadena larga de clases
    de utilidad se paga en cada nodo del DOM: lo que se repite es una clase de componente.
@@ -49,25 +51,64 @@ Todo el color se escribe en **OKLCH**. No es preciosismo: en OKLCH la luminosida
 perceptualmente uniforme, así que dos tonos con la misma L se ven igual de claros y **el
 contraste es predecible al añadir una categoría**. En HSL no lo sería.
 
-### Categorías
+### Gama: por qué el color se queda dentro de sRGB
 
-Cada categoría aporta **un solo número, su tono**, y de ahí se derivan el fondo, su pareja de
-degradado y la tinta:
+OKLCH sabe nombrar colores que ninguna pantalla puede mostrar. Cuando ocurre, el navegador
+**recorta**, canal a canal, en silencio — y recorta distinto en una pantalla de gama amplia que
+en una normal. Diez de los colores del sistema lo hacían: `--cat-bg` pedía croma 0.045 donde el
+tono más azul solo admite 0.021, más del doble. Ese recorte es lo que hacía converger tonos que
+sobre el papel estaban separados.
+
+Así que **cada croma del bloque base es el máximo que sRGB admite a esa luminosidad y tono**, y
+lo que una pantalla P3 sí puede mostrar se añade aparte:
 
 ```css
-[data-category='food'] {
-  --cat-hue: 70;
+@media (color-gamut: p3) {
+  :root { --cat-fg-c: 0.088; }   /* misma L, mismo tono, menos comprimido */
 }
 ```
+
+Nunca un color distinto en una pantalla mejor: la misma luminosidad y el mismo tono, con la
+croma que esa pantalla puede reproducir. Una pantalla que no declara P3 jamás ve esas reglas.
+
+### Categorías: seis familias, no quince tonos
+
+Quince categorías tuvieron quince tonos, separados **10°** en el caso más justo. Diez grados no
+se ven: medidos en OKLab, nueve de los 105 pares de fondos quedaban por debajo del umbral de
+diferencia perceptible, el más próximo en **ΔE 0.008**, un tercio del umbral. El color prometía
+distinguir «Cos» de «Emocions» y no podía.
+
+Ahora las categorías se agrupan en **seis familias separadas ≥50°**, y la familia dice algo
+cierto:
+
+| Familia | Tono | Categorías |
+|---|---|---|
+| Comida y cuidado | 65 | `food`, `routines`, `body` |
+| Personas | 10 | `family`, `emotions`, `courtesy` |
+| Mundo vivo | 145 | `animals`, `nature` |
+| Hacer y describir | 195 | `actions`, `qualities` |
+| Abstracciones | 250 | `colors`, `numbers`, `time` |
+| Objetos | 300 | `objects`, `clothing` |
+
+Cuál de las tres es una tarjeta lo dice su **icono** y el **encabezado de sección** que tiene
+encima, como siempre. El tono nunca tuvo que cargar una identidad él solo, y ahora no finge
+hacerlo.
+
+> La croma es **uniforme entre familias**, no la máxima de cada tono. El verde admite casi
+> cuatro veces la croma del azul a esta luminosidad; dejárselo haría que los verdes gritaran por
+> encima del resto. Croma igual es lo que hace que seis colores se lean como una sola paleta.
 
 Las luminosidades y cromas (`--cat-bg-l`, `--cat-fg-l`…) son comunes y viven en el tema, así que
 claro y oscuro no se pueden desincronizar.
 
-> ⚠️ **Límite conocido.** Hay 15 categorías repartidas en el círculo, y las más próximas
-> (`body` 10 / `emotions` 20, y `objects` 290 / `time` 300) están a **10°**. A la croma que usan
-> los fondos eso es prácticamente indistinguible, y con deficiencia de visión cromática peor. Es
-> la razón por la que el icono es obligatorio. Si algún día se rehace la paleta, el camino es
-> agrupar en ~5 familias de tono, no repartir 15 tonos más finos.
+### Nada de esto se vigila solo
+
+Un color fuera de gama se dibuja igual. Un par de fondos por debajo del umbral se dibuja igual.
+Los dos son invisibles en una revisión y evidentes para quien lee. Por eso
+[`src/lib/color.test.ts`](../src/lib/color.test.ts) **lee la hoja de estilos que se publica** y
+comprueba, en CI: que ningún color se sale de su gama, que las seis familias siguen a ≥45°, que
+cualquier par de fondos supera el umbral perceptible, que el chip llega a 4.5:1 en claro, en
+oscuro y en P3, y que los dos bloques de tema oscuro siguen siendo idénticos.
 
 ### Suelo de contraste del cristal
 
@@ -234,20 +275,27 @@ desmonta el iframe: eso es lo que de verdad detiene la reproducción.
 
 ## 8. Cómo añadir una categoría
 
-1. Añádela a `src/content/categories.json` con su `id`, etiquetas, `icon`, `color` y `order`.
+1. Añádela a `src/content/categories.json` con su `id`, etiquetas, `icon` y `order`.
 2. Añade su icono al sprite de [`IconSprite.astro`](../src/components/IconSprite.astro), en la
    misma rejilla de 24×24 y con el mismo trazo. **Nunca representa un gesto**: los iconos son
    marcas decorativas y se pueden dibujar libremente.
-3. Elige el tono en `global.css`:
+3. **Asígnala a una familia existente** en `global.css`, añadiendo su selector al grupo que le
+   corresponda:
 
    ```css
+   [data-category='actions'],
+   [data-category='qualities'],
    [data-category='nueva'] {
      --cat-hue: 195;
    }
    ```
 
-4. **Comprueba la separación con las vecinas.** Por debajo de ~30° no se distinguen (§3).
-5. Verifica el contraste en **claro y oscuro**, no solo en el que tengas puesto.
+   No inventes un tono nuevo. Seis familias ya ocupan el círculo a ≥50°; una séptima solo cabe
+   estrechando a todas, que es exactamente el problema que este sistema resolvió (§3).
+
+4. Ejecuta `npm run test`. `color.test.ts` falla si la categoría se queda sin familia, si algún
+   color se sale de gama o si el contraste del chip baja de 4.5:1 en cualquiera de los cuatro
+   escenarios (claro, oscuro, y ambos en P3).
 
 ---
 
@@ -258,6 +306,8 @@ Antes de dar por terminado un componente:
 - [ ] Navegable con teclado, con foco visible y en orden lógico.
 - [ ] Controles ≥ 44 px.
 - [ ] Contraste AA en **ambos** temas.
+- [ ] Todo color nuevo, **dentro de sRGB** a su luminosidad y tono (§3). `npm run test` lo
+      comprueba; si falla, baja la croma, no el listón.
 - [ ] Nombres accesibles correctos, no solo presentes (§7, `.chip`).
 - [ ] Nada de información transmitida solo por color.
 - [ ] Se comporta con `prefers-reduced-motion` y con `prefers-reduced-transparency`.
