@@ -3,56 +3,48 @@
     "id": "food",
     "labels": { "ca": "Menjar i beure", "es": "Comida y bebida", "en": "Food and drink" },
     "icon": "bowl",
-    "color": "food",
     "order": 1
   },
   {
     "id": "routines",
     "labels": { "ca": "Rutines i cura", "es": "Rutinas y cuidado", "en": "Routines and care" },
     "icon": "moon",
-    "color": "routines",
     "order": 2
   },
   {
     "id": "family",
     "labels": { "ca": "Persones i família", "es": "Personas y familia", "en": "People and family" },
     "icon": "family",
-    "color": "family",
     "order": 3
   },
   {
     "id": "emotions",
     "labels": { "ca": "Emocions", "es": "Emociones", "en": "Emotions" },
     "icon": "heart",
-    "color": "emotions",
     "order": 4
   },
   {
     "id": "animals",
     "labels": { "ca": "Animals", "es": "Animales", "en": "Animals" },
     "icon": "paw",
-    "color": "animals",
     "order": 5
   },
   {
     "id": "objects",
     "labels": { "ca": "Objectes i joguines", "es": "Objetos y juguetes", "en": "Objects and toys" },
     "icon": "ball",
-    "color": "objects",
     "order": 6
   },
   {
     "id": "actions",
     "labels": { "ca": "Accions", "es": "Acciones", "en": "Actions" },
     "icon": "run",
-    "color": "actions",
     "order": 7
   },
   {
     "id": "qualities",
     "labels": { "ca": "Qualitats", "es": "Cualidades", "en": "Qualities" },
     "icon": "scale",
-    "color": "qualities",
     "order": 8
   },
   {
@@ -63,49 +55,42 @@
       "en": "Nature and outdoors"
     },
     "icon": "leaf",
-    "color": "nature",
     "order": 9
   },
   {
     "id": "courtesy",
     "labels": { "ca": "Cortesia", "es": "Cortesía", "en": "Courtesy" },
     "icon": "wave",
-    "color": "courtesy",
     "order": 10
   },
   {
     "id": "body",
     "labels": { "ca": "Cos", "es": "Cuerpo", "en": "Body" },
     "icon": "body",
-    "color": "body",
     "order": 11
   },
   {
     "id": "clothing",
     "labels": { "ca": "Roba", "es": "Ropa", "en": "Clothing" },
     "icon": "shirt",
-    "color": "clothing",
     "order": 12
   },
   {
     "id": "colors",
     "labels": { "ca": "Colors", "es": "Colores", "en": "Colours" },
     "icon": "palette",
-    "color": "colors",
     "order": 13
   },
   {
     "id": "numbers",
     "labels": { "ca": "Números", "es": "Números", "en": "Numbers" },
     "icon": "hash",
-    "color": "numbers",
     "order": 14
   },
   {
     "id": "time",
     "labels": { "ca": "Temps i conceptes", "es": "Tiempo y conceptos", "en": "Time and concepts" },
     "icon": "clock",
-    "color": "time",
     "order": 15
   }
 ]
