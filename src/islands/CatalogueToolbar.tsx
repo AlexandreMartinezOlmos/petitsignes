@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useStore } from '@nanostores/react';
 import { createTranslator } from '../lib/i18n.ts';
 import {
@@ -33,6 +33,9 @@ interface Props {
  */
 const STATUS_FILTERS: readonly StatusFilter[] = ['all', 'favorites', 'learned', 'pending'];
 
+/** Matches the `sm` breakpoint the card layout switches at. */
+const WIDE_SCREEN = '(min-width: 40rem)';
+
 export default function CatalogueToolbar({ categories, language, initialCount }: Props) {
   const t = createTranslator(language);
 
@@ -45,6 +48,37 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
   const hasActiveFilters = useStore($hasActiveFilters);
 
   const searchInput = useRef<HTMLInputElement>(null);
+
+  // Collapsing the category list buys back vertical space on a phone. On a
+  // wide screen the full list is two lines, so hiding it would cost a click
+  // and save nothing — it starts open there instead.
+  //
+  // `useSyncExternalStore` rather than reading `matchMedia` during render: the
+  // page is built once at build time, so a viewport-dependent first render is
+  // the hydration mismatch this project keeps out of its components. The
+  // server snapshot is `false`, and React reconciles to the real value.
+  const wideScreen = useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia(WIDE_SCREEN);
+      query.addEventListener('change', onChange);
+      return () => query.removeEventListener('change', onChange);
+    },
+    () => window.matchMedia(WIDE_SCREEN).matches,
+    () => false,
+  );
+
+  // Null while the visitor has not expressed a preference, so the viewport
+  // decides; once they open or close it by hand, that wins and a resize does
+  // not undo it.
+  const [openOverride, setOpenOverride] = useState<boolean | null>(null);
+  const categoriesOpen = openOverride ?? wideScreen;
+
+  // Collapsed, the list still has to show the category doing the filtering —
+  // otherwise picking one and scrolling on leaves the catalogue visibly cut
+  // down with no on-screen explanation of why.
+  const shownCategories = categoriesOpen
+    ? categories
+    : categories.filter((option) => option.id === category);
 
   useEffect(() => {
     void hydrateFromStorage();
@@ -124,92 +158,127 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
           them.
         */}
         <div className="toolbar__filters">
-          {/* Category chips */}
-          <div
-            className="chip-row -mx-4 mt-3 px-4 pb-1"
-            role="group"
-            aria-label={t('filter.categories')}
-          >
-            <button
-              type="button"
-              onClick={() => {
-                $category.set(null);
-                $onlyFirstSigns.set(false);
-              }}
-              aria-pressed={category === null && !onlyFirstSigns}
-              className="chip"
-            >
-              {t('filter.all')}
-            </button>
+          {/* The animation clips against this wrapper, so the rows below can be
+              any height without a ceiling to outgrow. */}
+          <div className="toolbar__filters-inner">
+            {/*
+            Categories wrap and are collapsed by default rather than sitting in
+            a horizontally scrolling row. Measured on a 375px screen, that row
+            showed 3 of 17 chips and hid the rest behind five screens of
+            sideways scrolling: you could not find out that "Animals" existed
+            without swiping blind. Showing all of them instead costs six lines,
+            308px, a third of the viewport — which is why they were put in a
+            scroller in the first place.
 
-            <button
-              type="button"
-              onClick={() => {
-                $onlyFirstSigns.set(!onlyFirstSigns);
-                $category.set(null);
-              }}
-              aria-pressed={onlyFirstSigns}
-              className="chip"
-            >
-              ⭐ {t('filter.firstSigns')}
-            </button>
+            So: collapsed shows the two entry points plus whichever category is
+            actually filtering, and the button says how many more there are.
+            Expanded wraps all of them into a block that can be read at a
+            glance. The hidden chips are not rendered rather than clipped, so
+            there is never a control that is invisible but still tabbable.
+          */}
+            <div className="chip-row mt-3" role="group" aria-label={t('filter.categories')}>
+              <button
+                type="button"
+                onClick={() => {
+                  $category.set(null);
+                  $onlyFirstSigns.set(false);
+                }}
+                aria-pressed={category === null && !onlyFirstSigns}
+                className="chip"
+              >
+                {t('filter.all')}
+              </button>
 
-            {categories.map((option) => {
-              const active = category === option.id;
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => {
-                    $category.set(active ? null : option.id);
-                    $onlyFirstSigns.set(false);
-                  }}
-                  aria-pressed={active}
-                  className="chip"
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
+              <button
+                type="button"
+                onClick={() => {
+                  $onlyFirstSigns.set(!onlyFirstSigns);
+                  $category.set(null);
+                }}
+                aria-pressed={onlyFirstSigns}
+                className="chip"
+              >
+                ⭐ {t('filter.firstSigns')}
+              </button>
 
-          {/* Status filters + live result count */}
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            {/* Its own label: two groups called "Categories" are indistinguishable
-              when navigating by region, and axe cannot catch that — both had a
-              label, they were just the wrong one. */}
-            <div className="flex gap-1" role="group" aria-label={t('filter.status')}>
-              {STATUS_FILTERS.map((value) => {
-                const active = statusFilter === value;
+              {shownCategories.map((option) => {
+                const active = category === option.id;
                 return (
                   <button
-                    key={value}
+                    key={option.id}
                     type="button"
-                    onClick={() => $statusFilter.set(value)}
+                    onClick={() => {
+                      $category.set(active ? null : option.id);
+                      $onlyFirstSigns.set(false);
+                      // Choosing one answers the question the list was open for.
+                      setOpenOverride(false);
+                    }}
                     aria-pressed={active}
-                    className="chip-quiet"
+                    className="chip"
                   >
-                    {t(`filter.${value}`)}
+                    {option.label}
                   </button>
                 );
               })}
-            </div>
 
-            <p className="text-ink-muted ms-auto text-sm" aria-live="polite">
-              {visibleCount === 1
-                ? t('search.resultCountOne')
-                : t('search.resultCount', { count: visibleCount })}
-            </p>
-
-            {hasActiveFilters && (
+              {/* Short label, full accessible name: spelled out, the chip wrapped
+                onto a second line and cost 48px in the resting state that this
+                whole change exists to protect. */}
               <button
                 type="button"
-                onClick={clearFilters}
-                className="text-brand-ink min-h-9 text-sm font-medium underline underline-offset-2"
+                onClick={() => setOpenOverride(!categoriesOpen)}
+                aria-expanded={categoriesOpen}
+                aria-label={
+                  categoriesOpen
+                    ? t('filter.hideCategories')
+                    : t('filter.showCategoriesLabel', { count: categories.length })
+                }
+                className="chip chip--more"
               >
-                {t('filter.clear')}
+                {categoriesOpen
+                  ? t('filter.hideCategories')
+                  : t('filter.showCategories', { count: categories.length })}
               </button>
-            )}
+            </div>
+
+            {/* Status filters + live result count */}
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              {/* Its own label: two groups called "Categories" are indistinguishable
+              when navigating by region, and axe cannot catch that — both had a
+              label, they were just the wrong one. */}
+              <div className="flex gap-1" role="group" aria-label={t('filter.status')}>
+                {STATUS_FILTERS.map((value) => {
+                  const active = statusFilter === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => $statusFilter.set(value)}
+                      aria-pressed={active}
+                      className="chip-quiet"
+                    >
+                      {t(`filter.${value}`)}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="text-ink-muted ms-auto text-sm" aria-live="polite">
+                {visibleCount === 1
+                  ? t('search.resultCountOne')
+                  : t('search.resultCount', { count: visibleCount })}
+              </p>
+
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="text-brand-ink min-h-9 text-sm font-medium underline underline-offset-2"
+                >
+                  {t('filter.clear')}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

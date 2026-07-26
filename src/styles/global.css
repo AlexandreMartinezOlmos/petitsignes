@@ -513,18 +513,25 @@
    motion in the chrome is a cost with no benefit there.
 -------------------------------------------------------------------------- */
 @media (width < 40rem) {
+  /* A grid row animating between `1fr` and `0fr` folds content of any height
+     without naming that height. The first attempt used a `max-block-size`
+     ceiling, which worked until the category list could be expanded: the open
+     panel is taller than any figure that was sensible to pick, and the bottom
+     six categories were simply cut off. */
   .toolbar__filters {
-    overflow: hidden;
-    /* A generous ceiling: the rows are auto-height and transitioning to a
-       fixed max is what keeps this off the main thread. */
-    max-block-size: 12rem;
+    display: grid;
+    grid-template-rows: 1fr;
     transition:
-      max-block-size var(--duration-slow) var(--ease-out),
+      grid-template-rows var(--duration-slow) var(--ease-out),
       opacity var(--duration-base) var(--ease-out);
   }
 
+  .toolbar__filters-inner {
+    overflow: hidden;
+  }
+
   .app-header[data-condensed='true']:not(:focus-within) .toolbar__filters {
-    max-block-size: 0;
+    grid-template-rows: 0fr;
     opacity: 0;
     visibility: hidden;
   }
@@ -766,27 +773,21 @@
 
 /* The category row scrolls horizontally on every screen size. Fading the
    trailing edge signals there is more to reach, without adding a control. */
+/* Wraps rather than scrolls sideways. A scrolling row put 14 of 17 filters
+   off-screen with nothing to suggest they existed; wrapping means the list is
+   as long as it is, and the component only renders the chips it is currently
+   showing (see CatalogueToolbar). */
 .chip-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent 100%);
-  /* Snapping aligns a chip with the edge of the scrollport, which ignores the
-     row's own padding. Without this the browser scrolled the row by exactly
-     that padding on load, parking the first chip under the screen edge with
-     its rounded corner clipped. Matches the `px-4` the row is laid out with. */
-  scroll-padding-inline: 1rem;
 }
 
-.chip-row::-webkit-scrollbar {
-  display: none;
-}
-
-.chip-row > * {
-  scroll-snap-align: start;
+/* The disclosure reads as a control rather than as one more filter: it does
+   not narrow the catalogue, it reveals the ones that do. */
+.chip--more {
+  border-style: dashed;
+  font-weight: var(--font-weight-semibold);
 }
 
 /* Quieter row: status filters read as text until chosen. */

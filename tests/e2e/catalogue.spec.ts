@@ -55,14 +55,9 @@ test.describe('catalogue', () => {
     await expect(page.getByRole('status')).toContainText('zzzzzz');
   });
 
-  test('category chips narrow the grid', async ({ page }) => {
-    const before = await visibleCards(page);
-    await page.getByRole('button', { name: 'Animals', exact: true }).click();
-
-    const after = await visibleCards(page);
-    expect(after).toBeLessThan(before);
-    expect(after).toBeGreaterThan(0);
-  });
+  // Narrowing the grid by category moved to the `category filters` group
+  // below, which has to expand the list first: the categories are collapsed
+  // until asked for now, so reaching one is part of what the test proves.
 
   test('favourites survive a reload', async ({ page }) => {
     const card = page.locator('.sign-card[data-sign-id="leche"]');
@@ -317,5 +312,83 @@ test.describe('condensing toolbar', () => {
     // controls close under them.
     await expect(page.locator(header)).toHaveAttribute('data-condensed', 'true');
     await expect(page.getByRole('group', { name: /categor/i })).toBeVisible();
+  });
+});
+
+/**
+ * Seventeen category filters in a horizontally scrolling row showed three of
+ * them on a 375px screen and hid the rest behind five screens of sideways
+ * scrolling — you could not learn that "Animals" existed without swiping
+ * blind. They wrap and collapse now, so the list is either short or complete,
+ * never a keyhole onto itself.
+ */
+test.describe('category filters', () => {
+  const toggle = (page: Page) => page.locator('.chip--more');
+
+  test('collapsed, the catalogue can still be filtered once expanded', async ({
+    page,
+    viewport,
+  }) => {
+    test.skip((viewport?.width ?? 0) >= 640, 'the list only collapses on phones');
+    await page.goto('/');
+    await waitForHydration(page);
+
+    const animals = page.getByRole('button', { name: 'Animals', exact: true });
+    await expect(animals).toBeHidden();
+
+    await toggle(page).click();
+    await expect(animals).toBeVisible();
+
+    const before = await visibleCards(page);
+    await animals.click();
+    const after = await visibleCards(page);
+    expect(after).toBeLessThan(before);
+    expect(after).toBeGreaterThan(0);
+  });
+
+  test('the chosen category stays on screen after the list collapses', async ({
+    page,
+    viewport,
+  }) => {
+    test.skip((viewport?.width ?? 0) >= 640, 'the list only collapses on phones');
+    await page.goto('/');
+    await waitForHydration(page);
+
+    await toggle(page).click();
+    await page.getByRole('button', { name: 'Animals', exact: true }).click();
+
+    // Picking one closes the list, but the filter doing the work has to remain
+    // visible: otherwise the catalogue is visibly cut down with nothing on
+    // screen explaining why.
+    await expect(page.getByRole('button', { name: 'Animals', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Emocions', exact: true })).toBeHidden();
+  });
+
+  test('hidden categories are not rendered rather than merely invisible', async ({
+    page,
+    viewport,
+  }) => {
+    test.skip((viewport?.width ?? 0) >= 640, 'the list only collapses on phones');
+    await page.goto('/');
+    await waitForHydration(page);
+
+    // A control that is invisible but still focusable is worse than one that
+    // is absent, so the collapsed list must not leave any behind.
+    await expect(page.getByRole('button', { name: 'Emocions', exact: true })).toHaveCount(0);
+
+    await toggle(page).click();
+    await expect(page.getByRole('button', { name: 'Emocions', exact: true })).toHaveCount(1);
+  });
+
+  test('nothing scrolls sideways in either state', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    const overflows = () =>
+      page.locator('.chip-row').evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+
+    expect(await overflows()).toBe(false);
+    await toggle(page).click();
+    expect(await overflows()).toBe(false);
   });
 });
