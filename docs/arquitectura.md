@@ -1,6 +1,7 @@
 # Arquitectura
 
-Decisiones estructurales y por qué. Para añadir o corregir contenido, ver
+Decisiones estructurales y por qué. Para construir interfaz que encaje, ver
+[`design-system.md`](design-system.md); para añadir o corregir contenido,
 [`contenido.md`](contenido.md).
 
 ## El problema de fondo

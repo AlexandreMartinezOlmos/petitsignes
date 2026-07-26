@@ -60,6 +60,9 @@ aunque funcione en tu máquina.
   2019/882). Es un proyecto sobre lengua de signos: la accesibilidad no es un extra.
 - **Diseño con tokens.** Los colores, radios, sombras y duraciones salen de
   `src/styles/global.css`. No introduzcas valores sueltos: rompen el tema oscuro y el contraste.
+  Si vas a tocar la interfaz, lee antes [`docs/design-system.md`](docs/design-system.md): explica
+  los tokens, los componentes que ya existen y la lista de comprobación que debe pasar cualquiera
+  nuevo.
 - **JavaScript enviado al cliente.** Si una función se puede hacer con HTML y CSS, se hace con
   HTML y CSS. Las dependencias nuevas hay que justificarlas.
 - **Móvil.** Objetivos táctiles de 44 px como mínimo, texto de 16 px o más, todo alcanzable con
