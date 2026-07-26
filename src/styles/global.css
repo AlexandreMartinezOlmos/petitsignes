@@ -134,6 +134,13 @@
      legibility. Lower it and contrast starts depending on scroll position. */
   --glass-tint: 82%;
 
+  /* A hairline of light along the top edge, the way a raised surface catches
+     the light above it. This is what makes a card read as a physical plane
+     without any transparency: the glass look for the price of one inset
+     shadow, on an element that must never carry a real `backdrop-filter`
+     because there are 229 of them. */
+  --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.85);
+
   /* Elevation: an ambient spread plus a tighter directional shadow. Two layers
      read as depth; one reads as a flat drop. */
   --elevation-1: 0 1px 2px oklch(0.3 0.04 60 / 0.05), 0 2px 8px -2px oklch(0.3 0.04 60 / 0.06);
@@ -182,6 +189,14 @@
     /* Dark needs a touch more: the ink-on-surface gap is smaller here, so the
        same translucency eats more of it. */
     --glass-tint: 86%;
+
+    /* Barely there: on a dark surface a bright edge reads as glare rather
+       than as light. */
+    --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.07);
+
+    /* Barely there: on a dark surface a bright edge reads as glare rather
+     than as light. */
+    --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.07);
 
     --elevation-1: 0 1px 2px oklch(0 0 0 / 0.4), 0 2px 8px -2px oklch(0 0 0 / 0.45);
     --elevation-2: 0 2px 4px oklch(0 0 0 / 0.4), 0 12px 28px -8px oklch(0 0 0 / 0.55);
@@ -436,6 +451,14 @@
 
   .glass {
     backdrop-filter: none;
+  }
+
+  /* A `::backdrop` cannot carry the class, so it opts out by name. Fully
+     opaque rather than merely unblurred: a see-through scrim over a catalogue
+     of 229 cards is exactly the busy background this request is about. */
+  .player-dialog::backdrop {
+    backdrop-filter: none;
+    background-color: oklch(0.15 0.02 60);
   }
 }
 
@@ -822,7 +845,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background-color: var(--color-surface-raised);
-  box-shadow: var(--elevation-1);
+  box-shadow: var(--edge-light), var(--elevation-1);
   transition:
     transform var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out),
@@ -832,13 +855,13 @@
 @media (hover: hover) {
   .sign-card:hover {
     transform: translateY(-3px);
-    box-shadow: var(--elevation-2);
+    box-shadow: var(--edge-light), var(--elevation-2);
     border-color: color-mix(in oklab, var(--color-border-strong) 60%, transparent);
   }
 }
 
 .sign-card:focus-within {
-  box-shadow: var(--elevation-2);
+  box-shadow: var(--edge-light), var(--elevation-2);
 }
 
 .sign-card[hidden] {
@@ -1225,12 +1248,19 @@
   border-radius: var(--radius-card);
   background-color: var(--color-surface-raised);
   color: var(--color-ink);
-  box-shadow: var(--elevation-3);
+  box-shadow: var(--edge-light), var(--elevation-3);
 }
 
+/* The one place a heavier blur is worth its cost. Nothing scrolls behind an
+   open dialog, so the backdrop is rasterised once instead of every frame, and
+   this is the moment the app most wants the catalogue to recede: the visitor
+   is watching a sign. It cannot use `.glass` — a `::backdrop` is not an
+   element and cannot carry a class — so it reads the same tokens directly.
+   `prefers-reduced-transparency` is handled below, next to the `.glass` rules
+   it belongs with. */
 .player-dialog::backdrop {
   background-color: oklch(0.15 0.02 60 / 0.62);
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
 }
 
 .player-dialog[open] {
