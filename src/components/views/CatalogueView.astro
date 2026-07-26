@@ -61,10 +61,20 @@ const toolbarCategories = categories.map((category) => ({
     <p class="text-ink-muted mt-3 max-w-prose text-base sm:mt-4 sm:text-lg">{t('hero.lead')}</p>
   </section>
 
+  {
+    /*
+    One column on phones on purpose. Two columns squeezed each card to 166px,
+    which is what forced the word — the thing being looked up — into an
+    ellipsis. Below `sm` the card switches to its compact row layout (see
+    `.sign-card` in global.css), so a single column is also shorter per entry
+    than the two-column card was: more of the catalogue fits on screen, not
+    less.
+  */
+  }
   <div
     id="sign-grid"
     data-lang={language}
-    class="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
+    class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
   >
     {
       signs.map((sign) => {
