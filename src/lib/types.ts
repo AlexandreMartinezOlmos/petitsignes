@@ -123,6 +123,5 @@ export interface Category {
   id: CategoryId;
   labels: LocalizedText;
   icon: string;
-  color: string;
   order: number;
 }
