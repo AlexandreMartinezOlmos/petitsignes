@@ -21,6 +21,8 @@ const MESSAGES = {
     'nav.about': 'El projecte',
     'nav.sourceCode': 'Codi font',
     'nav.footer': 'Peu de pàgina',
+    'nav.site': 'Pàgines del lloc',
+    'nav.skipCatalogue': 'Salta el catàleg',
 
     'hero.title': "Comunica't amb el teu nadó",
     'hero.titleAccent': 'molt abans de la primera paraula',
@@ -108,6 +110,8 @@ const MESSAGES = {
     'nav.about': 'El proyecto',
     'nav.sourceCode': 'Código fuente',
     'nav.footer': 'Pie de página',
+    'nav.site': 'Páginas del sitio',
+    'nav.skipCatalogue': 'Saltar el catálogo',
 
     'hero.title': 'Comunícate con tu bebé',
     'hero.titleAccent': 'mucho antes de la primera palabra',
@@ -195,6 +199,8 @@ const MESSAGES = {
     'nav.about': 'The project',
     'nav.sourceCode': 'Source code',
     'nav.footer': 'Footer',
+    'nav.site': 'Site pages',
+    'nav.skipCatalogue': 'Skip the catalogue',
 
     'hero.title': 'Connect with your baby',
     'hero.titleAccent': 'long before their first word',

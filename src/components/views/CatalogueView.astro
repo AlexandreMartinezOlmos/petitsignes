@@ -111,6 +111,17 @@ for (const sign of signs) {
     less.
   */
   }
+  {
+    /*
+    Bypass block (WCAG 2.4.1). The grid holds 638 of the page's 654 focus
+    stops, so everything after it — the footer, and the only route to the
+    other pages on a phone — sat 650 Tab presses away. This is the standard
+    escape hatch: invisible until focused, and it lands on the footer nav
+    itself so the next Tab is already the first link there.
+  */
+  }
+  <a class="bypass-link" href="#footer-nav">{t('nav.skipCatalogue')}</a>
+
   <div
     id="sign-grid"
     data-lang={language}

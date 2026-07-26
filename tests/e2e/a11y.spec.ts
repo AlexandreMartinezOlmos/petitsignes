@@ -201,6 +201,11 @@ test('every control meets the touch target floor', async ({ page }) => {
   const undersized = await page.evaluate(() =>
     [...document.querySelectorAll('a[href], button, input, [role="button"]')]
       .map((el) => ({ el, box: el.getBoundingClientRect() }))
+      // A control clipped to a pixel is one that only exists once focused —
+      // the skip and bypass links. Measuring them at rest would report a 1px
+      // target for something nobody can point at; their real size is asserted
+      // in the tests that focus them.
+      .filter(({ el }) => getComputedStyle(el).clipPath === 'none')
       .filter(({ box }) => box.width > 0 && (box.width < 24 || box.height < 24))
       .map(
         ({ el, box }) =>
@@ -243,6 +248,65 @@ test('both card toggles answer a press with more than a hue', async ({ page }) =
     const filled = after.background !== before.background || after.iconFill !== before.iconFill;
     expect(filled, `${action} changed nothing but its colour`).toBe(true);
   }
+});
+
+/**
+ * WCAG 2.4.1 (Bypass Blocks). The grid holds 638 of the page's 654 focus
+ * stops, so the footer — and on a phone the only route to the other pages —
+ * sat 650 Tab presses behind it. The bypass link is the escape hatch; this
+ * pins both halves of it, because a skip link that does not move focus is the
+ * classic way for one to rot unnoticed.
+ */
+test('the catalogue can be skipped from the keyboard', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const bypass = page.locator('.bypass-link');
+  await expect(bypass).toHaveAttribute('href', '#footer-nav');
+
+  // Hidden until focused: it sits between the hero and the grid, so reserving
+  // space for it the rest of the time would be a permanent gap.
+  expect(await bypass.evaluate((el) => el.getBoundingClientRect().width)).toBeLessThan(2);
+
+  await bypass.focus();
+  expect(await bypass.evaluate((el) => el.getBoundingClientRect().width)).toBeGreaterThan(80);
+
+  await bypass.press('Enter');
+  // The target takes focus itself (`tabindex="-1"`), so the next Tab is
+  // already the first footer link rather than the top of the document.
+  await expect(page.locator('#footer-nav')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.footer-link').first()).toBeFocused();
+});
+
+/**
+ * The header carries the rest of the site from `sm` up. Below that it does
+ * not, on purpose — the mobile header is already 62% of the first screen —
+ * so this asserts the boundary in both directions rather than only the half
+ * that works.
+ */
+test('the header carries the site navigation on wide screens', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/credits/');
+
+  const links = page.locator('.site-nav__link');
+  await expect(links).toHaveCount(3);
+
+  // Reached before the catalogue rather than after it: three Tabs from the
+  // top of the document, past the skip link and the wordmark.
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await expect(links.first()).toBeFocused();
+
+  // Which page you are on is underlined, not only recoloured (WCAG 1.4.1).
+  const current = page.locator('.site-nav__link[aria-current="page"]');
+  await expect(current).toHaveCount(1);
+  await expect(current).toHaveText(/crèdits/i);
+  expect(await current.evaluate((el) => getComputedStyle(el).textDecorationLine)).toBe('underline');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(links.first()).toBeHidden();
 });
 
 /**
