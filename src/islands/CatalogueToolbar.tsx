@@ -201,9 +201,21 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                 );
               })}
 
-              {/* Short label, full accessible name: spelled out, the chip wrapped
-                onto a second line and cost 48px in the resting state that this
-                whole change exists to protect. */}
+              {/*
+                The accessible name **begins with the visible text**, then
+                explains it: "+15 més: mostra totes les categories".
+
+                It used to announce "Mostra les 15 categories" while showing
+                "+15 més", which fails WCAG 2.5.3 (Label in Name, level A) —
+                someone driving the page by voice says what they can see, and
+                "més" matched nothing. Spelling the label out in full instead
+                fixed that but pushed the chips onto a second row at 360px, a
+                very common phone width, costing 52px of a header that is
+                already too tall. Leading with the visible text satisfies the
+                criterion and keeps the row at one line, so long as the rule is
+                respected: whatever `filter.showCategories` says, the label
+                string has to start with it. `i18n.test.ts` pins that.
+              */}
               <button
                 type="button"
                 onClick={() => setCategoriesOpen(!categoriesOpen)}
