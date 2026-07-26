@@ -32,7 +32,6 @@ export default function SignVideoDialog({ language }: Props) {
   const t = createTranslator(language);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [request, setRequest] = useState<PlayRequestDetail | null>(null);
@@ -72,12 +71,18 @@ export default function SignVideoDialog({ language }: Props) {
     if (request && !dialog.open) {
       dialog.showModal();
 
-      // `showModal()` hands focus to the first focusable descendant, which is
-      // the close button, and the browser treats that as keyboard focus — so
-      // opening the player by tapping a card still drew a focus ring around
-      // the X. Moving focus to the title instead means a screen reader
-      // announces the sign rather than "close", and nothing looks pre-pressed.
-      titleRef.current?.focus();
+      // A modal has to take focus: otherwise it stays on the card behind,
+      // tabbing walks through content the visitor can no longer see, and a
+      // screen reader never announces that anything opened.
+      //
+      // `showModal()` parks it on the first focusable descendant — the close
+      // button — which the browser then treats as keyboard focus, so opening
+      // the player by tapping drew a ring around the X. The dialog itself
+      // takes it instead: its `aria-label` is already the sign's name, so
+      // that is what gets announced, and no control looks pre-pressed. The
+      // ring is suppressed in CSS because this element is not operable and
+      // cannot be reached with Tab.
+      dialog.focus();
     } else if (!request && dialog.open) {
       dialog.close();
     }
@@ -178,6 +183,7 @@ export default function SignVideoDialog({ language }: Props) {
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
     <dialog
       ref={dialogRef}
+      tabIndex={-1}
       aria-label={request ? videoTitle : t('card.watchSign')}
       className="player-dialog"
       onClick={(event) => {
@@ -187,11 +193,7 @@ export default function SignVideoDialog({ language }: Props) {
       {request && videoId && (
         <div className="flex flex-col">
           <div className="flex items-center gap-2 px-4 py-3">
-            {/* `tabIndex={-1}` so the dialog can hand it focus on open without
-                adding a stop to the tab order. */}
-            <h2 ref={titleRef} tabIndex={-1} className="min-w-0 flex-1 truncate text-lg font-bold">
-              {request.label}
-            </h2>
+            <h2 className="min-w-0 flex-1 truncate text-lg font-bold">{request.label}</h2>
             <button
               type="button"
               onClick={close}

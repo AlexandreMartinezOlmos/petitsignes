@@ -1272,6 +1272,15 @@
   box-shadow: var(--edge-light), var(--elevation-3);
 }
 
+/* The dialog takes focus when it opens so the modal is announced and tabbing
+   cannot wander behind it, but it is not something you can operate and Tab
+   cannot reach it, so drawing a focus ring around the whole sheet would only
+   be noise. Suppressing it here does not weaken "Focus Visible": that applies
+   to keyboard-operable components, and the controls inside keep their rings. */
+.player-dialog:focus {
+  outline: none;
+}
+
 /* The one place a heavier blur is worth its cost. Nothing scrolls behind an
    open dialog, so the backdrop is rasterised once instead of every frame, and
    this is the moment the app most wants the catalogue to recede: the visitor
