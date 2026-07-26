@@ -120,7 +120,17 @@ const canonical = new URL(localeHref(path, language), Astro.site);
     <a class="skip-link" href="#main">{t('nav.skipToContent')}</a>
 
     <header class="app-header glass" id="app-header">
-      <div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+      {
+        /*
+        `app-header__row` wraps rather than overflows. At 320px — the width
+        WCAG 1.4.10 asks the page to survive — the wordmark and the language
+        selector together needed 315px of a 288px budget, so the document
+        scrolled sideways. The tightened spacing below `sm` is what makes them
+        fit; the wrap is what guarantees they always will, whatever a future
+        translation does to the string lengths.
+      */
+      }
+      <div class="app-header__row mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
         <a href={homeHref} class="brand-mark shrink-0 text-base sm:text-lg">
           <span class="brand-mark__dot" aria-hidden="true">
             <svg class="icon-sm" aria-hidden="true" focusable="false">
@@ -170,22 +180,19 @@ const canonical = new URL(localeHref(path, language), Astro.site);
 
     <footer class="border-border text-ink-muted mt-16 border-t">
       <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-10 text-sm">
-        <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label={t('nav.footer')}>
-          <a class="hover:text-ink underline underline-offset-4" href={aboutHref}>
-            {t('nav.about')}
-          </a>
-          <a class="hover:text-ink underline underline-offset-4" href={creditsHref}>
-            {t('nav.credits')}
-          </a>
-          <a class="hover:text-ink underline underline-offset-4" href={accessibilityHref}>
-            {t('nav.accessibility')}
-          </a>
-          <a
-            class="hover:text-ink underline underline-offset-4"
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-          >
+        {
+          /*
+          `.footer-link` rather than the same four utility classes written out
+          four times, and it carries the 44px target the design system promises
+          for every control. These were 22px tall — under the 24px floor of
+          WCAG 2.5.8 and the only controls on the site breaking our own rule.
+        */
+        }
+        <nav class="footer-nav" aria-label={t('nav.footer')}>
+          <a class="footer-link" href={aboutHref}>{t('nav.about')}</a>
+          <a class="footer-link" href={creditsHref}>{t('nav.credits')}</a>
+          <a class="footer-link" href={accessibilityHref}>{t('nav.accessibility')}</a>
+          <a class="footer-link" href={REPO_URL} target="_blank" rel="noreferrer noopener">
             {t('nav.sourceCode')}
           </a>
         </nav>
