@@ -114,13 +114,26 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
   </div>
 
   <div class="sign-card__header">
-    <h2 class="sign-card__title">{label}</h2>
-    <span class="sign-card__chip" data-category={sign.category}>
-      <svg class="icon-sm" aria-hidden="true" focusable="false">
-        <use href={`#i-${category.icon}`}></use>
-      </svg>
-      {category.labels[language]}
-    </span>
+    {
+      /*
+      The word and its category read as one block, and the wrapper is what
+      lets them stack on wide cards and sit side by side in the compact row
+      without either arrangement fighting the toggles for the same line.
+    */
+    }
+    <div class="sign-card__label">
+      {
+        /* h3: the grid is grouped under section headings, and a card belongs to
+          one of them rather than sitting beside it. */
+      }
+      <h3 class="sign-card__title">{label}</h3>
+      <span class="sign-card__chip" data-category={sign.category}>
+        <svg class="icon-sm" aria-hidden="true" focusable="false">
+          <use href={`#i-${category.icon}`}></use>
+        </svg>
+        {category.labels[language]}
+      </span>
+    </div>
 
     <div class="sign-card__toggles">
       <button

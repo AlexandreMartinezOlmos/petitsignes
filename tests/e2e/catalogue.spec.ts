@@ -55,14 +55,9 @@ test.describe('catalogue', () => {
     await expect(page.getByRole('status')).toContainText('zzzzzz');
   });
 
-  test('category chips narrow the grid', async ({ page }) => {
-    const before = await visibleCards(page);
-    await page.getByRole('button', { name: 'Animals', exact: true }).click();
-
-    const after = await visibleCards(page);
-    expect(after).toBeLessThan(before);
-    expect(after).toBeGreaterThan(0);
-  });
+  // Narrowing the grid by category moved to the `category filters` group
+  // below, which has to expand the list first: the categories are collapsed
+  // until asked for now, so reaching one is part of what the test proves.
 
   test('favourites survive a reload', async ({ page }) => {
     const card = page.locator('.sign-card[data-sign-id="leche"]');
@@ -235,5 +230,204 @@ test.describe('video delivery', () => {
 
     await expect(link).toHaveAttribute('href', /fundacioncnse-dilse\.org/);
     await expect(link).toHaveAttribute('rel', /noreferrer/);
+  });
+});
+
+/**
+ * The header is sticky and holds the brand, the search field, a scrolling row
+ * of category chips and a row of status filters — 261px of a 375px-tall
+ * viewport before this. Folding the filter rows away while reading down the
+ * catalogue is worth a third of the screen, so it is worth a test.
+ */
+test.describe('condensing toolbar', () => {
+  test.skip(
+    ({ viewport }) => (viewport?.width ?? 0) >= 640,
+    'the toolbar only condenses on phones',
+  );
+
+  const header = '#app-header';
+
+  test('folds the filters away on the way down and returns them on the way up', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    // The attribute flips as soon as the scroll handler runs, but the rows
+    // fold over a transition, so every height here is polled until it settles
+    // rather than read on the next tick.
+    const height = async () => (await page.locator(header).boundingBox())!.height;
+    const expanded = await height();
+
+    await page.mouse.move(180, 600);
+    await page.mouse.wheel(0, 900);
+    await expect(page.locator(header)).toHaveAttribute('data-condensed', 'true');
+
+    // Worth doing at all: this should reclaim a real slice of the screen, not
+    // a few pixels of padding.
+    await expect.poll(async () => expanded - (await height())).toBeGreaterThan(80);
+
+    // The search field is the one control that stays: it is the fastest route
+    // to a specific sign and it costs a single row.
+    await expect(page.locator('#sign-search')).toBeVisible();
+
+    // Reversing before the fold has finished is something the implementation
+    // deliberately ignores — that guard is what stops the header oscillating
+    // against its own layout shift — and it is not a gesture a hand makes.
+    await page.waitForTimeout(400);
+    await page.mouse.wheel(0, -400);
+    await expect(page.locator(header)).toHaveAttribute('data-condensed', 'false');
+    await expect.poll(async () => Math.round(await height())).toBe(Math.round(expanded));
+  });
+
+  test('collapsed filters leave the tab order rather than hiding inside it', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    const categories = page
+      .getByRole('group', { name: /categor/i })
+      .getByRole('button')
+      .first();
+    await expect(categories).toBeVisible();
+
+    await page.mouse.move(180, 600);
+    await page.mouse.wheel(0, 900);
+    await expect(page.locator(header)).toHaveAttribute('data-condensed', 'true');
+
+    // Hidden means hidden: a control that is invisible but still focusable is
+    // worse than one that is simply gone.
+    await expect(categories).toBeHidden();
+  });
+
+  test('keeps the filters open while focus is inside the header', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    await page.locator('#sign-search').focus();
+    await page.mouse.move(180, 600);
+    await page.mouse.wheel(0, 900);
+
+    // The attribute still flips — the stylesheet is what refuses to act on it
+    // while focus is inside, so someone filtering by keyboard never has the
+    // controls close under them.
+    await expect(page.locator(header)).toHaveAttribute('data-condensed', 'true');
+    await expect(page.getByRole('group', { name: /categor/i })).toBeVisible();
+  });
+});
+
+/**
+ * Seventeen category filters in a horizontally scrolling row showed three of
+ * them on a 375px screen and hid the rest behind five screens of sideways
+ * scrolling — you could not learn that "Animals" existed without swiping
+ * blind. They wrap and collapse now, so the list is either short or complete,
+ * never a keyhole onto itself.
+ */
+test.describe('category filters', () => {
+  const toggle = (page: Page) => page.locator('.chip--more');
+
+  test('collapsed, the catalogue can still be filtered once expanded', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    const animals = page.getByRole('button', { name: 'Animals', exact: true });
+    await expect(animals).toBeHidden();
+
+    await toggle(page).click();
+    await expect(animals).toBeVisible();
+
+    const before = await visibleCards(page);
+    await animals.click();
+    const after = await visibleCards(page);
+    expect(after).toBeLessThan(before);
+    expect(after).toBeGreaterThan(0);
+  });
+
+  test('the chosen category stays on screen after the list collapses', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    await toggle(page).click();
+    await page.getByRole('button', { name: 'Animals', exact: true }).click();
+
+    // Picking one closes the list, but the filter doing the work has to remain
+    // visible: otherwise the catalogue is visibly cut down with nothing on
+    // screen explaining why.
+    await expect(page.getByRole('button', { name: 'Animals', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Emocions', exact: true })).toBeHidden();
+  });
+
+  test('hidden categories are not rendered rather than merely invisible', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    // A control that is invisible but still focusable is worse than one that
+    // is absent, so the collapsed list must not leave any behind.
+    await expect(page.getByRole('button', { name: 'Emocions', exact: true })).toHaveCount(0);
+
+    await toggle(page).click();
+    await expect(page.getByRole('button', { name: 'Emocions', exact: true })).toHaveCount(1);
+  });
+
+  test('nothing scrolls sideways in either state', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    const overflows = () =>
+      page.locator('.chip-row').evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+
+    expect(await overflows()).toBe(false);
+    await toggle(page).click();
+    expect(await overflows()).toBe(false);
+  });
+});
+
+/**
+ * The catalogue was already grouped — the curated route, then one category
+ * after another — but nothing said so: thirty-two food words went by with no
+ * indication of where they ended.
+ */
+test.describe('grid sections', () => {
+  const sections = (page: Page) => page.locator('[data-section]:not([hidden])');
+
+  test('every run of signs is introduced by a heading', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    // The curated route plus one per category.
+    await expect(sections(page)).toHaveCount(16);
+    await expect(sections(page).first()).toHaveText('Primers signes');
+  });
+
+  test('a search keeps its results grouped by where they came from', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+    await page.getByPlaceholder(/cerca un signe/i).fill('gos');
+
+    // Not a flat run of matches, and not a wall of empty headings either.
+    await expect(sections(page)).toHaveCount(1);
+    await expect(sections(page)).toHaveText('Animals');
+  });
+
+  test('headings do not survive a filter that empties them', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+    await page.getByPlaceholder(/cerca un signe/i).fill('zzzzzz');
+
+    await expect(sections(page)).toHaveCount(0);
+  });
+
+  test('the heading levels stay in order', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    // A card belongs to a section rather than sitting beside it, so the words
+    // are a level below the headings that introduce them.
+    const levels = await page.evaluate(() =>
+      [...document.querySelectorAll('h1, h2, h3')].map((el) => el.tagName),
+    );
+    expect(levels[0]).toBe('H1');
+    expect(levels[1]).toBe('H2');
+    expect(levels).toContain('H3');
+    expect(levels).not.toContain('H4');
   });
 });

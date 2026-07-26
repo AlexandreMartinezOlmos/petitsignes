@@ -67,8 +67,25 @@ export default function SignVideoDialog({ language }: Props) {
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (request && !dialog.open) dialog.showModal();
-    else if (!request && dialog.open) dialog.close();
+
+    if (request && !dialog.open) {
+      dialog.showModal();
+
+      // A modal has to take focus: otherwise it stays on the card behind,
+      // tabbing walks through content the visitor can no longer see, and a
+      // screen reader never announces that anything opened.
+      //
+      // `showModal()` parks it on the first focusable descendant — the close
+      // button — which the browser then treats as keyboard focus, so opening
+      // the player by tapping drew a ring around the X. The dialog itself
+      // takes it instead: its `aria-label` is already the sign's name, so
+      // that is what gets announced, and no control looks pre-pressed. The
+      // ring is suppressed in CSS because this element is not operable and
+      // cannot be reached with Tab.
+      dialog.focus();
+    } else if (!request && dialog.open) {
+      dialog.close();
+    }
   }, [request]);
 
   // Escape (when focus is not trapped in the iframe) fires `cancel`; keep the
@@ -166,6 +183,7 @@ export default function SignVideoDialog({ language }: Props) {
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
     <dialog
       ref={dialogRef}
+      tabIndex={-1}
       aria-label={request ? videoTitle : t('card.watchSign')}
       className="player-dialog"
       onClick={(event) => {

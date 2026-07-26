@@ -119,7 +119,7 @@ const canonical = new URL(localeHref(path, language), Astro.site);
     <IconSprite />
     <a class="skip-link" href="#main">{t('nav.skipToContent')}</a>
 
-    <header class="app-header" id="app-header">
+    <header class="app-header glass" id="app-header">
       <div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
         <a href={homeHref} class="brand-mark shrink-0 text-base sm:text-lg">
           <span class="brand-mark__dot" aria-hidden="true">
@@ -193,14 +193,68 @@ const canonical = new URL(localeHref(path, language), Astro.site);
     </footer>
 
     <script>
-      // Give the sticky header a shadow only once content sits behind it.
       const header = document.getElementById('app-header');
+
       if (header) {
-        const onScroll = () => {
-          header.dataset.scrolled = String(window.scrollY > 4);
+        // How far past the header the page must be before its filter rows are
+        // worth folding away, and how far the scroll has to reverse before
+        // they come back. Without that second number the rows flicker on the
+        // small jitter a finger leaves at the end of a swipe.
+        const CONDENSE_AFTER = 160;
+        const DIRECTION_THRESHOLD = 12;
+
+        // Folding the rows makes the header shorter, which shifts the document
+        // and fires another scroll event — one whose direction is the opposite
+        // of the gesture that caused it. Left alone that reads as "scrolling
+        // up", unfolds the rows, shifts the document back, and the header
+        // oscillates. Ignoring direction while the fold animates breaks the
+        // loop; the state itself still updates immediately.
+        const SETTLE_MS = 320;
+
+        let lastY = window.scrollY;
+        let condensed = false;
+        let ticking = false;
+        // Negative infinity, not 0: `performance.now()` is measured from page
+        // load, so starting at 0 would swallow any scroll in the first 320ms
+        // as though the header had just folded.
+        let settledAt = Number.NEGATIVE_INFINITY;
+
+        // Stated from the start rather than appearing on the first fold, so the
+        // header always advertises which of the two states it is in.
+        header.dataset.condensed = 'false';
+
+        const update = () => {
+          ticking = false;
+          const y = window.scrollY;
+
+          // Read once per frame and write once: the shadow and the condensed
+          // state share this handler so scrolling never triggers two layouts.
+          header.dataset.scrolled = String(y > 4);
+
+          const delta = y - lastY;
+          if (Math.abs(delta) < DIRECTION_THRESHOLD) return;
+          lastY = y;
+
+          if (performance.now() - settledAt < SETTLE_MS) return;
+
+          const next = delta > 0 && y > CONDENSE_AFTER;
+          if (next !== condensed) {
+            condensed = next;
+            settledAt = performance.now();
+            header.dataset.condensed = String(next);
+          }
         };
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
+
+        update();
+        window.addEventListener(
+          'scroll',
+          () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+          },
+          { passive: true },
+        );
       }
     </script>
   </body>

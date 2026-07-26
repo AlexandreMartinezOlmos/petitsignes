@@ -1,6 +1,7 @@
 # Arquitectura
 
-Decisiones estructurales y por qué. Para añadir o corregir contenido, ver
+Decisiones estructurales y por qué. Para construir interfaz que encaje, ver
+[`design-system.md`](design-system.md); para añadir o corregir contenido,
 [`contenido.md`](contenido.md).
 
 ## El problema de fondo
@@ -38,10 +39,11 @@ Cada tarjeta se renderiza en el build con sus datos en atributos `data-*`. El co
 `catalogue-grid.ts` los lee al arrancar y construye el índice de búsqueda **desde el DOM**, así
 que el catálogo no viaja dos veces (una en HTML y otra en el bundle).
 
-Filtrar es poner o quitar el atributo `hidden`. No hay re-render ni framework implicado.
+Filtrar es poner o quitar el atributo `hidden`. No hay re-render ni framework implicado. Los
+encabezados de sección se ocultan igual, cuando el filtro deja su grupo sin tarjetas.
 
 Consecuencia: la página funciona sin JavaScript para leer y navegar; sin él se pierden búsqueda,
-filtros y progreso, pero el contenido está y es indexable.
+filtros y progreso, pero el contenido está —agrupado y con sus encabezados— y es indexable.
 
 ### 2. Dos islas de React, no una aplicación
 
