@@ -21,6 +21,8 @@ const MESSAGES = {
     'nav.about': 'El projecte',
     'nav.sourceCode': 'Codi font',
     'nav.footer': 'Peu de pàgina',
+    'nav.site': 'Pàgines del lloc',
+    'nav.skipCatalogue': 'Salta el catàleg',
 
     'hero.title': "Comunica't amb el teu nadó",
     'hero.titleAccent': 'molt abans de la primera paraula',
@@ -31,6 +33,8 @@ const MESSAGES = {
     'search.clear': 'Esborra la cerca',
     'search.resultCount': '{count} signes',
     'search.resultCountOne': '1 signe',
+    'search.scopeAll': 'tot el catàleg',
+    'search.scopeSearch': 'cerca «{query}», a tot el catàleg',
 
     'empty.search.title': 'Cap signe per «{query}»',
     'empty.search.hint': 'Prova amb una altra paraula o mira totes les categories.',
@@ -54,6 +58,7 @@ const MESSAGES = {
     'filter.showCategories': '+{count} més',
     'filter.showCategoriesLabel': '+{count} més: mostra totes les categories',
     'filter.hideCategories': 'Amaga les categories',
+    'filter.searchScope': 'La cerca mira tot el catàleg, no la categoria triada.',
 
     'card.watchSign': 'Veure el signe',
     'card.addFavorite': 'Afegeix a preferits',
@@ -108,6 +113,8 @@ const MESSAGES = {
     'nav.about': 'El proyecto',
     'nav.sourceCode': 'Código fuente',
     'nav.footer': 'Pie de página',
+    'nav.site': 'Páginas del sitio',
+    'nav.skipCatalogue': 'Saltar el catálogo',
 
     'hero.title': 'Comunícate con tu bebé',
     'hero.titleAccent': 'mucho antes de la primera palabra',
@@ -118,6 +125,8 @@ const MESSAGES = {
     'search.clear': 'Borrar la búsqueda',
     'search.resultCount': '{count} signos',
     'search.resultCountOne': '1 signo',
+    'search.scopeAll': 'todo el catálogo',
+    'search.scopeSearch': 'búsqueda «{query}», en todo el catálogo',
 
     'empty.search.title': 'Ningún signo para «{query}»',
     'empty.search.hint': 'Prueba con otra palabra o mira todas las categorías.',
@@ -141,6 +150,7 @@ const MESSAGES = {
     'filter.showCategories': '+{count} más',
     'filter.showCategoriesLabel': '+{count} más: mostrar todas las categorías',
     'filter.hideCategories': 'Ocultar las categorías',
+    'filter.searchScope': 'La búsqueda mira todo el catálogo, no la categoría elegida.',
 
     'card.watchSign': 'Ver el signo',
     'card.addFavorite': 'Añadir a favoritos',
@@ -195,6 +205,8 @@ const MESSAGES = {
     'nav.about': 'The project',
     'nav.sourceCode': 'Source code',
     'nav.footer': 'Footer',
+    'nav.site': 'Site pages',
+    'nav.skipCatalogue': 'Skip the catalogue',
 
     'hero.title': 'Connect with your baby',
     'hero.titleAccent': 'long before their first word',
@@ -205,6 +217,8 @@ const MESSAGES = {
     'search.clear': 'Clear the search',
     'search.resultCount': '{count} signs',
     'search.resultCountOne': '1 sign',
+    'search.scopeAll': 'the whole catalogue',
+    'search.scopeSearch': 'search “{query}”, across the whole catalogue',
 
     'empty.search.title': 'No signs for “{query}”',
     'empty.search.hint': 'Try another word or browse the categories.',
@@ -228,6 +242,7 @@ const MESSAGES = {
     'filter.showCategories': '+{count} more',
     'filter.showCategoriesLabel': '+{count} more: show all categories',
     'filter.hideCategories': 'Hide categories',
+    'filter.searchScope': 'Search looks at the whole catalogue, not the chosen category.',
 
     'card.watchSign': 'Watch the sign',
     'card.addFavorite': 'Add to favourites',

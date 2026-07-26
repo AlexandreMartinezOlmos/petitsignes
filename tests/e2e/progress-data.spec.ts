@@ -34,6 +34,23 @@ async function seedProgress(page: Page): Promise<void> {
 }
 
 test.describe('progress data', () => {
+  /**
+   * The summary used to be server-rendered as "0 preferits · 0 signes
+   * apresos" and corrected only once the `client:visible` island hydrated —
+   * a rotund and false number sitting next to the export button, for as long
+   * as the visitor had not scrolled that far.
+   *
+   * Asserted against the HTML the server actually sends, not the hydrated
+   * DOM: after hydration the figure is right, which is exactly why looking at
+   * the page in a browser never showed this.
+   */
+  test('does not state a count before it knows one', async ({ request }) => {
+    const html = await (await request.get(ABOUT_PATH)).text();
+
+    expect(html).toContain('progress-data__summary');
+    expect(html).not.toMatch(/0 preferits|0 signes apresos/);
+  });
+
   test('summarises what is stored in this browser', async ({ page }) => {
     await seedProgress(page);
     await page.goto(ABOUT_PATH);

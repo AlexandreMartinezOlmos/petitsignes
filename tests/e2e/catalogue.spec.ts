@@ -126,9 +126,18 @@ test.describe('interface language', () => {
 
   test('the header no longer carries redundant catalogue navigation', async ({ page }) => {
     await page.goto('/');
-    // Only the logo and the two language links live in the header.
-    await expect(page.getByRole('link', { name: 'Catàleg' })).toHaveCount(0);
-    await expect(page.getByRole('link', { name: 'Primers signes' })).toHaveCount(0);
+
+    // The header carries the wordmark, the site pages and the language
+    // selector. What it must not carry is a second way to reach the catalogue
+    // the visitor is already looking at, or a filter dressed up as a link —
+    // `Primers signes` is a chip in the toolbar and belongs there.
+    //
+    // Scoped to the header and matched exactly: unscoped substring matching
+    // also caught the catalogue's own bypass link ("Salta el catàleg"), which
+    // is the opposite of redundant navigation.
+    const header = page.locator('#app-header');
+    await expect(header.getByRole('link', { name: 'Catàleg', exact: true })).toHaveCount(0);
+    await expect(header.getByRole('link', { name: 'Primers signes', exact: true })).toHaveCount(0);
   });
 });
 

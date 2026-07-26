@@ -41,6 +41,9 @@ const aboutHref = localeHref('/el-projecte/', language);
 const creditsHref = localeHref('/credits/', language);
 const accessibilityHref = localeHref('/accessibilitat/', language);
 const canonical = new URL(localeHref(path, language), Astro.site);
+
+/** `aria-current="page"` on the header link for the page being viewed. */
+const isCurrent = (target: string): 'page' | undefined => (path === target ? 'page' : undefined);
 ---
 
 <!doctype html>
@@ -142,6 +145,37 @@ const canonical = new URL(localeHref(path, language), Astro.site);
 
         {
           /*
+          The rest of the site used to live only in the footer: 650 Tab presses
+          and 38.6 screens of scroll past the catalogue, with the accessibility
+          statement the EAA obliges us to publish at the far end of it. From
+          `sm` up the header row already has ~800px of unused width, so these
+          cost no height at all.
+
+          Below `sm` they are hidden and the footer remains the only route —
+          the mobile header is already 62% of the first screen and a second row
+          would make that worse. That gap is the header-geometry work, not this
+          change; the skip link below is what makes the footer reachable
+          without crossing 229 cards in the meantime.
+        */
+        }
+        <nav class="site-nav" aria-label={t('nav.site')}>
+          <a class="site-nav__link" href={aboutHref} aria-current={isCurrent('/el-projecte/')}>
+            {t('nav.about')}
+          </a>
+          <a class="site-nav__link" href={creditsHref} aria-current={isCurrent('/credits/')}>
+            {t('nav.credits')}
+          </a>
+          <a
+            class="site-nav__link"
+            href={accessibilityHref}
+            aria-current={isCurrent('/accessibilitat/')}
+          >
+            {t('nav.accessibility')}
+          </a>
+        </nav>
+
+        {
+          /*
           The language selector doubles as the sign-language selector: each
           locale is coupled to one (ca → LSC, es → LSE). It is a plain set of
           links, so it works without JavaScript and its active state is
@@ -188,7 +222,7 @@ const canonical = new URL(localeHref(path, language), Astro.site);
           WCAG 2.5.8 and the only controls on the site breaking our own rule.
         */
         }
-        <nav class="footer-nav" aria-label={t('nav.footer')}>
+        <nav class="footer-nav" id="footer-nav" tabindex="-1" aria-label={t('nav.footer')}>
           <a class="footer-link" href={aboutHref}>{t('nav.about')}</a>
           <a class="footer-link" href={creditsHref}>{t('nav.credits')}</a>
           <a class="footer-link" href={accessibilityHref}>{t('nav.accessibility')}</a>

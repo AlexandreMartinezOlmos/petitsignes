@@ -490,6 +490,40 @@
   top: 0.5rem;
 }
 
+/* --- Bypass link -----------------------------------------------------------
+   Same idea as the skip link, but it sits inside the flow just before the
+   catalogue rather than at the very top of the page, so it cannot use the
+   negative-offset trick. Hidden the way `.sr-only` hides things, and it takes
+   up its real space only once focused — which is also why it must not reserve
+   any while hidden: it lives between the hero and the grid.
+-------------------------------------------------------------------------- */
+.bypass-link {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.bypass-link:focus {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  inline-size: auto;
+  min-block-size: var(--spacing-touch);
+  block-size: auto;
+  margin-block-end: 0.75rem;
+  overflow: visible;
+  clip-path: none;
+  border-radius: var(--radius-control);
+  padding-inline: 1rem;
+  background-color: var(--color-brand);
+  color: var(--color-on-brand);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--elevation-2);
+}
+
 /* --- Glass ----------------------------------------------------------------
    One class, so every translucent surface in the app shares a single set of
    rules and a single accessibility escape hatch.
@@ -617,6 +651,14 @@
   }
 }
 
+/* Why the category chips went quiet. Rendered only while a search actually
+   suspends them, so it is never permanent header height. */
+.toolbar__note {
+  margin-block-start: 0.5rem;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
 .brand-mark {
   display: inline-flex;
   align-items: center;
@@ -644,6 +686,54 @@
    ever needing to wrap on a real phone. See `.lang-switch` and WCAG 1.4.10. */
 .app-header__row {
   flex-wrap: wrap;
+}
+
+/* --- Site navigation -------------------------------------------------------
+   Shown from `sm` up, where the header row has width to spare and these cost
+   no extra height. Below that the row is already the tightest thing on the
+   page (see `.app-header__row` and WCAG 1.4.10) and the footer plus the
+   catalogue's bypass link carry the job instead.
+-------------------------------------------------------------------------- */
+.site-nav {
+  display: none;
+}
+
+@media (width >= 40rem) {
+  .site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}
+
+.site-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--spacing-touch);
+  border-radius: var(--radius-control);
+  padding-inline: 0.625rem;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-muted);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .site-nav__link:hover {
+    color: var(--color-ink);
+    background-color: var(--color-surface-sunken);
+  }
+}
+
+/* Underlined rather than only recoloured: which page you are on must not
+   depend on telling two greys apart (WCAG 1.4.1). */
+.site-nav__link[aria-current='page'] {
+  color: var(--color-brand-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
 }
 
 /* --- Language selector ---------------------------------------------------- */
@@ -843,6 +933,12 @@
   outline-offset: 2px;
 }
 
+/* Empty until the store answers (see ProgressData). Holding one line of height
+   means the summary arriving does not push the buttons down. */
+.progress-data__summary {
+  min-block-size: 1lh;
+}
+
 .progress-data__hint {
   margin-block-start: 0.4rem;
   color: var(--color-ink-muted);
@@ -987,6 +1083,15 @@
 
 .search-field::placeholder {
   color: var(--color-ink-subtle);
+}
+
+/* `type="search"` grows a second clear button of its own in every Blink and
+   WebKit browser: two controls doing the same job, side by side, and the
+   native one is ~14px with no accessible name. Ours is 36px, labelled, and
+   returns focus to the field. The sweep in `a11y.spec.ts` cannot catch this
+   one — it lives in the shadow DOM — so it is removed here explicitly. */
+.search-field::-webkit-search-cancel-button {
+  appearance: none;
 }
 
 @media (hover: hover) {
@@ -1299,17 +1404,24 @@
   }
 }
 
+/* Not a control, and it must not look like one. The dashed outline plus the
+   CTA's height, radius and centring gave it the exact silhouette of a disabled
+   button — 49 of 229 cards offering an action that cannot exist (§2.1).
+   The height stays: it is what keeps the cards in a row the same height. The
+   outline, the radius and the centring go, and the icon says in one glance
+   what the sentence says in five words. */
 .sign-card__novideo {
   display: flex;
   min-block-size: var(--spacing-touch);
   align-items: center;
-  justify-content: center;
-  border: 1px dashed var(--color-border-strong);
-  border-radius: var(--radius-control);
-  padding-inline: 0.75rem;
-  text-align: center;
+  gap: 0.4rem;
   font-size: var(--text-sm);
   color: var(--color-ink-muted);
+}
+
+.sign-card__novideo .icon-sm {
+  flex-shrink: 0;
+  color: var(--color-ink-subtle);
 }
 
 .sign-card__toggle {
@@ -1559,5 +1671,109 @@
 @media (hover: hover) {
   .prose-page a:hover {
     text-decoration-thickness: 2px;
+  }
+}
+
+/* --- Print -----------------------------------------------------------------
+   Printing gave 229 cards under a sticky glass header on a cream background.
+   Nurseries and midwives want a sheet of the signs they are working on, and
+   the catalogue already knows how to produce one: the grid controller hides
+   filtered-out cards with `hidden`, so whatever is on screen is what comes
+   out. Filter first, then print.
+
+   Everything removed here is either chrome, a control that cannot be pressed
+   on paper, or the empty media placeholder — which has no poster and never
+   will (§2.1), so on paper it is a blank rectangle costing a third of the
+   page. The link to the source dictionary stays, and gains its URL: that link
+   is the attribution the licence asks for (§2.4), and it is the only part of
+   a printed card that is still actionable.
+-------------------------------------------------------------------------- */
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .app-header,
+  .skip-link,
+  .bypass-link,
+  .empty-state,
+  .hero__title + p,
+  .progress-data__actions,
+  .sign-card__media,
+  .sign-card__toggles,
+  button.sign-card__cta,
+  dialog {
+    display: none !important;
+  }
+
+  /* `!important` because the width and padding come from utility classes on
+     the element, which a bare element selector cannot outrank. Overriding
+     layout for paper is what a print sheet is for. */
+  main {
+    max-inline-size: none !important;
+    padding: 0 !important;
+  }
+
+  #sign-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4cm;
+  }
+
+  /* A card split across a page break is unreadable, and a heading stranded at
+     the foot of a page introduces nothing. */
+  .sign-card {
+    break-inside: avoid;
+    border: 1px solid #999;
+    background: none;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .grid-section {
+    break-after: avoid;
+    color: #000;
+  }
+
+  /* On screen the headline is the invitation; on paper it is a label at the
+     top of a reference sheet, and at 52px it ate a third of the first page. */
+  .hero__title {
+    font-size: 1.5rem;
+    color: #000;
+  }
+
+  .hero__accent {
+    color: inherit;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  /* Category colour survives as a hairline rather than a filled chip: colour
+     printing is not a given, and a grey block behind grey text is worse than
+     no block at all. */
+  .sign-card__chip {
+    background: none;
+    border: 1px solid #999;
+    color: #000;
+  }
+
+  /* Non-breaking spaces: a leading space in generated content is collapsed
+     away, which ran the URL straight into the link text. */
+  .sign-card__cta--external::after {
+    content: '\00a0— ' attr(href);
+    font-weight: var(--font-weight-normal);
+    word-break: break-all;
+  }
+
+  .footer-link[href^='http']::after {
+    content: '\00a0(' attr(href) ')';
   }
 }
