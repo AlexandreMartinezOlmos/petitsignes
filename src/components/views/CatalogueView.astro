@@ -42,6 +42,46 @@ const toolbarCategories = categories.map((category) => ({
   id: category.id,
   label: category.labels[language],
 }));
+
+/**
+ * The grid, with a heading before each run of signs.
+ *
+ * The order above already groups the catalogue — the curated route, then one
+ * category after another — but nothing said so on screen: you scrolled past
+ * thirty-two food words with no indication of where they ended. These make the
+ * existing structure visible instead of inventing a new one, which is why the
+ * runs are detected from the sorted list rather than declared a second time.
+ *
+ * Headings stay in place when a filter is on, and the controller hides the
+ * ones left empty. That keeps search results grouped by category rather than
+ * arriving as one flat run, and keeps the heading levels unbroken — a section
+ * that vanished would leave the card headings under nothing.
+ */
+type GridItem =
+  | { kind: 'section'; id: string; label: string }
+  | { kind: 'sign'; sign: SignEntry; category: Category };
+
+const FIRST_SIGNS_SECTION = 'first-signs';
+
+const gridItems: GridItem[] = [];
+let openSection: string | null = null;
+
+for (const sign of signs) {
+  const category = categoryById.get(sign.category);
+  if (!category) continue;
+
+  const section = sign.isFirstSign ? FIRST_SIGNS_SECTION : sign.category;
+  if (section !== openSection) {
+    openSection = section;
+    gridItems.push({
+      kind: 'section',
+      id: section,
+      label: sign.isFirstSign ? t('filter.firstSigns') : category.labels[language],
+    });
+  }
+
+  gridItems.push({ kind: 'sign', sign, category });
+}
 ---
 
 <BaseLayout language={language} path="/">
@@ -61,16 +101,31 @@ const toolbarCategories = categories.map((category) => ({
     <p class="text-ink-muted mt-3 max-w-prose text-base sm:mt-4 sm:text-lg">{t('hero.lead')}</p>
   </section>
 
+  {
+    /*
+    One column on phones on purpose. Two columns squeezed each card to 166px,
+    which is what forced the word — the thing being looked up — into an
+    ellipsis. Below `sm` the card switches to its compact row layout (see
+    `.sign-card` in global.css), so a single column is also shorter per entry
+    than the two-column card was: more of the catalogue fits on screen, not
+    less.
+  */
+  }
   <div
     id="sign-grid"
     data-lang={language}
-    class="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
+    class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
   >
     {
-      signs.map((sign) => {
-        const category = categoryById.get(sign.category);
-        return category ? <SignCard sign={sign} category={category} language={language} /> : null;
-      })
+      gridItems.map((item) =>
+        item.kind === 'section' ? (
+          <h2 class="grid-section" data-section={item.id}>
+            {item.label}
+          </h2>
+        ) : (
+          <SignCard sign={item.sign} category={item.category} language={language} />
+        ),
+      )
     }
   </div>
 

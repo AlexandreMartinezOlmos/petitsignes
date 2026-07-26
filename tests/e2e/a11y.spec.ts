@@ -78,6 +78,42 @@ test('colour contrast holds in dark mode', async ({ page }) => {
 });
 
 /**
+ * Translucency is the one part of this design that can degrade legibility, so
+ * the escape hatch has to actually work rather than merely exist in the
+ * stylesheet. Playwright cannot emulate this query yet, so it is set through
+ * the DevTools protocol; both projects run on Chromium.
+ */
+test('glass turns solid when the visitor has asked for less transparency', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== 'chromium', 'media emulation is set through CDP');
+
+  await page.goto('/');
+  const header = page.locator('#app-header');
+
+  const translucent = await header.evaluate((el) => getComputedStyle(el).backdropFilter);
+  expect(translucent, 'the header should be glass by default').toContain('blur');
+
+  const session = await page.context().newCDPSession(page);
+  await session.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }],
+  });
+
+  await expect(header).toHaveCSS('backdrop-filter', 'none');
+
+  // Opaque means opaque: a surface that is still 86% tinted would keep the
+  // contrast dependent on whatever scrolls behind it, which is the whole
+  // reason the query is honoured.
+  const alpha = await header.evaluate((el) => {
+    const bg = getComputedStyle(el).backgroundColor;
+    const match = bg.match(/\/\s*([\d.]+)\s*\)$/) ?? bg.match(/,\s*([\d.]+)\s*\)$/);
+    return match ? Number(match[1]) : 1;
+  });
+  expect(alpha).toBe(1);
+});
+
+/**
  * WCAG 2.2 §2.4.11: a sticky header must not cover the element that has focus.
  * Tabbing through the grid scrolls cards into view, so they have to clear it.
  */

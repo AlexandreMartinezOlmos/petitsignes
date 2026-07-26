@@ -153,6 +153,11 @@ específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo 
   borrarlo** desde [la página del proyecto](https://petitsignes.cat/el-projecte/): es la
   única manera de llevártelo a otro dispositivo, porque no hay cuentas.
 
+Con más detalle: [`docs/arquitectura.md`](docs/arquitectura.md) explica **por qué** está
+construido así, y [`docs/design-system.md`](docs/design-system.md) **cómo** construir interfaz
+nueva que encaje — tokens, componentes existentes y la lista de comprobación de accesibilidad
+que debe pasar cualquiera nuevo.
+
 ## Gestionar el vocabulario
 
 El proyecto mantiene dos ficheros que dan una vista completa del vocabulario, generados

@@ -18,8 +18,8 @@
     'Nunito Sans Variable', 'Nunito Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
     Roboto, 'Helvetica Neue', sans-serif;
 
-  /* Fluid type scale. Body never drops below 16px (§8); headings gain presence
-     on wide screens without a media query. */
+  /* Fluid type scale. Body never drops below 16px; headings gain presence on
+     wide screens without a media query. */
   --text-xs: 0.75rem;
   --text-xs--line-height: 1.5;
   --text-sm: 0.875rem;
@@ -36,12 +36,31 @@
   --text-display--line-height: 1.08;
   --text-display--letter-spacing: -0.02em;
 
-  /* Radii: 16–24px on cards and controls (§8). */
+  /* The catalogue word gets its own step rather than borrowing a heading size.
+     In a list of 229 entries it is the one thing a visitor is scanning for, so
+     it should not be sized by whatever happens to sit near it in the scale. */
+  --text-word: clamp(1.25rem, 1.05rem + 0.85vw, 1.625rem);
+  --text-word--line-height: 1.15;
+  --text-word--letter-spacing: -0.02em;
+
+  /* Weight is a free axis: the variable font already downloaded carries 200 to
+     1000 in one file, so a heavier display weight costs no extra bytes. Named
+     here so components pick from a scale instead of inventing numbers — there
+     were five different weights in use before, including a stray 650. */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 800;
+  --font-weight-display: 900;
+
+  /* Radii: generous on cards, tighter on controls. */
   --radius-card: 1.375rem;
   --radius-control: 0.875rem;
   --radius-chip: 999px;
 
-  /* Motion. The 150–250ms band from §8, plus one slower step for entrances.
+  /* Motion. A short band that stays under the threshold where an animation
+     starts to feel like waiting, plus one slower step for entrances.
      `--ease-out` decelerates; `--ease-spring` overshoots slightly for presses. */
   --duration-fast: 140ms;
   --duration-base: 200ms;
@@ -49,8 +68,15 @@
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* Minimum touch target for one-handed use (§8) and WCAG 2.2 target size. */
+  /* Minimum touch target for one-handed use, and WCAG 2.2 target size. */
   --spacing-touch: 2.75rem; /* 44px */
+
+  /* Glass. Blur and saturation are the same in both themes: only how opaque
+     the tint has to be changes, and that lives with the theme values. The
+     slight saturation boost keeps colour from going grey behind the blur. */
+  --glass-blur: 16px;
+  --glass-blur-strong: 24px;
+  --glass-saturate: 1.4;
 }
 
 @theme inline {
@@ -101,6 +127,20 @@
   --star: oklch(0.62 0.16 70);
   --learned: oklch(0.5 0.13 155);
 
+  /* How opaque a glass surface stays. This is a contrast floor, not a taste
+     setting: text on glass has to pass AA over the WORST thing that can scroll
+     underneath it, and behind these surfaces is a grid of 229 cards in 15
+     category tints. Blur supplies the effect; this number supplies the
+     legibility. Lower it and contrast starts depending on scroll position. */
+  --glass-tint: 82%;
+
+  /* A hairline of light along the top edge, the way a raised surface catches
+     the light above it. This is what makes a card read as a physical plane
+     without any transparency: the glass look for the price of one inset
+     shadow, on an element that must never carry a real `backdrop-filter`
+     because there are 229 of them. */
+  --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.85);
+
   /* Elevation: an ambient spread plus a tighter directional shadow. Two layers
      read as depth; one reads as a flat drop. */
   --elevation-1: 0 1px 2px oklch(0.3 0.04 60 / 0.05), 0 2px 8px -2px oklch(0.3 0.04 60 / 0.06);
@@ -146,6 +186,18 @@
     --star: oklch(0.82 0.14 80);
     --learned: oklch(0.76 0.14 155);
 
+    /* Dark needs a touch more: the ink-on-surface gap is smaller here, so the
+       same translucency eats more of it. */
+    --glass-tint: 86%;
+
+    /* Barely there: on a dark surface a bright edge reads as glare rather
+       than as light. */
+    --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.07);
+
+    /* Barely there: on a dark surface a bright edge reads as glare rather
+     than as light. */
+    --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.07);
+
     --elevation-1: 0 1px 2px oklch(0 0 0 / 0.4), 0 2px 8px -2px oklch(0 0 0 / 0.45);
     --elevation-2: 0 2px 4px oklch(0 0 0 / 0.4), 0 12px 28px -8px oklch(0 0 0 / 0.55);
     --elevation-3: 0 4px 8px oklch(0 0 0 / 0.45), 0 24px 56px -12px oklch(0 0 0 / 0.65);
@@ -190,6 +242,10 @@
   --focus: oklch(0.78 0.15 255);
   --star: oklch(0.82 0.14 80);
   --learned: oklch(0.76 0.14 155);
+
+  /* Dark needs a touch more: the ink-on-surface gap is smaller here, so the
+     same translucency eats more of it. */
+  --glass-tint: 86%;
 
   --elevation-1: 0 1px 2px oklch(0 0 0 / 0.4), 0 2px 8px -2px oklch(0 0 0 / 0.45);
   --elevation-2: 0 2px 4px oklch(0 0 0 / 0.4), 0 12px 28px -8px oklch(0 0 0 / 0.55);
@@ -344,7 +400,7 @@
   border-radius: var(--radius-control);
   background-color: var(--color-brand);
   color: var(--color-on-brand);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   padding: 0.75rem 1rem;
   box-shadow: var(--elevation-2);
   transition: top var(--duration-fast) var(--ease-out);
@@ -354,22 +410,83 @@
   top: 0.5rem;
 }
 
+/* --- Glass ----------------------------------------------------------------
+   One class, so every translucent surface in the app shares a single set of
+   rules and a single accessibility escape hatch.
+
+   Glass is for CHROME only — surfaces that float over the content: the header,
+   the toolbar, the player sheet. It is never applied to the 229 cards. Two
+   reasons, and both are hard limits rather than preferences:
+
+   - Contrast. On glass, contrast depends on whatever happens to be behind it
+     at that scroll position. `--glass-tint` is the floor that keeps it
+     deterministic; see the token for the full argument.
+   - Cost. `backdrop-filter` makes the compositor snapshot and blur the
+     backdrop every time that backdrop changes. On a fixed 64px bar that is
+     paid once; on a scrolling grid it would be paid per frame, per card.
+
+   The opaque fallback is the default and the blur is layered on top only where
+   supported, so a browser without `backdrop-filter` gets a solid surface
+   rather than an unreadable translucent one.
+-------------------------------------------------------------------------- */
+.glass {
+  background-color: color-mix(in oklab, var(--color-surface) var(--glass-tint), transparent);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .glass {
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  }
+}
+
+/* Someone who has asked their operating system for less transparency has asked
+   for exactly this, and the request is usually about legibility rather than
+   taste. Because every translucent surface reads the same two tokens, raising
+   the tint to fully opaque and dropping the blur turns the whole design solid
+   in one place — no per-component opt-out to forget. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-tint: 100%;
+  }
+
+  .glass {
+    backdrop-filter: none;
+  }
+
+  /* A `::backdrop` cannot carry the class, so it opts out by name. Fully
+     opaque rather than merely unblurred: a see-through scrim over a catalogue
+     of 229 cards is exactly the busy background this request is about. */
+  .player-dialog::backdrop {
+    backdrop-filter: none;
+    background-color: oklch(0.15 0.02 60);
+  }
+}
+
+/* Windows high-contrast modes replace the palette outright. Hairline borders
+   drawn with a translucent colour vanish there, which would leave the header
+   and the player sheet floating with no edge, so they are restated in system
+   colours that forced-colors keeps. */
+@media (forced-colors: active) {
+  .glass {
+    backdrop-filter: none;
+    background-color: Canvas;
+  }
+
+  .app-header,
+  .player-dialog {
+    border: 1px solid CanvasText;
+  }
+}
+
 /* --- App shell ------------------------------------------------------------ */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 30;
   border-bottom: 1px solid transparent;
-  background-color: color-mix(in oklab, var(--color-surface) 82%, transparent);
   transition:
     border-color var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out);
-}
-
-@supports (backdrop-filter: blur(1px)) {
-  .app-header {
-    backdrop-filter: blur(16px) saturate(1.4);
-  }
 }
 
 /* Set by a scroll observer: the header only grows a shadow once content is
@@ -379,11 +496,52 @@
   box-shadow: var(--elevation-1);
 }
 
+/* --- Condensing toolbar ----------------------------------------------------
+   The header is sticky and held the brand, the search field, a scrolling row
+   of 16 category chips and a row of status filters: 261px on a 375px screen,
+   a third of the viewport permanently spent on chrome. Scrolling down the
+   catalogue folds the two filter rows away and leaves the search field, which
+   is the one control worth keeping within reach; scrolling back up returns
+   them.
+
+   `visibility` rather than opacity alone, so the collapsed controls leave the
+   tab order instead of becoming invisible things to tab into. `:focus-within`
+   then keeps the header open for as long as focus is inside it, so the rows
+   never fold away under someone using the keyboard.
+
+   Only on phones. There is no shortage of vertical space on a laptop, and
+   motion in the chrome is a cost with no benefit there.
+-------------------------------------------------------------------------- */
+@media (width < 40rem) {
+  /* A grid row animating between `1fr` and `0fr` folds content of any height
+     without naming that height. The first attempt used a `max-block-size`
+     ceiling, which worked until the category list could be expanded: the open
+     panel is taller than any figure that was sensible to pick, and the bottom
+     six categories were simply cut off. */
+  .toolbar__filters {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition:
+      grid-template-rows var(--duration-slow) var(--ease-out),
+      opacity var(--duration-base) var(--ease-out);
+  }
+
+  .toolbar__filters-inner {
+    overflow: hidden;
+  }
+
+  .app-header[data-condensed='true']:not(:focus-within) .toolbar__filters {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 .brand-mark {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 800;
+  font-weight: var(--font-weight-heavy);
   letter-spacing: -0.02em;
   color: var(--color-brand-ink);
   border-radius: var(--radius-control);
@@ -426,9 +584,11 @@
     color var(--duration-fast) var(--ease-out);
 }
 
-.lang-switch__option:hover {
-  color: var(--color-ink);
-  background-color: var(--color-surface-sunken);
+@media (hover: hover) {
+  .lang-switch__option:hover {
+    color: var(--color-ink);
+    background-color: var(--color-surface-sunken);
+  }
 }
 
 .lang-switch__option[aria-current] {
@@ -439,13 +599,13 @@
 
 .lang-switch__name {
   font-size: var(--text-sm);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .lang-switch__sign {
   margin-block-start: 0.1rem;
   font-size: 0.6875rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -455,7 +615,7 @@
   font-size: var(--text-display);
   line-height: var(--text-display--line-height);
   letter-spacing: var(--text-display--letter-spacing);
-  font-weight: 800;
+  font-weight: var(--font-weight-display);
 }
 
 .hero__accent {
@@ -490,7 +650,7 @@
 }
 
 .empty-state__title {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: var(--color-ink);
 }
 
@@ -518,13 +678,15 @@
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-control);
   padding-inline: 1rem;
-  font-weight: 650;
+  font-weight: var(--font-weight-bold);
   color: var(--color-brand-ink);
   cursor: pointer;
 }
 
-.progress-data__action:hover {
-  background-color: var(--color-surface);
+@media (hover: hover) {
+  .progress-data__action:hover {
+    background-color: var(--color-surface);
+  }
 }
 
 /* Visually hidden, but still focusable and still in the accessibility tree:
@@ -565,7 +727,7 @@
 
 .progress-data__feedback {
   margin-block-start: 1rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 /* --- Chips ---------------------------------------------------------------- */
@@ -581,7 +743,7 @@
   background-color: var(--color-surface-raised);
   color: var(--color-ink);
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   white-space: nowrap;
   transition:
     background-color var(--duration-fast) var(--ease-out),
@@ -591,9 +753,11 @@
     transform var(--duration-fast) var(--ease-out);
 }
 
-.chip:hover {
-  background-color: var(--color-surface-sunken);
-  border-color: var(--color-border-strong);
+@media (hover: hover) {
+  .chip:hover {
+    background-color: var(--color-surface-sunken);
+    border-color: var(--color-border-strong);
+  }
 }
 
 .chip:active {
@@ -609,22 +773,44 @@
 
 /* The category row scrolls horizontally on every screen size. Fading the
    trailing edge signals there is more to reach, without adding a control. */
-.chip-row {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent 100%);
+/* --- Grid sections ---------------------------------------------------------
+   The catalogue is grouped — the curated route, then one category after
+   another — and these say so. Spans every column so a heading never shares a
+   row with the cards it introduces, and the first one skips its top margin
+   because the hero already provides that space.
+-------------------------------------------------------------------------- */
+.grid-section {
+  grid-column: 1 / -1;
+  margin-block-start: 1.5rem;
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-heavy);
+  letter-spacing: -0.01em;
+  color: var(--color-ink-muted);
 }
 
-.chip-row::-webkit-scrollbar {
+.grid-section:first-child {
+  margin-block-start: 0;
+}
+
+.grid-section[hidden] {
   display: none;
 }
 
-.chip-row > * {
-  scroll-snap-align: start;
+/* Wraps rather than scrolls sideways. A scrolling row put 14 of 17 filters
+   off-screen with nothing to suggest they existed; wrapping means the list is
+   as long as it is, and the component only renders the chips it is currently
+   showing (see CatalogueToolbar). */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* The disclosure reads as a control rather than as one more filter: it does
+   not narrow the catalogue, it reveals the ones that do. */
+.chip--more {
+  border-style: dashed;
+  font-weight: var(--font-weight-semibold);
 }
 
 /* Quieter row: status filters read as text until chosen. */
@@ -633,22 +819,24 @@
   padding-inline: 0.75rem;
   border-radius: var(--radius-chip);
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--color-ink-muted);
   transition:
     background-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
 }
 
-.chip-quiet:hover {
-  color: var(--color-ink);
-  background-color: var(--color-surface-sunken);
+@media (hover: hover) {
+  .chip-quiet:hover {
+    color: var(--color-ink);
+    background-color: var(--color-surface-sunken);
+  }
 }
 
 .chip-quiet[aria-pressed='true'] {
   background-color: var(--color-surface-sunken);
   color: var(--color-ink);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   box-shadow: inset 0 0 0 1px var(--color-border);
 }
 
@@ -672,8 +860,10 @@
   color: var(--color-ink-subtle);
 }
 
-.search-field:hover {
-  border-color: var(--color-border-strong);
+@media (hover: hover) {
+  .search-field:hover {
+    border-color: var(--color-border-strong);
+  }
 }
 
 .search-field:focus {
@@ -694,7 +884,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background-color: var(--color-surface-raised);
-  box-shadow: var(--elevation-1);
+  box-shadow: var(--edge-light), var(--elevation-1);
   transition:
     transform var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out),
@@ -704,13 +894,13 @@
 @media (hover: hover) {
   .sign-card:hover {
     transform: translateY(-3px);
-    box-shadow: var(--elevation-2);
+    box-shadow: var(--edge-light), var(--elevation-2);
     border-color: color-mix(in oklab, var(--color-border-strong) 60%, transparent);
   }
 }
 
 .sign-card:focus-within {
-  box-shadow: var(--elevation-2);
+  box-shadow: var(--edge-light), var(--elevation-2);
 }
 
 .sign-card[hidden] {
@@ -803,10 +993,10 @@
 }
 
 .sign-card__title {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  letter-spacing: -0.015em;
-  line-height: 1.25;
+  font-size: var(--text-word);
+  line-height: var(--text-word--line-height);
+  letter-spacing: var(--text-word--letter-spacing);
+  font-weight: var(--font-weight-heavy);
   /* Long entries ("una altra vegada") wrap onto a second line. Truncating
      would hide the one thing the visitor came to read. */
   overflow-wrap: break-word;
@@ -830,7 +1020,7 @@
   border-radius: var(--radius-chip);
   padding: 0.15rem 0.55rem;
   font-size: var(--text-xs);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   background-color: var(--cat-bg);
   color: var(--cat-fg);
 }
@@ -839,6 +1029,99 @@
   order: 3;
   margin-block-start: auto;
   padding: 0 1rem 1rem;
+}
+
+/* --- Compact row (phones) --------------------------------------------------
+   Below `sm` the card stops being a poster with a caption and becomes a list
+   row. The reason is specific rather than stylistic: the media panel is a 3:2
+   block showing the category icon, and the chip directly under it shows the
+   same icon and names the category in words. On a 375px screen that panel was
+   109px, 36% of the card, spent repeating the line below it — and it is a
+   placeholder for a still image the licences do not allow this project to
+   have, so it is not waiting to be filled either.
+
+   Turning it into a leading tile keeps the colour and the icon, returns the
+   full width to the word, and roughly halves the height of an entry, so more
+   of the catalogue is reachable per screen rather than less.
+
+   The panel is not removed from the markup: a card that does have a real
+   poster still renders it (below), and the day a source grants permission the
+   image returns without touching this file.
+-------------------------------------------------------------------------- */
+@media (width < 40rem) {
+  .sign-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'media label   toggles'
+      'media actions toggles';
+    align-items: center;
+    column-gap: 0.875rem;
+    row-gap: 0.375rem;
+    padding: 0.875rem;
+  }
+
+  .sign-card__media {
+    grid-area: media;
+    aspect-ratio: 1;
+    inline-size: 3.5rem;
+    border-radius: var(--radius-control);
+  }
+
+  /* The gradient hairline separates two stacked planes; side by side there are
+     no planes to separate. */
+  .sign-card__media::after {
+    content: none;
+  }
+
+  .sign-card__placeholder .icon-lg {
+    block-size: 1.75rem;
+    inline-size: 1.75rem;
+  }
+
+  /* The header box exists to stack the word above its toggles on a wide card.
+     In the row there is nothing to stack, and its two children belong in
+     different cells, so the box steps out of the way. It carries no role or
+     label, so removing it changes nothing for assistive technology. */
+  .sign-card__header {
+    display: contents;
+  }
+
+  /* Word and category on one line: giving the chip a row of its own cost 22px
+     on every one of 229 entries for a label that reads perfectly well beside
+     the word. */
+  .sign-card__label {
+    grid-area: label;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.5rem;
+    row-gap: 0.25rem;
+    min-inline-size: 0;
+  }
+
+  .sign-card__chip {
+    margin-block-start: 0;
+  }
+
+  /* Stacked in a 44px column down the trailing edge rather than laid out in a
+     row. Side by side they took 92px out of a 243px content column, and
+     whichever row they shared then wrapped — the word onto two lines, or the
+     call to action into a two-line button. Vertical, they cost one touch
+     target of width and nothing wraps. */
+  .sign-card__toggles {
+    grid-area: toggles;
+    flex-direction: column;
+    margin-block-start: 0;
+    margin-inline-start: 0;
+  }
+
+  .sign-card__actions {
+    grid-area: actions;
+    /* The grid's row-gap already separates the rows. */
+    margin-block-start: 0;
+    padding: 0;
+  }
 }
 
 .sign-card__cta {
@@ -850,7 +1133,7 @@
   gap: 0.5rem;
   border-radius: var(--radius-control);
   padding-inline: 1rem;
-  font-weight: 650;
+  font-weight: var(--font-weight-bold);
   color: var(--color-on-brand);
   background: linear-gradient(140deg, var(--color-brand), var(--color-brand-hover));
   box-shadow: var(--elevation-1);
@@ -860,9 +1143,11 @@
     transform var(--duration-fast) var(--ease-out);
 }
 
-.sign-card__cta:hover {
-  filter: brightness(1.06);
-  box-shadow: var(--elevation-2);
+@media (hover: hover) {
+  .sign-card__cta:hover {
+    filter: brightness(1.06);
+    box-shadow: var(--elevation-2);
+  }
 }
 
 .sign-card__cta:active {
@@ -878,9 +1163,11 @@
   box-shadow: none;
 }
 
-.sign-card__cta--external:hover {
-  background-color: var(--color-brand-soft);
-  filter: none;
+@media (hover: hover) {
+  .sign-card__cta--external:hover {
+    background-color: var(--color-brand-soft);
+    filter: none;
+  }
 }
 
 .sign-card__novideo {
@@ -909,9 +1196,11 @@
     transform var(--duration-fast) var(--ease-spring);
 }
 
-.sign-card__toggle:hover {
-  background-color: var(--color-surface-sunken);
-  color: var(--color-ink);
+@media (hover: hover) {
+  .sign-card__toggle:hover {
+    background-color: var(--color-surface-sunken);
+    color: var(--color-ink);
+  }
 }
 
 .sign-card__toggle:active {
@@ -1004,12 +1293,28 @@
   border-radius: var(--radius-card);
   background-color: var(--color-surface-raised);
   color: var(--color-ink);
-  box-shadow: var(--elevation-3);
+  box-shadow: var(--edge-light), var(--elevation-3);
 }
 
+/* The dialog takes focus when it opens so the modal is announced and tabbing
+   cannot wander behind it, but it is not something you can operate and Tab
+   cannot reach it, so drawing a focus ring around the whole sheet would only
+   be noise. Suppressing it here does not weaken "Focus Visible": that applies
+   to keyboard-operable components, and the controls inside keep their rings. */
+.player-dialog:focus {
+  outline: none;
+}
+
+/* The one place a heavier blur is worth its cost. Nothing scrolls behind an
+   open dialog, so the backdrop is rasterised once instead of every frame, and
+   this is the moment the app most wants the catalogue to recede: the visitor
+   is watching a sign. It cannot use `.glass` — a `::backdrop` is not an
+   element and cannot carry a class — so it reads the same tokens directly.
+   `prefers-reduced-transparency` is handled below, next to the `.glass` rules
+   it belongs with. */
 .player-dialog::backdrop {
   background-color: oklch(0.15 0.02 60 / 0.62);
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
 }
 
 .player-dialog[open] {
@@ -1061,12 +1366,14 @@
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-control);
   padding-inline: 1rem;
-  font-weight: 650;
+  font-weight: var(--font-weight-bold);
   color: var(--color-brand-ink);
 }
 
-.player-dialog__fallback-link:hover {
-  background-color: var(--color-surface);
+@media (hover: hover) {
+  .player-dialog__fallback-link:hover {
+    background-color: var(--color-surface);
+  }
 }
 
 .icon-button {
@@ -1082,16 +1389,18 @@
     color var(--duration-fast) var(--ease-out);
 }
 
-.icon-button:hover {
-  background-color: var(--color-surface-sunken);
-  color: var(--color-ink);
+@media (hover: hover) {
+  .icon-button:hover {
+    background-color: var(--color-surface-sunken);
+    color: var(--color-ink);
+  }
 }
 
 /* --- Prose ---------------------------------------------------------------- */
 .prose-page h2 {
   margin-block-start: 2rem;
   font-size: var(--text-xl);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .prose-page p + p {
@@ -1105,6 +1414,8 @@
   text-decoration-thickness: 1px;
 }
 
-.prose-page a:hover {
-  text-decoration-thickness: 2px;
+@media (hover: hover) {
+  .prose-page a:hover {
+    text-decoration-thickness: 2px;
+  }
 }

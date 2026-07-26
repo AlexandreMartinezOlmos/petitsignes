@@ -51,6 +51,9 @@ const MESSAGES = {
     'filter.learned': 'Apresos',
     'filter.pending': 'Pendents',
     'filter.clear': 'Treu els filtres',
+    'filter.showCategories': '+{count} més',
+    'filter.showCategoriesLabel': 'Mostra les {count} categories',
+    'filter.hideCategories': 'Amaga les categories',
 
     'card.watchSign': 'Veure el signe',
     'card.addFavorite': 'Afegeix a preferits',
@@ -135,6 +138,9 @@ const MESSAGES = {
     'filter.learned': 'Aprendidos',
     'filter.pending': 'Pendientes',
     'filter.clear': 'Quitar los filtros',
+    'filter.showCategories': '+{count} más',
+    'filter.showCategoriesLabel': 'Mostrar las {count} categorías',
+    'filter.hideCategories': 'Ocultar las categorías',
 
     'card.watchSign': 'Ver el signo',
     'card.addFavorite': 'Añadir a favoritos',
@@ -219,6 +225,9 @@ const MESSAGES = {
     'filter.learned': 'Learned',
     'filter.pending': 'To learn',
     'filter.clear': 'Clear filters',
+    'filter.showCategories': '+{count} more',
+    'filter.showCategoriesLabel': 'Show all {count} categories',
+    'filter.hideCategories': 'Hide categories',
 
     'card.watchSign': 'Watch the sign',
     'card.addFavorite': 'Add to favourites',
