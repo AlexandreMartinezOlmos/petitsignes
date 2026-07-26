@@ -237,3 +237,85 @@ test.describe('video delivery', () => {
     await expect(link).toHaveAttribute('rel', /noreferrer/);
   });
 });
+
+/**
+ * The header is sticky and holds the brand, the search field, a scrolling row
+ * of category chips and a row of status filters — 261px of a 375px-tall
+ * viewport before this. Folding the filter rows away while reading down the
+ * catalogue is worth a third of the screen, so it is worth a test.
+ */
+test.describe('condensing toolbar', () => {
+  test.skip(
+    ({ viewport }) => (viewport?.width ?? 0) >= 640,
+    'the toolbar only condenses on phones',
+  );
+
+  const header = '#app-header';
+
+  test('folds the filters away on the way down and returns them on the way up', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    // The attribute flips as soon as the scroll handler runs, but the rows
+    // fold over a transition, so every height here is polled until it settles
+    // rather than read on the next tick.
+    const height = async () => (await page.locator(header).boundingBox())!.height;
+    const expanded = await height();
+
+    await page.mouse.move(180, 600);
+    await page.mouse.wheel(0, 900);
+    await expect(page.locator(header)).toHaveAttribute('data-condensed', 'true');
+
+    // Worth doing at all: this should reclaim a real slice of the screen, not
+    // a few pixels of padding.
+    await expect.poll(async () => expanded - (await height())).toBeGreaterThan(80);
+
+    // The search field is the one control that stays: it is the fastest route
+    // to a specific sign and it costs a single row.
+    await expect(page.locator('#sign-search')).toBeVisible();
+
+    // Reversing before the fold has finished is something the implementation
+    // deliberately ignores — that guard is what stops the header oscillating
+    // against its own layout shift — and it is not a gesture a hand makes.
+    await page.waitForTimeout(400);
+    await page.mouse.wheel(0, -400);
+    await expect(page.locator(header)).toHaveAttribute('data-condensed', 'false');
+    await expect.poll(async () => Math.round(await height())).toBe(Math.round(expanded));
+  });
+
+  test('collapsed filters leave the tab order rather than hiding inside it', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    const categories = page
+      .getByRole('group', { name: /categor/i })
+      .getByRole('button')
+      .first();
+    await expect(categories).toBeVisible();
+
+    await page.mouse.move(180, 600);
+    await page.mouse.wheel(0, 900);
+    await expect(page.locator(header)).toHaveAttribute('data-condensed', 'true');
+
+    // Hidden means hidden: a control that is invisible but still focusable is
+    // worse than one that is simply gone.
+    await expect(categories).toBeHidden();
+  });
+
+  test('keeps the filters open while focus is inside the header', async ({ page }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    await page.locator('#sign-search').focus();
+    await page.mouse.move(180, 600);
+    await page.mouse.wheel(0, 900);
+
+    // The attribute still flips — the stylesheet is what refuses to act on it
+    // while focus is inside, so someone filtering by keyboard never has the
+    // controls close under them.
+    await expect(page.locator(header)).toHaveAttribute('data-condensed', 'true');
+    await expect(page.getByRole('group', { name: /categor/i })).toBeVisible();
+  });
+});

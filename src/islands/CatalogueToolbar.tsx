@@ -110,92 +110,107 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
           </div>
         </div>
 
-        {/* Category chips */}
-        <div
-          className="chip-row -mx-4 mt-3 px-4 pb-1"
-          role="group"
-          aria-label={t('filter.categories')}
-        >
-          <button
-            type="button"
-            onClick={() => {
-              $category.set(null);
-              $onlyFirstSigns.set(false);
-            }}
-            aria-pressed={category === null && !onlyFirstSigns}
-            className="chip"
+        {/*
+          Everything past the search field collapses while scrolling down the
+          catalogue. On a 375px screen the header was 261px — a third of the
+          viewport permanently occupied by chrome — and these two rows are most
+          of it. Search stays: it is the fastest way to reach a specific sign,
+          and it is one row.
+
+          The rows are hidden, not just shrunk, so their controls leave the tab
+          order rather than becoming invisible focus traps. `:focus-within` on
+          the header keeps them open whenever focus is anywhere inside it, so a
+          keyboard user filtering the grid never has the controls close under
+          them.
+        */}
+        <div className="toolbar__filters">
+          {/* Category chips */}
+          <div
+            className="chip-row -mx-4 mt-3 px-4 pb-1"
+            role="group"
+            aria-label={t('filter.categories')}
           >
-            {t('filter.all')}
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                $category.set(null);
+                $onlyFirstSigns.set(false);
+              }}
+              aria-pressed={category === null && !onlyFirstSigns}
+              className="chip"
+            >
+              {t('filter.all')}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              $onlyFirstSigns.set(!onlyFirstSigns);
-              $category.set(null);
-            }}
-            aria-pressed={onlyFirstSigns}
-            className="chip"
-          >
-            ⭐ {t('filter.firstSigns')}
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                $onlyFirstSigns.set(!onlyFirstSigns);
+                $category.set(null);
+              }}
+              aria-pressed={onlyFirstSigns}
+              className="chip"
+            >
+              ⭐ {t('filter.firstSigns')}
+            </button>
 
-          {categories.map((option) => {
-            const active = category === option.id;
-            return (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => {
-                  $category.set(active ? null : option.id);
-                  $onlyFirstSigns.set(false);
-                }}
-                aria-pressed={active}
-                className="chip"
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Status filters + live result count */}
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          {/* Its own label: two groups called "Categories" are indistinguishable
-              when navigating by region, and axe cannot catch that — both had a
-              label, they were just the wrong one. */}
-          <div className="flex gap-1" role="group" aria-label={t('filter.status')}>
-            {STATUS_FILTERS.map((value) => {
-              const active = statusFilter === value;
+            {categories.map((option) => {
+              const active = category === option.id;
               return (
                 <button
-                  key={value}
+                  key={option.id}
                   type="button"
-                  onClick={() => $statusFilter.set(value)}
+                  onClick={() => {
+                    $category.set(active ? null : option.id);
+                    $onlyFirstSigns.set(false);
+                  }}
                   aria-pressed={active}
-                  className="chip-quiet"
+                  className="chip"
                 >
-                  {t(`filter.${value}`)}
+                  {option.label}
                 </button>
               );
             })}
           </div>
 
-          <p className="text-ink-muted ms-auto text-sm" aria-live="polite">
-            {visibleCount === 1
-              ? t('search.resultCountOne')
-              : t('search.resultCount', { count: visibleCount })}
-          </p>
+          {/* Status filters + live result count */}
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {/* Its own label: two groups called "Categories" are indistinguishable
+              when navigating by region, and axe cannot catch that — both had a
+              label, they were just the wrong one. */}
+            <div className="flex gap-1" role="group" aria-label={t('filter.status')}>
+              {STATUS_FILTERS.map((value) => {
+                const active = statusFilter === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => $statusFilter.set(value)}
+                    aria-pressed={active}
+                    className="chip-quiet"
+                  >
+                    {t(`filter.${value}`)}
+                  </button>
+                );
+              })}
+            </div>
 
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="text-brand-ink min-h-9 text-sm font-medium underline underline-offset-2"
-            >
-              {t('filter.clear')}
-            </button>
-          )}
+            <p className="text-ink-muted ms-auto text-sm" aria-live="polite">
+              {visibleCount === 1
+                ? t('search.resultCountOne')
+                : t('search.resultCount', { count: visibleCount })}
+            </p>
+
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-brand-ink min-h-9 text-sm font-medium underline underline-offset-2"
+              >
+                {t('filter.clear')}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

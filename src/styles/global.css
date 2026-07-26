@@ -473,6 +473,40 @@
   box-shadow: var(--elevation-1);
 }
 
+/* --- Condensing toolbar ----------------------------------------------------
+   The header is sticky and held the brand, the search field, a scrolling row
+   of 16 category chips and a row of status filters: 261px on a 375px screen,
+   a third of the viewport permanently spent on chrome. Scrolling down the
+   catalogue folds the two filter rows away and leaves the search field, which
+   is the one control worth keeping within reach; scrolling back up returns
+   them.
+
+   `visibility` rather than opacity alone, so the collapsed controls leave the
+   tab order instead of becoming invisible things to tab into. `:focus-within`
+   then keeps the header open for as long as focus is inside it, so the rows
+   never fold away under someone using the keyboard.
+
+   Only on phones. There is no shortage of vertical space on a laptop, and
+   motion in the chrome is a cost with no benefit there.
+-------------------------------------------------------------------------- */
+@media (width < 40rem) {
+  .toolbar__filters {
+    overflow: hidden;
+    /* A generous ceiling: the rows are auto-height and transitioning to a
+       fixed max is what keeps this off the main thread. */
+    max-block-size: 12rem;
+    transition:
+      max-block-size var(--duration-slow) var(--ease-out),
+      opacity var(--duration-base) var(--ease-out);
+  }
+
+  .app-header[data-condensed='true']:not(:focus-within) .toolbar__filters {
+    max-block-size: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 .brand-mark {
   display: inline-flex;
   align-items: center;
