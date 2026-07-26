@@ -52,7 +52,7 @@ const MESSAGES = {
     'filter.pending': 'Pendents',
     'filter.clear': 'Treu els filtres',
     'filter.showCategories': '+{count} més',
-    'filter.showCategoriesLabel': 'Mostra les {count} categories',
+    'filter.showCategoriesLabel': '+{count} més: mostra totes les categories',
     'filter.hideCategories': 'Amaga les categories',
 
     'card.watchSign': 'Veure el signe',
@@ -139,7 +139,7 @@ const MESSAGES = {
     'filter.pending': 'Pendientes',
     'filter.clear': 'Quitar los filtros',
     'filter.showCategories': '+{count} más',
-    'filter.showCategoriesLabel': 'Mostrar las {count} categorías',
+    'filter.showCategoriesLabel': '+{count} más: mostrar todas las categorías',
     'filter.hideCategories': 'Ocultar las categorías',
 
     'card.watchSign': 'Ver el signo',
@@ -226,7 +226,7 @@ const MESSAGES = {
     'filter.pending': 'To learn',
     'filter.clear': 'Clear filters',
     'filter.showCategories': '+{count} more',
-    'filter.showCategoriesLabel': 'Show all {count} categories',
+    'filter.showCategoriesLabel': '+{count} more: show all categories',
     'filter.hideCategories': 'Hide categories',
 
     'card.watchSign': 'Watch the sign',

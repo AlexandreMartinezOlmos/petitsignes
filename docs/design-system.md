@@ -247,6 +247,17 @@ filtrar y seguir leyendo dejaba el catálogo recortado sin explicación a la vis
 > **Los chips ocultos no se renderizan**, no se recortan. Un control invisible pero enfocable es
 > peor que uno ausente. Vale para cualquier cosa que se pliegue en este sistema.
 
+> **Regla que no se puede romper en `.chip--more`.** El texto visible es
+> `filter.showCategories` («+15 més») y el nombre accesible es `filter.showCategoriesLabel`.
+> WCAG 2.5.3 (Label in Name, **nivel A**) exige que el nombre **contenga** el texto visible, o
+> quien maneja la web por voz dice lo que ve y no pasa nada. Durante un tiempo anunciaba «Mostra
+> les 15 categories» sobre un botón que decía «+15 més»: incumplía.
+>
+> La regla operativa es que **la etiqueta empieza por el texto visible** y luego aclara.
+> Deletrearla entera en el botón también cumpliría, pero empuja los chips a una segunda fila a
+> 360 px —un ancho de móvil muy común— y cuesta 52 px de cabecera. `i18n.test.ts` fija que
+> `showCategoriesLabel` empiece por `showCategories` en los tres idiomas.
+
 ### `.grid-section` — encabezado de grupo
 
 Un `<h2>` que ocupa toda la fila de la rejilla y nombra el grupo que viene: primero la ruta
@@ -272,6 +283,26 @@ enlace externo (solo enlaza a la fuente) y un estado inerte cuando no hay vídeo
 desmonta el iframe: eso es lo que de verdad detiene la reproducción.
 
 ---
+
+### `.footer-link` — enlaces del pie
+
+Cuatro enlaces que antes repetían la misma cadena de utilidades cuatro veces y medían **22 px
+de alto**: por debajo de los 24 px de WCAG 2.5.8 y los únicos controles del sitio que
+incumplían el compromiso de 44 px del §5.
+
+Ahora son `inline-flex` con `min-block-size: var(--spacing-touch)`. Como los enlaces envuelven,
+esa altura hace además de separación vertical entre filas, así que `.footer-nav` solo necesita
+`column-gap`.
+
+### `.app-header__row` — la fila superior no puede desbordar
+
+`flex-wrap: wrap`, y por debajo de `sm` el `gap` y el `padding-inline` se estrechan.
+
+A 320 px —el ancho que WCAG 1.4.10 exige que la página aguante— la marca y el selector de idioma
+pedían 315 px de un presupuesto de 288, y el documento se iba a 330 px con scroll lateral. El
+espaciado estrecho es lo que los hace caber; **el `wrap` es lo que garantiza que siempre quepan**,
+haga lo que haga una traducción futura con la longitud de las cadenas. Un diseño que no puede
+desbordar vale más que uno ajustado a las cadenas de hoy.
 
 ## 8. Cómo añadir una categoría
 
@@ -304,7 +335,12 @@ desmonta el iframe: eso es lo que de verdad detiene la reproducción.
 Antes de dar por terminado un componente:
 
 - [ ] Navegable con teclado, con foco visible y en orden lógico.
-- [ ] Controles ≥ 44 px.
+- [ ] Controles ≥ 44 px. Hay un e2e que barre la página entera y falla por debajo de 24.
+- [ ] **A 320 px no aparece scroll horizontal** (WCAG 1.4.10). Cubierto por e2e en las 4 páginas.
+- [ ] Si el control lleva `aria-label` **y** texto visible, el nombre contiene el texto visible
+      (WCAG 2.5.3). Hay un e2e que barre todos los controles.
+- [ ] El estado activo no se distingue **solo por el tono**: que se rellene, cambie de forma o
+      aparezca algo.
 - [ ] Contraste AA en **ambos** temas.
 - [ ] Todo color nuevo, **dentro de sRGB** a su luminosidad y tono (§3). `npm run test` lo
       comprueba; si falla, baja la croma, no el listón.

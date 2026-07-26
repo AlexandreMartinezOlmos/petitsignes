@@ -638,6 +638,14 @@
   box-shadow: var(--elevation-1);
 }
 
+/* The header row must never push the document wider than the viewport. Wrapping
+   is the guarantee — a layout that cannot overflow beats one measured against
+   today's strings — and the tightened spacing below `sm` is what keeps it from
+   ever needing to wrap on a real phone. See `.lang-switch` and WCAG 1.4.10. */
+.app-header__row {
+  flex-wrap: wrap;
+}
+
 /* --- Language selector ---------------------------------------------------- */
 .lang-switch {
   display: flex;
@@ -688,6 +696,47 @@
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* Phones pay for every pixel of header width, and this control is the widest
+   thing in the row. Trimming the horizontal padding recovers 24px without
+   touching the target height, which stays at 2.25rem plus the row's own
+   padding — the language name and its sign language both stay visible, which
+   is the whole point of the control. */
+@media (width < 40rem) {
+  .app-header__row {
+    gap: 0.5rem;
+    padding-inline: 0.75rem;
+  }
+
+  .lang-switch__option {
+    padding-inline: 0.5rem;
+  }
+}
+
+/* --- Footer --------------------------------------------------------------- */
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.25rem;
+}
+
+/* The 44px comes from `--spacing-touch`, the same floor every other control on
+   the site meets. Because the links wrap, the height also supplies the vertical
+   separation between rows, so no `row-gap` is needed on top of it. */
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--spacing-touch);
+  border-radius: var(--radius-control);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .footer-link:hover {
+    color: var(--color-ink);
+  }
 }
 
 /* --- Hero ----------------------------------------------------------------- */
@@ -1296,13 +1345,26 @@
   animation: pop var(--duration-slow) var(--ease-spring);
 }
 
+/* Filled, not merely tinted.
+ *
+ * The card already announces a learned sign without relying on hue — a 3px bar
+ * appears along its top edge and the border changes — so this is not a 1.4.1
+ * fix. It is consistency: the favourite toggle answers a press by filling its
+ * star, and the learned one only shifted from grey to green, which is the one
+ * signal a red-green colour deficiency cannot read. Filling the pill and
+ * knocking the check out of it makes the control itself state the answer, the
+ * same way its neighbour does.
+ *
+ * The check keeps `--color-on-brand` on `--color-learned`: 5.66:1, past the 3:1
+ * that WCAG 1.4.11 asks of a graphical control. */
 .sign-card__toggle[aria-pressed='true'][data-action='learned'] {
-  color: var(--color-learned);
-  background-color: color-mix(in oklab, var(--color-learned) 16%, transparent);
+  background-color: var(--color-learned);
+  color: var(--color-on-brand);
 }
 
 .sign-card__toggle[aria-pressed='true'][data-action='learned'] .icon {
   animation: pop var(--duration-slow) var(--ease-spring);
+  stroke-width: 2.75;
 }
 
 /* A learned sign stays recognisable at a glance across the grid. */
