@@ -17,7 +17,9 @@ Para *por qué* la web está construida así (rejilla estática, islas, entrega 
    cumple no está terminado. En un proyecto sobre lengua de signos esto además es coherencia.
 2. **Móvil primero de verdad.** El uso real es un bebé en brazos y el móvil en la otra mano.
    Objetivo táctil mínimo 44 px, texto nunca por debajo de 16 px.
-3. **El color nunca es la única señal.** Cada categoría lleva icono además de tono.
+3. **El color nunca es la única señal.** Seis familias de tono cubren quince categorías, así que
+   el tono dice a qué familia pertenece una tarjeta, nunca cuál es: eso lo dicen su icono y el
+   encabezado de sección que tiene encima. El icono no es decoración, es la señal.
 4. **Mínimo JavaScript.** Si algo se puede hacer con HTML y CSS, se hace con HTML y CSS.
 5. **El diseño vive en `src/styles/global.css`.** Con 229 tarjetas, una cadena larga de clases
    de utilidad se paga en cada nodo del DOM: lo que se repite es una clase de componente.
@@ -304,6 +306,8 @@ Antes de dar por terminado un componente:
 - [ ] Navegable con teclado, con foco visible y en orden lógico.
 - [ ] Controles ≥ 44 px.
 - [ ] Contraste AA en **ambos** temas.
+- [ ] Todo color nuevo, **dentro de sRGB** a su luminosidad y tono (§3). `npm run test` lo
+      comprueba; si falla, baja la croma, no el listón.
 - [ ] Nombres accesibles correctos, no solo presentes (§7, `.chip`).
 - [ ] Nada de información transmitida solo por color.
 - [ ] Se comporta con `prefers-reduced-motion` y con `prefers-reduced-transparency`.
