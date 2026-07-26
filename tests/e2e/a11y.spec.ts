@@ -403,3 +403,25 @@ test('printing drops the chrome and keeps the signs', async ({ page }) => {
   const card = page.locator('.sign-card').first();
   expect(await card.evaluate((el) => getComputedStyle(el).breakInside)).toBe('avoid');
 });
+
+/**
+ * WCAG 2.2 §2.4.11: a sticky header must not cover the element that has focus.
+ * Tabbing through the grid scrolls cards into view, so they have to clear it.
+ */
+test('the sticky header never covers the focused element', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const headerBottom = await page
+    .locator('#app-header')
+    .evaluate((el) => el.getBoundingClientRect().bottom);
+
+  // Focus a card deep enough down the grid that the browser has to scroll.
+  const target = page.locator('.sign-card [data-action="favorite"]').nth(20);
+  await target.focus();
+  await page.waitForTimeout(300);
+
+  const box = await target.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box!.y).toBeGreaterThanOrEqual(headerBottom - 1);
+});
