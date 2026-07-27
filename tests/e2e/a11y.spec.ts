@@ -504,7 +504,7 @@ test('the result count says what it counted', async ({ page }) => {
  * Every concept in the catalogue has a video today (see `contenido.md`), so
  * `.sign-card__novideo` no longer appears in any shipped card — but the rule
  * it exists for is not "we happen to have full coverage", it is §2.1: a
- * concept without a verified source is never filled with a guess, so the next
+ * concept with no official source is never filled with a guess, so the next
  * one added without a video still needs this note, not a silent gap. The
  * class survives in `SignCard.astro` for that day. Since no real card can
  * exercise it right now, this injects the exact markup the component would

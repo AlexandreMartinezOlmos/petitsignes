@@ -68,13 +68,6 @@ export const SIGN_SOURCES = ['CNSE-DILSE', 'Gencat-VocabulariLSC'] as const;
 export type SignSource = (typeof SIGN_SOURCES)[number];
 
 /**
- * Content lifecycle. A sign is only shown as playable once it is `verified`
- * against the official dictionary and its source is recorded (§15).
- */
-export const VIDEO_STATUSES = ['draft', 'verified'] as const;
-export type VideoStatus = (typeof VIDEO_STATUSES)[number];
-
-/**
  * How a video may legally be shown. The sources do not allow re-hosting, so
  * nothing is ever served from our own domain.
  *
@@ -103,7 +96,6 @@ export interface SignVideo {
   sourceUrl: string;
   license: string;
   updatedAt: string;
-  status: VideoStatus;
   /** Territorial variant, when a sign language documents more than one form. */
   variant?: string;
 }

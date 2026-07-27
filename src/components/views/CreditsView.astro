@@ -21,11 +21,6 @@ const updateDates = signEntries
   .sort();
 const lastUpdated = updateDates.at(-1);
 
-const verifiedCount = signEntries.filter((entry) =>
-  entry.data.videos.some((video) => video.status === 'verified'),
-).length;
-const total = signEntries.length;
-
 const LSC_URL =
   'https://llengua.gencat.cat/ca/serveis/informacio_i_difusio/publicacions_en_linia/classific_temes/temes_llengua_signes_catalana/';
 const LSE_URL = 'https://fundacioncnse-dilse.org/';
@@ -48,8 +43,6 @@ const copy = {
     licData: 'Dades curades (llista de paraules, categories, metadades)',
     licVideos:
       'Vídeos i imatges dels signes: propietat de les fonts respectives, sota les seves condicions de reutilització. Cada fitxa n’enllaça l’origen.',
-    statusTitle: 'Estat del contingut',
-    statusBody: `${verifiedCount} de ${total} conceptes tenen almenys un vídeo verificat contra el diccionari oficial.`,
     updated: 'Última actualització del contingut:',
     respectTitle: 'Respecte a la comunitat sorda',
     respectBody:
@@ -74,8 +67,6 @@ const copy = {
     licData: 'Datos curados (lista de palabras, categorías, metadatos)',
     licVideos:
       'Vídeos e imágenes de los signos: propiedad de las fuentes respectivas, bajo sus condiciones de reutilización. Cada ficha enlaza su origen.',
-    statusTitle: 'Estado del contenido',
-    statusBody: `${verifiedCount} de ${total} conceptos tienen al menos un vídeo verificado contra el diccionario oficial.`,
     updated: 'Última actualización del contenido:',
     respectTitle: 'Respeto a la comunidad sorda',
     respectBody:
@@ -92,7 +83,6 @@ const sections: PageSection[] = [
   { id: 'lsc', title: c.lscTitle },
   { id: 'lse', title: c.lseTitle },
   { id: 'licences', title: c.licTitle },
-  { id: 'status', title: c.statusTitle },
   { id: 'respect', title: c.respectTitle },
 ];
 ---
@@ -120,10 +110,10 @@ const sections: PageSection[] = [
   </Fragment>
 
   {
-    /* The licences and the state of the content are the two blocks people come
-       to this page to check rather than to read, so they get a surface. The
-       update date is part of the attribution the Generalitat's terms ask for,
-       which is why it sits with the count instead of in a footnote. */
+    /* The licences are what people come to this page to check rather than to
+       read, so they get a surface. The update date sits here because it is not
+       a footnote: the Generalitat's terms ask for the source *and its update
+       date*, so it is part of the attribution itself. */
   }
   <div class="page-callout" slot="licences">
     <ul class="page-list">
@@ -131,20 +121,13 @@ const sections: PageSection[] = [
       <li><strong>{c.licData}</strong>: CC BY-SA 4.0.</li>
       <li>{c.licVideos}</li>
     </ul>
-  </div>
-
-  <div class="page-callout" slot="status">
-    <p>
-      {c.statusBody}
-      {
-        lastUpdated && (
-          <>
-            {' '}
-            {c.updated} <time datetime={lastUpdated}>{lastUpdated}</time>.
-          </>
-        )
-      }
-    </p>
+    {
+      lastUpdated && (
+        <p class="text-ink-muted text-sm">
+          {c.updated} <time datetime={lastUpdated}>{lastUpdated}</time>.
+        </p>
+      )
+    }
   </div>
 
   <p slot="respect">{c.respectBody}</p>

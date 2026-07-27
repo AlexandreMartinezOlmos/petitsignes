@@ -67,7 +67,7 @@ describe('applyRow', () => {
     expect(data.videos).toEqual([]);
   });
 
-  it('keeps a human’s verification and variant when the id is unchanged', () => {
+  it('keeps the variant label and the recorded date when the id is unchanged', () => {
     const existing: SignData = {
       labels: { ca: 'gat', es: 'gato', en: 'cat' },
       category: 'animals',
@@ -81,19 +81,17 @@ describe('applyRow', () => {
           sourceUrl: 'x',
           license: 'x',
           updatedAt: '2020-01-01',
-          status: 'verified',
           variant: 'Gat / gata',
         },
       ],
     };
     const data = applyRow(row(), existing, TODAY);
     const lsc = data.videos.find((v) => v.signLanguage === 'lsc')!;
-    expect(lsc.status).toBe('verified');
     expect(lsc.variant).toBe('Gat / gata');
     expect(lsc.updatedAt).toBe('2020-01-01');
   });
 
-  it('resets status to draft when the LSE term changes', () => {
+  it('re-dates the LSE video when its search term changes', () => {
     const existing: SignData = {
       labels: { ca: 'gat', es: 'gato', en: 'cat' },
       category: 'animals',
@@ -107,13 +105,14 @@ describe('applyRow', () => {
           sourceUrl: 'x',
           license: 'x',
           updatedAt: '2020-01-01',
-          status: 'verified',
         },
       ],
     };
     const data = applyRow(row({ lseDilseTerm: 'gato' }), existing, TODAY);
     const lse = data.videos.find((v) => v.signLanguage === 'lse')!;
-    expect(lse.status).toBe('draft');
+    // A different term is a different source entry, so the date it carries is
+    // the day this link was recorded, not the day the old one was.
+    expect(lse.videoUrl).toContain('buscar=gato');
     expect(lse.updatedAt).toBe(TODAY);
   });
 

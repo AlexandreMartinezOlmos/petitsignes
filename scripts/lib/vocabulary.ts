@@ -114,9 +114,8 @@ function lscVideo(id: string, existing: SignVideo | undefined, today: string): S
     source: 'Gencat-VocabulariLSC',
     sourceUrl: LSC_SOURCE_URL,
     license: LSC_LICENSE,
-    // Preserve a human's verification and variant label when the id is unchanged.
+    // Preserve the date and the variant label when the id is unchanged.
     updatedAt: existing?.updatedAt ?? today,
-    status: existing?.status ?? 'draft',
     ...(existing?.variant !== undefined ? { variant: existing.variant } : {}),
   };
 }
@@ -131,14 +130,15 @@ function lseVideo(term: string, existing: SignVideo | undefined, today: string):
     source: 'CNSE-DILSE',
     sourceUrl: url,
     license: LSE_LICENSE,
+    // A new term is a new source, so it carries today's date rather than the
+    // date on which the previous link was recorded.
     updatedAt: unchanged ? (existing?.updatedAt ?? today) : today,
-    status: unchanged ? (existing?.status ?? 'draft') : 'draft',
   };
 }
 
 /**
  * Merges a manifest row into an existing entry (or creates one). Videos are
- * rebuilt from the row's ids/term, but verification status and variant labels
+ * rebuilt from the row's ids/term, but variant labels and the recorded date
  * survive whenever the id/term is unchanged. Non-video fields the manifest does
  * not carry (`tips`) are kept.
  */
