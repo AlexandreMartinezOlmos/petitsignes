@@ -118,3 +118,84 @@ export function hueDistance(a: number, b: number): number {
   const d = Math.abs(a - b) % 360;
   return d > 180 ? 360 - d : d;
 }
+
+/* --- Colour vision -------------------------------------------------------- */
+
+export type Dichromacy = 'protanopia' | 'deuteranopia' | 'tritanopia';
+
+/**
+ * Machado, Oliveira & Fernandes (2009), severity 1.0, on linear sRGB. The
+ * severity-1.0 matrices are the dichromat case: the cone class is absent
+ * rather than shifted.
+ */
+const CVD: Record<Dichromacy, readonly Linear[]> = {
+  protanopia: [
+    [0.152286, 1.052583, -0.204868],
+    [0.114503, 0.786281, 0.099216],
+    [-0.003882, -0.048116, 1.051998],
+  ],
+  deuteranopia: [
+    [0.367322, 0.860646, -0.227968],
+    [0.280085, 0.672501, 0.047413],
+    [-0.01182, 0.04294, 0.968881],
+  ],
+  tritanopia: [
+    [1.255528, -0.076749, -0.178779],
+    [-0.078411, 0.930809, 0.147602],
+    [0.004733, 0.691367, 0.3039],
+  ],
+};
+
+function clamp(linear: Linear): Linear {
+  return linear.map((v) => Math.min(1, Math.max(0, v))) as unknown as Linear;
+}
+
+function linearToOklab([r, g, b]: Linear): readonly [number, number, number] {
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return [
+    0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+  ];
+}
+
+function simulate(color: Oklch, kind: Dichromacy): Linear {
+  const [r, g, b] = clamp(toLinearSrgb(color));
+  return clamp(
+    CVD[kind].map((row) => row[0]! * r! + row[1]! * g! + row[2]! * b!) as unknown as Linear,
+  );
+}
+
+/**
+ * How far apart two colours look to a dichromat, in OKLab.
+ *
+ * Useful for what it rules out rather than what it promises: a dichromat has
+ * one fewer colour dimension, so **no** palette can hold six hue-distinct
+ * families. This is what says by how much, and therefore how hard the icons
+ * and headings have to work.
+ */
+export function deltaEAs(a: Oklch, b: Oklch, kind: Dichromacy): number {
+  const [al, aa, ab] = linearToOklab(simulate(a, kind));
+  const [bl, ba, bb] = linearToOklab(simulate(b, kind));
+  return Math.hypot(al - bl, aa - ba, ab - bb);
+}
+
+/**
+ * WCAG contrast as a dichromat sees it.
+ *
+ * This is the half that *is* achievable, and the palette earns it by holding
+ * every family at one lightness: hue collapses under these matrices, luminance
+ * barely moves, so the text stays as readable as it was. A palette that varied
+ * lightness by family would lose that quietly.
+ */
+export function contrastRatioAs(a: Oklch, b: Oklch, kind: Dichromacy): number {
+  const luminance = (color: Oklch) => {
+    const [r, g, b] = simulate(color, kind);
+    return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+  };
+  const la = luminance(a);
+  const lb = luminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}

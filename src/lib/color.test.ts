@@ -2,7 +2,17 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import categories from '../content/categories.json' with { type: 'json' };
-import { contrastRatio, deltaE, hueDistance, inGamut, maxChroma, type Oklch } from './color.ts';
+import {
+  contrastRatio,
+  contrastRatioAs,
+  deltaE,
+  deltaEAs,
+  hueDistance,
+  inGamut,
+  maxChroma,
+  type Dichromacy,
+  type Oklch,
+} from './color.ts';
 
 /**
  * The palette, checked against the stylesheet that ships.
@@ -167,6 +177,58 @@ describe('category families', () => {
         );
       }
     }
+  });
+});
+
+/**
+ * Colour vision deficiency.
+ *
+ * Simulated rather than eyeballed in a plugin, so the answer is a number that
+ * fails the build when it moves. Two findings, and they point opposite ways:
+ *
+ *  - **Hue cannot carry the category, and no palette could make it.** Under
+ *    deuteranopia the closest pair of family tints falls from ΔE 0.0296 to
+ *    0.0051 — a fifth of the just-noticeable difference. That is not a defect
+ *    to fix: a dichromat is missing a colour dimension, so six hue-distinct
+ *    families is unreachable by construction. It is why every category also
+ *    carries an icon and sits under a heading that names it in words, and why
+ *    that rule is not negotiable.
+ *  - **Legibility survives, and that is worth pinning.** The palette holds
+ *    every family at one lightness, so hue collapses and luminance barely
+ *    moves: the chip stays above 6.3:1 in all three dichromacies. A future
+ *    palette that varied lightness per family would lose this silently, which
+ *    is exactly what a test is for.
+ */
+describe('colour vision deficiency', () => {
+  const KINDS: Dichromacy[] = ['protanopia', 'deuteranopia', 'tritanopia'];
+
+  it.each([
+    ['light', () => lightBlock.body],
+    ['dark', () => darkMediaBlock.body],
+  ])('keeps the category chip readable to a dichromat in %s', (_name, base) => {
+    const layers = catLayers(base());
+    for (const kind of KINDS) {
+      for (const h of HUES) {
+        const ratio = contrastRatioAs({ ...layers.fg, h }, { ...layers.bg, h }, kind);
+        expect(ratio, `${kind}, hue ${h}`).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+  });
+
+  /**
+   * The two card states answer a press with a shape as well as a hue — the
+   * star fills, the learned toggle fills its pill and knocks the check out —
+   * so this is not what makes them distinguishable. It is here to catch the
+   * day somebody decides the shapes are noise and leaves only the colour.
+   */
+  it('does not let the two card states rest on hue alone', () => {
+    const star = color(lightBlock.body, '--star');
+    const learned = color(lightBlock.body, '--learned');
+
+    const worst = Math.min(...KINDS.map((kind) => deltaEAs(star, learned, kind)));
+    // Comfortably apart even at the worst (protanopia, 0.076), but the shape
+    // change is what the criterion actually rests on. See `.sign-card__toggle`.
+    expect(worst).toBeGreaterThan(0.02);
   });
 });
 
