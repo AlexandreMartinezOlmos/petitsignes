@@ -14,7 +14,6 @@ import {
   $favorites,
   $learned,
   $onlyFirstSigns,
-  $onlyWithVideo,
   $query,
   $statusFilter,
   $visibleCount,
@@ -27,15 +26,12 @@ import type { CategoryId, Language } from './types.ts';
 
 export interface CardData extends SearchableSign {
   isFirstSign: boolean;
-  /** Whether this card has a video in the sign language of its page. */
-  hasVideo: boolean;
 }
 
 export interface FilterState {
   query: string;
   category: CategoryId | null;
   onlyFirstSigns: boolean;
-  onlyWithVideo: boolean;
   statusFilter: StatusFilter;
   favorites: readonly string[];
   learned: readonly string[];
@@ -56,14 +52,13 @@ export interface PlayRequestDetail {
 export const PLAY_EVENT = 'sign:play';
 
 export function readCardData(element: HTMLElement): CardData | null {
-  const { signId, category, firstSign, hasVideo, labelCa, labelEs, labelEn } = element.dataset;
+  const { signId, category, firstSign, labelCa, labelEs, labelEn } = element.dataset;
   if (!signId || !category || !labelCa || !labelEs || !labelEn) return null;
 
   return {
     id: signId,
     category: category as CategoryId,
     isFirstSign: firstSign === 'true',
-    hasVideo: hasVideo === 'true',
     labels: { ca: labelCa, es: labelEs, en: labelEn },
   };
 }
@@ -112,12 +107,6 @@ export function filterCards(
       if (state.onlyFirstSigns && !card.isFirstSign) continue;
       if (state.category !== null && card.category !== state.category) continue;
     }
-    // Outside that block on purpose: a search suspends the category chips
-    // because finding a word should not depend on which chip is lit, but
-    // "only what I can actually watch" is a statement about the catalogue that
-    // holds whether or not someone is searching. Turning it off mid-search
-    // would answer a search with the very dead ends it was asked to hide.
-    if (state.onlyWithVideo && !card.hasVideo) continue;
     if (!matchesStatus(card.id, state)) continue;
     visible.add(card.id);
   }
@@ -210,7 +199,6 @@ export function mountCatalogue(root: HTMLElement): () => void {
       query: $query.get(),
       category: $category.get(),
       onlyFirstSigns: $onlyFirstSigns.get(),
-      onlyWithVideo: $onlyWithVideo.get(),
       statusFilter: $statusFilter.get(),
       favorites: $favorites.get(),
       learned: $learned.get(),
@@ -276,7 +264,6 @@ export function mountCatalogue(root: HTMLElement): () => void {
     $query.subscribe(applyFilters),
     $category.subscribe(applyFilters),
     $onlyFirstSigns.subscribe(applyFilters),
-    $onlyWithVideo.subscribe(applyFilters),
     $statusFilter.subscribe(applyFilters),
     $favorites.subscribe(() => {
       applyProgress();

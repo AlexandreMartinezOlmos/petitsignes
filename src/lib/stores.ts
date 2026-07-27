@@ -21,17 +21,6 @@ export const $query = atom<string>('');
 export const $category = atom<CategoryId | null>(null);
 export const $onlyFirstSigns = atom<boolean>(false);
 
-/**
- * Hide the 49 of 229 signs (21%) that have no video in this page's sign
- * language.
- *
- * A filter about the *content*, not about the visitor's progress, which is why
- * it is its own store and its own control rather than a fifth value of
- * `StatusFilter`. And unlike the category chips, a search does **not** suspend
- * it: searching for a word you cannot be shown is not a result, it is a dead
- * end with a name on it.
- */
-export const $onlyWithVideo = atom<boolean>(false);
 export const $statusFilter = atom<StatusFilter>('all');
 
 export const $favorites = atom<readonly string[]>([]);
@@ -41,13 +30,9 @@ export const $learned = atom<readonly string[]>([]);
 export const $visibleCount = atom<number>(-1);
 
 export const $hasActiveFilters = computed(
-  [$query, $category, $onlyFirstSigns, $onlyWithVideo, $statusFilter],
-  (query, category, onlyFirstSigns, onlyWithVideo, statusFilter) =>
-    query.trim() !== '' ||
-    category !== null ||
-    onlyFirstSigns ||
-    onlyWithVideo ||
-    statusFilter !== 'all',
+  [$query, $category, $onlyFirstSigns, $statusFilter],
+  (query, category, onlyFirstSigns, statusFilter) =>
+    query.trim() !== '' || category !== null || onlyFirstSigns || statusFilter !== 'all',
 );
 
 let progressStore: ProgressStore | null = null;
@@ -109,6 +94,5 @@ export function clearFilters(): void {
   $query.set('');
   $category.set(null);
   $onlyFirstSigns.set(false);
-  $onlyWithVideo.set(false);
   $statusFilter.set('all');
 }
