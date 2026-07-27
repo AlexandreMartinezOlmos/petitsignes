@@ -433,7 +433,18 @@ test('the first screen is mostly catalogue', async ({ page }) => {
       return (header + hero) / window.innerHeight;
     });
 
-    expect(chrome).toBeLessThanOrEqual(0.51);
+    // 0.58, raised from 0.51 when the "with video" chip was added and the
+    // phone's filter row went from one line to two: 44px to 96px, and the
+    // header with it. That is a deliberate trade, not drift — 49 of 229 signs
+    // are dead ends and there was no way to leave them out. Four chips do not
+    // fit across 358px: trimming their padding and dropping the chip's icon
+    // gets to 357, and a row that only just fits is the thing
+    // `.app-header__row` exists to warn about. The row also folds away on the
+    // first swipe, so this is the arrival cost, not the browsing cost.
+    //
+    // Still below the 62% this audit started from. Do not raise it again
+    // without the same kind of reason written down.
+    expect(chrome).toBeLessThanOrEqual(0.58);
   }
 
   // The lead never drops below the 16px the design system promises for body
@@ -559,6 +570,163 @@ test('the sticky header never covers the focused element', async ({ page }) => {
   const box = await target.boundingBox();
   expect(box).not.toBeNull();
   expect(box!.y).toBeGreaterThanOrEqual(headerBottom - 1);
+});
+
+/**
+ * C1. The card said the same thing three times: the section heading, the chip
+ * under the word, and the media block showing the category's icon. 217 of the
+ * 229 chips repeated their heading word for word — the headings arrived after
+ * the chip did, and that is what left it with nothing to say.
+ */
+test('the category chip only appears where it adds something', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const repeats = await page.evaluate(() => {
+    let heading: string | null = null;
+    let duplicates = 0;
+    let informative = 0;
+    for (const el of document.getElementById('sign-grid')!.children) {
+      if (el.classList.contains('grid-section')) heading = el.textContent!.trim();
+      else if (el.classList.contains('sign-card')) {
+        const chip = el.querySelector('.sign-card__chip')?.textContent?.trim();
+        if (!chip) continue;
+        if (chip === heading) duplicates += 1;
+        else informative += 1;
+      }
+    }
+    return { duplicates, informative };
+  });
+
+  expect(repeats.duplicates).toBe(0);
+  // The curated route is the one heading that is not a category, so its cards
+  // are the ones where the chip still says something. Losing these would be
+  // the opposite mistake.
+  expect(repeats.informative).toBeGreaterThan(0);
+});
+
+/**
+ * C2. The word is what somebody came to read, and it was the third loudest
+ * thing on its own card: the chip matched it pixel for pixel at 115px, and the
+ * call to action was 234px of solid brand repeated identically on 180 cards.
+ */
+test('the word is the loudest thing on the card', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/');
+
+  const card = page.locator('.sign-card[data-first-sign="false"]').first();
+  const sizes = await card.evaluate((el) => {
+    const size = (selector: string) => {
+      const found = el.querySelector(selector);
+      return found ? parseFloat(getComputedStyle(found).fontSize) : 0;
+    };
+    return { word: size('.sign-card__title'), cta: size('.sign-card__cta') };
+  });
+
+  expect(sizes.word).toBeGreaterThan(sizes.cta);
+
+  // The action is still unmistakably the action — it just stopped shouting.
+  const cta = card.locator('.sign-card__cta');
+  await expect(cta).toBeVisible();
+  expect(await cta.evaluate((el) => el.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+});
+
+/**
+ * The toggles moved onto the image. Two things have to survive that: the 44px
+ * target, and a focus ring that is visible against a surface that changes
+ * colour with every category.
+ */
+test('the toggles stay aimable and visible on the image', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const card = page.locator('.sign-card').first();
+  const favorite = card.locator('[data-action="favorite"]');
+
+  const geometry = await card.evaluate((el) => {
+    const button = el.querySelector('[data-action="favorite"]')!.getBoundingClientRect();
+    const media = el.querySelector('.sign-card__media')!.getBoundingClientRect();
+    return {
+      size: Math.min(button.width, button.height),
+      onTheImage:
+        button.top >= media.top - 1 &&
+        button.bottom <= media.bottom + 1 &&
+        button.right <= media.right + 1,
+    };
+  });
+
+  expect(geometry.size).toBeGreaterThanOrEqual(44);
+  expect(geometry.onTheImage).toBe(true);
+
+  // Reached by keyboard, so the ring is the real `:focus-visible` one rather
+  // than whatever a programmatic focus would show.
+  await favorite.press('Tab');
+  await favorite.focus();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Tab');
+  const ring = await favorite.evaluate((el) => {
+    const style = getComputedStyle(el);
+    return { width: parseFloat(style.outlineWidth), style: style.outlineStyle };
+  });
+  expect(ring.style).not.toBe('none');
+  expect(ring.width).toBeGreaterThanOrEqual(2);
+
+  // And it still works as a control.
+  await favorite.click();
+  await expect(favorite).toHaveAttribute('aria-pressed', 'true');
+});
+
+/**
+ * The compact row is untouched by all of the above: on a phone the tile is
+ * 56px and two 44px targets do not go inside it, so the toggles stay in their
+ * trailing column.
+ */
+test('the phone card keeps its own layout', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const placement = await page
+    .locator('.sign-card')
+    .first()
+    .evaluate((el) => {
+      const button = el.querySelector('[data-action="favorite"]')!.getBoundingClientRect();
+      const media = el.querySelector('.sign-card__media')!.getBoundingClientRect();
+      return {
+        overlaps: button.left < media.right,
+        position: getComputedStyle(el.querySelector('.sign-card__toggles')!).position,
+      };
+    });
+
+  expect(placement.overlaps).toBe(false);
+  expect(placement.position).toBe('static');
+});
+
+/**
+ * C4. 49 of 229 signs (21%) have no video in this page's sign language, and no
+ * filter could leave them out: one card in five was a dead end you had to open
+ * to discover.
+ */
+test('the catalogue can hide what cannot be watched', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const chip = page.locator('.chip', { hasText: 'Amb vídeo' });
+  await chip.click();
+  await expect(chip).toHaveAttribute('aria-pressed', 'true');
+
+  await expect(page.locator('.sign-card:not([hidden])')).not.toHaveCount(0);
+  await expect(page.locator('.sign-card[data-has-video="false"]:not([hidden])')).toHaveCount(0);
+  // It is a filter about the catalogue, so the live region says so.
+  await expect(page.locator('[aria-live="polite"]')).toContainText('Amb vídeo');
+
+  // Unlike the category chips, a search does not suspend it — and when that
+  // empties the grid, the message names the cause you can remove rather than
+  // implying the word is not in the catalogue.
+  await page.locator('#sign-search').fill('biberó');
+  await expect(page.locator('.sign-card:not([hidden])')).toHaveCount(0);
+  await expect(chip).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.empty-state__hint')).toContainText(/amb vídeo/i);
 });
 
 /**
