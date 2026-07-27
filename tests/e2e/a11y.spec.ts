@@ -560,3 +560,113 @@ test('the sticky header never covers the focused element', async ({ page }) => {
   expect(box).not.toBeNull();
   expect(box!.y).toBeGreaterThanOrEqual(headerBottom - 1);
 });
+
+/**
+ * E. The three text pages were prose on cream with no route back: the wordmark
+ * was the only way to the catalogue and a wordmark does not read as a link.
+ */
+const TEXT_PAGES = ['/el-projecte/', '/credits/', '/accessibilitat/'];
+
+test('every text page offers a way back to the catalogue', async ({ page }) => {
+  for (const path of TEXT_PAGES) {
+    await page.goto(path);
+
+    const crumb = page.locator('.breadcrumb__link');
+    await expect(crumb).toHaveText(/catàleg/i);
+    // The 44px floor the rest of the site meets, on the one control whose
+    // absence was the finding.
+    const box = await crumb.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+
+    // The last step is the page you are on, so it is stated rather than linked.
+    await expect(page.locator('.breadcrumb__current')).toHaveAttribute('aria-current', 'page');
+
+    await crumb.click();
+    await expect(page.locator('#sign-grid')).toBeVisible();
+  }
+});
+
+/**
+ * The contents list and the headings come from one array, so a renamed or
+ * removed section cannot leave an entry pointing at nothing. This is the test
+ * that keeps that true if anyone ever writes the list out a second time.
+ */
+test('the contents list points at headings that exist', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+
+  for (const path of TEXT_PAGES) {
+    await page.goto(path);
+
+    const links = page.locator('.page-toc__link');
+    const count = await links.count();
+    expect(count).toBeGreaterThan(2);
+
+    const headings = page.locator('.page-section__title');
+    await expect(headings).toHaveCount(count);
+
+    for (let i = 0; i < count; i += 1) {
+      const href = await links.nth(i).getAttribute('href');
+      const target = page.locator(`h2${href}`);
+      await expect(target).toHaveCount(1);
+      // Same text, not merely the same anchor: an entry that says something
+      // other than its heading is a different kind of broken.
+      await expect(target).toHaveText((await links.nth(i).innerText()).trim());
+    }
+  }
+});
+
+/**
+ * A heading jumped to from the contents list has to clear the sticky header,
+ * or the link delivers the section with its own title hidden behind the
+ * toolbar — the same criterion as 2.4.11, arrived at by a different route.
+ */
+test('an anchor lands below the sticky header', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/credits/');
+
+  await page.locator('.page-toc__link', { hasText: 'Llicències' }).click();
+  await page.waitForTimeout(300);
+
+  const headerBottom = await page
+    .locator('#app-header')
+    .evaluate((el) => el.getBoundingClientRect().bottom);
+  const box = await page.locator('#licences').boundingBox();
+
+  expect(box).not.toBeNull();
+  expect(box!.y).toBeGreaterThanOrEqual(headerBottom - 1);
+});
+
+/**
+ * The finding measured 624px of text in a 1152px `main` — 46% of the page
+ * empty down one side. The measure was never the problem, so the column keeps
+ * its width and the space beside it got a job.
+ */
+test('the text pages stop wasting half the width', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/accessibilitat/');
+
+  const used = await page.evaluate(() => {
+    const main = document.getElementById('main')!.getBoundingClientRect().width;
+    const prose = document.querySelector('.page-prose')!.getBoundingClientRect().width;
+    const aside = document.querySelector('.page-aside')!.getBoundingClientRect().width;
+    return (prose + aside) / main;
+  });
+  expect(used).toBeGreaterThan(0.7);
+
+  // The measure itself stays where it was: comfortable, not stretched.
+  const chars = await page
+    .locator('.page-prose p')
+    .first()
+    .evaluate((el) => {
+      const size = parseFloat(getComputedStyle(el).fontSize);
+      return el.getBoundingClientRect().width / (size * 0.5);
+    });
+  expect(chars).toBeLessThan(80);
+
+  // Nothing in the aside is missing from the article, which is what makes it
+  // safe to drop below `lg`.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator('.page-aside')).toBeHidden();
+  await expect(page.locator('.page-section__title').first()).toBeVisible();
+});
