@@ -133,7 +133,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
         translation does to the string lengths.
       */
       }
-      <div class="app-header__row mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+      <div class="app-header__row shell flex items-center gap-3 py-3">
         <a href={homeHref} class="brand-mark shrink-0 text-base sm:text-lg">
           <span class="brand-mark__dot" aria-hidden="true">
             <svg class="icon-sm" aria-hidden="true" focusable="false">
@@ -221,12 +221,12 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
       <slot name="toolbar" />
     </header>
 
-    <main id="main" class="mx-auto max-w-6xl px-4 py-6">
+    <main id="main" class="shell py-6">
       <slot />
     </main>
 
     <footer class="border-border text-ink-muted mt-16 border-t">
-      <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-10 text-sm">
+      <div class="shell flex flex-col gap-3 py-10 text-sm">
         {
           /*
           `.footer-link` rather than the same four utility classes written out

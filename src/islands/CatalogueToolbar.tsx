@@ -103,7 +103,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
 
   return (
     <div className="toolbar">
-      <div className="toolbar__inner mx-auto max-w-6xl px-4 pb-3">
+      <div className="toolbar__inner shell pb-3">
         {/* Search */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
