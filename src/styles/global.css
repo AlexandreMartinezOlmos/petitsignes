@@ -1815,6 +1815,208 @@
   }
 }
 
+/* --- Text pages ------------------------------------------------------------
+   `/el-projecte/`, `/credits/` and `/accessibilitat/` were plain prose on
+   cream: not one element carried a class from this file, the `h1` had none of
+   the catalogue's treatment, and the column of text was 624px of a 1152px
+   `main` — 46% of the page empty down the right, which reads as a layout that
+   ran out rather than one that decided anything.
+
+   The measure was never the problem: 65 characters is where it should be. So
+   the column keeps its width and the space beside it gets a job.
+-------------------------------------------------------------------------- */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block-end: 0.5rem;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+/* The 44px floor every other control on the site meets. It was the wordmark or
+   nothing before, and a wordmark does not read as a way back. */
+.breadcrumb__link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--spacing-touch);
+  border-radius: var(--radius-control);
+  color: var(--color-brand-ink);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .breadcrumb__link:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+.breadcrumb__sep {
+  color: var(--color-ink-subtle);
+}
+
+.breadcrumb__current {
+  color: var(--color-ink-muted);
+}
+
+/* One column until there is room for two. `minmax(0, 65ch)` rather than a
+   fixed width so the measure is the same object the prose already sets, and
+   `justify-content: center` so that below `lg` the leftover space falls on
+   both sides instead of piling up on one. */
+.page-layout {
+  display: grid;
+  justify-content: center;
+  gap: 2.5rem;
+  grid-template-columns: minmax(0, 65ch);
+}
+
+@media (width >= 64rem) {
+  .page-layout {
+    grid-template-columns: minmax(0, 65ch) minmax(0, 14rem);
+    align-items: start;
+  }
+}
+
+.page-prose {
+  min-inline-size: 0;
+}
+
+.page-hero {
+  padding-block-end: 0.5rem;
+}
+
+/* The same face, weight and leading as the catalogue's headline, one step down
+   the scale: these titles are short, so the display step would be shouting.
+   `--text-2xl` is already fluid, so it needs no breakpoint of its own. */
+.page-hero__title {
+  font-size: var(--text-2xl);
+  line-height: var(--text-display--line-height);
+  letter-spacing: var(--text-display--letter-spacing);
+  font-weight: var(--font-weight-display);
+}
+
+.page-hero__lead {
+  margin-block-start: 0.75rem;
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  color: var(--color-ink-muted);
+}
+
+.page-section {
+  margin-block-start: 2.5rem;
+}
+
+.page-section__title {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  font-weight: var(--font-weight-bold);
+}
+
+/* `scroll-margin-top` and not only the document's `scroll-padding-top`: a
+   heading jumped to from the contents list has to clear the sticky header, or
+   the first thing the link delivers is the section's title hidden behind it. */
+.page-section__title,
+.page-hero__title {
+  scroll-margin-top: 9rem;
+}
+
+.page-section > * + * {
+  margin-block-start: 0.75rem;
+}
+
+.page-section__title + * {
+  margin-block-start: 0.5rem;
+}
+
+.page-list {
+  margin-block-start: 0.5rem;
+  padding-inline-start: 1.25rem;
+  list-style: disc;
+}
+
+.page-list > li + li {
+  margin-block-start: 0.4rem;
+}
+
+/* A surface for the blocks that are a set of facts rather than prose — the
+   licences, the state of the content, the known limitations. One or two per
+   page: six stacked panels would be a card salad, and prose that is prose
+   should stay prose. */
+.page-callout {
+  margin-block-start: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 1rem 1.25rem;
+  background-color: var(--color-surface-raised);
+  box-shadow: var(--edge-light), var(--elevation-1);
+}
+
+.page-callout > * + * {
+  margin-block-start: 0.5rem;
+}
+
+.page-callout .page-list {
+  margin-block-start: 0;
+}
+
+/* --- Contents list ---------------------------------------------------------
+   Lives in the column that was empty anyway, and only from `lg`: narrower than
+   that there is no spare column, and a list of links above the article would
+   be one more thing to scroll past on a phone. It repeats nothing the article
+   does not already say, which is what makes hiding it cost no content.
+
+   `9rem` is the same offset the anchors use — the sticky header plus its
+   toolbar.
+-------------------------------------------------------------------------- */
+.page-aside {
+  display: none;
+}
+
+@media (width >= 64rem) {
+  .page-aside {
+    display: block;
+    position: sticky;
+    top: 9rem;
+  }
+}
+
+.page-toc__title {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-subtle);
+}
+
+.page-toc__list {
+  margin-block-start: 0.5rem;
+  border-inline-start: 2px solid var(--color-border);
+}
+
+.page-toc__link {
+  display: block;
+  /* Short of the 44px floor on purpose: this is a duplicate route to headings
+     that are already in the document, shown only on a pointer-and-keyboard
+     screen, and 44px each would make five entries taller than the section they
+     point at. Still well past the 24px of WCAG 2.5.8. */
+  min-block-size: 2rem;
+  padding-block: 0.35rem;
+  padding-inline-start: 0.75rem;
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  color: var(--color-ink-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .page-toc__link:hover {
+    color: var(--color-brand-ink);
+  }
+}
+
 /* --- Prose ---------------------------------------------------------------- */
 .prose-page h2 {
   margin-block-start: 2rem;
@@ -1826,6 +2028,7 @@
   margin-block-start: 0.75rem;
 }
 
+.page-prose a:not(.breadcrumb__link):not(.page-toc__link),
 .prose-page a {
   color: var(--color-brand-ink);
   text-decoration: underline;
@@ -1834,6 +2037,7 @@
 }
 
 @media (hover: hover) {
+  .page-prose a:not(.breadcrumb__link):not(.page-toc__link):hover,
   .prose-page a:hover {
     text-decoration-thickness: 2px;
   }
@@ -1870,14 +2074,28 @@
   .app-header,
   .skip-link,
   .bypass-link,
+  .breadcrumb,
   .empty-state,
   .hero__lead,
+  .page-aside,
   .progress-data__actions,
   .sign-card__media,
   .sign-card__toggles,
   button.sign-card__cta,
   dialog {
     display: none !important;
+  }
+
+  /* A printed text page is one column: nothing is beside it any more, and the
+     panels are ink on paper rather than surfaces above a background. */
+  .page-layout {
+    display: block;
+  }
+
+  .page-callout {
+    border: 1px solid #999;
+    background: none;
+    box-shadow: none;
   }
 
   /* `!important` because the width and padding come from utility classes on

@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageShell, { type PageSection } from '../PageShell.astro';
 import type { RoutedLocale } from '../../lib/routing.ts';
 import { REPO_ISSUES_URL } from '../../lib/site.ts';
 
@@ -96,47 +96,55 @@ const copy = {
 } as const;
 
 const c = copy[language];
+
+// The ids are anchors people can link to — an accessibility statement gets
+// pointed at section by section — so they are stable and independent of the
+// language the page is served in.
+const sections: PageSection[] = [
+  { id: 'compliance', title: c.statusTitle },
+  { id: 'measures', title: c.measuresTitle },
+  { id: 'testing', title: c.testingTitle },
+  { id: 'limits', title: c.limitsTitle },
+  { id: 'feedback', title: c.feedbackTitle },
+];
 ---
 
-<BaseLayout language={language} path="/accessibilitat/" title={c.title}>
-  <article class="prose-page max-w-prose">
-    <h1 class="text-2xl font-extrabold tracking-tight">{c.title}</h1>
-    <p class="mt-4">{c.intro}</p>
+<PageShell
+  language={language}
+  path="/accessibilitat/"
+  title={c.title}
+  lead={c.intro}
+  sections={sections}
+>
+  <p slot="compliance">{c.statusBody}</p>
 
-    <h2>{c.statusTitle}</h2>
-    <p class="mt-2">{c.statusBody}</p>
+  <ul class="page-list" slot="measures">
+    {c.measures.map((item) => <li>{item}</li>)}
+  </ul>
 
-    <h2>{c.measuresTitle}</h2>
-    <ul class="mt-2 list-disc space-y-1.5 ps-5">
-      {c.measures.map((item) => <li>{item}</li>)}
-    </ul>
+  <p slot="testing">{c.testingBody}</p>
 
-    <h2>{c.testingTitle}</h2>
-    <p class="mt-2">{c.testingBody}</p>
-
-    <h2>{c.limitsTitle}</h2>
-    <ul class="mt-2 list-disc space-y-1.5 ps-5">
+  {
+    /* A panel rather than prose: this is the list a visitor checks against
+       what just happened to them, not something read top to bottom. */
+  }
+  <div class="page-callout" slot="limits">
+    <ul class="page-list">
       {c.limits.map((item) => <li>{item}</li>)}
     </ul>
+  </div>
 
-    <h2>{c.feedbackTitle}</h2>
-    <p class="mt-2">
-      {c.feedbackBody}{' '}
-      <a
-        class="underline underline-offset-2"
-        href={REPO_ISSUES_URL}
-        target="_blank"
-        rel="noreferrer noopener">{c.feedbackCta}</a
-      >
-    </p>
+  <p slot="feedback">
+    {c.feedbackBody}{' '}
+    <a href={REPO_ISSUES_URL} target="_blank" rel="noreferrer noopener">{c.feedbackCta}</a>
+  </p>
 
-    {
-      /* The space is explicit: Astro collapses the newline between an
-        expression and the tag after it, which ran the sentence into the date. */
-    }
-    <p class="text-ink-muted mt-8 text-sm">
-      {c.reviewed}{' '}
-      <time datetime={REVIEWED}>{REVIEWED_LABEL}</time>.
-    </p>
-  </article>
-</BaseLayout>
+  {
+    /* The space is explicit: Astro collapses the newline between an
+      expression and the tag after it, which ran the sentence into the date. */
+  }
+  <p class="text-ink-muted mt-10 text-sm">
+    {c.reviewed}{' '}
+    <time datetime={REVIEWED}>{REVIEWED_LABEL}</time>.
+  </p>
+</PageShell>

@@ -403,6 +403,40 @@ espaciado estrecho es lo que los hace caber; **el `wrap` es lo que garantiza que
 haga lo que haga una traducción futura con la longitud de las cadenas. Un diseño que no puede
 desbordar vale más que uno ajustado a las cadenas de hoy.
 
+### `PageShell` — las tres páginas de texto
+
+`/el-projecte/`, `/credits/` y `/accessibilitat/` eran prosa sobre crema: **ni un solo elemento
+llevaba una clase de este fichero**, el `h1` no tenía nada del tratamiento del catálogo, y la
+columna de texto eran **624 px de un `main` de 1152** — el 46 % de la página vacío por la derecha,
+que se lee como un layout que se quedó corto, no como uno que decidió algo. Tampoco había camino
+de vuelta: la marca era la única ruta al catálogo y una marca no parece un enlace.
+
+**La medida nunca fue el problema** —65 caracteres está donde tiene que estar—, así que la columna
+conserva su ancho y el hueco de al lado recibe un trabajo.
+
+| Clase | Qué hace |
+|---|---|
+| `.breadcrumb` | La vuelta al catálogo, con los 44 px que cumple todo control del sitio. La página actual se **afirma** con `aria-current`, no se enlaza, y la barra separadora es `aria-hidden`: una barra leída en voz alta entre dos nombres de página es ruido |
+| `.page-hero` | La misma tipografía, peso e interlineado que el titular del catálogo, un paso por debajo. Estos títulos son cortos; el paso de display sería gritar |
+| `.page-layout` | Una columna centrada hasta `lg`, donde el índice ocupa el espacio que ya estaba vacío |
+| `.page-toc` | Índice pegajoso. **Solo desde `lg`**: más estrecho no hay columna sobrante, y una lista de enlaces sobre el artículo sería una cosa más que pasar en el móvil |
+| `.page-callout` | Superficie para los bloques que son **datos y no prosa** (licencias, estado del contenido, limitaciones conocidas). Una o dos por página: seis paneles apilados serían ensalada de tarjetas |
+
+**Las secciones y el índice salen de una sola lista.** Cada vista declara `sections: PageSection[]`
+y entrega el cuerpo por un slot con el nombre del `id`. Declararla dos veces es exactamente cómo
+una entrada acaba apuntando a un encabezado que se renombró — el mismo motivo por el que los
+encabezados de grupo del catálogo se emiten desde su propio listado ordenado (§7, `.grid-section`).
+
+Los `id` son **anclas enlazables** y no dependen del idioma servido: una declaración de
+accesibilidad se cita sección por sección. Los encabezados llevan `scroll-margin-top`, no solo el
+`scroll-padding-top` del documento, o el enlace entregaría la sección con su propio título detrás
+de la cabecera fija.
+
+El índice enlaza a 32 px de alto y no a 44, a conciencia: es una **ruta duplicada** a encabezados
+que ya están en el documento, visible solo en pantallas con puntero y teclado, y cinco entradas a
+44 px serían más altas que la sección a la que apuntan. Sigue muy por encima de los 24 px del
+criterio 2.5.8.
+
 ### Impresión
 
 Imprimir daba 229 tarjetas bajo una cabecera fija sobre fondo crema. Escuelas infantiles y
@@ -469,6 +503,9 @@ Antes de dar por terminado un componente:
       problema de altura, la media query pregunta por `height` (§7, `.toolbar`).
 - [ ] Si algo se reordena al envolverse una fila, **el orden del código sigue siendo el orden de
       lectura** en todas las anchuras (§7, `.site-nav`).
+- [ ] Nada que se pueda navegar se declara dos veces: si hay un índice, sale de la misma lista que
+      los encabezados (§7, `PageShell`).
+- [ ] Un ancla aterriza **por debajo** de la cabecera fija, no detrás (`scroll-margin-top`).
 - [ ] Se comporta con `prefers-reduced-motion` y con `prefers-reduced-transparency`.
 - [ ] Sin valores sueltos: todo sale de tokens.
 - [ ] Lo que se repite es una clase de componente, no una cadena de utilidades.
