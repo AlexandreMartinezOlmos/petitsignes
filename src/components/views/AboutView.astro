@@ -1,6 +1,7 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageShell, { type PageSection } from '../PageShell.astro';
 import ProgressData from '../../islands/ProgressData.tsx';
+import { createTranslator } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { REPO_URL } from '../../lib/site.ts';
 
@@ -9,6 +10,7 @@ interface Props {
 }
 
 const { language } = Astro.props;
+const t = createTranslator(language);
 const creditsHref = localeHref('/credits/', language);
 
 // User-facing prose (not developer docs), so it is translated by hand rather
@@ -69,47 +71,50 @@ const copy = {
 } as const;
 
 const c = copy[language];
+
+const sections: PageSection[] = [
+  { id: 'who', title: c.whoTitle },
+  { id: 'principles', title: c.principlesTitle },
+  { id: 'sources', title: c.sourcesTitle },
+  { id: 'data', title: t('progress.title') },
+  { id: 'privacy', title: c.privacyTitle },
+  { id: 'open', title: c.openTitle },
+];
 ---
 
-<BaseLayout language={language} path="/el-projecte/" title={c.title}>
-  <article class="max-w-prose">
-    <h1 class="text-3xl font-extrabold tracking-tight">{c.title}</h1>
+<PageShell
+  language={language}
+  path="/el-projecte/"
+  title={c.title}
+  lead={c.intro}
+  sections={sections}
+>
+  <p slot="who">{c.whoBody}</p>
 
-    <p class="mt-4">{c.intro}</p>
+  <ul class="page-list" slot="principles">
+    {c.principles.map((item) => <li>{item}</li>)}
+  </ul>
 
-    <h2 class="mt-8 text-xl font-bold">{c.whoTitle}</h2>
-    <p class="mt-2">{c.whoBody}</p>
+  <Fragment slot="sources">
+    <p>{c.sourcesBody}</p>
+    <p><a href={creditsHref}>{c.sourcesLink}</a></p>
+  </Fragment>
 
-    <h2 class="mt-8 text-xl font-bold">{c.principlesTitle}</h2>
-    <ul class="mt-2 list-disc space-y-1.5 ps-5">
-      {c.principles.map((item) => <li>{item}</li>)}
-    </ul>
+  {
+    /* Directly after the "no accounts, nothing leaves your device" promise
+       above: this is where that promise has to become something the visitor
+       can act on. `client:visible` keeps it off the catalogue's JS budget.
+       Its own section now, so it appears in the contents list — with no
+       accounts, this is the only way anyone keeps their progress. */
+  }
+  <ProgressData slot="data" language={language} client:visible />
 
-    <h2 class="mt-8 text-xl font-bold">{c.sourcesTitle}</h2>
-    <p class="mt-2">{c.sourcesBody}</p>
-    <p class="mt-1">
-      <a class="underline underline-offset-2" href={creditsHref}>{c.sourcesLink}</a>
+  <p slot="privacy">{c.privacyBody}</p>
+
+  <Fragment slot="open">
+    <p>{c.openBody}</p>
+    <p>
+      <a href={REPO_URL} target="_blank" rel="noreferrer noopener">{c.openCta}</a>
     </p>
-
-    {
-      /* Directly after the "no accounts, nothing leaves your device" promise
-         above: this is where that promise has to become something the visitor
-         can act on. `client:visible` keeps it off the catalogue's JS budget. */
-    }
-    <ProgressData language={language} client:visible />
-
-    <h2 class="mt-8 text-xl font-bold">{c.privacyTitle}</h2>
-    <p class="mt-2">{c.privacyBody}</p>
-
-    <h2 class="mt-8 text-xl font-bold">{c.openTitle}</h2>
-    <p class="mt-2">{c.openBody}</p>
-    <p class="mt-1">
-      <a
-        class="underline underline-offset-2"
-        href={REPO_URL}
-        target="_blank"
-        rel="noreferrer noopener">{c.openCta}</a
-      >
-    </p>
-  </article>
-</BaseLayout>
+  </Fragment>
+</PageShell>

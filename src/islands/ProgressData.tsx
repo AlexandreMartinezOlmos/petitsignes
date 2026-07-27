@@ -119,9 +119,11 @@ export default function ProgressData({ language }: Props) {
   }, [t]);
 
   return (
+    // The heading belongs to the page, not to the island: it is one more
+    // section of the article and it has to appear in its contents list like
+    // the rest. What is left here is the panel itself.
     <section className="progress-data">
-      <h2 className="mt-8 text-xl font-bold">{t('progress.title')}</h2>
-      <p className="mt-2">{t('progress.intro')}</p>
+      <p>{t('progress.intro')}</p>
       {/* The class reserves the line so the summary appearing does not shift
           the buttons under it. */}
       <p className="progress-data__summary text-ink-muted mt-2 text-sm">
