@@ -98,7 +98,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
 
   return (
     <div className="toolbar">
-      <div className="mx-auto max-w-6xl px-4 pb-3">
+      <div className="toolbar__inner mx-auto max-w-6xl px-4 pb-3">
         {/* Search */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
@@ -188,7 +188,11 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
             glance. The hidden chips are not rendered rather than clipped, so
             there is never a control that is invisible but still tabbable.
           */}
-            <div className="chip-row mt-3" role="group" aria-label={t('filter.categories')}>
+            <div
+              className="toolbar__categories chip-row mt-3"
+              role="group"
+              aria-label={t('filter.categories')}
+            >
               <button
                 type="button"
                 onClick={() => {
@@ -266,7 +270,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
             </div>
 
             {/* Status filters + live result count */}
-            <div className="mt-2 flex flex-wrap items-center gap-2">
+            <div className="toolbar__status mt-2 flex flex-wrap items-center gap-2">
               {/* Its own label: two groups called "Categories" are indistinguishable
               when navigating by region, and axe cannot catch that — both had a
               label, they were just the wrong one. */}

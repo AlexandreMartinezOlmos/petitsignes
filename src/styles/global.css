@@ -623,10 +623,19 @@
    then keeps the header open for as long as focus is inside it, so the rows
    never fold away under someone using the keyboard.
 
-   Only on phones. There is no shortage of vertical space on a laptop, and
-   motion in the chrome is a cost with no benefit there.
+   The fold answers a question about **height**, and for a while it asked
+   about width instead. On a phone held sideways — 844×390 — the header was
+   227px of a 390px screen and not one card was visible; the observer duly set
+   `data-condensed="true"` on the first swipe and nothing moved, because these
+   rules sat behind `width < 40rem` and 844px does not qualify. A state
+   announced to assistive technology that changed nothing on screen.
+
+   So: narrow **or** short. A laptop at 768px of viewport height keeps its
+   filters, which is the original intent — there is no shortage of vertical
+   space there and motion in the chrome would be a cost with no benefit. 34rem
+   sits well clear of any laptop and well above any phone in landscape.
 -------------------------------------------------------------------------- */
-@media (width < 40rem) {
+@media (width < 40rem), (height < 34rem) {
   /* A grid row animating between `1fr` and `0fr` folds content of any height
      without naming that height. The first attempt used a `max-block-size`
      ceiling, which worked until the category list could be expanded: the open
@@ -648,6 +657,41 @@
     grid-template-rows: 0fr;
     opacity: 0;
     visibility: hidden;
+  }
+}
+
+/* A phone held sideways has 390px of height and the header started at 227 of
+   them — before the hero, so the catalogue itself began off-screen. Folding
+   fixes what happens after the first swipe; this is what is there on arrival.
+
+   Only the gaps between the rows are tightened. Every control keeps the height
+   it has everywhere else — the search field, the chips and their 36px and 44px
+   targets are the same object on every screen, and a landscape phone is not a
+   reason to make them harder to hit. */
+@media (height < 34rem) {
+  /* The compact row needs roughly 340px to keep the word, its category and the
+     call to action each on one line. The column count on a landscape phone is
+     decided by width — three at 844px, so 260px a card — which is where the
+     button wrapped onto two lines and the row grew back to 191px. Asking for a
+     floor instead of a count lets the browser pick, and it picks two. */
+  #sign-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(22rem, 100%), 1fr));
+  }
+
+  .app-header__row {
+    padding-block: 0.375rem;
+  }
+
+  .toolbar__inner {
+    padding-block-end: 0.5rem;
+  }
+
+  .toolbar__categories {
+    margin-block-start: 0.5rem;
+  }
+
+  .toolbar__status {
+    margin-block-start: 0.375rem;
   }
 }
 
@@ -689,20 +733,59 @@
 }
 
 /* --- Site navigation -------------------------------------------------------
-   Shown from `sm` up, where the header row has width to spare and these cost
-   no extra height. Below that the row is already the tightest thing on the
-   page (see `.app-header__row` and WCAG 1.4.10) and the footer plus the
-   catalogue's bypass link carry the job instead.
+   Last in the source and last to the eye at both widths, so the tab order and
+   the reading order never disagree: from `sm` up `margin-inline-start: auto`
+   pushes it to the far end of the row, and below `sm` `flex-basis: 100%` drops
+   it onto a row of its own under the wordmark.
+
+   `.site-nav-fold` is the animatable box. It is `display: contents` — no box
+   at all — until the phone layout needs something whose height can go to zero.
 -------------------------------------------------------------------------- */
-.site-nav {
-  display: none;
+.site-nav-fold {
+  display: contents;
 }
 
-@media (width >= 40rem) {
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-inline-start: auto;
+}
+
+/* The phone row. It folds with the filter rows rather than holding 44px of a
+   sticky header for the whole visit: there on arrival, back the moment the
+   scroll reverses. Same `1fr`/`0fr` grid track as `.toolbar__filters`, and the
+   same `visibility` so the links leave the tab order instead of becoming
+   invisible things to tab into. */
+@media (width < 40rem) {
+  .site-nav-fold {
+    display: grid;
+    flex-basis: 100%;
+    grid-template-rows: 1fr;
+    transition:
+      grid-template-rows var(--duration-slow) var(--ease-out),
+      opacity var(--duration-base) var(--ease-out);
+  }
+
   .site-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+    margin-inline-start: 0;
+    /* Clipping is what makes the fold read as a fold — but a clipped row also
+       cuts the 3px focus ring off the links inside it. There is nothing to
+       clip while the row is open, so the clip only exists in the state that
+       animates, and `:focus-within` covers the frames where it reopens under
+       someone using the keyboard. */
+    overflow: hidden;
+  }
+
+  .app-header:not([data-condensed='true']) .site-nav,
+  .app-header:focus-within .site-nav {
+    overflow: visible;
+  }
+
+  .app-header[data-condensed='true']:not(:focus-within) .site-nav-fold {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
   }
 }
 
@@ -796,6 +879,7 @@
 @media (width < 40rem) {
   .app-header__row {
     gap: 0.5rem;
+    padding-block: 0.5rem;
     padding-inline: 0.75rem;
   }
 
@@ -829,12 +913,76 @@
   }
 }
 
-/* --- Hero ----------------------------------------------------------------- */
+/* --- Hero ------------------------------------------------------------------
+   Measured on a phone, the header and this section together were 458px of an
+   844px screen: 54% of the first thing anyone sees spent on copy that has been
+   read by the second visit, on a tool people come back to daily.
+
+   Two ways out were considered. Shrinking it from the second visit on needs
+   client state to decide a layout: a flash of the wrong height on every load,
+   and a page that is not the same page twice. So it is simply shorter — the
+   display face is worth two lines on a wide screen and not three on a phone —
+   and shorter again wherever the screen itself is short.
+
+   Nothing is hidden at any width. The `h1` is the page's heading and the lead
+   is the one sentence that says what the site is; both stay at every size,
+   and the lead never drops below the 16px floor the design system promises.
+-------------------------------------------------------------------------- */
+.hero {
+  padding-block: 0.25rem 1rem;
+}
+
+/* The tighter leading is the display line-height, not a compressed body one:
+   three lines of a 900-weight headline do not need the air that a paragraph
+   does, and it is 12px of the first screen. */
 .hero__title {
-  font-size: var(--text-display);
+  font-size: var(--text-2xl);
   line-height: var(--text-display--line-height);
   letter-spacing: var(--text-display--letter-spacing);
   font-weight: var(--font-weight-display);
+}
+
+.hero__lead {
+  margin-block-start: 0.5rem;
+  max-inline-size: 60ch;
+  font-size: var(--text-base);
+  line-height: 1.45;
+  color: var(--color-ink-muted);
+}
+
+@media (width >= 40rem) {
+  .hero {
+    padding-block: 1.5rem 2rem;
+  }
+
+  .hero__title {
+    font-size: var(--text-display);
+  }
+
+  .hero__lead {
+    margin-block-start: 1rem;
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+  }
+}
+
+/* A phone held sideways is wide enough for the display face and has nowhere
+   to put it: 390px of height, minus a header that starts at 227. Last, so it
+   wins over the `sm` block above at 844×390. */
+@media (height < 34rem) {
+  .hero {
+    padding-block: 0.25rem 0.75rem;
+  }
+
+  .hero__title {
+    font-size: var(--text-2xl);
+  }
+
+  .hero__lead {
+    margin-block-start: 0.35rem;
+    font-size: var(--text-base);
+    line-height: 1.45;
+  }
 }
 
 .hero__accent {
@@ -1055,6 +1203,17 @@
   .chip-quiet:hover {
     color: var(--color-ink);
     background-color: var(--color-surface-sunken);
+  }
+}
+
+/* The four status filters plus the result count needed 378px of the 358 a
+   390px phone offers, so the count dropped to a second line and the row cost
+   66px instead of 36 — 30px of sticky header spent saying nothing. Four pixels
+   off each side brings the row to 346 and it fits on one line. The 36px
+   height, which is what a finger actually aims at, is untouched. */
+@media (width < 40rem) {
+  .chip-quiet {
+    padding-inline: 0.5rem;
   }
 }
 
@@ -1281,8 +1440,14 @@
    The panel is not removed from the markup: a card that does have a real
    poster still renders it (below), and the day a source grants permission the
    image returns without touching this file.
+
+   Short screens get the same row for the same reason, which is why the query
+   asks about both axes. A phone held sideways is 844px wide and 390px tall:
+   wide enough for the two-column poster layout, and a poster card is 363px —
+   taller than the whole viewport once the header is on it, so not one card
+   could ever be fully visible. As a row it is 122px and three fit.
 -------------------------------------------------------------------------- */
-@media (width < 40rem) {
+@media (width < 40rem), (height < 34rem) {
   .sign-card {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -1706,7 +1871,7 @@
   .skip-link,
   .bypass-link,
   .empty-state,
-  .hero__title + p,
+  .hero__lead,
   .progress-data__actions,
   .sign-card__media,
   .sign-card__toggles,
