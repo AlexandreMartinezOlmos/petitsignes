@@ -310,6 +310,48 @@ test('the header carries the site navigation on wide screens', async ({ page }) 
 });
 
 /**
+ * B2. A phone held sideways is 844×390. The header was 227px of that and the
+ * grid began below the fold, so the catalogue opened on nothing at all — and
+ * the fold that should have rescued it announced `data-condensed="true"` and
+ * changed no pixel, because its rules were behind `width < 40rem` and 844px is
+ * not narrow. A state reported to assistive technology and contradicted by the
+ * screen.
+ */
+test('a phone held sideways opens on the catalogue, not on the header', async ({ page }) => {
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const visibleCards = async () =>
+    page.locator('.sign-card').evaluateAll(
+      (cards) =>
+        cards.filter((el) => {
+          const box = el.getBoundingClientRect();
+          return box.top < window.innerHeight && box.bottom > 0;
+        }).length,
+    );
+
+  expect(await visibleCards()).toBeGreaterThan(0);
+
+  // A poster card is 363px — taller than this whole viewport — so the row
+  // layout is not a phone-width preference, it is what makes an entry fit.
+  const cardHeight = await page
+    .locator('.sign-card')
+    .first()
+    .evaluate((el) => el.getBoundingClientRect().height);
+  expect(cardHeight).toBeLessThan(200);
+
+  // And now the fold does what it says.
+  const header = page.locator('#app-header');
+  const tall = await header.evaluate((el) => el.getBoundingClientRect().height);
+  await page.mouse.wheel(0, 600);
+  await expect(header).toHaveAttribute('data-condensed', 'true');
+  await expect
+    .poll(() => header.evaluate((el) => el.getBoundingClientRect().height))
+    .toBeLessThan(tall - 60);
+});
+
+/**
  * D. Header plus hero was 54% of the first screen on a phone, on a tool people
  * come back to daily. Shrinking it from the second visit on would have meant a
  * layout decided by client state — a flash of the wrong height on every load —

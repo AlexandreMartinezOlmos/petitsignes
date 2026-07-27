@@ -623,10 +623,19 @@
    then keeps the header open for as long as focus is inside it, so the rows
    never fold away under someone using the keyboard.
 
-   Only on phones. There is no shortage of vertical space on a laptop, and
-   motion in the chrome is a cost with no benefit there.
+   The fold answers a question about **height**, and for a while it asked
+   about width instead. On a phone held sideways — 844×390 — the header was
+   227px of a 390px screen and not one card was visible; the observer duly set
+   `data-condensed="true"` on the first swipe and nothing moved, because these
+   rules sat behind `width < 40rem` and 844px does not qualify. A state
+   announced to assistive technology that changed nothing on screen.
+
+   So: narrow **or** short. A laptop at 768px of viewport height keeps its
+   filters, which is the original intent — there is no shortage of vertical
+   space there and motion in the chrome would be a cost with no benefit. 34rem
+   sits well clear of any laptop and well above any phone in landscape.
 -------------------------------------------------------------------------- */
-@media (width < 40rem) {
+@media (width < 40rem), (height < 34rem) {
   /* A grid row animating between `1fr` and `0fr` folds content of any height
      without naming that height. The first attempt used a `max-block-size`
      ceiling, which worked until the category list could be expanded: the open
@@ -648,6 +657,41 @@
     grid-template-rows: 0fr;
     opacity: 0;
     visibility: hidden;
+  }
+}
+
+/* A phone held sideways has 390px of height and the header started at 227 of
+   them — before the hero, so the catalogue itself began off-screen. Folding
+   fixes what happens after the first swipe; this is what is there on arrival.
+
+   Only the gaps between the rows are tightened. Every control keeps the height
+   it has everywhere else — the search field, the chips and their 36px and 44px
+   targets are the same object on every screen, and a landscape phone is not a
+   reason to make them harder to hit. */
+@media (height < 34rem) {
+  /* The compact row needs roughly 340px to keep the word, its category and the
+     call to action each on one line. The column count on a landscape phone is
+     decided by width — three at 844px, so 260px a card — which is where the
+     button wrapped onto two lines and the row grew back to 191px. Asking for a
+     floor instead of a count lets the browser pick, and it picks two. */
+  #sign-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(22rem, 100%), 1fr));
+  }
+
+  .app-header__row {
+    padding-block: 0.375rem;
+  }
+
+  .toolbar__inner {
+    padding-block-end: 0.5rem;
+  }
+
+  .toolbar__categories {
+    margin-block-start: 0.5rem;
+  }
+
+  .toolbar__status {
+    margin-block-start: 0.375rem;
   }
 }
 
@@ -1357,8 +1401,14 @@
    The panel is not removed from the markup: a card that does have a real
    poster still renders it (below), and the day a source grants permission the
    image returns without touching this file.
+
+   Short screens get the same row for the same reason, which is why the query
+   asks about both axes. A phone held sideways is 844px wide and 390px tall:
+   wide enough for the two-column poster layout, and a poster card is 363px —
+   taller than the whole viewport once the header is on it, so not one card
+   could ever be fully visible. As a row it is 122px and three fit.
 -------------------------------------------------------------------------- */
-@media (width < 40rem) {
+@media (width < 40rem), (height < 34rem) {
   .sign-card {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
