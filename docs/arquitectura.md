@@ -183,6 +183,12 @@ diseño.
   envuelve, y el selector de idioma va antes que la navegación tanto en el código como a la
   vista: a un lado en una fila, encima cuando son dos. Cualquier reordenación visual dejaría la
   tabulación en desacuerdo con la página en uno de los dos breakpoints.
+- **Un contraste que solo cumple por poco no cumple.** Los enlaces de la cabecera llevaban tiempo
+  a 4,44:1 —por debajo del 4,5 del criterio 1.4.3— y la batería de axe salía verde en cada
+  ejecución: la cabecera es cristal, así que lo que se ve a través depende del scroll y de la
+  altura de la tarjeta que quede detrás, y la composición que axe muestreaba pasaba. Acortar las
+  tarjetas movió el tinte y los mismos enlaces empezaron a fallar. Lo que se comprueba por muestreo
+  necesita margen, no un valor que roce el listón.
 - **Nada navegable se declara dos veces.** El índice de las páginas de texto y sus encabezados
   salen de la misma lista de secciones (`PageShell.astro`), igual que los encabezados de grupo
   del catálogo se emiten desde su propio listado ordenado: dos fuentes para el mismo agrupamiento
