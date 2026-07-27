@@ -501,24 +501,36 @@ test('the result count says what it counted', async ({ page }) => {
 });
 
 /**
- * 49 of 229 cards have no video, and the note saying so wore the CTA's
- * silhouette: 44px tall, rounded, dashed outline. That is a disabled button,
- * which promises an action that cannot exist (§2.1).
+ * Every concept in the catalogue has a video today (see `contenido.md`), so
+ * `.sign-card__novideo` no longer appears in any shipped card — but the rule
+ * it exists for is not "we happen to have full coverage", it is §2.1: a
+ * concept without a verified source is never filled with a guess, so the next
+ * one added without a video still needs this note, not a silent gap. The
+ * class survives in `SignCard.astro` for that day. Since no real card can
+ * exercise it right now, this injects the exact markup the component would
+ * render and checks its computed shape directly: it once wore the CTA's
+ * silhouette — 44px tall, rounded, dashed outline — a disabled button
+ * promising an action that cannot exist.
  */
 test('the missing-video note does not look like a disabled button', async ({ page }) => {
   await page.goto('/');
 
-  const note = page.locator('.sign-card__novideo').first();
-  await expect(note).toBeVisible();
-
-  const shape = await note.evaluate((el) => {
-    const style = getComputedStyle(el);
-    return {
+  const shape = await page.evaluate(() => {
+    const card = document.querySelector('.sign-card');
+    if (!card) throw new Error('no card to graft the note onto');
+    const note = document.createElement('p');
+    note.className = 'sign-card__novideo';
+    note.textContent = 'Sense vídeo en LSC';
+    card.appendChild(note);
+    const style = getComputedStyle(note);
+    const result = {
       borderWidth: style.borderTopWidth,
       radius: style.borderTopLeftRadius,
       // Still as tall as the CTA, which is what keeps a row of cards aligned.
-      height: el.getBoundingClientRect().height,
+      height: note.getBoundingClientRect().height,
     };
+    note.remove();
+    return result;
   });
 
   expect(shape.borderWidth).toBe('0px');
