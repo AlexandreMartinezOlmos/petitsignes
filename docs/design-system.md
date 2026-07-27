@@ -339,23 +339,19 @@ filtrar y seguir leyendo dejaba el catálogo recortado sin explicación a la vis
 > 360 px —un ancho de móvil muy común— y cuesta 52 px de cabecera. `i18n.test.ts` fija que
 > `showCategoriesLabel` empiece por `showCategories` en los tres idiomas.
 
-**`Amb vídeo` es un filtro de contenido, no de progreso.** Va junto a `Primers signes` y no en el
-grupo `Tots / Preferits / Apresos / Pendents`, que se llama «Filtra pel teu progrés» y responde a
-«¿por dónde voy?». Este responde a «¿qué puedo ver?»: 49 de 229 signos (21 %) no tienen vídeo en
-la lengua de su página y no había forma de dejarlos fuera.
-
-Y a diferencia de los chips de categoría, **una búsqueda no lo suspende**. Los chips se apagan al
-buscar porque encontrar una palabra no puede depender de qué chip esté encendido; este, en cambio,
-dice qué parte del catálogo se puede ver, y responder a una búsqueda con los callejones sin salida
-que el filtro tenía que esconder sería la misma mentira de F1 apuntando al revés. Cuando eso vacía
-la rejilla, **el estado vacío nombra la causa que se puede quitar**: «Cap signe per «biberó»» es
-cierto y engañoso a la vez —la palabra está en el catálogo, lo que falta es el vídeo—.
-
-Cuesta 52 px de cabecera en móvil: el cuarto chip no cabe en los 358 px de un teléfono de 390 y la
-fila envuelve. Cuatro chips piden 430 px; recortarles el relleno y quitar el icono llega a 357, y
-una fila que cabe por los pelos es justo contra lo que advierte `.app-header__row`. Se aceptó a
-conciencia, está anotado en el e2e del cromo de la primera pantalla, y la fila se pliega al primer
-deslizamiento.
+> **Hubo un cuarto chip, «Amb vídeo», y se quitó.** Filtraba los 49 de 229 signos (21 %) sin
+> vídeo en la lengua de su página. La premisa del proyecto es que **toda palabra acaba teniendo
+> vídeo o enlace a su ficha oficial**, así que el filtro no separaba dos clases de contenido: solo
+> señalaba trabajo de catálogo pendiente, y lo hacía con un control permanente en la cabecera.
+>
+> Devolverlo cuesta menos de lo que costaba tenerlo. Cuatro chips no caben en los 358 px de un
+> teléfono de 390 —piden 430—, así que la fila envolvía: cabecera **323 px**, fila de filtros
+> **96 px**, cromo de la primera pantalla **57 %**. Sin él, **271 px**, **44 px** y **50,4 %**,
+> los números de antes de añadirlo. Fijados en el e2e del cromo de la primera pantalla.
+>
+> Que a un signo le falte el vídeo lo sigue diciendo su tarjeta, en el sitio donde importa
+> (`.sign-card__novideo`). Eso es informar; un filtro global era administrar el catálogo desde la
+> interfaz de quien viene a aprender.
 
 ### `.hero` — la portada del catálogo
 

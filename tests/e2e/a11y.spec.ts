@@ -433,18 +433,16 @@ test('the first screen is mostly catalogue', async ({ page }) => {
       return (header + hero) / window.innerHeight;
     });
 
-    // 0.58, raised from 0.51 when the "with video" chip was added and the
-    // phone's filter row went from one line to two: 44px to 96px, and the
-    // header with it. That is a deliberate trade, not drift — 49 of 229 signs
-    // are dead ends and there was no way to leave them out. Four chips do not
-    // fit across 358px: trimming their padding and dropping the chip's icon
-    // gets to 357, and a row that only just fits is the thing
-    // `.app-header__row` exists to warn about. The row also folds away on the
-    // first swipe, so this is the arrival cost, not the browsing cost.
+    // Back to 0.51 after the "with video" chip was removed. That chip had
+    // taken the phone's filter row from one line to two — 44px to 96px, and
+    // the header with it — and the trade was only worth 0.58 while 49 of 229
+    // signs were dead ends. The premise now is that every word gets a video or
+    // a link to its official entry, so there is nothing left to filter out and
+    // the row fits across 358px again.
     //
-    // Still below the 62% this audit started from. Do not raise it again
-    // without the same kind of reason written down.
-    expect(chrome).toBeLessThanOrEqual(0.58);
+    // Well below the 62% this audit started from. Do not raise it without the
+    // same kind of reason written down.
+    expect(chrome).toBeLessThanOrEqual(0.51);
   }
 
   // The lead never drops below the 16px the design system promises for body
@@ -700,33 +698,6 @@ test('the phone card keeps its own layout', async ({ page }) => {
 
   expect(placement.overlaps).toBe(false);
   expect(placement.position).toBe('static');
-});
-
-/**
- * C4. 49 of 229 signs (21%) have no video in this page's sign language, and no
- * filter could leave them out: one card in five was a dead end you had to open
- * to discover.
- */
-test('the catalogue can hide what cannot be watched', async ({ page }) => {
-  await page.goto('/');
-  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
-
-  const chip = page.locator('.chip', { hasText: 'Amb vídeo' });
-  await chip.click();
-  await expect(chip).toHaveAttribute('aria-pressed', 'true');
-
-  await expect(page.locator('.sign-card:not([hidden])')).not.toHaveCount(0);
-  await expect(page.locator('.sign-card[data-has-video="false"]:not([hidden])')).toHaveCount(0);
-  // It is a filter about the catalogue, so the live region says so.
-  await expect(page.locator('[aria-live="polite"]')).toContainText('Amb vídeo');
-
-  // Unlike the category chips, a search does not suspend it — and when that
-  // empties the grid, the message names the cause you can remove rather than
-  // implying the word is not in the catalogue.
-  await page.locator('#sign-search').fill('biberó');
-  await expect(page.locator('.sign-card:not([hidden])')).toHaveCount(0);
-  await expect(chip).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.empty-state__hint')).toContainText(/amb vídeo/i);
 });
 
 /**
