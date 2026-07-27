@@ -23,7 +23,10 @@ test.describe('catalogue', () => {
   });
 
   test('renders the whole catalogue as static HTML', async ({ page }) => {
-    expect(await visibleCards(page)).toBeGreaterThan(200);
+    // Not the whole 229 the catalogue started with — 34 concepts without a
+    // verifiable source in one of the two sign languages were retired rather
+    // than shipped with a placeholder (see `contenido.md`).
+    expect(await visibleCards(page)).toBeGreaterThan(190);
   });
 
   test('search finds a sign by its Catalan label', async ({ page }) => {
