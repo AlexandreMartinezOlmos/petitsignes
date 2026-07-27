@@ -101,6 +101,39 @@ hacerlo.
 Las luminosidades y cromas (`--cat-bg-l`, `--cat-fg-l`…) son comunes y viven en el tema, así que
 claro y oscuro no se pueden desincronizar.
 
+### Daltonismo: qué se comprobó y qué no se puede arreglar
+
+Simulado con las matrices de **Machado, Oliveira & Fernandes (2009)** a severidad 1,0 sobre RGB
+lineal (`deltaEAs` y `contrastRatioAs` en `src/lib/color.ts`), no mirado en un plugin: así el
+resultado es un número que rompe el build cuando se mueve. Dos hallazgos que apuntan en
+direcciones opuestas.
+
+**El tono no puede identificar la categoría, y ninguna paleta lo conseguiría.** Con deuteranopía
+—la más común— el par de tintes más cercano cae de **ΔE 0,0296 a 0,0051**, una quinta parte del
+umbral perceptible. No es un defecto que corregir: a un dicrómata le falta una dimensión de
+color, así que seis familias distinguibles por tono es **inalcanzable por construcción**.
+
+| Peor par de tintes | Normal | Protanopía | Deuteranopía | Tritanopía |
+|---|---|---|---|---|
+| Tema claro | 0,0296 | 0,0113 | **0,0051** | 0,0077 |
+| Tema oscuro | 0,0406 | 0,0149 | **0,0072** | 0,0117 |
+
+Por eso la regla de que **cada categoría lleva icono y encabezado que la nombra** no es un
+extra: es lo único que identifica la categoría para una parte real del público.
+
+**La legibilidad sí aguanta, y eso sí se puede fijar.** La paleta mantiene todas las familias a
+una misma luminosidad, así que al colapsar el tono la luminancia apenas se mueve: el chip se
+queda **por encima de 6,3:1 en las tres dicromacías** y en los dos temas. Una paleta futura que
+variara la luminosidad por familia perdería esto en silencio, así que hay test.
+
+| Contraste del chip | Normal | Protanopía | Deuteranopía | Tritanopía |
+|---|---|---|---|---|
+| Tema claro | 6,64:1 | 6,37:1 | 6,67:1 | 6,43:1 |
+| Tema oscuro | 9,01:1 | 8,95:1 | 9,02:1 | 8,87:1 |
+
+Los dos estados de la tarjeta (estrella y aprendido) quedan a ΔE 0,076 en el peor caso, pero eso
+es de propina: lo que los distingue es el **cambio de forma** (§7, `.sign-card__toggle`).
+
 ### Nada de esto se vigila solo
 
 Un color fuera de gama se dibuja igual. Un par de fondos por debajo del umbral se dibuja igual.
@@ -445,6 +478,32 @@ incumplían el compromiso de 44 px del §5.
 Ahora son `inline-flex` con `min-block-size: var(--spacing-touch)`. Como los enlaces envuelven,
 esa altura hace además de separación vertical entre filas, así que `.footer-nav` solo necesita
 `column-gap`.
+
+### `.shell` — el contenedor del sitio
+
+Un único contenedor para la fila de la cabecera, la barra de filtros, el `main` y el pie, para
+que la marca, el buscador, la rejilla y los enlaces del pie caigan sobre los mismos dos bordes.
+Antes eran las mismas cuatro utilidades escritas cuatro veces.
+
+**Por encima de 90 rem el tope se abre.** A 2560 px la rejilla se quedaba en 1120 px con cuatro
+columnas y **el 56 % de la pantalla era margen**: correcto para prosa, que tiene una medida que
+proteger, y puro desperdicio para una rejilla de 229 fichas, que no tiene ninguna. El tope pasa a
+`min(112rem, 88vw)` — el primero son unas seis columnas de tarjeta, que es lo ancha que puede
+ponerse una fila antes de que el ojo tenga que viajar para leerla; el segundo garantiza margen en
+cualquier pantalla, así que nunca llega de borde a borde.
+
+Y la rejilla deja de contar columnas y pasa a **pedir un ancho**, igual que ya hacía en pantallas
+bajas: un suelo de 16 rem —el ancho que la tarjeta póster ya tenía— deja que el navegador quepa
+las que quepan. Por debajo de 90 rem no cambia nada: los breakpoints están medidos y el problema
+solo existe arriba.
+
+| | 1280 px | 1440 px | 1920 px | 2560 px |
+|---|---|---|---|---|
+| Columnas | 4 | 4 | **6** | **6** |
+| Margen | 13 % | 14 % | 14 % | **31 %** (antes 56 %) |
+
+Nada de lo de dentro pierde su medida: el titular conserva `max-w-5xl`, la entradilla 60ch y las
+páginas de texto 65ch. Un contenedor más ancho les da más margen, no líneas más largas.
 
 ### `.app-header__row` — la fila superior no puede desbordar
 
