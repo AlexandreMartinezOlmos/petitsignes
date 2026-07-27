@@ -183,6 +183,10 @@ diseño.
   envuelve, y el selector de idioma va antes que la navegación tanto en el código como a la
   vista: a un lado en una fila, encima cuando son dos. Cualquier reordenación visual dejaría la
   tabulación en desacuerdo con la página en uno de los dos breakpoints.
+- **Nada navegable se declara dos veces.** El índice de las páginas de texto y sus encabezados
+  salen de la misma lista de secciones (`PageShell.astro`), igual que los encabezados de grupo
+  del catálogo se emiten desde su propio listado ordenado: dos fuentes para el mismo agrupamiento
+  solo pueden acabar discrepando, y aquí discrepar significa un enlace a un ancla que ya no está.
 - Toda la animación es decorativa y se apaga con `prefers-reduced-motion`.
 - **Ningún estado de la interfaz afirma algo que no esté ocurriendo.** La búsqueda ignora los
   chips de categoría por diseño, así que mientras hay búsqueda esos chips van a
