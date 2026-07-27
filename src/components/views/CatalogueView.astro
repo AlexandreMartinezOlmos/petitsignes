@@ -161,7 +161,13 @@ for (const sign of signs) {
 
 <script>
   import { mountCatalogue } from '../../lib/catalogue-grid.ts';
-  import { $query, $statusFilter, $visibleCount, rememberLanguage } from '../../lib/stores.ts';
+  import {
+    $onlyWithVideo,
+    $query,
+    $statusFilter,
+    $visibleCount,
+    rememberLanguage,
+  } from '../../lib/stores.ts';
   import { createTranslator, type MessageKey } from '../../lib/i18n.ts';
   import { isRoutedLocale } from '../../lib/routing.ts';
   import { isSearchable } from '../../lib/search.ts';
@@ -221,6 +227,16 @@ for (const sign of signs) {
         hintKey = 'empty.pending.hint';
       }
 
+      // Last, and it overrides the hint whatever the reason above was. With
+      // "Amb vídeo" on, "Cap signe per «gos»" is true but misleading: the word
+      // may well be in the catalogue and simply have no video in this sign
+      // language. Naming the removable cause is the difference between a dead
+      // end and a next step — and 49 of 229 signs can produce this.
+      if ($onlyWithVideo.get()) {
+        if (!isSearchable(query) && status === 'all') titleKey = 'empty.withVideo.title';
+        hintKey = 'empty.withVideo.hint';
+      }
+
       const emojiEl = document.createElement('span');
       emojiEl.className = 'empty-state__emoji';
       emojiEl.setAttribute('aria-hidden', 'true');
@@ -242,5 +258,6 @@ for (const sign of signs) {
     $visibleCount.subscribe(renderEmptyState);
     $query.subscribe(renderEmptyState);
     $statusFilter.subscribe(renderEmptyState);
+    $onlyWithVideo.subscribe(renderEmptyState);
   }
 </script>

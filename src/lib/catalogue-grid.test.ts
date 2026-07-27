@@ -15,24 +15,29 @@ const CARDS: CardData[] = [
     labels: { ca: 'llet', es: 'leche', en: 'milk' },
     category: 'food',
     isFirstSign: true,
+    hasVideo: true,
   },
   {
     id: 'agua',
     labels: { ca: 'aigua', es: 'agua', en: 'water' },
     category: 'food',
     isFirstSign: true,
+    hasVideo: true,
   },
   {
     id: 'pan',
     labels: { ca: 'pa', es: 'pan', en: 'bread' },
     category: 'food',
     isFirstSign: false,
+    // The one dead end in this fixture: 49 of the 229 real signs are.
+    hasVideo: false,
   },
   {
     id: 'perro',
     labels: { ca: 'gos', es: 'perro', en: 'dog' },
     category: 'animals',
     isFirstSign: false,
+    hasVideo: true,
   },
 ];
 
@@ -43,6 +48,7 @@ function state(overrides: Partial<FilterState> = {}): FilterState {
     query: '',
     category: null,
     onlyFirstSigns: false,
+    onlyWithVideo: false,
     statusFilter: 'all',
     favorites: [],
     learned: [],
@@ -134,6 +140,27 @@ describe('filterCards', () => {
     const visible = filterCards(CARDS, state({ category: 'food' }), null);
     expect(visible.size).toBe(3);
   });
+
+  it('leaves out the signs with no video', () => {
+    const visible = filterCards(CARDS, state({ onlyWithVideo: true }), index);
+    expect(visible.has('pan')).toBe(false);
+    expect(visible.size).toBe(CARDS.length - 1);
+  });
+
+  /**
+   * The category chips are suspended by a search on purpose — finding a word
+   * must not depend on which chip is lit. This one is not: it says which part
+   * of the catalogue can actually be watched, and answering a search with the
+   * dead ends it was asked to hide would be the same lie, pointing the other
+   * way.
+   */
+  it('keeps hiding them while a search is running', () => {
+    const withoutFilter = filterCards(CARDS, state({ query: 'pan' }), index);
+    expect([...withoutFilter]).toEqual(['pan']);
+
+    const withFilter = filterCards(CARDS, state({ query: 'pan', onlyWithVideo: true }), index);
+    expect(withFilter.size).toBe(0);
+  });
 });
 
 /**
@@ -186,6 +213,7 @@ describe('readCardData', () => {
     signId: 'leche',
     category: 'food',
     firstSign: 'true',
+    hasVideo: 'true',
     labelCa: 'llet',
     labelEs: 'leche',
     labelEn: 'milk',
@@ -196,8 +224,20 @@ describe('readCardData', () => {
       id: 'leche',
       category: 'food',
       isFirstSign: true,
+      hasVideo: true,
       labels: { ca: 'llet', es: 'leche', en: 'milk' },
     });
+  });
+
+  /**
+   * The attribute is always written, but a card whose flag went missing must
+   * not pass a filter that promises a video: the visitor would open it and
+   * find the dead end the filter exists to hide.
+   */
+  it('treats a missing video flag as no video', () => {
+    const { hasVideo: _omitted, ...withoutFlag } = complete;
+    expect(readCardData(card(withoutFlag))?.hasVideo).toBe(false);
+    expect(readCardData(card({ ...complete, hasVideo: 'false' }))?.hasVideo).toBe(false);
   });
 
   it('treats anything but "true" as not being a first sign', () => {

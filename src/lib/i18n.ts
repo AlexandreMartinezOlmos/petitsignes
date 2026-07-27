@@ -47,6 +47,9 @@ const MESSAGES = {
     'empty.learned.hint': 'Marca’ls com a apresos a mesura que els vagis fent servir amb el nadó.',
     'empty.pending.title': 'Ho tens tot après!',
     'empty.pending.hint': 'No et queda cap signe pendent. Quin crac.',
+    'empty.withVideo.title': 'Cap signe amb vídeo aquí',
+    'empty.withVideo.hint':
+      'Treu el filtre «Amb vídeo»: el signe pot ser al catàleg sense que en tinguem encara el vídeo.',
     'empty.generic.title': 'Cap signe aquí',
     'empty.generic.hint': 'Prova de treure algun filtre.',
 
@@ -54,6 +57,7 @@ const MESSAGES = {
     'filter.status': 'Filtra pel teu progrés',
     'filter.all': 'Tots',
     'filter.firstSigns': 'Primers signes',
+    'filter.withVideo': 'Amb vídeo',
     'filter.favorites': 'Preferits',
     'filter.learned': 'Apresos',
     'filter.pending': 'Pendents',
@@ -142,6 +146,9 @@ const MESSAGES = {
     'empty.learned.hint': 'Márcalos como aprendidos a medida que los vayas usando con el bebé.',
     'empty.pending.title': '¡Lo tienes todo aprendido!',
     'empty.pending.hint': 'No te queda ningún signo pendiente. Qué crack.',
+    'empty.withVideo.title': 'Ningún signo con vídeo aquí',
+    'empty.withVideo.hint':
+      'Quita el filtro «Con vídeo»: el signo puede estar en el catálogo sin que tengamos aún su vídeo.',
     'empty.generic.title': 'Ningún signo aquí',
     'empty.generic.hint': 'Prueba a quitar algún filtro.',
 
@@ -149,6 +156,7 @@ const MESSAGES = {
     'filter.status': 'Filtrar por tu progreso',
     'filter.all': 'Todos',
     'filter.firstSigns': 'Primeros signos',
+    'filter.withVideo': 'Con vídeo',
     'filter.favorites': 'Favoritos',
     'filter.learned': 'Aprendidos',
     'filter.pending': 'Pendientes',
@@ -237,6 +245,9 @@ const MESSAGES = {
     'empty.learned.hint': 'Mark signs as learned as you start using them with your baby.',
     'empty.pending.title': 'You’ve learned them all!',
     'empty.pending.hint': 'Nothing left to learn. Nice.',
+    'empty.withVideo.title': 'No signs with video here',
+    'empty.withVideo.hint':
+      'Turn off the "With video" filter: the sign may be in the catalogue without a video yet.',
     'empty.generic.title': 'No signs here',
     'empty.generic.hint': 'Try clearing a filter.',
 
@@ -244,6 +255,7 @@ const MESSAGES = {
     'filter.status': 'Filter by your progress',
     'filter.all': 'All',
     'filter.firstSigns': 'First signs',
+    'filter.withVideo': 'With video',
     'filter.favorites': 'Favourites',
     'filter.learned': 'Learned',
     'filter.pending': 'To learn',
