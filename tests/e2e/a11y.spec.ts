@@ -310,6 +310,39 @@ test('the header carries the site navigation on wide screens', async ({ page }) 
 });
 
 /**
+ * D. Header plus hero was 54% of the first screen on a phone, on a tool people
+ * come back to daily. Shrinking it from the second visit on would have meant a
+ * layout decided by client state — a flash of the wrong height on every load —
+ * so it is simply shorter, and the numbers are pinned here rather than left to
+ * drift back.
+ */
+test('the first screen is mostly catalogue', async ({ page }) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 1280, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/');
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+    const chrome = await page.evaluate(() => {
+      const header = document.getElementById('app-header')!.getBoundingClientRect().height;
+      const hero = document.querySelector('.hero')!.getBoundingClientRect().height;
+      return (header + hero) / window.innerHeight;
+    });
+
+    expect(chrome).toBeLessThanOrEqual(0.51);
+  }
+
+  // The lead never drops below the 16px the design system promises for body
+  // text: the hero got shorter by spending less on space, not on legibility.
+  const leadSize = await page
+    .locator('.hero__lead')
+    .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  expect(leadSize).toBeGreaterThanOrEqual(16);
+});
+
+/**
  * A search is a global lookup and ignores the category chips by design, but
  * nothing un-pressed them: picking `Primers signes` and then searching left
  * the chip `aria-pressed="true"` over results that are not first signs. The

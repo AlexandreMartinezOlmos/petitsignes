@@ -796,6 +796,7 @@
 @media (width < 40rem) {
   .app-header__row {
     gap: 0.5rem;
+    padding-block: 0.5rem;
     padding-inline: 0.75rem;
   }
 
@@ -829,12 +830,76 @@
   }
 }
 
-/* --- Hero ----------------------------------------------------------------- */
+/* --- Hero ------------------------------------------------------------------
+   Measured on a phone, the header and this section together were 458px of an
+   844px screen: 54% of the first thing anyone sees spent on copy that has been
+   read by the second visit, on a tool people come back to daily.
+
+   Two ways out were considered. Shrinking it from the second visit on needs
+   client state to decide a layout: a flash of the wrong height on every load,
+   and a page that is not the same page twice. So it is simply shorter — the
+   display face is worth two lines on a wide screen and not three on a phone —
+   and shorter again wherever the screen itself is short.
+
+   Nothing is hidden at any width. The `h1` is the page's heading and the lead
+   is the one sentence that says what the site is; both stay at every size,
+   and the lead never drops below the 16px floor the design system promises.
+-------------------------------------------------------------------------- */
+.hero {
+  padding-block: 0.25rem 1rem;
+}
+
+/* The tighter leading is the display line-height, not a compressed body one:
+   three lines of a 900-weight headline do not need the air that a paragraph
+   does, and it is 12px of the first screen. */
 .hero__title {
-  font-size: var(--text-display);
+  font-size: var(--text-2xl);
   line-height: var(--text-display--line-height);
   letter-spacing: var(--text-display--letter-spacing);
   font-weight: var(--font-weight-display);
+}
+
+.hero__lead {
+  margin-block-start: 0.5rem;
+  max-inline-size: 60ch;
+  font-size: var(--text-base);
+  line-height: 1.45;
+  color: var(--color-ink-muted);
+}
+
+@media (width >= 40rem) {
+  .hero {
+    padding-block: 1.5rem 2rem;
+  }
+
+  .hero__title {
+    font-size: var(--text-display);
+  }
+
+  .hero__lead {
+    margin-block-start: 1rem;
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+  }
+}
+
+/* A phone held sideways is wide enough for the display face and has nowhere
+   to put it: 390px of height, minus a header that starts at 227. Last, so it
+   wins over the `sm` block above at 844×390. */
+@media (height < 34rem) {
+  .hero {
+    padding-block: 0.25rem 0.75rem;
+  }
+
+  .hero__title {
+    font-size: var(--text-2xl);
+  }
+
+  .hero__lead {
+    margin-block-start: 0.35rem;
+    font-size: var(--text-base);
+    line-height: 1.45;
+  }
 }
 
 .hero__accent {
@@ -1055,6 +1120,17 @@
   .chip-quiet:hover {
     color: var(--color-ink);
     background-color: var(--color-surface-sunken);
+  }
+}
+
+/* The four status filters plus the result count needed 378px of the 358 a
+   390px phone offers, so the count dropped to a second line and the row cost
+   66px instead of 36 — 30px of sticky header spent saying nothing. Four pixels
+   off each side brings the row to 346 and it fits on one line. The 36px
+   height, which is what a finger actually aims at, is untouched. */
+@media (width < 40rem) {
+  .chip-quiet {
+    padding-inline: 0.5rem;
   }
 }
 
@@ -1706,7 +1782,7 @@
   .skip-link,
   .bypass-link,
   .empty-state,
-  .hero__title + p,
+  .hero__lead,
   .progress-data__actions,
   .sign-card__media,
   .sign-card__toggles,
