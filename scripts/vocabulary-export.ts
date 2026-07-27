@@ -73,9 +73,6 @@ function markdownDoc(entries: { id: string; data: SignData }[]): string {
     `Actualitzat: ${new Date().toISOString().slice(0, 10)} · ${total} conceptes · ` +
       `${withLsc} amb LSC · ${withLse} amb LSE.`,
     '',
-    'La columna **Estat** és `draft` fins que algú ha vist el vídeo i confirma que correspon al',
-    'concepte; llavors passa a `verified`.',
-    '',
   ];
 
   for (const category of CATEGORY_IDS) {
@@ -83,7 +80,7 @@ function markdownDoc(entries: { id: string; data: SignData }[]): string {
     if (inCategory.length === 0) continue;
 
     out.push(`## ${CATEGORY_LABEL[category]}`, '');
-    out.push('| Paraula (ca / es / en) | LSC | LSE | Estat |', '|---|---|---|---|');
+    out.push('| Paraula (ca / es / en) | LSC | LSE |', '|---|---|---|');
 
     for (const { data } of inCategory) {
       const label = `${data.labels.ca} / ${data.labels.es} / ${data.labels.en}`;
@@ -101,10 +98,7 @@ function markdownDoc(entries: { id: string; data: SignData }[]): string {
               .join(' ');
       const lseCell = lse ? link(dilseSearchUrl(dilseTermFromUrl(lse.videoUrl)), '↗ DILSE') : '—';
 
-      const statuses = [...new Set(data.videos.map((v) => v.status))];
-      const statusCell = statuses.length ? statuses.join(', ') : '—';
-
-      out.push(`| ${label} | ${lscCell} | ${lseCell} | ${statusCell} |`);
+      out.push(`| ${label} | ${lscCell} | ${lseCell} |`);
     }
     out.push('');
   }

@@ -11,15 +11,15 @@ es un recuento anónimo y agregado de visitas ([GoatCounter](https://www.goatcou
 identificadores y sin seguir a nadie entre visitas — por eso no hay aviso de cookies.
 
 > **Estado:** MVP funcional. Catálogo, búsqueda, filtros, progreso local, reproductor e interfaz
-> en catalán y castellano. **195 conceptos, todos con vídeo LSC y enlace LSE.** Todos los vídeos
-> están marcados como `draft` en el dato: coinciden con el diccionario oficial, pero aún no los ha
-> revisado un humano uno por uno (ver [Estado del contenido](#estado-del-contenido-y-verificación)).
+> en catalán y castellano. **195 conceptos, todos con vídeo LSC y enlace LSE.** Cada vídeo
+> declara su fuente, su licencia y su fecha (ver
+> [Estado del contenido](#estado-del-contenido)).
 
 ## Por qué existe este proyecto
 
-Antes de que un bebé pueda hablar, ya puede comunicarse con las manos: señalar, pedir, decir "más"
-o "otra vez" con un gesto sencillo reduce la frustración de ambos lados mucho antes de la primera
-palabra. Esto no es un método propio ni una lengua inventada para bebés: son signos **reales** de
+Antes de que un bebé pueda hablar, ya puede comunicarse con las manos: señalar, pedir "leche"
+o decir "otra vez" con un gesto sencillo reduce la frustración de ambos lados mucho antes de la
+primera palabra. Esto no es un método propio ni una lengua inventada para bebés: son signos **reales** de
 LSC y LSE, las lenguas de la comunidad sorda de Cataluña y España. Aprenderlos con tu bebé es,
 también, un primer contacto respetuoso con esas lenguas y esa comunidad.
 
@@ -30,7 +30,7 @@ oficial verificable — nunca de una ilustración inventada o de un signo "parec
 Está pensado para dos públicos:
 
 - **Familias**, que quieren aprender un puñado de signos útiles del día a día (comer, dormir,
-  más, gracias) sin tener que estudiar una lengua entera de golpe.
+  leche, gracias) sin tener que estudiar una lengua entera de golpe.
 - **Comunidad educativa** (escuelas infantiles, matronas, logopedas, educadores), que puede
   usarlo como recurso libre para introducir signos en el aula o recomendarlo a las familias.
 
@@ -98,15 +98,12 @@ acentos**, porque en catalán un acento cambia el significado (_més_ = "más", 
 calendario"): confundirlos enseñaría un signo equivocado a una familia, que se lo enseñaría a su
 bebé. Ver la sección siguiente para el detalle de cómo se muestran estos vídeos y por qué.
 
-## Estado del contenido y verificación
+## Estado del contenido
 
 El catálogo tiene **195 conceptos** curados con etiquetas en catalán, castellano e inglés,
-repartidos en 15 categorías, más una ruta guiada de 11 "primeros signos".
-
-Empezó con 229. Los 34 que no tenían fuente oficial verificable para uno de los dos idiomas —ni
-LSC ni LSE, o solo uno de los dos sin alternativa encontrada— se retiraron en vez de quedarse como
-fichas sin salida; **el catálogo completo tiene hoy vídeo LSC y enlace LSE en el 100% de los
-conceptos.**
+repartidos en 15 categorías, más una ruta guiada de 11 "primeros signos". Todos tienen vídeo LSC
+y enlace LSE: un concepto sin fuente oficial para alguna de las dos lenguas no entra en el
+catálogo.
 
 |                     | LSC                         | LSE                        |
 | ------------------- | --------------------------- | -------------------------- |
@@ -125,10 +122,9 @@ ficha declara cómo puede mostrarse legalmente:
 Como consecuencia, y sin derecho a extraer un fotograma del vídeo, la cara de la tarjeta es un
 marcador neutro con el icono de la categoría — nunca una representación inventada del gesto.
 
-**Todos los vídeos están en `status: draft`.** El término coincide con el diccionario oficial,
-pero antes de considerarlo `verified` alguien tiene que haber visto el clip entero y confirmado
-que corresponde al concepto (algunas palabras tienen decenas de acepciones distintas en el
-diccionario de origen). Es la contribución más valiosa que se puede hacer al proyecto — ver
+Elegir la acepción correcta es la parte difícil: algunas palabras tienen decenas de vídeos
+distintos en el diccionario de origen y solo uno sirve para este contexto. Si detectas un signo
+que no corresponde, es la corrección más valiosa que se puede aportar — ver
 [Contribuir](#contribuir).
 
 ## Accesibilidad
@@ -185,10 +181,10 @@ npm run content:import   # vuelca la hoja editada al contenido (src/content/sign
 npm run build             # la palabra nueva o corregida ya está en la web
 ```
 
-El `import` conserva lo que la hoja no gestiona directamente — el estado de verificación
-(`draft`/`verified`), las variantes y los consejos de uso — mientras el enlace de origen no
-cambie; si cambias un enlace, ese vídeo vuelve a quedar en `draft` porque hay que confirmarlo de
-nuevo. Un concepto que se borra de la hoja no se elimina solo: el script avisa y hay que borrarlo
+El `import` conserva lo que la hoja no gestiona directamente —las variantes, los consejos de uso
+y la fecha de origen— mientras el enlace no cambie; si cambias un enlace, ese vídeo pasa a llevar
+la fecha de hoy, porque es una fuente nueva. Un concepto que se borra de la hoja no se elimina
+solo: el script avisa y hay que borrarlo
 a mano si es intencionado. La lógica de esta conversión tiene sus propios tests unitarios en
 [`scripts/lib/vocabulary.test.ts`](scripts/lib/vocabulary.test.ts).
 
@@ -250,8 +246,7 @@ El flujo es Gitflow: `feature/*` → `develop` → pull request → `main`.
 ## Contribuir
 
 Se aceptan correcciones de signos **aportando siempre la fuente oficial** — no hace falta saber
-programar, cada signo es un fichero JSON de diez líneas. También se agradece revisar un vídeo en
-`draft` y confirmar (o desmentir) que corresponde al concepto. Ver
+programar, cada signo es un fichero JSON de diez líneas. Ver
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Licencia

@@ -21,8 +21,8 @@ Un fichero por signo: los diffs son pequeños y una corrección se revisa de un 
 ## Dos formas de editar
 
 **A) Directamente en el JSON.** Para una corrección puntual, edita
-`src/content/signs/<slug>.json` (formato abajo). Es lo mejor para tocar `tips`, `status` o una
-variante concreta.
+`src/content/signs/<slug>.json` (formato abajo). Es lo mejor para tocar `tips` o una variante
+concreta.
 
 **B) Con la hoja de vocabulario.** Para añadir palabras o revisar la cobertura de un vistazo, usa
 la tabla editable. Los JSON siguen siendo la fuente de verdad; la tabla es una capa cómoda encima
@@ -47,10 +47,11 @@ Columnas de `vocabulary.tsv`:
 | `lsc_youtube` | Id(s) de YouTube del Vocabulari bàsic. Varios separados por coma = variantes. Vacío = sin LSC. |
 | `lse_dilse_term` | Término de búsqueda de DILSE (`?buscar=…`). Vacío = sin LSE. |
 
-El `import` **conserva** lo que no está en la tabla: el `status` de verificación y la etiqueta de
-`variant` sobreviven mientras el id/término no cambie, y los `tips` se mantienen. Cambiar un
-enlace vuelve a poner ese vídeo en `draft`. Un concepto que ya no esté en la tabla **no se borra**
-automáticamente: el script lo avisa y lo borras a mano si es intencionado.
+El `import` **conserva** lo que no está en la tabla: la etiqueta de `variant` y la fecha de origen
+sobreviven mientras el id/término no cambie, y los `tips` se mantienen. Cambiar un enlace hace que
+ese vídeo pase a llevar la fecha de hoy, porque es una fuente nueva. Un concepto que ya no esté en
+la tabla **no se borra** automáticamente: el script lo avisa y lo borras a mano si es
+intencionado.
 
 La lógica del round-trip está en [`../scripts/lib/vocabulary.ts`](../scripts/lib/vocabulary.ts) y
 tiene tests unitarios; el `build` sigue validando cada ficha con Zod, así que un error en la tabla
@@ -98,15 +99,12 @@ favoritos que la gente tenga guardados.
   "sourceUrl": "https://…",
   "license": "…",
   "updatedAt": "2026-07-23",
-  "status": "verified",
   "variant": "opcional"
 }
 ```
 
 - `source` solo admite valores conocidos; añadir una fuente nueva implica añadir también su
   atribución en la página de créditos.
-- `status` es `draft` hasta que alguien ha **visto el vídeo** y confirmado que corresponde al
-  concepto. Solo `verified` cuenta como listo.
 - `variant` es para cuando una lengua documenta varias realizaciones del mismo concepto (en LSC,
   por ejemplo, *No* tiene tres). Sin `variant`, el esquema no deja meter dos vídeos de la misma
   lengua para un mismo signo.
@@ -130,8 +128,10 @@ El build valida todo esto con Zod: si algo no cuadra, el build falla. Es intenci
 3. **Mira el vídeo entero.** No basta con que el título coincida.
 4. **Anota la fuente**: `sourceUrl` a la ficha original, `license` con las condiciones, y
    `updatedAt` con la fecha en que lo comprobaste.
-5. **Deja `status: "draft"`** si no has podido verificarlo del todo.
-6. `npm run build` para validar y `npm test` antes de abrir el PR.
+5. `npm run build` para validar y `npm test` antes de abrir el PR.
+
+Si en el paso 2 o 3 no llegas a estar seguro, **no lo añadas**. Un concepto sin fuente confirmada
+se queda fuera del catálogo; no entra a medias.
 
 ## Qué se puede generar y qué no
 
@@ -146,22 +146,17 @@ Es deliberado: comunica "todavía no lo tenemos" sin enseñar nada incorrecto.
 
 ## Carga masiva desde el Vocabulari bàsic (LSC)
 
-Los 180 conceptos con vídeo LSC se emparejaron contra el **Vocabulari bàsic de la LSC** de la
-Generalitat, que es el índice autoritativo del canal oficial de YouTube: 2.480 términos, cada uno
-con su vídeo. Es mejor fuente que el listado del canal porque da el **término normalizado** de
-cada signo, no el título de un vídeo.
+Los vídeos LSC se emparejan contra el **Vocabulari bàsic de la LSC** de la Generalitat, que es el
+índice autoritativo del canal oficial de YouTube: 2.480 términos, cada uno con su vídeo. Es mejor
+fuente que el listado del canal porque da el **término normalizado** de cada signo, no el título
+de un vídeo.
 
-El emparejamiento fue **exacto y sensible a acentos**, y esa decisión es el corazón del asunto:
+El emparejamiento es **exacto y sensible a acentos**, y esa decisión es el corazón del asunto:
 
 > En catalán el acento distingue palabras. Un primer intento que ignoraba acentos emparejó
-> **`més`** (more, entonces el segundo de los primeros signos) con **`Mes`**, el mes del
-> calendario. Son signos distintos: habríamos enseñado el gesto equivocado a un padre, que se lo
-> habría enseñado a su hijo. Plegar acentos en una búsqueda de usuario es tolerancia; plegarlos
-> al elegir un signo es un error de contenido.
->
-> El desenlace refuerza la regla en vez de suavizarla: al buscar `més` a mano tampoco apareció
-> ningún vídeo LSC válido, así que el concepto se retiró (§9 de `pendientes.md`). El acierto no
-> fue encontrar el signo correcto — fue **no** publicar el incorrecto.
+> **`més`** («más») con **`Mes`**, el mes del calendario. Son signos distintos: habríamos enseñado
+> el gesto equivocado a un padre, que se lo habría enseñado a su hijo. Plegar acentos en una
+> búsqueda de usuario es tolerancia; plegarlos al elegir un signo es un error de contenido.
 
 Reglas que quedaron fijadas:
 
@@ -169,52 +164,30 @@ Reglas que quedaron fijadas:
 2. Se separan las alternativas de género que el diccionario escribe con barra (`Gos / gossa`) y
    se ignora el sufijo numérico de los números (`Tres - 3`).
 3. Las **variantes numeradas** del diccionario (`Ós (1)`, `Ós (2)`) son realizaciones distintas
-   del mismo signo: se cargan **todas**, cada una con su `variant`. 14 conceptos las tienen.
+   del mismo signo: se cargan **todas**, cada una con su `variant`.
 4. Los **cualificadores entre paréntesis** se resuelven a mano, no por regla: `Cap (part del cos)`
    sirve para «cabeza», `Cap (patró)` (jefe) no. `Taronja (fruita)` sí, `Taronja (color)` no.
 5. Ante cualquier duda, **no se carga**.
 
-Casos rechazados a propósito, que quedan documentados para que nadie los «arregle» por lote —lo
-que no impide que alguien busque y confirme el vídeo correcto a mano, que es justo lo que pasó
-después con varios de ellos (ver más abajo):
+Trampas reales que la regla 1 evita, y que conviene tener presentes al buscar a mano:
 
-| Concepto | Candidato | Por qué no |
+| Término | Candidato engañoso | Por qué no sirve |
 |---|---|---|
-| `sed` (set / sed) | `Set - 7` | Es el número siete; en catalán *set* es homógrafo |
+| `més` («más») | `Mes` | Es el mes del calendario |
+| `set` («sed») | `Set - 7` | Es el número siete; en catalán *set* es homógrafo |
 | `estrella` | `Estrella (forma)` | Es la figura geométrica, no el astro |
 
 El vocabulario de la Generalitat es general —con mucha terminología parlamentaria, sanitaria y
-geográfica— y no de puericultura, así que la carga automática dejó 49 conceptos sin vídeo LSC y
-4 sin enlace LSE.
-
-**Todos los vídeos cargados están en `status: draft`.** El término coincide con el diccionario,
-pero nadie ha visto aún cada clip para confirmar la realización. Pasar uno a `verified` es una
-contribución muy valiosa: mira el vídeo, comprueba que corresponde al concepto y cambia el campo.
-
-## Búsqueda manual de lo que quedó sin fuente
-
-La carga automática solo cubre lo que el vocabulario de la Generalitat tiene indexado por
-término exacto (regla 1 de arriba). Lo que dejó fuera se buscó **a mano, uno por uno**, en el
-propio canal de YouTube del Vocabulari bàsic y en el buscador del DILSE:
-
-- **11 conceptos** encontraron su vídeo o enlace correcto bajo **otra palabra** — el matching
-  automático no falló por descuido, sino porque el diccionario no signa el verbo o sustantivo
-  exacto del catálogo. `abrir` no está, pero `abierto/a` sí; `sed` no está como estado, pero
-  `beber` sí; `te quiero` no existe como frase, pero `amar` sí. En estos casos se cambió la
-  palabra del catálogo, no el signo: la ficha ahora se llama como el signo real, en las tres
-  lenguas de interfaz.
-- **5 conceptos** (`ratón`, `adiós`, `estrella`, `tía`, `pantalón`) solo les faltaba una de las
-  dos lenguas y se encontró el vídeo o enlace correcto sin tocar la palabra.
-- **34 conceptos** no tenían ni una alternativa razonable en una de las dos lenguas —o en
-  ninguna— y se **retiraron** del catálogo en vez de quedarse como fichas sin salida. Es la
-  misma regla de §1: si no hay fuente verificable, no se inventa ni se rellena con un
-  placeholder; se pregunta o, si ya se preguntó y la respuesta es que no existe, se quita.
+geográfica— y no de puericultura, así que la coincidencia automática nunca cubre el catálogo
+entero: lo que deja fuera se busca **a mano**, término a término, en el canal del Vocabulari
+bàsic y en el buscador del DILSE. A veces el diccionario no signa el verbo o sustantivo exacto
+que se buscaba pero sí uno equivalente, y entonces **se ajusta la palabra del catálogo al signo
+real, nunca al revés**. Si no aparece ninguna fuente válida, el concepto no entra.
 
 ## Estado actual
 
-195 conceptos: **todos con vídeo LSC y enlace LSE.** **Ninguno está `verified` todavía** — los
-390 vídeos cargados están en `draft` a la espera de que alguien vea cada clip. El catálogo
-completo, con los enlaces clicables, se genera en [`vocabulari.md`](vocabulari.md).
+195 conceptos, **todos con vídeo LSC y enlace LSE**. El catálogo completo, con los enlaces
+clicables, se genera en [`vocabulari.md`](vocabulari.md).
 
 Las condiciones de reutilización de cada fuente están analizadas en
 [`arquitectura.md`](arquitectura.md#entrega-de-vídeo-nada-se-aloja-aquí).

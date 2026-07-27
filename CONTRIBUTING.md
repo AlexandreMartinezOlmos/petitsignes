@@ -23,8 +23,8 @@ negocian al tocarlo:
   significado (_més_ = "más" ≠ _mes_ = "mes del calendario"), y una misma palabra castellana
   puede tener veinte vídeos distintos en el diccionario de origen (solo uno es el correcto para
   este contexto). Ante la duda, no lo pongas.
-- Todo vídeo nuevo entra con `"status": "draft"`. Pasar uno a `"verified"` — haber visto el clip
-  entero y confirmado que corresponde al concepto — es en sí mismo una contribución muy valiosa.
+- **Mira el vídeo entero antes de enlazarlo.** Que el título coincida no basta: es justo donde se
+  cuelan los errores.
 
 Si eres una persona sorda o intérprete y ves algo que chirría, dínoslo aunque no tengas la
 referencia a mano. Preferimos quitar un signo dudoso a dejarlo.

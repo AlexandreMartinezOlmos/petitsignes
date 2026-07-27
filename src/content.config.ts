@@ -6,7 +6,6 @@ import {
   SIGN_LANGUAGES,
   SIGN_SOURCES,
   VIDEO_DELIVERIES,
-  VIDEO_STATUSES,
   type Language,
 } from './lib/types.ts';
 
@@ -37,7 +36,6 @@ const signVideo = z
     sourceUrl: z.url(),
     license: z.string().min(1),
     updatedAt: z.iso.date(),
-    status: z.enum(VIDEO_STATUSES).default('draft'),
     variant: z.string().min(1).optional(),
   })
   .strict();
