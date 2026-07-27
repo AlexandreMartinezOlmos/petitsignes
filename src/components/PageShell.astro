@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { createTranslator } from '../lib/i18n.ts';
+import { localeHref, type RoutedLocale } from '../lib/routing.ts';
+
+/**
+ * The shell the three text pages share.
+ *
+ * Before this they were plain prose on cream: not one element carried a class
+ * from the design system, the `h1` had none of the catalogue's treatment, and
+ * the column of text was 624px of a 1152px `main` — 46% of the page empty down
+ * the right. There was also no way back: the wordmark was the only route to
+ * the catalogue and it does not read as a link.
+ *
+ * `sections` is the single source for both the table of contents and the
+ * headings themselves, and each body arrives through a slot named after its
+ * id. Declaring the list twice is exactly how a contents entry ends up
+ * pointing at a heading that was renamed or removed — the same reason the
+ * catalogue's group headings are emitted from its own sorted list rather than
+ * written out a second time.
+ */
+export interface PageSection {
+  /** Anchor and slot name. Stable: it is a URL people can link to. */
+  id: string;
+  title: string;
+}
+
+interface Props {
+  language: RoutedLocale;
+  /** Locale-independent path, as `BaseLayout` expects it. */
+  path: string;
+  title: string;
+  /** The one sentence under the title. Sets up the page; never decorative. */
+  lead: string;
+  description?: string;
+  sections: readonly PageSection[];
+}
+
+const { language, path, title, lead, description, sections } = Astro.props;
+const t = createTranslator(language);
+const homeHref = localeHref('/', language);
+---
+
+<BaseLayout language={language} path={path} title={title} description={description ?? lead}>
+  {
+    /*
+    The way back. `aria-current="page"` on the last step rather than a link to
+    the page you are already on, and the separator is `aria-hidden` because a
+    slash read aloud between two page names is noise.
+  */
+  }
+  <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
+    <a class="breadcrumb__link" href={homeHref}>{t('nav.catalogue')}</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current" aria-current="page">{title}</span>
+  </nav>
+
+  <div class="page-layout">
+    <article class="page-prose">
+      <header class="page-hero">
+        <h1 class="page-hero__title">{title}</h1>
+        <p class="page-hero__lead">{lead}</p>
+      </header>
+
+      {
+        sections.map((section) => (
+          <section class="page-section" aria-labelledby={section.id}>
+            <h2 class="page-section__title" id={section.id}>
+              {section.title}
+            </h2>
+            <slot name={section.id} />
+          </section>
+        ))
+      }
+
+      <slot />
+    </article>
+
+    {
+      /*
+      The contents list goes in the space that was empty anyway, and only from
+      `lg`: narrower than that there is no spare column, and a list of links
+      above the article would just be more to scroll past on a phone. Nothing
+      lives here that is not also in the article below it, so hiding it costs
+      no content — which is what makes it safe to hide at all.
+    */
+    }
+    <aside class="page-aside">
+      <nav class="page-toc" aria-label={t('nav.onThisPage')}>
+        <p class="page-toc__title" aria-hidden="true">{t('nav.onThisPage')}</p>
+        <ul class="page-toc__list">
+          {
+            sections.map((section) => (
+              <li>
+                <a class="page-toc__link" href={`#${section.id}`}>
+                  {section.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </aside>
+  </div>
+</BaseLayout>

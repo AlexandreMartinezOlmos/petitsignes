@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageShell, { type PageSection } from '../PageShell.astro';
 import { createTranslator } from '../../lib/i18n.ts';
 import type { RoutedLocale } from '../../lib/routing.ts';
 import { REPO_ISSUES_URL } from '../../lib/site.ts';
@@ -87,46 +87,54 @@ const copy = {
 } as const;
 
 const c = copy[language];
+
+const sections: PageSection[] = [
+  { id: 'lsc', title: c.lscTitle },
+  { id: 'lse', title: c.lseTitle },
+  { id: 'licences', title: c.licTitle },
+  { id: 'status', title: c.statusTitle },
+  { id: 'respect', title: c.respectTitle },
+];
 ---
 
-<BaseLayout language={language} path="/credits/" title={t('nav.credits')}>
-  <article class="max-w-prose">
-    <h1 class="text-3xl font-extrabold tracking-tight">{t('nav.credits')}</h1>
-
-    <p class="mt-4">{c.intro}</p>
-
-    <h2 class="mt-8 text-xl font-bold">{c.lscTitle}</h2>
-    <p class="mt-2">{c.lscBody}</p>
-    <p class="text-ink-muted mt-1 text-sm">{c.lscTerms}</p>
-    <p class="mt-1">
-      <a
-        class="underline underline-offset-2"
-        href={LSC_URL}
-        target="_blank"
-        rel="noreferrer noopener">llengua.gencat.cat</a
-      >
+<PageShell
+  language={language}
+  path="/credits/"
+  title={t('nav.credits')}
+  lead={c.intro}
+  sections={sections}
+>
+  <Fragment slot="lsc">
+    <p>{c.lscBody}</p>
+    <p class="text-ink-muted text-sm">{c.lscTerms}</p>
+    <p>
+      <a href={LSC_URL} target="_blank" rel="noreferrer noopener">llengua.gencat.cat</a>
     </p>
+  </Fragment>
 
-    <h2 class="mt-8 text-xl font-bold">{c.lseTitle}</h2>
-    <p class="mt-2">{c.lseBody}</p>
-    <p class="mt-1">
-      <a
-        class="underline underline-offset-2"
-        href={LSE_URL}
-        target="_blank"
-        rel="noreferrer noopener">fundacioncnse-dilse.org</a
-      >
+  <Fragment slot="lse">
+    <p>{c.lseBody}</p>
+    <p>
+      <a href={LSE_URL} target="_blank" rel="noreferrer noopener">fundacioncnse-dilse.org</a>
     </p>
+  </Fragment>
 
-    <h2 class="mt-8 text-xl font-bold">{c.licTitle}</h2>
-    <ul class="mt-2 list-disc space-y-1 ps-5">
+  {
+    /* The licences and the state of the content are the two blocks people come
+       to this page to check rather than to read, so they get a surface. The
+       update date is part of the attribution the Generalitat's terms ask for,
+       which is why it sits with the count instead of in a footnote. */
+  }
+  <div class="page-callout" slot="licences">
+    <ul class="page-list">
       <li><strong>{c.licCode}</strong>: MIT.</li>
       <li><strong>{c.licData}</strong>: CC BY-SA 4.0.</li>
       <li>{c.licVideos}</li>
     </ul>
+  </div>
 
-    <h2 class="mt-8 text-xl font-bold">{c.statusTitle}</h2>
-    <p class="mt-2">
+  <div class="page-callout" slot="status">
+    <p>
       {c.statusBody}
       {
         lastUpdated && (
@@ -137,18 +145,12 @@ const c = copy[language];
         )
       }
     </p>
+  </div>
 
-    <h2 class="mt-8 text-xl font-bold">{c.respectTitle}</h2>
-    <p class="mt-2">{c.respectBody}</p>
+  <p slot="respect">{c.respectBody}</p>
 
-    <p class="text-ink-muted mt-8 text-sm">
-      {c.report}{' '}
-      <a
-        class="underline underline-offset-2"
-        href={REPO_ISSUES_URL}
-        target="_blank"
-        rel="noreferrer noopener">{c.reportCta}</a
-      >
-    </p>
-  </article>
-</BaseLayout>
+  <p class="text-ink-muted mt-10 text-sm">
+    {c.report}{' '}
+    <a href={REPO_ISSUES_URL} target="_blank" rel="noreferrer noopener">{c.reportCta}</a>
+  </p>
+</PageShell>
