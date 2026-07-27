@@ -789,6 +789,15 @@
   }
 }
 
+/* `--color-ink`, not `--color-ink-muted`, and this is not a preference.
+   Muted ink on the page came out at **4.44:1** — under the 4.5 that WCAG 1.4.3
+   asks of 14px text. It went unnoticed when these links shipped because the
+   header is glass: what shows through it changes with the scroll position and
+   with the height of whatever card is behind it, so the composite axe happened
+   to sample passed. Shortening the cards moved the tint and the same links
+   started failing. A control whose contrast depends on what is scrolled behind
+   it needs headroom, not a value that only just clears the bar, so these take
+   full ink and stay secondary by size and weight instead. */
 .site-nav__link {
   display: inline-flex;
   align-items: center;
@@ -797,7 +806,7 @@
   padding-inline: 0.625rem;
   font-size: var(--text-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-ink-muted);
+  color: var(--color-ink);
   transition:
     color var(--duration-fast) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out);
@@ -805,7 +814,6 @@
 
 @media (hover: hover) {
   .site-nav__link:hover {
-    color: var(--color-ink);
     background-color: var(--color-surface-sunken);
   }
 }
