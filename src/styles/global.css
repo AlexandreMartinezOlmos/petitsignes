@@ -595,7 +595,46 @@
   }
 }
 
-/* --- App shell ------------------------------------------------------------ */
+/* --- App shell ------------------------------------------------------------
+   One container for the header row, the main column and the footer, so the
+   wordmark, the search field, the grid and the footer links all sit on the
+   same two edges. It was the same four utilities written out four times.
+
+   The cap opens up on very wide screens. At 2560px the grid stopped at 1120px
+   with four columns and **56% of the screen was margin** — correct for prose,
+   which has a measure to protect, and pure waste for a grid of 229 cards,
+   which has none. Above 90rem it takes the smaller of 112rem and 88vw: the
+   first is about six card columns, which is as wide as a row can get before
+   the eye has to travel to read it; the second keeps a margin on any screen,
+   so the layout never runs edge to edge.
+
+   Nothing inside loses its own measure. The headline keeps `max-w-5xl`, the
+   lead 60ch and the text pages 65ch — a wider shell gives them more margin,
+   not longer lines.
+-------------------------------------------------------------------------- */
+.shell {
+  margin-inline: auto;
+  max-inline-size: 72rem;
+  padding-inline: 1rem;
+}
+
+@media (width >= 90rem) {
+  .shell {
+    max-inline-size: min(112rem, 88vw);
+  }
+
+  /* And the grid stops counting columns and starts asking for a width, the
+     same way it already does on short screens. A count fixed at four turned
+     every extra pixel into a wider card instead of another card; a 16rem floor
+     lets the browser fit as many as the row holds — six at 2560px, and still
+     the same four at 1440px, because the floor is the width the poster card
+     already had. Below 90rem the tuned breakpoints stay: the problem being
+     solved here only exists at the top end. */
+  #sign-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
+  }
+}
+
 .app-header {
   position: sticky;
   top: 0;
