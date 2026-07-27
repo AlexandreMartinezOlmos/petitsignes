@@ -174,6 +174,15 @@ diseño.
 - La rejilla concentra **638 de los 654 focos** de la página, así que hay un bloque de omisión
   (criterio 2.4.1) justo antes de ella que salta al pie: 650 tabulaciones pasan a 16. El destino
   lleva `tabindex="-1"` para recibir el foco de verdad, no solo el hash.
+- **Una regla que resuelve un problema de altura pregunta por la altura.** El plegado de la
+  cabecera vivía tras `width < 40rem` y en un móvil girado (844×390) anunciaba
+  `data-condensed="true"` sin mover un píxel: un estado dado a las tecnologías de apoyo y
+  desmentido por la pantalla. La consulta es ahora `(width < 40rem), (height < 34rem)`, y con
+  ella la tarjeta en fila compacta y el suelo de columna de la rejilla.
+- **El orden del código es el orden de lectura en todas las anchuras.** La fila de la cabecera
+  envuelve, y el selector de idioma va antes que la navegación tanto en el código como a la
+  vista: a un lado en una fila, encima cuando son dos. Cualquier reordenación visual dejaría la
+  tabulación en desacuerdo con la página en uno de los dos breakpoints.
 - Toda la animación es decorativa y se apaga con `prefers-reduced-motion`.
 - **Ningún estado de la interfaz afirma algo que no esté ocurriendo.** La búsqueda ignora los
   chips de categoría por diseño, así que mientras hay búsqueda esos chips van a
