@@ -194,12 +194,47 @@ cabecera o el `sticky` de sus hijos. **Trampa nº2:** un ancestro con `transform
 
 La unidad del catálogo, repetida 229 veces. Tiene **dos formas**:
 
-- **Tarjeta** (≥ `sm`): panel de color arriba, palabra y chip debajo, acción al pie.
-- **Fila compacta** (< `sm`): baldosa de categoría a la izquierda, palabra y chip en línea,
-  acción abajo, toggles apilados en el borde. Una entrada ocupa 122 px en vez de 156 px.
+- **Tarjeta** (≥ `sm` y pantalla alta): panel de color arriba con los toggles encima, palabra
+  debajo, acción al pie. **266 px**, antes 370.
+- **Fila compacta** (estrecho **o** bajo): baldosa de categoría a la izquierda, palabra en línea,
+  acción abajo, toggles apilados en el borde. Una entrada ocupa 122 px.
 
-Anatomía: `__media` (panel o baldosa) · `__header` › `__label` › `__title` + `__chip` ·
-`__toggles` · `__actions` › `__cta`.
+Anatomía: `__media` (panel o baldosa) · `__toggles` · `__header` › `__label` › `__title` +
+`__chip` · `__actions` › `__cta`.
+
+#### Por qué la tarjeta encogió un 28 %
+
+La tarjeta decía **tres veces lo mismo**: el encabezado de sección «Roba», un chip que ponía
+«Roba» bajo la palabra, y un bloque de medio con el icono de la categoría. Contado en el DOM:
+**217 de los 229 chips repetían literalmente su encabezado**. Nada de eso fue un error en su
+momento — el chip informaba cuando la rejilla era plana, y los encabezados que le quitaron el
+trabajo llegaron después.
+
+Y la palabra, que es lo que alguien viene a buscar, perdía contra su propio mobiliario: 115 px la
+palabra, 115 px el chip a su lado, y 234 px de CTA con relleno sólido de marca **repetido idéntico
+en 180 tarjetas**. Algo que aparece 180 veces igual es textura, no una llamada a la acción, y
+estaba cobrando el precio de una.
+
+- **El chip solo donde informa.** Lo decide quien monta la rejilla (`CatalogueView`), no la
+  tarjeta: una tarjeta no puede saber qué hay escrito encima de ella. Se queda en las 12 fichas
+  bajo «Primers signes», el único encabezado que no es una categoría.
+- **Los toggles suben al bloque de medio**, cada uno con **pastilla sólida**. La pastilla no es
+  adorno: detrás hay un tinte de categoría distinto en cada tarjeta y el criterio 1.4.11 pide 3:1
+  al propio control. Medido en los quince tintes: **el icono queda a 4,31:1 en el peor caso**, y
+  el filo de la pastilla usa `border-strong` porque con el hairline normal salía a **1,03:1** en
+  los tintes más claros — un borde que nadie ve.
+- **El bloque de medio pasa de 3:2 a 16:9** (177 → 150 px). Se queda, y a ancho completo: es la
+  única parte de la tarjeta que algún día dirá algo que no está escrito —el pictograma de la
+  palabra, nunca del gesto (§2.1)—. Simplemente no necesita media tarjeta. Por debajo de 16:9 un
+  dibujo cuadrado empieza a ahogarse.
+- **El CTA baja a relleno suave** con tinta de marca. `color.test.ts` sostiene ese par a 4,5:1 en
+  los dos temas: cuanto más callado es un par, más cerca queda del suelo.
+
+**El orden del código es el orden de lectura.** El marcado era medio → acción → palabra →
+toggles y se veía medio → palabra → acción, con `order` tapando la diferencia; subir los toggles
+habría ensanchado ese hueco. Ahora el marcado es medio → toggles → palabra → acción, que es lo que
+hace el ojo en una tarjeta ancha, y no queda ni un `order`. La fila compacta usa áreas de rejilla,
+así que el móvil no se entera.
 
 Reglas que no se tocan:
 
@@ -270,6 +305,24 @@ filtrar y seguir leyendo dejaba el catálogo recortado sin explicación a la vis
 > Deletrearla entera en el botón también cumpliría, pero empuja los chips a una segunda fila a
 > 360 px —un ancho de móvil muy común— y cuesta 52 px de cabecera. `i18n.test.ts` fija que
 > `showCategoriesLabel` empiece por `showCategories` en los tres idiomas.
+
+**`Amb vídeo` es un filtro de contenido, no de progreso.** Va junto a `Primers signes` y no en el
+grupo `Tots / Preferits / Apresos / Pendents`, que se llama «Filtra pel teu progrés» y responde a
+«¿por dónde voy?». Este responde a «¿qué puedo ver?»: 49 de 229 signos (21 %) no tienen vídeo en
+la lengua de su página y no había forma de dejarlos fuera.
+
+Y a diferencia de los chips de categoría, **una búsqueda no lo suspende**. Los chips se apagan al
+buscar porque encontrar una palabra no puede depender de qué chip esté encendido; este, en cambio,
+dice qué parte del catálogo se puede ver, y responder a una búsqueda con los callejones sin salida
+que el filtro tenía que esconder sería la misma mentira de F1 apuntando al revés. Cuando eso vacía
+la rejilla, **el estado vacío nombra la causa que se puede quitar**: «Cap signe per «biberó»» es
+cierto y engañoso a la vez —la palabra está en el catálogo, lo que falta es el vídeo—.
+
+Cuesta 52 px de cabecera en móvil: el cuarto chip no cabe en los 358 px de un teléfono de 390 y la
+fila envuelve. Cuatro chips piden 430 px; recortarles el relleno y quitar el icono llega a 357, y
+una fila que cabe por los pelos es justo contra lo que advierte `.app-header__row`. Se aceptó a
+conciencia, está anotado en el e2e del cromo de la primera pantalla, y la fila se pliega al primer
+deslizamiento.
 
 ### `.hero` — la portada del catálogo
 
@@ -505,6 +558,12 @@ Antes de dar por terminado un componente:
       lectura** en todas las anchuras (§7, `.site-nav`).
 - [ ] Nada que se pueda navegar se declara dos veces: si hay un índice, sale de la misma lista que
       los encabezados (§7, `PageShell`).
+- [ ] **Nada dice dos veces lo mismo.** Si una etiqueta repite lo que ya pone encima, sobra (§7,
+      `.sign-card`).
+- [ ] Un control sobre una superficie **que cambia de color** lleva su propia base sólida; el
+      contraste se mide contra los quince tintes, no contra uno (§7, `.sign-card`).
+- [ ] Si un par de colores se hace **más callado**, se mide: es al bajar el contraste cuando se
+      cruza el suelo sin enterarse (`color.test.ts`).
 - [ ] Un ancla aterriza **por debajo** de la cabecera fija, no detrás (`scroll-margin-top`).
 - [ ] Se comporta con `prefers-reduced-motion` y con `prefers-reduced-transparency`.
 - [ ] Sin valores sueltos: todo sale de tokens.

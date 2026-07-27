@@ -11,9 +11,18 @@ interface Props {
   sign: SignEntry;
   category: Category;
   language: Language;
+  /**
+   * Whether the category chip says anything this card is not already under.
+   *
+   * The grid is grouped by section heading, and 217 of the 229 cards sat under
+   * a heading whose text the chip then repeated word for word. The caller owns
+   * this because the caller is what decides the sections (see
+   * `CatalogueView.astro`); a card cannot know what is written above it.
+   */
+  showCategory: boolean;
 }
 
-const { sign, category, language } = Astro.props;
+const { sign, category, language, showCategory } = Astro.props;
 const t = createTranslator(language);
 
 const label = sign.labels[language];
@@ -42,6 +51,7 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
   data-sign-id={sign.id}
   data-category={sign.category}
   data-first-sign={sign.isFirstSign ? 'true' : 'false'}
+  data-has-video={video === undefined ? 'false' : 'true'}
   data-label-ca={sign.labels.ca}
   data-label-es={sign.labels.es}
   data-label-en={sign.labels.en}
@@ -67,6 +77,74 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
           </div>
         )
       }
+    </div>
+
+    {
+      /*
+      Second in source because on a wide card they sit on the image, above the
+      word — so this is the order the eye reads them in too. They are a sibling
+      of the media rather than a child of it: the compact row lays the card out
+      with grid areas and needs them as a direct child, and overlaying does not
+      need nesting, only `position: absolute` against the card.
+    */
+    }
+    <div class="sign-card__toggles">
+      <button
+        type="button"
+        class="sign-card__toggle"
+        data-action="favorite"
+        data-sign-id={sign.id}
+        aria-pressed="false"
+        aria-label={t('card.addFavorite')}
+        data-label-on={t('card.removeFavorite')}
+        data-label-off={t('card.addFavorite')}
+      >
+        <svg class="icon" aria-hidden="true" focusable="false">
+          <use href="#i-star"></use>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="sign-card__toggle"
+        data-action="learned"
+        data-sign-id={sign.id}
+        aria-pressed="false"
+        aria-label={t('card.markLearned')}
+        data-label-on={t('card.unmarkLearned')}
+        data-label-off={t('card.markLearned')}
+      >
+        <svg class="icon" aria-hidden="true" focusable="false">
+          <use href="#i-check"></use>
+        </svg>
+      </button>
+    </div>
+
+    <div class="sign-card__header">
+      {
+        /*
+        The word and its category read as one block, and the wrapper is what
+        lets the compact row put them side by side without either arrangement
+        fighting the toggles for the same line.
+      */
+      }
+      <div class="sign-card__label">
+        {
+          /* h3: the grid is grouped under section headings, and a card belongs to
+            one of them rather than sitting beside it. */
+        }
+        <h3 class="sign-card__title">{label}</h3>
+        {
+          showCategory && (
+            <span class="sign-card__chip" data-category={sign.category}>
+              <svg class="icon-sm" aria-hidden="true" focusable="false">
+                <use href={`#i-${category.icon}`} />
+              </svg>
+              {category.labels[language]}
+            </span>
+          )
+        }
+      </div>
     </div>
 
     <div class="sign-card__actions">
@@ -119,61 +197,6 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
           </a>
         )
       }
-    </div>
-  </div>
-
-  <div class="sign-card__header">
-    {
-      /*
-      The word and its category read as one block, and the wrapper is what
-      lets them stack on wide cards and sit side by side in the compact row
-      without either arrangement fighting the toggles for the same line.
-    */
-    }
-    <div class="sign-card__label">
-      {
-        /* h3: the grid is grouped under section headings, and a card belongs to
-          one of them rather than sitting beside it. */
-      }
-      <h3 class="sign-card__title">{label}</h3>
-      <span class="sign-card__chip" data-category={sign.category}>
-        <svg class="icon-sm" aria-hidden="true" focusable="false">
-          <use href={`#i-${category.icon}`}></use>
-        </svg>
-        {category.labels[language]}
-      </span>
-    </div>
-
-    <div class="sign-card__toggles">
-      <button
-        type="button"
-        class="sign-card__toggle"
-        data-action="favorite"
-        data-sign-id={sign.id}
-        aria-pressed="false"
-        aria-label={t('card.addFavorite')}
-        data-label-on={t('card.removeFavorite')}
-        data-label-off={t('card.addFavorite')}
-      >
-        <svg class="icon" aria-hidden="true" focusable="false">
-          <use href="#i-star"></use>
-        </svg>
-      </button>
-
-      <button
-        type="button"
-        class="sign-card__toggle"
-        data-action="learned"
-        data-sign-id={sign.id}
-        aria-pressed="false"
-        aria-label={t('card.markLearned')}
-        data-label-on={t('card.unmarkLearned')}
-        data-label-off={t('card.markLearned')}
-      >
-        <svg class="icon" aria-hidden="true" focusable="false">
-          <use href="#i-check"></use>
-        </svg>
-      </button>
     </div>
   </div>
 </article>

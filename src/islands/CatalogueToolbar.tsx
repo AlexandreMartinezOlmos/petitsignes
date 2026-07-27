@@ -6,6 +6,7 @@ import {
   $category,
   $hasActiveFilters,
   $onlyFirstSigns,
+  $onlyWithVideo,
   $query,
   $statusFilter,
   $visibleCount,
@@ -40,6 +41,7 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
   const query = useStore($query);
   const category = useStore($category);
   const onlyFirstSigns = useStore($onlyFirstSigns);
+  const onlyWithVideo = useStore($onlyWithVideo);
   const statusFilter = useStore($statusFilter);
   const reportedCount = useStore($visibleCount);
   const visibleCount = reportedCount < 0 ? initialCount : reportedCount;
@@ -73,6 +75,9 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
     searchActive ? t('search.scopeSearch', { query: query.trim() }) : null,
     !searchActive && onlyFirstSigns ? t('filter.firstSigns') : null,
     !searchActive ? (categories.find((option) => option.id === category)?.label ?? null) : null,
+    // Announced even while searching, because unlike the chips it is still
+    // being applied — see `filterCards`.
+    onlyWithVideo ? t('filter.withVideo') : null,
     statusFilter !== 'all' ? t(`filter.${statusFilter}`) : null,
   ].filter((part): part is string => part !== null);
 
@@ -215,6 +220,30 @@ export default function CatalogueToolbar({ categories, language, initialCount }:
                 className="chip"
               >
                 ⭐ {t('filter.firstSigns')}
+              </button>
+
+              {/*
+                A filter about the catalogue, not about the visitor's progress,
+                so it belongs beside `Primers signes` and not in the status row
+                — that group is named "Estat" and answers "where am I with
+                this?". 49 of 229 signs (21%) have no video in this page's sign
+                language and there was no way to leave them out; opening one in
+                five cards to find nothing is not a way to learn.
+
+                No `!searchActive` here, unlike the two chips above: the search
+                does apply this one, so un-pressing it would be the lie that F1
+                fixed, in reverse.
+              */}
+              <button
+                type="button"
+                onClick={() => $onlyWithVideo.set(!onlyWithVideo)}
+                aria-pressed={onlyWithVideo}
+                className="chip"
+              >
+                <svg className="icon-sm" aria-hidden="true" focusable="false">
+                  <use href="#i-play" />
+                </svg>
+                {t('filter.withVideo')}
               </button>
 
               {shownCategories.map((option) => {

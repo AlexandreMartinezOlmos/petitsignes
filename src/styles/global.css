@@ -39,7 +39,10 @@
   /* The catalogue word gets its own step rather than borrowing a heading size.
      In a list of 229 entries it is the one thing a visitor is scanning for, so
      it should not be sized by whatever happens to sit near it in the scale. */
-  --text-word: clamp(1.25rem, 1.05rem + 0.85vw, 1.625rem);
+  /* The ceiling was raised, not the floor: on a wide card the word had to
+     stop losing to the button beside it, and on a phone the compact row was
+     already right. Same size below `sm` as before, four steps more at 1280. */
+  --text-word: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
   --text-word--line-height: 1.15;
   --text-word--letter-spacing: -0.02em;
 
@@ -789,6 +792,15 @@
   }
 }
 
+/* `--color-ink`, not `--color-ink-muted`, and this is not a preference.
+   Muted ink on the page came out at **4.44:1** — under the 4.5 that WCAG 1.4.3
+   asks of 14px text. It went unnoticed when these links shipped because the
+   header is glass: what shows through it changes with the scroll position and
+   with the height of whatever card is behind it, so the composite axe happened
+   to sample passed. Shortening the cards moved the tint and the same links
+   started failing. A control whose contrast depends on what is scrolled behind
+   it needs headroom, not a value that only just clears the bar, so these take
+   full ink and stay secondary by size and weight instead. */
 .site-nav__link {
   display: inline-flex;
   align-items: center;
@@ -797,7 +809,7 @@
   padding-inline: 0.625rem;
   font-size: var(--text-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-ink-muted);
+  color: var(--color-ink);
   transition:
     color var(--duration-fast) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out);
@@ -805,7 +817,6 @@
 
 @media (hover: hover) {
   .site-nav__link:hover {
-    color: var(--color-ink);
     background-color: var(--color-surface-sunken);
   }
 }
@@ -1300,10 +1311,15 @@
   display: none;
 }
 
+/* 16:9 rather than 3:2. The block was 177px of a 370px card and it is the one
+   part of the card that will eventually say something the rest does not — the
+   pictogram of the word, never of the gesture (§2.1) — so it stays. It just
+   does not need half the card: 150px still gives a drawing room to read, and
+   the ratio says what the block is a door to. Below that a square-ish drawing
+   starts to be squeezed. */
 .sign-card__media {
-  order: 1;
   position: relative;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 9;
   inline-size: 100%;
   overflow: hidden;
   background-color: var(--color-surface-sunken);
@@ -1372,13 +1388,12 @@
   }
 }
 
-/* The word stacks above its toggles rather than sharing a row with them.
-   Side by side, the two 44px targets took 92px of a 132px content box on a
-   375px screen, leaving 32px for the title: "dormir" and even "més" were
-   ellipsised. The word is the whole point of the card, so it gets the full
-   width, and the toggles drop to where a thumb actually reaches. */
+/* The word gets the full width of the card. Side by side with the two 44px
+   targets it had 32px of a 132px content box on a 375px screen — "dormir" and
+   even "més" were ellipsised. Source order now matches what the eye reads on
+   a wide card (image and its toggles, word, action), so nothing here reorders
+   anything. */
 .sign-card__header {
-  order: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1396,13 +1411,48 @@
   hyphens: auto;
 }
 
-/* Pulled left by the buttons' own padding (44px target around a 20px icon),
-   so the star lines up with the first letter of the word above it. */
+/* --- Card toggles ----------------------------------------------------------
+   On a wide card they sit on the image, stacked down its trailing edge. They
+   used to live under the word, inside its block, where two 44px targets and a
+   category chip competed with the one thing on the card anybody is looking
+   for. Moving them onto the image is 46px of card height and, more to the
+   point, it leaves the word alone.
+
+   Each one carries a solid pill. That is not decoration: the surface behind
+   them is a category tint that changes from card to card, and WCAG 1.4.11 asks
+   3:1 of the control itself, which an icon floating on an arbitrary tint
+   cannot promise. The pill is a known surface, so the contrast is the same on
+   every card — and it is what a real pictogram, when there is one, will be
+   read against too.
+
+   The compact row keeps them in their trailing column: the tile there is 56px
+   and two 44px targets do not go inside it.
+-------------------------------------------------------------------------- */
 .sign-card__toggles {
   display: flex;
   gap: 0.25rem;
-  margin-block-start: 0.15rem;
-  margin-inline-start: -0.75rem;
+}
+
+@media (width >= 40rem) and (height >= 34rem) {
+  .sign-card__toggles {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 0.5rem;
+    inset-inline-end: 0.5rem;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  /* `border-strong`, not `border`: measured against the fifteen category tints,
+     the hairline came out at 1.03:1 on the palest of them — an edge nobody can
+     see. The icon inside carries the criterion (4.31:1 at worst, past the 3:1
+     of WCAG 1.4.11), but a control whose boundary dissolves into the picture
+     behind it is still a control that is hard to aim at. */
+  .sign-card__toggle {
+    border: 1px solid var(--color-border-strong);
+    background-color: var(--color-surface-raised);
+    box-shadow: var(--elevation-1);
+  }
 }
 
 .sign-card__chip {
@@ -1419,7 +1469,6 @@
 }
 
 .sign-card__actions {
-  order: 3;
   margin-block-start: auto;
   padding: 0 1rem 1rem;
 }
@@ -1523,6 +1572,13 @@
   }
 }
 
+/* A soft fill, not the solid brand gradient it used to be.
+   Measured on a desktop card: the word was 115px and this was 234px of solid
+   brand with an elevation under it — the loudest thing on the card, repeated
+   identically on 180 of them. Something that appears 180 times unchanged is
+   texture, not a call to action, and it was charging the price of one. The
+   brand ink on the brand tint keeps it unmistakably the primary action and
+   passes 4.5:1 in both themes; `color.test.ts` holds that. */
 .sign-card__cta {
   display: flex;
   min-block-size: var(--spacing-touch);
@@ -1533,19 +1589,16 @@
   border-radius: var(--radius-control);
   padding-inline: 1rem;
   font-weight: var(--font-weight-bold);
-  color: var(--color-on-brand);
-  background: linear-gradient(140deg, var(--color-brand), var(--color-brand-hover));
-  box-shadow: var(--elevation-1);
+  color: var(--color-brand-ink);
+  background-color: var(--color-brand-soft);
   transition:
-    filter var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out);
 }
 
 @media (hover: hover) {
   .sign-card__cta:hover {
-    filter: brightness(1.06);
-    box-shadow: var(--elevation-2);
+    background-color: color-mix(in oklab, var(--color-brand) 18%, var(--color-brand-soft));
   }
 }
 
@@ -1556,16 +1609,13 @@
 /* Leaving the site for the source dictionary reads as a quieter, outlined
    action than playing a video in place. */
 .sign-card__cta--external {
-  background: transparent;
-  color: var(--color-brand-ink);
+  background-color: transparent;
   border: 1px solid var(--color-border-strong);
-  box-shadow: none;
 }
 
 @media (hover: hover) {
   .sign-card__cta--external:hover {
     background-color: var(--color-brand-soft);
-    filter: none;
   }
 }
 
