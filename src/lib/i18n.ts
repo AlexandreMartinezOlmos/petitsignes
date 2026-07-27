@@ -23,6 +23,9 @@ const MESSAGES = {
     'nav.footer': 'Peu de pàgina',
     'nav.site': 'Pàgines del lloc',
     'nav.skipCatalogue': 'Salta el catàleg',
+    'nav.catalogue': 'Catàleg',
+    'nav.breadcrumb': 'On ets',
+    'nav.onThisPage': 'En aquesta pàgina',
 
     'hero.title': "Comunica't amb el teu nadó",
     'hero.titleAccent': 'molt abans de la primera paraula',
@@ -115,6 +118,9 @@ const MESSAGES = {
     'nav.footer': 'Pie de página',
     'nav.site': 'Páginas del sitio',
     'nav.skipCatalogue': 'Saltar el catálogo',
+    'nav.catalogue': 'Catálogo',
+    'nav.breadcrumb': 'Dónde estás',
+    'nav.onThisPage': 'En esta página',
 
     'hero.title': 'Comunícate con tu bebé',
     'hero.titleAccent': 'mucho antes de la primera palabra',
@@ -207,6 +213,9 @@ const MESSAGES = {
     'nav.footer': 'Footer',
     'nav.site': 'Site pages',
     'nav.skipCatalogue': 'Skip the catalogue',
+    'nav.catalogue': 'Catalogue',
+    'nav.breadcrumb': 'Breadcrumb',
+    'nav.onThisPage': 'On this page',
 
     'hero.title': 'Connect with your baby',
     'hero.titleAccent': 'long before their first word',
