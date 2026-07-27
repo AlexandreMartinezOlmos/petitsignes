@@ -145,44 +145,19 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
 
         {
           /*
-          The rest of the site used to live only in the footer: 650 Tab presses
-          and 38.6 screens of scroll past the catalogue, with the accessibility
-          statement the EAA obliges us to publish at the far end of it. From
-          `sm` up the header row already has ~800px of unused width, so these
-          cost no height at all.
-
-          Below `sm` they are hidden and the footer remains the only route —
-          the mobile header is already 62% of the first screen and a second row
-          would make that worse. That gap is the header-geometry work, not this
-          change; the skip link below is what makes the footer reachable
-          without crossing 229 cards in the meantime.
-        */
-        }
-        <nav class="site-nav" aria-label={t('nav.site')}>
-          <a class="site-nav__link" href={aboutHref} aria-current={isCurrent('/el-projecte/')}>
-            {t('nav.about')}
-          </a>
-          <a class="site-nav__link" href={creditsHref} aria-current={isCurrent('/credits/')}>
-            {t('nav.credits')}
-          </a>
-          <a
-            class="site-nav__link"
-            href={accessibilityHref}
-            aria-current={isCurrent('/accessibilitat/')}
-          >
-            {t('nav.accessibility')}
-          </a>
-        </nav>
-
-        {
-          /*
           The language selector doubles as the sign-language selector: each
           locale is coupled to one (ca → LSC, es → LSE). It is a plain set of
           links, so it works without JavaScript and its active state is
           server-rendered — no hydration, no flash of the wrong choice.
+
+          It sits next to the wordmark rather than at the far end because of
+          what it actually decides: not a translation of the interface but
+          which sign language the whole catalogue teaches. It is also what lets
+          the source order below be the same order the eye reads at every
+          width — see `.site-nav`.
         */
         }
-        <nav class="lang-switch ms-auto shrink-0" aria-label={t('nav.language')}>
+        <nav class="lang-switch shrink-0" aria-label={t('nav.language')}>
           {
             ROUTED_LOCALES.map((locale) => {
               const active = locale === language;
@@ -203,6 +178,44 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
             })
           }
         </nav>
+
+        {
+          /*
+          The rest of the site used to live only in the footer: 650 Tab presses
+          and 38.6 screens of scroll past the catalogue, with the accessibility
+          statement the EAA obliges us to publish at the far end of it.
+
+          Last in source, and last to the eye at every width: from `sm` up it
+          is pushed to the far end of the one header row, and below `sm` it
+          wraps onto a row of its own under the wordmark. That is why the
+          language selector moved up rather than these moving down — any
+          arrangement where one of the two crosses the other on one breakpoint
+          only makes the tab order disagree with the reading order somewhere.
+
+          On phones the row folds away with the filters while the catalogue is
+          being scrolled, so it is present on arrival and on the way back up
+          without holding 44px of a sticky header for the whole visit. The
+          wrapper exists only to give that fold something to animate; on wider
+          screens it is `display: contents` and no box at all.
+        */
+        }
+        <div class="site-nav-fold">
+          <nav class="site-nav" aria-label={t('nav.site')}>
+            <a class="site-nav__link" href={aboutHref} aria-current={isCurrent('/el-projecte/')}>
+              {t('nav.about')}
+            </a>
+            <a class="site-nav__link" href={creditsHref} aria-current={isCurrent('/credits/')}>
+              {t('nav.credits')}
+            </a>
+            <a
+              class="site-nav__link"
+              href={accessibilityHref}
+              aria-current={isCurrent('/accessibilitat/')}
+            >
+              {t('nav.accessibility')}
+            </a>
+          </nav>
+        </div>
       </div>
 
       <slot name="toolbar" />

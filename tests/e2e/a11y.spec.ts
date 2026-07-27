@@ -280,23 +280,36 @@ test('the catalogue can be skipped from the keyboard', async ({ page }) => {
 });
 
 /**
- * The header carries the rest of the site from `sm` up. Below that it does
- * not, on purpose — the mobile header is already 62% of the first screen —
- * so this asserts the boundary in both directions rather than only the half
- * that works.
+ * The header carries the rest of the site at every width now, including the
+ * phone it was left off. What has to hold either way is that the reading order
+ * and the tab order agree: the language selector comes first in the source, so
+ * it must come first to the eye too — to the left of the navigation on one row
+ * when there is width for one row, and on the row above it when there is not.
+ * Any arrangement where one of the two overtakes the other at one breakpoint
+ * puts the keyboard out of step with the page somewhere.
  */
-test('the header carries the site navigation on wide screens', async ({ page }) => {
+test('the header navigation reads in the order it is tabbed', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/credits/');
 
   const links = page.locator('.site-nav__link');
   await expect(links).toHaveCount(3);
 
-  // Reached before the catalogue rather than after it: three Tabs from the
-  // top of the document, past the skip link and the wordmark.
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
+  const boxOf = async (selector: string) => {
+    const box = await page.locator(selector).boundingBox();
+    expect(box).not.toBeNull();
+    return box!;
+  };
+
+  // One row, language selector first.
+  let lang = await boxOf('.lang-switch');
+  let nav = await boxOf('.site-nav');
+  expect(nav.y).toBeLessThan(lang.y + lang.height);
+  expect(lang.x + lang.width).toBeLessThanOrEqual(nav.x);
+
+  // And that is the order the keyboard finds them in: skip link, wordmark,
+  // the two locales, then the three pages.
+  for (let i = 0; i < 5; i += 1) await page.keyboard.press('Tab');
   await expect(links.first()).toBeFocused();
 
   // Which page you are on is underlined, not only recoloured (WCAG 1.4.1).
@@ -305,8 +318,55 @@ test('the header carries the site navigation on wide screens', async ({ page }) 
   await expect(current).toHaveText(/crèdits/i);
   expect(await current.evaluate((el) => getComputedStyle(el).textDecorationLine)).toBe('underline');
 
+  // On a phone it wraps onto its own row *below* the selector — still after
+  // it, so the source order is still the reading order.
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(links.first()).toBeHidden();
+  await expect(links.first()).toBeVisible();
+  lang = await boxOf('.lang-switch');
+  nav = await boxOf('.site-nav');
+  expect(nav.y).toBeGreaterThanOrEqual(lang.y + lang.height);
+});
+
+/**
+ * The phone navigation is only affordable because it folds with the filters
+ * while the catalogue is being scrolled. Both halves matter: it has to go, and
+ * it has to come back — and it must never fold away under a keyboard, or the
+ * links would vanish mid-tab.
+ */
+test('the phone navigation folds while scrolling and returns', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const nav = page.locator('.site-nav__link').first();
+  await expect(nav).toBeVisible();
+  const tall = await page
+    .locator('#app-header')
+    .evaluate((el) => el.getBoundingClientRect().height);
+
+  await page.mouse.wheel(0, 600);
+  await expect(page.locator('#app-header')).toHaveAttribute('data-condensed', 'true');
+  await expect(nav).toBeHidden();
+  // Polled: the fold is a transition, so the height arrives a few frames after
+  // the state does.
+  await expect
+    .poll(() => page.locator('#app-header').evaluate((el) => el.getBoundingClientRect().height))
+    .toBeLessThan(tall - 100);
+
+  // The observer ignores direction for 320ms after a fold, on purpose: folding
+  // shortens the document, which fires a scroll event pointing the other way.
+  // So the wait here is not flake padding, it is the debounce the feature has.
+  await page.waitForTimeout(400);
+  await page.mouse.wheel(0, -300);
+  await expect(page.locator('#app-header')).toHaveAttribute('data-condensed', 'false');
+  await expect(nav).toBeVisible();
+
+  // Focus inside the header holds it open whatever the scroll says.
+  await page.waitForTimeout(400);
+  await page.mouse.wheel(0, 600);
+  await expect(page.locator('#app-header')).toHaveAttribute('data-condensed', 'true');
+  await page.locator('#sign-search').focus();
+  await expect(nav).toBeVisible();
 });
 
 /**

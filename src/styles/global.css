@@ -733,20 +733,59 @@
 }
 
 /* --- Site navigation -------------------------------------------------------
-   Shown from `sm` up, where the header row has width to spare and these cost
-   no extra height. Below that the row is already the tightest thing on the
-   page (see `.app-header__row` and WCAG 1.4.10) and the footer plus the
-   catalogue's bypass link carry the job instead.
+   Last in the source and last to the eye at both widths, so the tab order and
+   the reading order never disagree: from `sm` up `margin-inline-start: auto`
+   pushes it to the far end of the row, and below `sm` `flex-basis: 100%` drops
+   it onto a row of its own under the wordmark.
+
+   `.site-nav-fold` is the animatable box. It is `display: contents` — no box
+   at all — until the phone layout needs something whose height can go to zero.
 -------------------------------------------------------------------------- */
-.site-nav {
-  display: none;
+.site-nav-fold {
+  display: contents;
 }
 
-@media (width >= 40rem) {
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-inline-start: auto;
+}
+
+/* The phone row. It folds with the filter rows rather than holding 44px of a
+   sticky header for the whole visit: there on arrival, back the moment the
+   scroll reverses. Same `1fr`/`0fr` grid track as `.toolbar__filters`, and the
+   same `visibility` so the links leave the tab order instead of becoming
+   invisible things to tab into. */
+@media (width < 40rem) {
+  .site-nav-fold {
+    display: grid;
+    flex-basis: 100%;
+    grid-template-rows: 1fr;
+    transition:
+      grid-template-rows var(--duration-slow) var(--ease-out),
+      opacity var(--duration-base) var(--ease-out);
+  }
+
   .site-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+    margin-inline-start: 0;
+    /* Clipping is what makes the fold read as a fold — but a clipped row also
+       cuts the 3px focus ring off the links inside it. There is nothing to
+       clip while the row is open, so the clip only exists in the state that
+       animates, and `:focus-within` covers the frames where it reopens under
+       someone using the keyboard. */
+    overflow: hidden;
+  }
+
+  .app-header:not([data-condensed='true']) .site-nav,
+  .app-header:focus-within .site-nav {
+    overflow: visible;
+  }
+
+  .app-header[data-condensed='true']:not(:focus-within) .site-nav-fold {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
   }
 }
 
