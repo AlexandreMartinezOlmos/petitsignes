@@ -11,9 +11,9 @@ es un recuento anónimo y agregado de visitas ([GoatCounter](https://www.goatcou
 identificadores y sin seguir a nadie entre visitas — por eso no hay aviso de cookies.
 
 > **Estado:** MVP funcional. Catálogo, búsqueda, filtros, progreso local, reproductor e interfaz
-> en catalán y castellano. **180 conceptos con vídeo LSC y 225 con enlace LSE**, de 229 en total.
-> Todos los vídeos están marcados como `draft` en el dato: coinciden con el diccionario oficial,
-> pero aún no los ha revisado un humano uno por uno (ver [Estado del contenido](#estado-del-contenido-y-verificación)).
+> en catalán y castellano. **195 conceptos, todos con vídeo LSC y enlace LSE.** Todos los vídeos
+> están marcados como `draft` en el dato: coinciden con el diccionario oficial, pero aún no los ha
+> revisado un humano uno por uno (ver [Estado del contenido](#estado-del-contenido-y-verificación)).
 
 ## Por qué existe este proyecto
 
@@ -100,12 +100,17 @@ bebé. Ver la sección siguiente para el detalle de cómo se muestran estos víd
 
 ## Estado del contenido y verificación
 
-El catálogo tiene **229 conceptos** curados con etiquetas en catalán, castellano e inglés,
-repartidos en 15 categorías, más una ruta guiada de 12 "primeros signos".
+El catálogo tiene **195 conceptos** curados con etiquetas en catalán, castellano e inglés,
+repartidos en 15 categorías, más una ruta guiada de 11 "primeros signos".
+
+Empezó con 229. Los 34 que no tenían fuente oficial verificable para uno de los dos idiomas —ni
+LSC ni LSE, o solo uno de los dos sin alternativa encontrada— se retiraron en vez de quedarse como
+fichas sin salida; **el catálogo completo tiene hoy vídeo LSC y enlace LSE en el 100% de los
+conceptos.**
 
 |                     | LSC                         | LSE                        |
 | ------------------- | --------------------------- | -------------------------- |
-| Conceptos con vídeo | **180** de 229              | **225** de 229             |
+| Conceptos con vídeo | **195** de 195              | **195** de 195             |
 | Cómo se muestra     | vídeo de YouTube incrustado | enlace a la ficha de DILSE |
 
 **Ningún vídeo se aloja en este proyecto.** Las condiciones de reutilización de las dos fuentes

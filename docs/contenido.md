@@ -154,10 +154,14 @@ cada signo, no el título de un vídeo.
 El emparejamiento fue **exacto y sensible a acentos**, y esa decisión es el corazón del asunto:
 
 > En catalán el acento distingue palabras. Un primer intento que ignoraba acentos emparejó
-> **`més`** (more, uno de los doce primeros signos) con **`Mes`**, el mes del calendario. Son
-> signos distintos: habríamos enseñado el gesto equivocado a un padre, que se lo habría enseñado
-> a su hijo. Plegar acentos en una búsqueda de usuario es tolerancia; plegarlos al elegir un
-> signo es un error de contenido.
+> **`més`** (more, entonces el segundo de los primeros signos) con **`Mes`**, el mes del
+> calendario. Son signos distintos: habríamos enseñado el gesto equivocado a un padre, que se lo
+> habría enseñado a su hijo. Plegar acentos en una búsqueda de usuario es tolerancia; plegarlos
+> al elegir un signo es un error de contenido.
+>
+> El desenlace refuerza la regla en vez de suavizarla: al buscar `més` a mano tampoco apareció
+> ningún vídeo LSC válido, así que el concepto se retiró (§9 de `pendientes.md`). El acierto no
+> fue encontrar el signo correcto — fue **no** publicar el incorrecto.
 
 Reglas que quedaron fijadas:
 
@@ -170,26 +174,47 @@ Reglas que quedaron fijadas:
    sirve para «cabeza», `Cap (patró)` (jefe) no. `Taronja (fruita)` sí, `Taronja (color)` no.
 5. Ante cualquier duda, **no se carga**.
 
-Casos rechazados a propósito, que quedan documentados para que nadie los «arregle»:
+Casos rechazados a propósito, que quedan documentados para que nadie los «arregle» por lote —lo
+que no impide que alguien busque y confirme el vídeo correcto a mano, que es justo lo que pasó
+después con varios de ellos (ver más abajo):
 
 | Concepto | Candidato | Por qué no |
 |---|---|---|
-| `mas` (més / más) | `Mes` | Es el mes del calendario |
 | `sed` (set / sed) | `Set - 7` | Es el número siete; en catalán *set* es homógrafo |
 | `estrella` | `Estrella (forma)` | Es la figura geométrica, no el astro |
 
-Los 49 conceptos sin vídeo simplemente no están en ese vocabulario: es un vocabulario general
-—con mucha terminología parlamentaria, sanitaria y geográfica— y no de puericultura.
+El vocabulario de la Generalitat es general —con mucha terminología parlamentaria, sanitaria y
+geográfica— y no de puericultura, así que la carga automática dejó 49 conceptos sin vídeo LSC y
+4 sin enlace LSE.
 
 **Todos los vídeos cargados están en `status: draft`.** El término coincide con el diccionario,
 pero nadie ha visto aún cada clip para confirmar la realización. Pasar uno a `verified` es una
 contribución muy valiosa: mira el vídeo, comprueba que corresponde al concepto y cambia el campo.
 
+## Búsqueda manual de lo que quedó sin fuente
+
+La carga automática solo cubre lo que el vocabulario de la Generalitat tiene indexado por
+término exacto (regla 1 de arriba). Lo que dejó fuera se buscó **a mano, uno por uno**, en el
+propio canal de YouTube del Vocabulari bàsic y en el buscador del DILSE:
+
+- **11 conceptos** encontraron su vídeo o enlace correcto bajo **otra palabra** — el matching
+  automático no falló por descuido, sino porque el diccionario no signa el verbo o sustantivo
+  exacto del catálogo. `abrir` no está, pero `abierto/a` sí; `sed` no está como estado, pero
+  `beber` sí; `te quiero` no existe como frase, pero `amar` sí. En estos casos se cambió la
+  palabra del catálogo, no el signo: la ficha ahora se llama como el signo real, en las tres
+  lenguas de interfaz.
+- **5 conceptos** (`ratón`, `adiós`, `estrella`, `tía`, `pantalón`) solo les faltaba una de las
+  dos lenguas y se encontró el vídeo o enlace correcto sin tocar la palabra.
+- **34 conceptos** no tenían ni una alternativa razonable en una de las dos lenguas —o en
+  ninguna— y se **retiraron** del catálogo en vez de quedarse como fichas sin salida. Es la
+  misma regla de §1: si no hay fuente verificable, no se inventa ni se rellena con un
+  placeholder; se pregunta o, si ya se preguntó y la respuesta es que no existe, se quita.
+
 ## Estado actual
 
-229 conceptos: 180 con vídeo LSC y 225 con LSE. **Ninguno está `verified` todavía** — los 421
-vídeos cargados están en `draft` a la espera de que alguien vea cada clip. El catálogo completo,
-con los enlaces clicables, se genera en [`vocabulari.md`](vocabulari.md).
+195 conceptos: **todos con vídeo LSC y enlace LSE.** **Ninguno está `verified` todavía** — los
+390 vídeos cargados están en `draft` a la espera de que alguien vea cada clip. El catálogo
+completo, con los enlaces clicables, se genera en [`vocabulari.md`](vocabulari.md).
 
 Las condiciones de reutilización de cada fuente están analizadas en
 [`arquitectura.md`](arquitectura.md#entrega-de-vídeo-nada-se-aloja-aquí).
