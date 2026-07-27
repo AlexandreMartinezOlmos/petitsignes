@@ -128,13 +128,27 @@ for (const sign of signs) {
     class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
   >
     {
+      /*
+      `showCategory` is exactly "is this card under the first-signs heading":
+      every other card sits under its own category, where the chip repeated the
+      heading word for word — 217 of the 229. The condition is written against
+      the same `isFirstSign` that decided the section above, so the chip and the
+      heading cannot drift apart.
+    */
+    }
+    {
       gridItems.map((item) =>
         item.kind === 'section' ? (
           <h2 class="grid-section" data-section={item.id}>
             {item.label}
           </h2>
         ) : (
-          <SignCard sign={item.sign} category={item.category} language={language} />
+          <SignCard
+            sign={item.sign}
+            category={item.category}
+            language={language}
+            showCategory={item.sign.isFirstSign}
+          />
         ),
       )
     }

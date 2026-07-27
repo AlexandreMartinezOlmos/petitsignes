@@ -170,6 +170,27 @@ describe('category families', () => {
   });
 });
 
+/**
+ * The card's call to action.
+ *
+ * It used to be white on a solid brand gradient, where the contrast was never
+ * in question. It is now brand ink on the brand tint — quieter on purpose, and
+ * the quieter a pairing gets the closer it drifts to the floor. This is bold
+ * 16px text, which WCAG 1.4.3 would let past at 3:1 as large text; 4.5:1 is
+ * the bar held here because the button appears 180 times and is the only route
+ * to the thing the site exists for.
+ */
+describe('the card call to action', () => {
+  it.each([
+    ['light', () => lightBlock.body],
+    ['dark', () => darkMediaBlock.body],
+  ])('keeps its label readable in %s', (_name, base) => {
+    const body = base();
+    const ratio = contrastRatio(color(body, '--brand-ink'), color(body, '--brand-soft'));
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
 describe('the two dark declarations', () => {
   /**
    * `prefers-color-scheme` and an explicit `data-theme` cannot share a block,
