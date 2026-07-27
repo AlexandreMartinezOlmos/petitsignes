@@ -806,6 +806,43 @@ test('an anchor lands below the sticky header', async ({ page }) => {
 });
 
 /**
+ * G1. At 2560px the grid stopped at 1120px and four columns: 56% of the screen
+ * was margin. A maximum width is right for prose, which has a measure to
+ * protect; a grid of 229 cards has none, and every extra pixel was going into
+ * wider cards instead of more of them.
+ */
+test('a very wide screen gets more catalogue, not more margin', async ({ page }) => {
+  const measure = async (width: number) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/');
+    return page.evaluate(() => {
+      const grid = document.getElementById('sign-grid')!.getBoundingClientRect();
+      const row = document.querySelector('.app-header__row')!.getBoundingClientRect();
+      return {
+        columns: getComputedStyle(document.getElementById('sign-grid')!).gridTemplateColumns.split(
+          ' ',
+        ).length,
+        used: grid.width / window.innerWidth,
+        // The header and the grid share one container, so their edges must
+        // agree whatever the shell is doing. The 1rem is `main`'s own padding.
+        aligned: Math.abs(grid.left - row.left - 16) < 2,
+      };
+    });
+  };
+
+  const wide = await measure(2560);
+  expect(wide.columns).toBeGreaterThan(4);
+  expect(wide.used).toBeGreaterThan(0.65);
+  expect(wide.aligned).toBe(true);
+
+  // And nothing changes on the width most people actually have: the floor is
+  // the width the card already had, so 1280 keeps its four columns.
+  const laptop = await measure(1280);
+  expect(laptop.columns).toBe(4);
+  expect(laptop.aligned).toBe(true);
+});
+
+/**
  * The finding measured 624px of text in a 1152px `main` — 46% of the page
  * empty down one side. The measure was never the problem, so the column keeps
  * its width and the space beside it got a job.
