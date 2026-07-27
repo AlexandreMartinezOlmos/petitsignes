@@ -230,6 +230,19 @@ El plegado usa una fila de rejilla animada entre `1fr` y `0fr`, no un `max-block
 contenido puede crecer (la lista de categorías se despliega) y un techo fijo lo recortaría. El
 recorte ocurre en `.toolbar__filters-inner`.
 
+**La consulta es `(width < 40rem), (height < 34rem)`, y el segundo término no es un adorno.** El
+plegado resuelve un problema de *altura* y durante un tiempo preguntó por el ancho: en un móvil
+girado —844×390— el observador ponía `data-condensed="true"` en el primer deslizamiento y no se
+movía un píxel, porque 844 px no es estrecho. Un estado anunciado a las tecnologías de apoyo y
+desmentido por la pantalla. Un portátil a 768 px de alto conserva sus filtros, que era la
+intención original; 34 rem queda lejos de cualquier portátil y por encima de cualquier móvil
+apaisado.
+
+Ese mismo eje decide otras dos cosas en pantallas bajas: la tarjeta pasa a `.sign-card` en fila
+compacta (una tarjeta póster mide 363 px, más que el viewport entero, así que ninguna podía verse
+completa) y la rejilla pide un **suelo de 22 rem por columna** en vez de un número de columnas,
+porque tres columnas de 260 px volvían a partir el botón en dos líneas.
+
 ### `.chip`, `.chip-quiet` y `.chip--more` — filtros
 
 Botones con `aria-pressed`. Cada grupo necesita **su propio `aria-label`**: dos grupos llamados
@@ -257,6 +270,26 @@ filtrar y seguir leyendo dejaba el catálogo recortado sin explicación a la vis
 > Deletrearla entera en el botón también cumpliría, pero empuja los chips a una segunda fila a
 > 360 px —un ancho de móvil muy común— y cuesta 52 px de cabecera. `i18n.test.ts` fija que
 > `showCategoriesLabel` empiece por `showCategories` en los tres idiomas.
+
+### `.hero` — la portada del catálogo
+
+`.hero`, `.hero__title`, `.hero__lead`, `.hero__accent`. La cabecera más el héroe eran **458 px de
+una pantalla de 844**: el 54 % de lo primero que se ve, gastado en un texto de presentación que ya
+se ha leído en la segunda visita, en una herramienta a la que se vuelve a diario.
+
+Se valoraron dos salidas. **Encogerlo a partir de la segunda visita se descartó:** haría que un
+estado de cliente decidiera un layout, con el parpadeo de la altura equivocada en cada carga y una
+página que no es la misma dos veces. Así que simplemente es más corto.
+
+- El paso `--text-display` se reserva para `sm` y más, donde ocupa dos líneas en vez de tres. Por
+  debajo el titular usa `--text-2xl` con el interlineado de display.
+- En pantallas bajas (`height < 34rem`) vuelve al paso compacto aunque haya ancho de sobra.
+- **No se oculta nada en ninguna anchura.** El `h1` es el encabezado de la página y la entradilla
+  es la única frase que dice qué es el sitio; la entradilla **nunca baja de 16 px**. La altura sale
+  del espacio, no de la legibilidad.
+
+Medido, primera pantalla: móvil 458 → 425 px (54 % → 50 %, con la navegación móvil ya dentro),
+escritorio 446 → 437 px.
 
 ### `.grid-section` — encabezado de grupo
 
@@ -294,8 +327,23 @@ Tab y 38,6 pantallas de scroll, con la declaración de accesibilidad que obliga 
 recorrido. Desde `sm` la fila de la cabecera tiene ~800 px sin usar, así que estos enlaces **no
 cuestan ni un píxel de altura** (227 px antes y después, medido a 1280).
 
-Por debajo de `sm` se ocultan a propósito: la cabecera móvil ya es el 62 % de la primera pantalla
-y una segunda fila lo empeoraría. Ahí el camino es el pie más `.bypass-link`.
+En móvil bajan a **una fila propia** bajo la marca, y esa fila **se pliega con los filtros**
+mientras se baja por el catálogo: está al llegar y al volver a subir, pero no ocupa 44 px de
+cabecera fija durante toda la visita. Mismo mecanismo que `.toolbar__filters` —pista de rejilla
+de `1fr` a `0fr`, `visibility: hidden` para salir del orden de tabulación, `:focus-within` para
+no cerrarse bajo el teclado—. `.site-nav-fold` es la caja que se anima; por encima de `sm` es
+`display: contents` y no es una caja en absoluto.
+
+**El orden del código es el orden de lectura en las dos anchuras, y eso decide dónde va el
+selector de idioma.** Va junto a la marca, y la navegación al extremo opuesto de la fila. No es
+decoración: si uno de los dos adelantara al otro al envolverse la fila, la tabulación
+contradiría a la página en uno de los dos breakpoints. De paso deja el control más
+consecuente del sitio —elige LSC o LSE para todo el catálogo, no solo una traducción— pegado a
+la marca a la que pertenece.
+
+El recorte del plegado se apaga cuando la fila está abierta (`:not([data-condensed='true'])` y
+`:focus-within`): un `overflow: hidden` permanente cortaría el anillo de foco de 3 px de los
+enlaces, que miden exactamente el alto de la fila.
 
 La página actual se marca con `aria-current="page"` y **se subraya**, no solo se recolorea: saber
 dónde estás no puede depender de distinguir dos grises (WCAG 1.4.1).
@@ -417,6 +465,10 @@ Antes de dar por terminado un componente:
 - [ ] No se afirma una cifra que todavía no se conoce: el servidor no renderiza un `0` que la
       hidratación va a corregir (`.progress-data__summary`).
 - [ ] Si el componente sale en el catálogo, mirar cómo **se imprime** (§7, Impresión).
+- [ ] **Probado con el móvil girado** (844×390), no solo estrecho. Si una regla resuelve un
+      problema de altura, la media query pregunta por `height` (§7, `.toolbar`).
+- [ ] Si algo se reordena al envolverse una fila, **el orden del código sigue siendo el orden de
+      lectura** en todas las anchuras (§7, `.site-nav`).
 - [ ] Se comporta con `prefers-reduced-motion` y con `prefers-reduced-transparency`.
 - [ ] Sin valores sueltos: todo sale de tokens.
 - [ ] Lo que se repite es una clase de componente, no una cadena de utilidades.
