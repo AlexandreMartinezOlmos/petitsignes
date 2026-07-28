@@ -302,11 +302,25 @@ El sitemap declara los `hreflang` de cada URL. Sin ellos, publicar el mismo cat�
 hace que las dos versiones compitan como duplicados en vez de leerse como una página en dos
 lenguas.
 
-**La 404 es una sola, y eso decide su idioma.** Cloudflare Pages responde a cualquier ruta
-inexistente con el `404.html` de la raíz, así que no puede haber una por locale. Se escribe en el
-idioma por defecto y ofrece las dos rutas de vuelta, en lugar de adivinar por la ruta y renderizar
-las dos versiones: adivinar significaría llevar **las dos lenguas de signos al mismo documento**,
-que es justo lo que §4.4 impide para que el gesto equivocado no quede a un `display` de mostrarse.
+**Hay una 404 por idioma**, en `/404.html` y `/es/404.html`. Cloudflare Pages responde a una ruta
+inexistente con el `404.html` **más cercano subiendo por el árbol de directorios**, así que
+`/es/lo-que-sea` encuentra la castellana. Eso evita tener que adivinar el idioma desde la ruta —
+adivinar habría significado llevar las dos lenguas de signos al mismo documento, justo lo que §4.4
+impide para que el gesto equivocado no quede a un `display` de mostrarse. Cada 404 envía la suya y
+ya está.
 
-Lleva `noindex` y **no** lleva canónica ni alternates: un documento que responde a miles de
-direcciones no puede afirmar que todas son la misma URL.
+Hace falta un empujón en el build: con `format: 'directory'` una página anidada se emite en
+`es/404/index.html`, una dirección que nadie pide, así que la 404 castellana existiría sin llegar
+a servirse nunca. La integración `localised404` de `astro.config.mjs` la mueve a `es/404.html`
+después de construir. Astro aplica el formato por build y no por página, y el resto de rutas sí
+quiere la forma de directorio para su URL limpia: mover un fichero es el arreglo estrecho, cambiar
+el formato renombraría el sitio entero.
+
+Ambas llevan `noindex` y **no** llevan canónica ni alternates: un documento que responde a miles
+de direcciones no puede afirmar que todas son la misma URL.
+
+**La tarjeta de la 404 funciona de verdad.** `mountSignCards` se separó de `mountCatalogue`
+precisamente aquí: lo que necesita una tarjeta suelta es progreso y reproducción, mientras que el
+filtrado, el índice de búsqueda y los encabezados de sección pertenecen a la rejilla. La primera
+versión de la 404 solo cableó el botón de vídeo y dejó los dos toggles muertos — la misma promesa
+rota que C3 quitó de la nota de «sin vídeo», reaparecida en otra página.

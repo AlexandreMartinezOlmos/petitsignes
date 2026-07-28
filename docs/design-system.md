@@ -569,13 +569,13 @@ Se compone reutilizando `SignCard` tal cual, cortada a `min(100%, 22rem)` para q
 una forma que la rejilla nunca enseña. Sus clases viven en la propia página y no en esta hoja:
 **el sistema de diseño es para lo que se repite**, y nada más usa estos estilos.
 
-El botón de vídeo funciona sin cargar el controlador de la rejilla. `dispatchPlayRequest` se
-extrajo de `catalogue-grid.ts` justo para esto: un botón que no hiciera nada sería un segundo
-callejón sin salida encima del primero.
+Ofrece **una sola ruta de vuelta**, en el idioma que ya se estaba leyendo: hay una 404 por idioma,
+así que la página sabe cuál es. El selector de idioma sigue en la cabecera donde siempre está, de
+modo que un segundo botón aquí competiría con la salida real por la atención.
 
-Ofrece **las dos rutas de vuelta**, no solo la del idioma en que está escrita, porque quien se
-equivocó de dirección podía ir a cualquiera de las dos. La del idioma por defecto va rellena y la
-otra perfilada: se ofrece, no se empuja, en una página que ya ha fallado una vez al visitante.
+Sus controles funcionan. `mountSignCards` da a esta tarjeta el mismo cableado que reciben las de la
+rejilla —los dos toggles persisten y el CTA abre el reproductor—, sin cargar el controlador
+completo. Un toggle muerto sería la misma promesa rota que C3 quitó de la nota de «sin vídeo».
 
 ## 8. Cómo añadir una categoría
 

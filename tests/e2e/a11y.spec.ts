@@ -16,8 +16,10 @@ const PAGES = [
   { name: 'credits (es)', path: '/es/credits/' },
   { name: 'accessibility statement (ca)', path: '/accessibilitat/' },
   { name: 'accessibility statement (es)', path: '/es/accessibilitat/' },
-  // Served from every wrong address, so it is as public as any other page.
-  { name: 'not found', path: '/404.html' },
+  // Served from every wrong address, so as public as any other page — and one
+  // per locale, so `/es/…` fails in Spanish.
+  { name: 'not found (ca)', path: '/404.html' },
+  { name: 'not found (es)', path: '/es/404.html' },
 ];
 
 for (const { name, path } of PAGES) {
@@ -962,65 +964,115 @@ test('the sitemap lists both languages of every page and points at itself from r
  * P2. Any wrong address served the homepage with a 200: a mistyped link looked
  * like it had worked, and search engines were free to index endless duplicates
  * of the catalogue.
+ *
+ * There is one page per locale rather than one for the site. Cloudflare Pages
+ * serves the closest `404.html` up the directory tree, so `/es/…` finds the
+ * Spanish one — which is also what lets each build ship a single sign language
+ * (§4.4) instead of guessing a language from the path and rendering both.
  */
-test('a wrong address says so, offers both catalogues, and refuses indexing', async ({ page }) => {
-  await page.goto('/404.html');
+test.describe('a wrong address', () => {
+  const CASES = [
+    { name: 'Catalan', page: '/404.html', lang: 'ca', signLanguage: 'lsc', home: '/' },
+    { name: 'Spanish', page: '/es/404.html', lang: 'es', signLanguage: 'lse', home: '/es/' },
+  ];
 
-  await expect(page.locator('h1')).toBeVisible();
+  for (const { name, page: path, lang, signLanguage, home } of CASES) {
+    test(`says so in ${name} and offers the way back it was already reading`, async ({ page }) => {
+      await page.goto(path);
 
-  // It must not claim to be a real page: one document answers thousands of
-  // addresses, so a canonical link here would assert they are all the same URL.
-  const head = await page.evaluate(() => ({
-    robots: document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? null,
-    canonical: document.querySelector('link[rel="canonical"]'),
-    alternates: document.querySelectorAll('link[rel="alternate"]').length,
-  }));
-  expect(head.robots).toContain('noindex');
-  expect(head.canonical).toBeNull();
-  expect(head.alternates).toBe(0);
+      await expect(page.locator('html')).toHaveAttribute('lang', lang);
+      await expect(page.locator('h1')).toBeVisible();
 
-  // Both routes back, because the visitor may have been heading for either.
-  const routes = page.locator('.not-found__route');
-  await expect(routes).toHaveCount(2);
-  await expect(routes.first()).toHaveAttribute('href', '/');
-  await expect(routes.last()).toHaveAttribute('href', '/es/');
+      // It must not claim to be a real page: one document answers thousands of
+      // addresses, so a canonical link would assert they are all the same URL.
+      const head = await page.evaluate(() => ({
+        robots: document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? null,
+        canonical: document.querySelector('link[rel="canonical"]'),
+        alternates: document.querySelectorAll('link[rel="alternate"]').length,
+      }));
+      expect(head.robots).toContain('noindex');
+      expect(head.canonical).toBeNull();
+      expect(head.alternates).toBe(0);
 
-  // Every route back is a real target, and big enough to hit (WCAG 2.5.8).
-  for (const href of ['/', '/es/']) {
-    expect((await page.request.get(href)).status(), href).toBe(200);
+      // One route, in the language being read. The header still carries the
+      // language switch, so a second button here would compete with the way out.
+      const route = page.locator('.not-found__route');
+      await expect(route).toHaveCount(1);
+      await expect(route).toHaveAttribute('href', home);
+      expect((await route.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      expect((await page.request.get(home)).status()).toBe(200);
+
+      // The card carries this route's sign language and no other.
+      const languages = await page
+        .locator('.sign-card__lang')
+        .evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.sl));
+      expect(languages).toEqual([signLanguage]);
+    });
   }
-  const box = await routes.first().boundingBox();
-  expect(box!.height).toBeGreaterThanOrEqual(44);
-});
 
-/**
- * The 404 offers a real sign rather than an apology, and the offer has to work:
- * a play button that did nothing would be a second dead end. It carries only
- * the page's own sign language, like every other page — §4.4 is what keeps the
- * wrong gesture out of the document rather than merely out of view.
- */
-test('the sign on the 404 page is real, playable and single-language', async ({ page }) => {
-  await page.goto('/404.html');
-  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+  /**
+   * The toggles shipped inert on the first attempt: the card was rendered but
+   * nothing wired it, so pressing favourite did nothing at all. That is the
+   * same broken promise C3 took out of the missing-video note, and it is why
+   * `mountSignCards` exists separately from the grid controller.
+   */
+  test('offers a card whose controls actually work', async ({ page }) => {
+    await page.goto('/404.html');
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
 
-  const card = page.locator('.sign-card');
-  await expect(card).toHaveCount(1);
-  await expect(card).toHaveAttribute('data-sign-id', 'no');
+    const card = page.locator('.sign-card');
+    await expect(card).toHaveAttribute('data-sign-id', 'no');
 
-  // One sign language reaches the DOM, and it is the one this route serves.
-  const languages = await page
-    .locator('.sign-card__lang')
-    .evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.sl));
-  expect(languages).toEqual(['lsc']);
+    const favorite = card.locator('[data-action="favorite"]');
+    await expect(favorite).toHaveAttribute('aria-pressed', 'false');
+    await favorite.click();
+    await expect(favorite).toHaveAttribute('aria-pressed', 'true');
 
-  // Nothing contacts YouTube until asked, exactly as in the catalogue.
-  const youtube: string[] = [];
-  page.on('request', (request) => {
-    if (/youtube|ytimg/.test(request.url())) youtube.push(request.url());
+    const learned = card.locator('[data-action="learned"]');
+    await learned.click();
+    await expect(learned).toHaveAttribute('aria-pressed', 'true');
+
+    // Progress is progress wherever it was marked: the catalogue has to agree.
+    await page.goto('/');
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+    const inGrid = page.locator('.sign-card[data-sign-id="no"]');
+    await expect(inGrid.locator('[data-action="favorite"]')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(inGrid).toHaveAttribute('data-learned', 'true');
   });
-  await page.waitForTimeout(300);
-  expect(youtube).toEqual([]);
 
-  await card.locator('[data-action="play"]').click();
-  await expect(page.locator('dialog[open]')).toBeVisible();
+  test('plays its sign without loading YouTube up front', async ({ page }) => {
+    const youtube: string[] = [];
+    page.on('request', (request) => {
+      // Real YouTube hosts only. Matching the raw URL also catches our own
+      // `youtube.ts` module, which the dev server serves by path.
+      const host = new URL(request.url()).hostname;
+      if (/(^|\.)(youtube\.com|youtube-nocookie\.com|ytimg\.com|googlevideo\.com)$/.test(host)) {
+        youtube.push(request.url());
+      }
+    });
+
+    await page.goto('/404.html');
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+    await page.waitForTimeout(300);
+    expect(youtube).toEqual([]);
+
+    await page.locator('.sign-card [data-action="play"]').click();
+    await expect(page.locator('dialog[open]')).toBeVisible();
+  });
+
+  /**
+   * The Spanish catalogue delivers LSE by linking out to DILSE rather than
+   * embedding, so its 404 must offer a link, not a dead play button.
+   */
+  test('links out to the dictionary on the Spanish side', async ({ page }) => {
+    await page.goto('/es/404.html');
+
+    const cta = page.locator('.sign-card__cta--external');
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveAttribute('href', /fundacioncnse-dilse\.org/);
+    await expect(page.locator('.sign-card [data-action="play"]')).toHaveCount(0);
+  });
 });
