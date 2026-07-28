@@ -84,3 +84,20 @@ describe('robots.txt', () => {
     expect(robots).not.toContain('Sitemap:');
   });
 });
+
+/**
+ * The guard is only as good as the origin it is handed, and the first version
+ * of this shipped with it inert: nothing set `SITE_URL` on a Cloudflare build,
+ * so previews declared the canonical domain and served `Allow: /`. The origin
+ * now comes from `CF_PAGES_BRANCH`/`CF_PAGES_URL` when Cloudflare provides
+ * them, and these cases are what that has to keep true.
+ */
+describe('the origin a deployment describes itself with', () => {
+  it.each([
+    ['a branch preview', PREVIEW, true],
+    ['production', SITE_ORIGIN, false],
+  ])('%s', (_name, origin, blocked) => {
+    expect(buildRobots(origin).includes('Disallow: /')).toBe(blocked);
+    expect(buildSitemap(origin)).toContain(`<loc>${origin}/</loc>`);
+  });
+});

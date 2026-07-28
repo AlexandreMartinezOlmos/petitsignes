@@ -290,6 +290,14 @@ compara contra `SITE_ORIGIN` y cierra la puerta a cualquier origen que no sea el
 regla que no se puede olvidar, a diferencia de un flag de build. Un fichero estático no podría
 distinguirlos.
 
+Para que esa comparación signifique algo, la build de una previsualización tiene que **decir su
+propio origen**. `SITE_URL` lo fuerza a mano, y si no está, `astro.config.mjs` lee las dos
+variables que Cloudflare Pages define en cada build. **Decide la rama, no la URL**: `CF_PAGES_URL`
+es la dirección `pages.dev` también en producción, así que fiarse de ella sin mirar la rama
+quitaría el dominio propio de las canónicas. La primera versión de esto no comprobaba nada y la
+guarda quedó inerte —el preview servía `Allow: /`—, que es justo el fallo silencioso que esta
+sección existe para evitar.
+
 El sitemap declara los `hreflang` de cada URL. Sin ellos, publicar el mismo catálogo en dos idiomas
 hace que las dos versiones compitan como duplicados en vez de leerse como una página en dos
 lenguas.
