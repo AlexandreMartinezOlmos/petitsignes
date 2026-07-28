@@ -95,6 +95,30 @@ function relativeLuminance(color: Oklch): number {
   return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
 }
 
+/** The sRGB transfer function: linear light to the values a file stores. */
+function encodeSrgb(channel: number): number {
+  const v = Math.min(1, Math.max(0, channel));
+  return v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
+}
+
+/**
+ * The colour as `#rrggbb`.
+ *
+ * The stylesheet is the only place brand colour is decided, but a few consumers
+ * cannot read OKLCH: `site.webmanifest` and the SVG favicon both need hex. This
+ * is what lets a test prove those copies still agree with the token instead of
+ * trusting that someone updated all three — they had already drifted once.
+ */
+export function toHex(color: Oklch): string {
+  return `#${toLinearSrgb(color)
+    .map((channel) =>
+      Math.round(encodeSrgb(channel) * 255)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`;
+}
+
 /** WCAG 2.x contrast ratio, 1 to 21. */
 export function contrastRatio(a: Oklch, b: Oklch): number {
   const la = relativeLuminance(a);
