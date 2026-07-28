@@ -51,6 +51,33 @@ export interface PlayRequestDetail {
 
 export const PLAY_EVENT = 'sign:play';
 
+/**
+ * Turns a card's play button into the request the video dialog listens for.
+ *
+ * Exported because the catalogue is not the only page that shows a card: the
+ * 404 offers one too, and it needs the button to work without paying for the
+ * whole grid controller. Everything the dialog needs travels on the button's
+ * own dataset, so nothing here has to know where the card came from.
+ */
+export function dispatchPlayRequest(button: HTMLElement, signId: string): void {
+  countEvent(ANALYTICS_EVENTS.playLsc);
+  button.dispatchEvent(
+    new CustomEvent<PlayRequestDetail>(PLAY_EVENT, {
+      bubbles: true,
+      detail: {
+        signId,
+        label: button.dataset.label ?? signId,
+        signLanguage: button.dataset.signLanguage ?? '',
+        videoUrl: button.dataset.videoUrl ?? '',
+        posterUrl: button.dataset.posterUrl ?? '',
+        source: button.dataset.source ?? '',
+        sourceUrl: button.dataset.sourceUrl ?? '',
+        license: button.dataset.license ?? '',
+      },
+    }),
+  );
+}
+
 export function readCardData(element: HTMLElement): CardData | null {
   const { signId, category, firstSign, labelCa, labelEs, labelEn } = element.dataset;
   if (!signId || !category || !labelCa || !labelEs || !labelEn) return null;
@@ -238,22 +265,7 @@ export function mountCatalogue(root: HTMLElement): () => void {
         void toggleLearned(signId);
         break;
       case 'play':
-        countEvent(ANALYTICS_EVENTS.playLsc);
-        root.dispatchEvent(
-          new CustomEvent<PlayRequestDetail>(PLAY_EVENT, {
-            bubbles: true,
-            detail: {
-              signId,
-              label: button.dataset.label ?? signId,
-              signLanguage: button.dataset.signLanguage ?? '',
-              videoUrl: button.dataset.videoUrl ?? '',
-              posterUrl: button.dataset.posterUrl ?? '',
-              source: button.dataset.source ?? '',
-              sourceUrl: button.dataset.sourceUrl ?? '',
-              license: button.dataset.license ?? '',
-            },
-          }),
-        );
+        dispatchPlayRequest(button, signId);
         break;
     }
   }

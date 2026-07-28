@@ -16,6 +16,13 @@ import {
   type RoutedLocale,
 } from '../lib/routing.ts';
 import { ANALYTICS_ENDPOINT, ANALYTICS_SCRIPT, REPO_URL, analyticsHost } from '../lib/site.ts';
+import {
+  APPLE_TOUCH_ICON,
+  OG_IMAGE,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_WIDTH,
+  WEB_MANIFEST,
+} from '../lib/seo.ts';
 
 interface Props {
   /** The routed interface language of this page. */
@@ -24,9 +31,15 @@ interface Props {
   path: string;
   title?: string;
   description?: string;
+  /**
+   * Keep this page out of search results and out of the language graph. Only
+   * the 404 needs it: it answers on every wrong URL, so a canonical link would
+   * claim thousands of addresses are the same page.
+   */
+  noindex?: boolean;
 }
 
-const { language, path, title, description } = Astro.props;
+const { language, path, title, description, noindex = false } = Astro.props;
 const t = createTranslator(language);
 
 // The sign language is derived here, at build time, and baked into the markup.
@@ -69,26 +82,56 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
     }
     <link rel="preload" href={nunitoSansLatin} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="canonical" href={canonical} />
+    {
+      /*
+      iOS ignores the manifest and reads this instead, so "add to home screen"
+      needs a PNG: an SVG favicon alone leaves a generic screenshot on the
+      home screen of the one device this site is designed for.
+    */
+    }
+    <link rel="apple-touch-icon" href={APPLE_TOUCH_ICON} />
+    <link rel="manifest" href={WEB_MANIFEST} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     {/* Tell search engines about the other language versions of this page. */}
     {
-      ROUTED_LOCALES.map((locale) => (
+      !noindex &&
+        ROUTED_LOCALES.map((locale) => (
+          <link
+            rel="alternate"
+            hreflang={locale}
+            href={new URL(localeHref(path, locale), Astro.site)}
+          />
+        ))
+    }
+    {
+      !noindex && (
         <link
           rel="alternate"
-          hreflang={locale}
-          href={new URL(localeHref(path, locale), Astro.site)}
+          hreflang="x-default"
+          href={new URL(localeHref(path, DEFAULT_LOCALE), Astro.site)}
         />
-      ))
+      )
     }
-    <link
-      rel="alternate"
-      hreflang="x-default"
-      href={new URL(localeHref(path, DEFAULT_LOCALE), Astro.site)}
-    />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={language} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={t('site.title')} />
+    {
+      /*
+      Absolute, because a share sheet fetches this from its own servers and has
+      no page to resolve a relative path against. Declaring the dimensions lets
+      the card reserve its space before the image arrives instead of reflowing
+      the preview.
+    */
+    }
+    <meta property="og:image" content={new URL(OG_IMAGE, Astro.site)} />
+    <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+    <meta property="og:image:alt" content={pageDescription} />
+    <meta name="twitter:card" content="summary_large_image" />
 
     {
       /*
