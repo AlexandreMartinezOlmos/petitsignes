@@ -16,6 +16,8 @@ const PAGES = [
   { name: 'credits (es)', path: '/es/credits/' },
   { name: 'accessibility statement (ca)', path: '/accessibilitat/' },
   { name: 'accessibility statement (es)', path: '/es/accessibilitat/' },
+  // Served from every wrong address, so it is as public as any other page.
+  { name: 'not found', path: '/404.html' },
 ];
 
 for (const { name, path } of PAGES) {
@@ -857,4 +859,168 @@ test('the text pages stop wasting half the width', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('.page-aside')).toBeHidden();
   await expect(page.locator('.page-section__title').first()).toBeVisible();
+});
+
+/**
+ * P1. The link had no preview image, which is the whole of a WhatsApp share:
+ * a project meant to travel between parents was arriving as a line of grey
+ * text. These tags are the only part of the site that is never rendered for
+ * the person who published it, so nothing but a test tells you they are wrong.
+ */
+test('every page offers a social card that a share sheet can actually fetch', async ({ page }) => {
+  for (const path of ['/', '/es/', '/credits/']) {
+    await page.goto(path);
+
+    const card = await page.evaluate(() => {
+      const meta = (property: string) =>
+        document
+          .querySelector(`meta[property="${property}"], meta[name="${property}"]`)
+          ?.getAttribute('content') ?? null;
+      return {
+        image: meta('og:image'),
+        width: meta('og:image:width'),
+        height: meta('og:image:height'),
+        alt: meta('og:image:alt'),
+        url: meta('og:url'),
+        twitter: meta('twitter:card'),
+      };
+    });
+
+    // Absolute, because the share sheet fetches this from its own servers and
+    // has no page to resolve a relative path against.
+    expect(card.image, path).toMatch(/^https?:\/\//);
+    expect(card.url, path).toMatch(/^https?:\/\//);
+    expect(card.width, path).toBe('1200');
+    expect(card.height, path).toBe('630');
+    expect(card.alt, path).toBeTruthy();
+    expect(card.twitter, path).toBe('summary_large_image');
+  }
+
+  // The file has to exist as well as be declared: a 404 here is a blank card.
+  const response = await page.request.get('/og.png');
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toContain('image/png');
+});
+
+/**
+ * P4. "Add to home screen" left a generic icon on the one device this site is
+ * designed for. iOS ignores the manifest entirely, which is why the PNG is
+ * linked directly as well as listed there.
+ */
+test('the site can be installed to a home screen without looking generic', async ({ page }) => {
+  await page.goto('/');
+
+  const icons = await page.evaluate(() => ({
+    apple: document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href') ?? null,
+    manifest: document.querySelector('link[rel="manifest"]')?.getAttribute('href') ?? null,
+  }));
+  expect(icons.apple).toBe('/apple-touch-icon.png');
+  expect(icons.manifest).toBe('/site.webmanifest');
+
+  for (const asset of ['/apple-touch-icon.png', '/icon-192.png', '/icon-512.png']) {
+    expect((await page.request.get(asset)).status(), asset).toBe(200);
+  }
+
+  const manifest = await (await page.request.get('/site.webmanifest')).json();
+  expect(manifest.name).toBeTruthy();
+  expect(manifest.start_url).toBe('/');
+  // Both sizes, or Android substitutes a blurred upscale on the splash screen.
+  expect(manifest.icons.map((icon: { sizes: string }) => icon.sizes)).toEqual(
+    expect.arrayContaining(['192x192', '512x512']),
+  );
+});
+
+/**
+ * P3. `/sitemap.xml` used to answer with the homepage's HTML and a 200, which
+ * is worse than a 404: anything asking for it got told everything was fine and
+ * handed the wrong document.
+ */
+test('the sitemap lists both languages of every page and points at itself from robots', async ({
+  page,
+}) => {
+  const sitemap = await page.request.get('/sitemap.xml');
+  expect(sitemap.status()).toBe(200);
+  expect(sitemap.headers()['content-type']).toContain('xml');
+
+  const xml = await sitemap.text();
+  expect(xml.startsWith('<?xml')).toBe(true);
+  for (const path of ['/', '/es/', '/el-projecte/', '/es/el-projecte/']) {
+    expect(xml, path).toContain(`${path}</loc>`);
+  }
+  // The alternates are the point: without them the two locales read as
+  // duplicates rather than as one page in two languages.
+  expect(xml).toContain('hreflang="x-default"');
+
+  const robots = await page.request.get('/robots.txt');
+  expect(robots.status()).toBe(200);
+  const text = await robots.text();
+  expect(text).toContain('Sitemap:');
+  expect(text).toContain('/sitemap.xml');
+});
+
+/**
+ * P2. Any wrong address served the homepage with a 200: a mistyped link looked
+ * like it had worked, and search engines were free to index endless duplicates
+ * of the catalogue.
+ */
+test('a wrong address says so, offers both catalogues, and refuses indexing', async ({ page }) => {
+  await page.goto('/404.html');
+
+  await expect(page.locator('h1')).toBeVisible();
+
+  // It must not claim to be a real page: one document answers thousands of
+  // addresses, so a canonical link here would assert they are all the same URL.
+  const head = await page.evaluate(() => ({
+    robots: document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? null,
+    canonical: document.querySelector('link[rel="canonical"]'),
+    alternates: document.querySelectorAll('link[rel="alternate"]').length,
+  }));
+  expect(head.robots).toContain('noindex');
+  expect(head.canonical).toBeNull();
+  expect(head.alternates).toBe(0);
+
+  // Both routes back, because the visitor may have been heading for either.
+  const routes = page.locator('.not-found__route');
+  await expect(routes).toHaveCount(2);
+  await expect(routes.first()).toHaveAttribute('href', '/');
+  await expect(routes.last()).toHaveAttribute('href', '/es/');
+
+  // Every route back is a real target, and big enough to hit (WCAG 2.5.8).
+  for (const href of ['/', '/es/']) {
+    expect((await page.request.get(href)).status(), href).toBe(200);
+  }
+  const box = await routes.first().boundingBox();
+  expect(box!.height).toBeGreaterThanOrEqual(44);
+});
+
+/**
+ * The 404 offers a real sign rather than an apology, and the offer has to work:
+ * a play button that did nothing would be a second dead end. It carries only
+ * the page's own sign language, like every other page — §4.4 is what keeps the
+ * wrong gesture out of the document rather than merely out of view.
+ */
+test('the sign on the 404 page is real, playable and single-language', async ({ page }) => {
+  await page.goto('/404.html');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const card = page.locator('.sign-card');
+  await expect(card).toHaveCount(1);
+  await expect(card).toHaveAttribute('data-sign-id', 'no');
+
+  // One sign language reaches the DOM, and it is the one this route serves.
+  const languages = await page
+    .locator('.sign-card__lang')
+    .evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.sl));
+  expect(languages).toEqual(['lsc']);
+
+  // Nothing contacts YouTube until asked, exactly as in the catalogue.
+  const youtube: string[] = [];
+  page.on('request', (request) => {
+    if (/youtube|ytimg/.test(request.url())) youtube.push(request.url());
+  });
+  await page.waitForTimeout(300);
+  expect(youtube).toEqual([]);
+
+  await card.locator('[data-action="play"]').click();
+  await expect(page.locator('dialog[open]')).toBeVisible();
 });

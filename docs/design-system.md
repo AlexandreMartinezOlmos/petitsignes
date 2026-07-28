@@ -559,6 +559,24 @@ blanco—, encoge el titular del héroe y pasa la rejilla a tres columnas con `b
 **El enlace a la fuente se queda, y gana su URL.** Es la atribución que pide la licencia y lo
 único de una tarjeta impresa que sigue siendo accionable.
 
+### `.not-found` — la página que responde a una dirección equivocada
+
+Es la única pantalla del sistema que un visitante alcanza por error, así que no repite el tono del
+resto: **no se disculpa, da algo**. Muestra el signo real de `no` —una ficha del catálogo, con su
+vídeo oficial verificado— en lugar de una ilustración hecha para la ocasión.
+
+Se compone reutilizando `SignCard` tal cual, cortada a `min(100%, 22rem)` para que no se estire a
+una forma que la rejilla nunca enseña. Sus clases viven en la propia página y no en esta hoja:
+**el sistema de diseño es para lo que se repite**, y nada más usa estos estilos.
+
+El botón de vídeo funciona sin cargar el controlador de la rejilla. `dispatchPlayRequest` se
+extrajo de `catalogue-grid.ts` justo para esto: un botón que no hiciera nada sería un segundo
+callejón sin salida encima del primero.
+
+Ofrece **las dos rutas de vuelta**, no solo la del idioma en que está escrita, porque quien se
+equivocó de dirección podía ir a cualquiera de las dos. La del idioma por defecto va rellena y la
+otra perfilada: se ofrece, no se empuja, en una página que ya ha fallado una vez al visitante.
+
 ## 8. Cómo añadir una categoría
 
 1. Añádela a `src/content/categories.json` con su `id`, etiquetas, `icon` y `order`.

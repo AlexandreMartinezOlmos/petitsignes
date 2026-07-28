@@ -264,3 +264,41 @@ código.
 **Nunca se sustituye por una ilustración del gesto.** Enseñaría configuraciones de mano
 incorrectas, que es el daño exacto que este proyecto existe para evitar. Una tarjeta sin imagen
 no es trabajo pendiente: es la decisión correcta.
+
+## Lo que se le cuenta a un buscador, y a quien pega el enlace
+
+Tres piezas que ningún visitante ve y que, precisamente por eso, fallan en silencio.
+
+**La tarjeta social se genera, no se dibuja.** `scripts/brand-assets.ts` lee el trazo de la mano
+del propio sprite de iconos y los colores de los tokens de `global.css`, y renderiza los PNG con
+Chromium. Nada se dibuja dos veces: un cambio de marca llega a las imágenes reejecutando el
+script, no acordándose de editar una segunda copia. Es un **script de contenido**, no un paso del
+build (§2.3): el resultado se commitea.
+
+Al montarlo apareció una divergencia real: el favicon usaba `#b4552e` mientras `--brand` resuelve
+a `#bc461e`. Los dos consumidores que no pueden leer OKLCH —el favicon y `site.webmanifest`— ahora
+llevan un test que compara su hex contra el token (`color.test.ts`), porque una marca que se
+desincroniza no rompe nada y por eso nadie lo nota.
+
+> La mano es **marca**, no gesto. §2.1 prohíbe representar cómo se ejecuta un signo; un logo de
+> una mano abierta no dice nada sobre LSC ni LSE.
+
+**`robots.txt` y `sitemap.xml` se emiten desde `src/pages/`, no desde `public/`.** La razón es que
+la respuesta depende del origen: cada rama se despliega a su propio `*.pages.dev` con el mismo
+build, y una previsualización indexada compite con producción por el mismo contenido. `buildRobots`
+compara contra `SITE_ORIGIN` y cierra la puerta a cualquier origen que no sea el canónico — una
+regla que no se puede olvidar, a diferencia de un flag de build. Un fichero estático no podría
+distinguirlos.
+
+El sitemap declara los `hreflang` de cada URL. Sin ellos, publicar el mismo catálogo en dos idiomas
+hace que las dos versiones compitan como duplicados en vez de leerse como una página en dos
+lenguas.
+
+**La 404 es una sola, y eso decide su idioma.** Cloudflare Pages responde a cualquier ruta
+inexistente con el `404.html` de la raíz, así que no puede haber una por locale. Se escribe en el
+idioma por defecto y ofrece las dos rutas de vuelta, en lugar de adivinar por la ruta y renderizar
+las dos versiones: adivinar significaría llevar **las dos lenguas de signos al mismo documento**,
+que es justo lo que §4.4 impide para que el gesto equivocado no quede a un `display` de mostrarse.
+
+Lleva `noindex` y **no** lleva canónica ni alternates: un documento que responde a miles de
+direcciones no puede afirmar que todas son la misma URL.
