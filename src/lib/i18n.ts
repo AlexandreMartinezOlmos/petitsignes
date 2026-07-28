@@ -128,7 +128,7 @@ const MESSAGES = {
     'notFound.title': 'Aquí no hay nada',
     'notFound.lead':
       'Esta página no existe o ha cambiado de dirección. Ya que estás, este signo te puede servir.',
-    'notFound.back': 'Volver al catálogo',
+    'notFound.back': 'Vuelve al catálogo',
     'nav.breadcrumb': 'Dónde estás',
     'nav.onThisPage': 'En esta página',
 

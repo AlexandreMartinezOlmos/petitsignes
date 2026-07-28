@@ -1,8 +1,47 @@
 // @ts-check
+import { readdir, rename, rm } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { SITE_ORIGIN, assertOrigin } from './src/lib/site.ts';
+
+/**
+ * Puts each locale's 404 where a static host will look for it.
+ *
+ * Cloudflare Pages answers an unmatched request with the closest `404.html`
+ * walking up the directory tree, which is what lets `/es/…` fail in Spanish
+ * instead of falling back to the Catalan page at the root. But `format:
+ * 'directory'` writes a nested page to `es/404/index.html`, an address nothing
+ * ever asks for — so the Spanish 404 would exist and never be served.
+ *
+ * Astro applies the format per build, not per page, and every other route wants
+ * the directory form for its clean URL. Moving this one file afterwards is the
+ * narrow fix; changing the format would rename the whole site.
+ */
+function localised404() {
+  return {
+    name: 'localised-404',
+    hooks: {
+      /** @type {(options: { dir: URL, logger: { info: (msg: string) => void } }) => Promise<void>} */
+      'astro:build:done': async ({ dir, logger }) => {
+        const root = fileURLToPath(dir);
+        for (const item of await readdir(root, { withFileTypes: true })) {
+          if (!item.isDirectory()) continue;
+          const nested = path.join(root, item.name, '404', 'index.html');
+          try {
+            await rename(nested, path.join(root, item.name, '404.html'));
+            await rm(path.join(root, item.name, '404'), { recursive: true, force: true });
+            logger.info(`moved ${item.name}/404/index.html to ${item.name}/404.html`);
+          } catch {
+            // This locale has no 404 of its own; the root one covers it.
+          }
+        }
+      },
+    },
+  };
+}
 
 // The canonical origin (canonical links, hreflang, Open Graph, sitemap). It is
 // defined in src/lib/site.ts so that changing domain is a reviewed commit
@@ -36,7 +75,7 @@ export default defineConfig({
       redirectToDefaultLocale: false,
     },
   },
-  integrations: [react()],
+  integrations: [react(), localised404()],
   vite: {
     plugins: [tailwindcss()],
   },
