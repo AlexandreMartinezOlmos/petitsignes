@@ -24,6 +24,11 @@ const MESSAGES = {
     'nav.site': 'Pàgines del lloc',
     'nav.skipCatalogue': 'Salta el catàleg',
     'nav.catalogue': 'Catàleg',
+
+    'notFound.title': 'Aquí no hi ha res',
+    'notFound.lead':
+      'Aquesta pàgina no existeix o ha canviat d’adreça. Ja que hi ets, aquest signe et pot servir.',
+    'notFound.back': 'Torna al catàleg',
     'nav.breadcrumb': 'On ets',
     'nav.onThisPage': 'En aquesta pàgina',
 
@@ -119,6 +124,11 @@ const MESSAGES = {
     'nav.site': 'Páginas del sitio',
     'nav.skipCatalogue': 'Saltar el catálogo',
     'nav.catalogue': 'Catálogo',
+
+    'notFound.title': 'Aquí no hay nada',
+    'notFound.lead':
+      'Esta página no existe o ha cambiado de dirección. Ya que estás, este signo te puede servir.',
+    'notFound.back': 'Vuelve al catálogo',
     'nav.breadcrumb': 'Dónde estás',
     'nav.onThisPage': 'En esta página',
 
@@ -214,6 +224,11 @@ const MESSAGES = {
     'nav.site': 'Site pages',
     'nav.skipCatalogue': 'Skip the catalogue',
     'nav.catalogue': 'Catalogue',
+
+    'notFound.title': 'Nothing here',
+    'notFound.lead':
+      'This page does not exist, or it moved. While you are here, this sign might come in handy.',
+    'notFound.back': 'Back to the catalogue',
     'nav.breadcrumb': 'Breadcrumb',
     'nav.onThisPage': 'On this page',
 

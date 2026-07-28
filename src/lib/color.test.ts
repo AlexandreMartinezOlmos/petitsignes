@@ -10,6 +10,7 @@ import {
   hueDistance,
   inGamut,
   maxChroma,
+  toHex,
   type Dichromacy,
   type Oklch,
 } from './color.ts';
@@ -250,6 +251,37 @@ describe('the card call to action', () => {
     const body = base();
     const ratio = contrastRatio(color(body, '--brand-ink'), color(body, '--brand-soft'));
     expect(ratio).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+/**
+ * The copies of the brand colour that cannot read OKLCH.
+ *
+ * `site.webmanifest` sets the Android theme colour and the splash background;
+ * `favicon.svg` fills its tile. Neither can reference a CSS token, so both hold
+ * a hex literal — and both had quietly drifted from `--brand`: the favicon was
+ * `#b4552e` against a token that resolves to `#bc461e`. Nothing breaks when
+ * that happens, which is why nobody noticed. This is the check that turns a
+ * silent divergence into a failing build.
+ */
+describe('the hex copies of the brand colour', () => {
+  const manifest = JSON.parse(
+    readFileSync(resolve(process.cwd(), 'public/site.webmanifest'), 'utf8'),
+  ) as { theme_color: string; background_color: string };
+  const favicon = readFileSync(resolve(process.cwd(), 'public/favicon.svg'), 'utf8');
+
+  it('matches the tokens the stylesheet actually ships', () => {
+    const brand = toHex(color(lightBlock.body, '--brand'));
+    const surface = toHex(color(lightBlock.body, '--surface'));
+
+    expect(manifest.theme_color).toBe(brand);
+    expect(manifest.background_color).toBe(surface);
+    expect(favicon).toContain(brand);
+  });
+
+  it('converts a known colour correctly', () => {
+    expect(toHex({ l: 0, c: 0, h: 0 })).toBe('#000000');
+    expect(toHex({ l: 1, c: 0, h: 0 })).toBe('#ffffff');
   });
 });
 

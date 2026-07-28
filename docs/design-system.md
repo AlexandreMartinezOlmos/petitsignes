@@ -559,6 +559,24 @@ blanco—, encoge el titular del héroe y pasa la rejilla a tres columnas con `b
 **El enlace a la fuente se queda, y gana su URL.** Es la atribución que pide la licencia y lo
 único de una tarjeta impresa que sigue siendo accionable.
 
+### `.not-found` — la página que responde a una dirección equivocada
+
+Es la única pantalla del sistema que un visitante alcanza por error, así que no repite el tono del
+resto: **no se disculpa, da algo**. Muestra el signo real de `no` —una ficha del catálogo, con su
+vídeo oficial verificado— en lugar de una ilustración hecha para la ocasión.
+
+Se compone reutilizando `SignCard` tal cual, cortada a `min(100%, 22rem)` para que no se estire a
+una forma que la rejilla nunca enseña. Sus clases viven en la propia página y no en esta hoja:
+**el sistema de diseño es para lo que se repite**, y nada más usa estos estilos.
+
+Ofrece **una sola ruta de vuelta**, en el idioma que ya se estaba leyendo: hay una 404 por idioma,
+así que la página sabe cuál es. El selector de idioma sigue en la cabecera donde siempre está, de
+modo que un segundo botón aquí competiría con la salida real por la atención.
+
+Sus controles funcionan. `mountSignCards` da a esta tarjeta el mismo cableado que reciben las de la
+rejilla —los dos toggles persisten y el CTA abre el reproductor—, sin cargar el controlador
+completo. Un toggle muerto sería la misma promesa rota que C3 quitó de la nota de «sin vídeo».
+
 ## 8. Cómo añadir una categoría
 
 1. Añádela a `src/content/categories.json` con su `id`, etiquetas, `icon` y `order`.

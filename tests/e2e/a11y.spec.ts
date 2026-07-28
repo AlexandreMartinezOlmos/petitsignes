@@ -16,6 +16,10 @@ const PAGES = [
   { name: 'credits (es)', path: '/es/credits/' },
   { name: 'accessibility statement (ca)', path: '/accessibilitat/' },
   { name: 'accessibility statement (es)', path: '/es/accessibilitat/' },
+  // Served from every wrong address, so as public as any other page — and one
+  // per locale, so `/es/…` fails in Spanish.
+  { name: 'not found (ca)', path: '/404.html' },
+  { name: 'not found (es)', path: '/es/404.html' },
 ];
 
 for (const { name, path } of PAGES) {
@@ -857,4 +861,218 @@ test('the text pages stop wasting half the width', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('.page-aside')).toBeHidden();
   await expect(page.locator('.page-section__title').first()).toBeVisible();
+});
+
+/**
+ * P1. The link had no preview image, which is the whole of a WhatsApp share:
+ * a project meant to travel between parents was arriving as a line of grey
+ * text. These tags are the only part of the site that is never rendered for
+ * the person who published it, so nothing but a test tells you they are wrong.
+ */
+test('every page offers a social card that a share sheet can actually fetch', async ({ page }) => {
+  for (const path of ['/', '/es/', '/credits/']) {
+    await page.goto(path);
+
+    const card = await page.evaluate(() => {
+      const meta = (property: string) =>
+        document
+          .querySelector(`meta[property="${property}"], meta[name="${property}"]`)
+          ?.getAttribute('content') ?? null;
+      return {
+        image: meta('og:image'),
+        width: meta('og:image:width'),
+        height: meta('og:image:height'),
+        alt: meta('og:image:alt'),
+        url: meta('og:url'),
+        twitter: meta('twitter:card'),
+      };
+    });
+
+    // Absolute, because the share sheet fetches this from its own servers and
+    // has no page to resolve a relative path against.
+    expect(card.image, path).toMatch(/^https?:\/\//);
+    expect(card.url, path).toMatch(/^https?:\/\//);
+    expect(card.width, path).toBe('1200');
+    expect(card.height, path).toBe('630');
+    expect(card.alt, path).toBeTruthy();
+    expect(card.twitter, path).toBe('summary_large_image');
+  }
+
+  // The file has to exist as well as be declared: a 404 here is a blank card.
+  const response = await page.request.get('/og.png');
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toContain('image/png');
+});
+
+/**
+ * P4. "Add to home screen" left a generic icon on the one device this site is
+ * designed for. iOS ignores the manifest entirely, which is why the PNG is
+ * linked directly as well as listed there.
+ */
+test('the site can be installed to a home screen without looking generic', async ({ page }) => {
+  await page.goto('/');
+
+  const icons = await page.evaluate(() => ({
+    apple: document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href') ?? null,
+    manifest: document.querySelector('link[rel="manifest"]')?.getAttribute('href') ?? null,
+  }));
+  expect(icons.apple).toBe('/apple-touch-icon.png');
+  expect(icons.manifest).toBe('/site.webmanifest');
+
+  for (const asset of ['/apple-touch-icon.png', '/icon-192.png', '/icon-512.png']) {
+    expect((await page.request.get(asset)).status(), asset).toBe(200);
+  }
+
+  const manifest = await (await page.request.get('/site.webmanifest')).json();
+  expect(manifest.name).toBeTruthy();
+  expect(manifest.start_url).toBe('/');
+  // Both sizes, or Android substitutes a blurred upscale on the splash screen.
+  expect(manifest.icons.map((icon: { sizes: string }) => icon.sizes)).toEqual(
+    expect.arrayContaining(['192x192', '512x512']),
+  );
+});
+
+/**
+ * P3. `/sitemap.xml` used to answer with the homepage's HTML and a 200, which
+ * is worse than a 404: anything asking for it got told everything was fine and
+ * handed the wrong document.
+ */
+test('the sitemap lists both languages of every page and points at itself from robots', async ({
+  page,
+}) => {
+  const sitemap = await page.request.get('/sitemap.xml');
+  expect(sitemap.status()).toBe(200);
+  expect(sitemap.headers()['content-type']).toContain('xml');
+
+  const xml = await sitemap.text();
+  expect(xml.startsWith('<?xml')).toBe(true);
+  for (const path of ['/', '/es/', '/el-projecte/', '/es/el-projecte/']) {
+    expect(xml, path).toContain(`${path}</loc>`);
+  }
+  // The alternates are the point: without them the two locales read as
+  // duplicates rather than as one page in two languages.
+  expect(xml).toContain('hreflang="x-default"');
+
+  const robots = await page.request.get('/robots.txt');
+  expect(robots.status()).toBe(200);
+  const text = await robots.text();
+  expect(text).toContain('Sitemap:');
+  expect(text).toContain('/sitemap.xml');
+});
+
+/**
+ * P2. Any wrong address served the homepage with a 200: a mistyped link looked
+ * like it had worked, and search engines were free to index endless duplicates
+ * of the catalogue.
+ *
+ * There is one page per locale rather than one for the site. Cloudflare Pages
+ * serves the closest `404.html` up the directory tree, so `/es/…` finds the
+ * Spanish one — which is also what lets each build ship a single sign language
+ * (§4.4) instead of guessing a language from the path and rendering both.
+ */
+test.describe('a wrong address', () => {
+  const CASES = [
+    { name: 'Catalan', page: '/404.html', lang: 'ca', signLanguage: 'lsc', home: '/' },
+    { name: 'Spanish', page: '/es/404.html', lang: 'es', signLanguage: 'lse', home: '/es/' },
+  ];
+
+  for (const { name, page: path, lang, signLanguage, home } of CASES) {
+    test(`says so in ${name} and offers the way back it was already reading`, async ({ page }) => {
+      await page.goto(path);
+
+      await expect(page.locator('html')).toHaveAttribute('lang', lang);
+      await expect(page.locator('h1')).toBeVisible();
+
+      // It must not claim to be a real page: one document answers thousands of
+      // addresses, so a canonical link would assert they are all the same URL.
+      const head = await page.evaluate(() => ({
+        robots: document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? null,
+        canonical: document.querySelector('link[rel="canonical"]'),
+        alternates: document.querySelectorAll('link[rel="alternate"]').length,
+      }));
+      expect(head.robots).toContain('noindex');
+      expect(head.canonical).toBeNull();
+      expect(head.alternates).toBe(0);
+
+      // One route, in the language being read. The header still carries the
+      // language switch, so a second button here would compete with the way out.
+      const route = page.locator('.not-found__route');
+      await expect(route).toHaveCount(1);
+      await expect(route).toHaveAttribute('href', home);
+      expect((await route.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      expect((await page.request.get(home)).status()).toBe(200);
+
+      // The card carries this route's sign language and no other.
+      const languages = await page
+        .locator('.sign-card__lang')
+        .evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.sl));
+      expect(languages).toEqual([signLanguage]);
+    });
+  }
+
+  /**
+   * The toggles shipped inert on the first attempt: the card was rendered but
+   * nothing wired it, so pressing favourite did nothing at all. That is the
+   * same broken promise C3 took out of the missing-video note, and it is why
+   * `mountSignCards` exists separately from the grid controller.
+   */
+  test('offers a card whose controls actually work', async ({ page }) => {
+    await page.goto('/404.html');
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+    const card = page.locator('.sign-card');
+    await expect(card).toHaveAttribute('data-sign-id', 'no');
+
+    const favorite = card.locator('[data-action="favorite"]');
+    await expect(favorite).toHaveAttribute('aria-pressed', 'false');
+    await favorite.click();
+    await expect(favorite).toHaveAttribute('aria-pressed', 'true');
+
+    const learned = card.locator('[data-action="learned"]');
+    await learned.click();
+    await expect(learned).toHaveAttribute('aria-pressed', 'true');
+
+    // Progress is progress wherever it was marked: the catalogue has to agree.
+    await page.goto('/');
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+    const inGrid = page.locator('.sign-card[data-sign-id="no"]');
+    await expect(inGrid.locator('[data-action="favorite"]')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(inGrid).toHaveAttribute('data-learned', 'true');
+  });
+
+  test('plays its sign without loading YouTube up front', async ({ page }) => {
+    const youtube: string[] = [];
+    page.on('request', (request) => {
+      // Real YouTube hosts only. Matching the raw URL also catches our own
+      // `youtube.ts` module, which the dev server serves by path.
+      const host = new URL(request.url()).hostname;
+      if (/(^|\.)(youtube\.com|youtube-nocookie\.com|ytimg\.com|googlevideo\.com)$/.test(host)) {
+        youtube.push(request.url());
+      }
+    });
+
+    await page.goto('/404.html');
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+    await page.waitForTimeout(300);
+    expect(youtube).toEqual([]);
+
+    await page.locator('.sign-card [data-action="play"]').click();
+    await expect(page.locator('dialog[open]')).toBeVisible();
+  });
+
+  /**
+   * The Spanish catalogue delivers LSE by linking out to DILSE rather than
+   * embedding, so its 404 must offer a link, not a dead play button.
+   */
+  test('links out to the dictionary on the Spanish side', async ({ page }) => {
+    await page.goto('/es/404.html');
+
+    const cta = page.locator('.sign-card__cta--external');
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveAttribute('href', /fundacioncnse-dilse\.org/);
+    await expect(page.locator('.sign-card [data-action="play"]')).toHaveCount(0);
+  });
 });

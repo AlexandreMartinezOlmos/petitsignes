@@ -264,3 +264,63 @@ código.
 **Nunca se sustituye por una ilustración del gesto.** Enseñaría configuraciones de mano
 incorrectas, que es el daño exacto que este proyecto existe para evitar. Una tarjeta sin imagen
 no es trabajo pendiente: es la decisión correcta.
+
+## Lo que se le cuenta a un buscador, y a quien pega el enlace
+
+Tres piezas que ningún visitante ve y que, precisamente por eso, fallan en silencio.
+
+**La tarjeta social se genera, no se dibuja.** `scripts/brand-assets.ts` lee el trazo de la mano
+del propio sprite de iconos y los colores de los tokens de `global.css`, y renderiza los PNG con
+Chromium. Nada se dibuja dos veces: un cambio de marca llega a las imágenes reejecutando el
+script, no acordándose de editar una segunda copia. Es un **script de contenido**, no un paso del
+build (§2.3): el resultado se commitea.
+
+Al montarlo apareció una divergencia real: el favicon usaba `#b4552e` mientras `--brand` resuelve
+a `#bc461e`. Los dos consumidores que no pueden leer OKLCH —el favicon y `site.webmanifest`— ahora
+llevan un test que compara su hex contra el token (`color.test.ts`), porque una marca que se
+desincroniza no rompe nada y por eso nadie lo nota.
+
+> La mano es **marca**, no gesto. §2.1 prohíbe representar cómo se ejecuta un signo; un logo de
+> una mano abierta no dice nada sobre LSC ni LSE.
+
+**`robots.txt` y `sitemap.xml` se emiten desde `src/pages/`, no desde `public/`.** La razón es que
+la respuesta depende del origen: cada rama se despliega a su propio `*.pages.dev` con el mismo
+build, y una previsualización indexada compite con producción por el mismo contenido. `buildRobots`
+compara contra `SITE_ORIGIN` y cierra la puerta a cualquier origen que no sea el canónico — una
+regla que no se puede olvidar, a diferencia de un flag de build. Un fichero estático no podría
+distinguirlos.
+
+Para que esa comparación signifique algo, la build de una previsualización tiene que **decir su
+propio origen**. `SITE_URL` lo fuerza a mano, y si no está, `astro.config.mjs` lee las dos
+variables que Cloudflare Pages define en cada build. **Decide la rama, no la URL**: `CF_PAGES_URL`
+es la dirección `pages.dev` también en producción, así que fiarse de ella sin mirar la rama
+quitaría el dominio propio de las canónicas. La primera versión de esto no comprobaba nada y la
+guarda quedó inerte —el preview servía `Allow: /`—, que es justo el fallo silencioso que esta
+sección existe para evitar.
+
+El sitemap declara los `hreflang` de cada URL. Sin ellos, publicar el mismo catálogo en dos idiomas
+hace que las dos versiones compitan como duplicados en vez de leerse como una página en dos
+lenguas.
+
+**Hay una 404 por idioma**, en `/404.html` y `/es/404.html`. Cloudflare Pages responde a una ruta
+inexistente con el `404.html` **más cercano subiendo por el árbol de directorios**, así que
+`/es/lo-que-sea` encuentra la castellana. Eso evita tener que adivinar el idioma desde la ruta —
+adivinar habría significado llevar las dos lenguas de signos al mismo documento, justo lo que §4.4
+impide para que el gesto equivocado no quede a un `display` de mostrarse. Cada 404 envía la suya y
+ya está.
+
+Hace falta un empujón en el build: con `format: 'directory'` una página anidada se emite en
+`es/404/index.html`, una dirección que nadie pide, así que la 404 castellana existiría sin llegar
+a servirse nunca. La integración `localised404` de `astro.config.mjs` la mueve a `es/404.html`
+después de construir. Astro aplica el formato por build y no por página, y el resto de rutas sí
+quiere la forma de directorio para su URL limpia: mover un fichero es el arreglo estrecho, cambiar
+el formato renombraría el sitio entero.
+
+Ambas llevan `noindex` y **no** llevan canónica ni alternates: un documento que responde a miles
+de direcciones no puede afirmar que todas son la misma URL.
+
+**La tarjeta de la 404 funciona de verdad.** `mountSignCards` se separó de `mountCatalogue`
+precisamente aquí: lo que necesita una tarjeta suelta es progreso y reproducción, mientras que el
+filtrado, el índice de búsqueda y los encabezados de sección pertenecen a la rejilla. La primera
+versión de la 404 solo cableó el botón de vídeo y dejó los dos toggles muertos — la misma promesa
+rota que C3 quitó de la nota de «sin vídeo», reaparecida en otra página.

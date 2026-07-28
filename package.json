@@ -20,6 +20,7 @@
     "test:e2e": "playwright test",
     "content:export": "node --experimental-strip-types scripts/vocabulary-export.ts",
     "content:import": "node --experimental-strip-types scripts/vocabulary-import.ts",
+    "brand:assets": "node --experimental-strip-types scripts/brand-assets.ts",
     "prepare": "husky || true",
     "test:coverage": "vitest run --coverage"
   },

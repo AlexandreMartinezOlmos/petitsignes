@@ -51,6 +51,33 @@ export interface PlayRequestDetail {
 
 export const PLAY_EVENT = 'sign:play';
 
+/**
+ * Turns a card's play button into the request the video dialog listens for.
+ *
+ * Exported because the catalogue is not the only page that shows a card: the
+ * 404 offers one too, and it needs the button to work without paying for the
+ * whole grid controller. Everything the dialog needs travels on the button's
+ * own dataset, so nothing here has to know where the card came from.
+ */
+export function dispatchPlayRequest(button: HTMLElement, signId: string): void {
+  countEvent(ANALYTICS_EVENTS.playLsc);
+  button.dispatchEvent(
+    new CustomEvent<PlayRequestDetail>(PLAY_EVENT, {
+      bubbles: true,
+      detail: {
+        signId,
+        label: button.dataset.label ?? signId,
+        signLanguage: button.dataset.signLanguage ?? '',
+        videoUrl: button.dataset.videoUrl ?? '',
+        posterUrl: button.dataset.posterUrl ?? '',
+        source: button.dataset.source ?? '',
+        sourceUrl: button.dataset.sourceUrl ?? '',
+        license: button.dataset.license ?? '',
+      },
+    }),
+  );
+}
+
 export function readCardData(element: HTMLElement): CardData | null {
   const { signId, category, firstSign, labelCa, labelEs, labelEn } = element.dataset;
   if (!signId || !category || !labelCa || !labelEs || !labelEn) return null;
@@ -131,51 +158,21 @@ function setToggleState(button: HTMLButtonElement, pressed: boolean): void {
   if (label) button.setAttribute('aria-label', label);
 }
 
-/** Wires the static grid to the shared stores. Returns a cleanup function. */
-export function mountCatalogue(root: HTMLElement): () => void {
-  const cardElements = Array.from(root.querySelectorAll<HTMLElement>('.sign-card'));
-  const cards = cardElements.map(readCardData).filter((card): card is CardData => card !== null);
-
+/**
+ * Wires the parts of a card that work wherever one is rendered: the two
+ * progress toggles and the route to the video.
+ *
+ * Split out from the catalogue because the grid is not the only page that shows
+ * a card — the 404 offers one too, and a toggle that silently did nothing there
+ * would be the same broken promise C3 removed from the missing-video note. What
+ * a single card needs is progress and playback; the filtering, the search index
+ * and the section headings all belong to the grid and stay there.
+ */
+export function mountSignCards(root: HTMLElement): () => void {
   const byId = new Map<string, HTMLElement>();
-  for (const element of cardElements) {
+  for (const element of root.querySelectorAll<HTMLElement>('.sign-card')) {
     const id = element.dataset.signId;
     if (id) byId.set(id, element);
-  }
-
-  // Built once from the DOM, so the catalogue is never duplicated in the bundle.
-  const index = createSearchIndex(cards);
-
-  // Headings printed between the runs of signs. Which run a card belongs to is
-  // derived rather than stored on the element: the grouping is already implied
-  // by `isFirstSign` and the category, and a third attribute on 229 cards
-  // could only ever disagree with them.
-  const sectionElements = new Map<string, HTMLElement>();
-  for (const element of root.querySelectorAll<HTMLElement>('[data-section]')) {
-    const id = element.dataset.section;
-    if (id) sectionElements.set(id, element);
-  }
-
-  function applyFilters(): void {
-    const visible = filterCards(cards, readFilterState(), index);
-
-    for (const [id, element] of byId) {
-      element.hidden = !visible.has(id);
-    }
-
-    // A heading with nothing under it reads as an empty category rather than
-    // as a filtered one, so the populated sections are collected first and the
-    // rest are hidden.
-    if (sectionElements.size > 0) {
-      const populated = new Set<string>();
-      for (const card of cards) {
-        if (visible.has(card.id)) populated.add(sectionOf(card));
-      }
-      for (const [id, element] of sectionElements) {
-        element.hidden = !populated.has(id);
-      }
-    }
-
-    $visibleCount.set(visible.size);
   }
 
   function applyProgress(): void {
@@ -192,17 +189,6 @@ export function mountCatalogue(root: HTMLElement): () => void {
       const learnedButton = element.querySelector<HTMLButtonElement>('[data-action="learned"]');
       if (learnedButton) setToggleState(learnedButton, isLearned);
     }
-  }
-
-  function readFilterState(): FilterState {
-    return {
-      query: $query.get(),
-      category: $category.get(),
-      onlyFirstSigns: $onlyFirstSigns.get(),
-      statusFilter: $statusFilter.get(),
-      favorites: $favorites.get(),
-      learned: $learned.get(),
-    };
   }
 
   function onClick(event: MouseEvent): void {
@@ -238,47 +224,96 @@ export function mountCatalogue(root: HTMLElement): () => void {
         void toggleLearned(signId);
         break;
       case 'play':
-        countEvent(ANALYTICS_EVENTS.playLsc);
-        root.dispatchEvent(
-          new CustomEvent<PlayRequestDetail>(PLAY_EVENT, {
-            bubbles: true,
-            detail: {
-              signId,
-              label: button.dataset.label ?? signId,
-              signLanguage: button.dataset.signLanguage ?? '',
-              videoUrl: button.dataset.videoUrl ?? '',
-              posterUrl: button.dataset.posterUrl ?? '',
-              source: button.dataset.source ?? '',
-              sourceUrl: button.dataset.sourceUrl ?? '',
-              license: button.dataset.license ?? '',
-            },
-          }),
-        );
+        dispatchPlayRequest(button, signId);
         break;
     }
   }
 
   root.addEventListener('click', onClick);
 
-  const unsubscribers = [
-    $query.subscribe(applyFilters),
-    $category.subscribe(applyFilters),
-    $onlyFirstSigns.subscribe(applyFilters),
-    $statusFilter.subscribe(applyFilters),
-    $favorites.subscribe(() => {
-      applyProgress();
-      applyFilters();
-    }),
-    $learned.subscribe(() => {
-      applyProgress();
-      applyFilters();
-    }),
-  ];
+  const unsubscribers = [$favorites.subscribe(applyProgress), $learned.subscribe(applyProgress)];
 
   void hydrateFromStorage();
 
   return () => {
     root.removeEventListener('click', onClick);
+    for (const unsubscribe of unsubscribers) unsubscribe();
+  };
+}
+
+/** Wires the static grid to the shared stores. Returns a cleanup function. */
+export function mountCatalogue(root: HTMLElement): () => void {
+  const cardElements = Array.from(root.querySelectorAll<HTMLElement>('.sign-card'));
+  const cards = cardElements.map(readCardData).filter((card): card is CardData => card !== null);
+
+  const byId = new Map<string, HTMLElement>();
+  for (const element of cardElements) {
+    const id = element.dataset.signId;
+    if (id) byId.set(id, element);
+  }
+
+  // Built once from the DOM, so the catalogue is never duplicated in the bundle.
+  const index = createSearchIndex(cards);
+
+  // Headings printed between the runs of signs. Which run a card belongs to is
+  // derived rather than stored on the element: the grouping is already implied
+  // by `isFirstSign` and the category, and a third attribute on 195 cards
+  // could only ever disagree with them.
+  const sectionElements = new Map<string, HTMLElement>();
+  for (const element of root.querySelectorAll<HTMLElement>('[data-section]')) {
+    const id = element.dataset.section;
+    if (id) sectionElements.set(id, element);
+  }
+
+  function applyFilters(): void {
+    const visible = filterCards(cards, readFilterState(), index);
+
+    for (const [id, element] of byId) {
+      element.hidden = !visible.has(id);
+    }
+
+    // A heading with nothing under it reads as an empty category rather than
+    // as a filtered one, so the populated sections are collected first and the
+    // rest are hidden.
+    if (sectionElements.size > 0) {
+      const populated = new Set<string>();
+      for (const card of cards) {
+        if (visible.has(card.id)) populated.add(sectionOf(card));
+      }
+      for (const [id, element] of sectionElements) {
+        element.hidden = !populated.has(id);
+      }
+    }
+
+    $visibleCount.set(visible.size);
+  }
+
+  function readFilterState(): FilterState {
+    return {
+      query: $query.get(),
+      category: $category.get(),
+      onlyFirstSigns: $onlyFirstSigns.get(),
+      statusFilter: $statusFilter.get(),
+      favorites: $favorites.get(),
+      learned: $learned.get(),
+    };
+  }
+
+  const unsubscribers = [
+    $query.subscribe(applyFilters),
+    $category.subscribe(applyFilters),
+    $onlyFirstSigns.subscribe(applyFilters),
+    $statusFilter.subscribe(applyFilters),
+    $favorites.subscribe(applyFilters),
+    $learned.subscribe(applyFilters),
+  ];
+
+  // Last, so the filters are already listening when hydration lands: the toggles
+  // change which cards a status filter shows, not only how they look.
+  const unmountCards = mountSignCards(root);
+
+  return () => {
+    unmountCards();
     for (const unsubscribe of unsubscribers) unsubscribe();
   };
 }
