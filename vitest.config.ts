@@ -19,8 +19,8 @@ export default defineConfig({
       reporter: ['text', 'lcov'],
       /**
        * A ratchet, not a target. The floor sits just under what the suite
-       * measures today (68.93% statements, 62.02% branches, 78.78% functions,
-       * 69.41% lines), so it fails when coverage *drops* and never on the day
+       * measures today (70.51% statements, 63.85% branches, 80.18% functions,
+       * 71.14% lines), so it fails when coverage *drops* and never on the day
        * it is set — a threshold above reality gets lowered on first contact and
        * then means nothing.
        *
@@ -37,10 +37,10 @@ export default defineConfig({
        * percentage and less real confidence.
        */
       thresholds: {
-        statements: 68,
-        branches: 61,
-        functions: 78,
-        lines: 68,
+        statements: 70,
+        branches: 63,
+        functions: 80,
+        lines: 70,
       },
     },
   },
