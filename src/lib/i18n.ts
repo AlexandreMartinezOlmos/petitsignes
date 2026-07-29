@@ -76,6 +76,7 @@ const MESSAGES = {
     'card.noVideo': 'Sense vídeo en {signLanguage}',
     'card.watchAtSource': 'Veure a {source}',
     'card.posterPending': 'Encara no tenim la imatge d’aquest signe',
+    'card.openEntry': 'fitxa del signe',
 
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',
@@ -193,6 +194,7 @@ const MESSAGES = {
     'card.noVideo': 'Sin vídeo en {signLanguage}',
     'card.watchAtSource': 'Ver en {source}',
     'card.posterPending': 'Todavía no tenemos la imagen de este signo',
+    'card.openEntry': 'ficha del signo',
 
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',
@@ -311,6 +313,7 @@ const MESSAGES = {
     'card.noVideo': 'No video in {signLanguage}',
     'card.watchAtSource': 'Watch at {source}',
     'card.posterPending': 'We do not have the image for this sign yet',
+    'card.openEntry': 'sign entry',
 
     'signLanguage.lsc': 'LSC',
     'signLanguage.lse': 'LSE',

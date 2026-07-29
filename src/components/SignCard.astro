@@ -146,7 +146,23 @@ const href = localeHref(signPath(sign.id), language);
             one of them rather than sitting beside it. */
         }
         <h3 class="sign-card__title">
-          <a class="sign-card__link" href={href}>{label}</a>
+          {
+            /*
+            The visually hidden half is the same pattern the CTAs use, and it is
+            here for two reasons that happen to agree. A screen reader listing
+            the links of this page would otherwise hear 195 bare words with no
+            hint of where any of them goes; and Lighthouse rejects a link whose
+            entire text sits in its blocklist of generic words, which on a page
+            made of vocabulary is a matter of time — "ir" tripped it and scored
+            the Spanish catalogue 0.92 on SEO. It says "fitxa" rather than
+            "veure el signe" on purpose: the play button on the same card is
+            already called that, and two links a card apart with the same name
+            and different destinations is the confusion this is meant to avoid.
+          */
+          }
+          <a class="sign-card__link" href={href}>
+            {label}<span class="sr-only">: {t('card.openEntry')}</span>
+          </a>
         </h3>
         {
           showCategory && (

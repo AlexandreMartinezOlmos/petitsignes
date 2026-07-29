@@ -33,9 +33,11 @@ test.describe('finding a sign page', () => {
 
     await page
       .locator('.sign-card[data-sign-id="leche"]')
-      // Exact: the external CTA on a Spanish card is also named after the word
-      // ("Ver en CNSE-DILSE: leche").
-      .getByRole('link', { name: 'leche', exact: true })
+      // Anchored at the start: the external CTA on a Spanish card is also named
+      // after the word ("Ver en CNSE-DILSE: leche"), so a bare substring matches
+      // both. Not anchored at the colon — `.sr-only` is positioned, so the
+      // accessible name reads "leche : ficha del signo" with a space before it.
+      .getByRole('link', { name: /^leche/i })
       .click();
 
     await expect(page).toHaveURL(new RegExp(`${ES}$`));
@@ -97,12 +99,16 @@ test.describe('what a sign page says', () => {
     await page.goto(CA);
 
     const related = page.locator('.sign-related');
-    // Same category, never the sign itself.
-    await expect(related.getByRole('link')).not.toHaveText(['llet']);
-    await expect(related.getByRole('link').first()).toHaveAttribute(
-      'href',
-      /^\/signe\/[a-z0-9-]+\/$/,
-    );
+    // The neighbours only — the section also holds the link back to the whole
+    // catalogue, which is deliberately not a sign page.
+    const hrefs = await related
+      .locator('.sign-related__link')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+
+    expect(hrefs.length).toBeGreaterThan(0);
+    // Every neighbour is a sign page, and none of them is the page you are on.
+    expect(hrefs.every((href) => /^\/signe\/[a-z0-9-]+\/$/.test(href ?? ''))).toBe(true);
+    expect(hrefs).not.toContain(CA);
 
     await expect(page.locator('.breadcrumb__link')).toHaveAttribute('href', '/');
   });

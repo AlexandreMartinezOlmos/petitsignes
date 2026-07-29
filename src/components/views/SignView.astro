@@ -251,8 +251,11 @@ const updatedAt = video
           <ul class="sign-related__list">
             {related.map((other) => (
               <li>
+                {/* Same reasoning as the card's title link: a list of bare
+                    words tells a screen reader nothing about where they go. */}
                 <a class="sign-related__link" href={localeHref(signPath(other.id), language)}>
                   {other.labels[language]}
+                  <span class="sr-only">: {t('card.openEntry')}</span>
                 </a>
               </li>
             ))}
