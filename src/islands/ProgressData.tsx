@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { ANALYTICS_EVENTS, countEvent } from '../lib/analytics.ts';
 import { createTranslator, type MessageKey, type Translator } from '../lib/i18n.ts';
 import { downloadJson, progressFileName } from '../lib/progress-file.ts';
@@ -7,6 +7,16 @@ import type { Language } from '../lib/types.ts';
 
 interface Props {
   language: Language;
+  /**
+   * Every sign id in the catalogue, from the page that renders this island.
+   *
+   * It is what lets an import drop words the vocabulary no longer has, and what
+   * keeps the summary above the buttons honest: a retired id sits in storage
+   * invisibly and would otherwise be counted forever. Roughly 1.2 kB of props on
+   * this page and none on the catalogue, which is the page whose JavaScript
+   * budget actually matters.
+   */
+  signIds: readonly string[];
 }
 
 interface Counts {
@@ -45,8 +55,10 @@ function summarise(t: Translator, counts: Counts): string {
  * Hydrated with `client:visible`: it costs nothing on the catalogue, which is
  * the page whose JavaScript budget actually matters.
  */
-export default function ProgressData({ language }: Props) {
+export default function ProgressData({ language, signIds }: Props) {
   const t = createTranslator(language);
+
+  const knownIds = useMemo(() => new Set(signIds), [signIds]);
 
   // `null` until the store answers, not `{0, 0}`. Rendered on the server, that
   // placeholder read as "0 preferits · 0 signes apresos" — a rotund and false
@@ -59,11 +71,22 @@ export default function ProgressData({ language }: Props) {
 
   // The store notifies on every write, so the summary stays true after an
   // import or a reset without this component tracking the changes itself.
+  //
+  // Counted against the catalogue rather than as raw array lengths: the store is
+  // deliberately catalogue-agnostic and keeps whatever it was given, so a sign
+  // retired from the vocabulary stays in storage and would be counted here even
+  // though no page can show it. Claiming "12 preferits" next to eleven visible
+  // cards is a number the visitor cannot reconcile.
   useEffect(() => {
+    const countKnown = (ids: readonly string[]) => ids.filter((id) => knownIds.has(id)).length;
+
     return getProgressStore().subscribe((snapshot) => {
-      setCounts({ favorites: snapshot.favorites.length, learned: snapshot.learned.length });
+      setCounts({
+        favorites: countKnown(snapshot.favorites),
+        learned: countKnown(snapshot.learned),
+      });
     });
-  }, []);
+  }, [knownIds]);
 
   const onExport = useCallback(() => {
     void (async () => {
@@ -83,19 +106,44 @@ export default function ProgressData({ language }: Props) {
 
       void (async () => {
         try {
-          const store = getProgressStore();
-          await store.import(await file.text());
-          const [favorites, learned] = await Promise.all([
-            store.getFavorites(),
-            store.getLearned(),
-          ]);
+          const result = await getProgressStore().import(await file.text(), { knownIds });
           countEvent(ANALYTICS_EVENTS.progressImported);
-          setFeedback({
-            kind: 'status',
-            message: t('progress.imported', {
-              summary: summarise(t, { favorites: favorites.length, learned: learned.length }),
-            }),
-          });
+
+          // What changed, not what the total now is: the summary line above
+          // already shows the total, and after a merge the interesting number is
+          // the one the file contributed. Saying "0 preferits i 0 apresos" would
+          // be true and useless, so a file that adds nothing says so in words.
+          const sentences =
+            result.addedFavorites === 0 && result.addedLearned === 0
+              ? [t('progress.importedNothing')]
+              : [
+                  t('progress.importedAdded', {
+                    favorites: count(
+                      t,
+                      result.addedFavorites,
+                      'progress.favoritesCountOne',
+                      'progress.favoritesCount',
+                    ),
+                    learned: count(
+                      t,
+                      result.addedLearned,
+                      'progress.learnedCountOne',
+                      'progress.learnedCount',
+                    ),
+                  }),
+                ];
+
+          // Never silent: a dropped id is the one thing that makes the numbers
+          // fail to add up, so it is stated rather than left to be noticed.
+          if (result.skipped > 0) {
+            sentences.push(
+              result.skipped === 1
+                ? t('progress.importedSkippedOne')
+                : t('progress.importedSkipped', { count: result.skipped }),
+            );
+          }
+
+          setFeedback({ kind: 'status', message: sentences.join(' ') });
         } catch {
           // Every failure mode here — malformed JSON, a foreign file, a newer
           // schema — is the same thing to the visitor: this file cannot be used.
@@ -103,7 +151,7 @@ export default function ProgressData({ language }: Props) {
         }
       })();
     },
-    [t],
+    [t, knownIds],
   );
 
   const onReset = useCallback(() => {

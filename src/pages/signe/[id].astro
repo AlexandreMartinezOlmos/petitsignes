@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import SignView from '../../components/views/SignView.astro';
+import type { SignEntry } from '../../lib/types.ts';
+
+/**
+ * One page per sign, in Catalan and therefore in LSC.
+ *
+ * The Spanish route is a second file rather than a locale param, for the same
+ * reason the 404 is: each build then emits exactly one sign language, and the
+ * other one cannot reach the markup by any route (§4.4).
+ */
+export async function getStaticPaths() {
+  const signs = await getCollection('signs');
+  return signs.map((entry) => ({
+    params: { id: entry.id },
+    props: { sign: { id: entry.id, ...entry.data } satisfies SignEntry },
+  }));
+}
+
+const { sign } = Astro.props;
+---
+
+<SignView language="ca" sign={sign} />

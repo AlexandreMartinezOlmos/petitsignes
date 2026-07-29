@@ -20,6 +20,11 @@ const PAGES = [
   // per locale, so `/es/…` fails in Spanish.
   { name: 'not found (ca)', path: '/404.html' },
   { name: 'not found (es)', path: '/es/404.html' },
+  // One template, 390 pages. `leche` is the one that exercises every branch of
+  // it: an embedded LSC video in Catalan, an external LSE link in Spanish, and
+  // a declared variant in the source block.
+  { name: 'sign (ca)', path: '/signe/leche/' },
+  { name: 'sign (es)', path: '/es/signe/leche/' },
 ];
 
 for (const { name, path } of PAGES) {

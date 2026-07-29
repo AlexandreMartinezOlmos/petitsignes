@@ -74,21 +74,24 @@ test.describe('progress data', () => {
     expect(JSON.parse(contents)).toMatchObject({ favorites: ['leche'], learned: [] });
   });
 
+  /** The one helper every import test needs: drop a file on the input. */
+  async function importFile(page: Page, snapshot: unknown): Promise<void> {
+    await page.locator('.progress-data input[type="file"]').setInputFiles({
+      name: 'progres.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(snapshot)),
+    });
+  }
+
   test('imports a file and the catalogue reflects it', async ({ page }) => {
     await page.goto(ABOUT_PATH);
     const section = await openProgressSection(page);
 
-    await section.locator('input[type="file"]').setInputFiles({
-      name: 'progres.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(
-        JSON.stringify({
-          schemaVersion: 1,
-          favorites: ['leche', 'agua'],
-          learned: ['mas'],
-          preferences: { language: 'ca', signLanguage: 'lsc' },
-        }),
-      ),
+    await importFile(page, {
+      schemaVersion: 1,
+      favorites: ['leche', 'agua'],
+      learned: ['pan'],
+      preferences: { language: 'ca', signLanguage: 'lsc' },
     });
 
     await expect(page.getByRole('status')).toContainText('2 preferits');
@@ -99,6 +102,68 @@ test.describe('progress data', () => {
     await expect(
       page.locator('.sign-card[data-sign-id="leche"] [data-action="favorite"]'),
     ).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  /**
+   * The reason the merge exists. Importing used to replace the snapshot, so two
+   * carers of the same baby swapping files destroyed one of the two — and the
+   * hint had to warn about it, which made the button a decision instead of an
+   * action. Nothing that is already here may be lost.
+   */
+  test('an imported file adds to this browser instead of replacing it', async ({ page }) => {
+    await seedProgress(page);
+    await page.goto(ABOUT_PATH);
+    const section = await openProgressSection(page);
+
+    await importFile(page, { schemaVersion: 1, favorites: ['agua'], learned: [] });
+
+    await expect(page.getByRole('status')).toContainText('S’han afegit 1 preferit');
+    await expect(section).toContainText('2 preferits');
+
+    await page.goto('/');
+    for (const id of ['leche', 'agua']) {
+      await expect(
+        page.locator(`.sign-card[data-sign-id="${id}"] [data-action="favorite"]`),
+      ).toHaveAttribute('aria-pressed', 'true');
+    }
+  });
+
+  test('says so when a file brings nothing new', async ({ page }) => {
+    await seedProgress(page);
+    await page.goto(ABOUT_PATH);
+    await openProgressSection(page);
+
+    await importFile(page, { schemaVersion: 1, favorites: ['leche'], learned: [] });
+
+    // "0 preferits i 0 signes apresos" would be true and useless.
+    await expect(page.getByRole('status')).toContainText(/no portava res de nou/i);
+  });
+
+  /**
+   * `mas` was a real id until the vocabulary cleanup retired it, and an export
+   * taken before that still carries it. Storing it would leave a favourite that
+   * no page can show and yet the summary counts, so it is dropped — and the
+   * visitor is told, because otherwise the numbers simply fail to add up.
+   */
+  test('drops a word the catalogue no longer has, out loud', async ({ page }) => {
+    await page.goto(ABOUT_PATH);
+    const section = await openProgressSection(page);
+
+    await importFile(page, { schemaVersion: 1, favorites: ['leche', 'mas'], learned: ['mas'] });
+
+    await expect(page.getByRole('status')).toContainText(/1 signe del fitxer ja no és al catàleg/i);
+    await expect(section).toContainText('1 preferit ·');
+  });
+
+  test('the hint promises what the button now does', async ({ page }) => {
+    await page.goto(ABOUT_PATH);
+    const section = await openProgressSection(page);
+
+    // The copy is a promise, and it was the honest warning of the old
+    // destructive import. It has to change with the behaviour, in both
+    // directions: no visitor should read "substituirà" and find a merge.
+    await expect(section).toContainText(/no n’esborra res/i);
+    await expect(section).not.toContainText(/substituirà/i);
   });
 
   test('rejects a file that is not a progress export', async ({ page }) => {

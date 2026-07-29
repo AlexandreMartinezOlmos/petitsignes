@@ -3,7 +3,7 @@
 > Document generat automàticament amb `npm run content:export`. **No l’editis a mà**: els
 > canvis es fan a `content/vocabulary.tsv` i s'apliquen amb `npm run content:import`.
 
-Actualitzat: 2026-07-27 · 195 conceptes · 195 amb LSC · 195 amb LSE.
+Actualitzat: 2026-07-29 · 194 conceptes · 194 amb LSC · 194 amb LSE.
 
 ## Menjar i beure
 
@@ -29,7 +29,6 @@ Actualitzat: 2026-07-27 · 195 conceptes · 195 amb LSC · 195 amb LSE.
 | pera / pera / pear | [▶ vídeo](https://www.youtube.com/watch?v=WYIyBC-ENuQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pera) |
 | plàtan / plátano / banana | [▶ vídeo](https://www.youtube.com/watch?v=meyCZJPVg18) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pl%C3%A1tano) |
 | formatge / queso / cheese | [▶ vídeo](https://www.youtube.com/watch?v=PyiVGkm5amY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=queso) |
-| beure / beber / drink | [▶ vídeo](https://www.youtube.com/watch?v=1W3Y9fbwwpw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=beber) |
 | sopa / sopa / soup | [▶ vídeo](https://www.youtube.com/watch?v=neZfK2YHlpQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=sopa) |
 | tomàquet / tomate / tomato | [▶ vídeo](https://www.youtube.com/watch?v=_cc-R8GvJes) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tomate) |
 | raïm / uva / grape | [▶ vídeo](https://www.youtube.com/watch?v=TLDeV9LkRBw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=uva) |
