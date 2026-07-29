@@ -17,8 +17,12 @@ import { SITE_ORIGIN } from './site.ts';
  *
  * This is the single list the sitemap and its test both read, so a page added
  * without a sitemap entry is a test failure rather than an omission nobody
- * notices. When a route per sign arrives, extend this from the content
- * collection rather than by hand.
+ * notices.
+ *
+ * The 194 sign pages are deliberately NOT here: they come from the content
+ * collection, which the endpoint appends (see `sitemap.xml.ts`). A list of words
+ * written out twice is a list that disagrees with itself the first time the
+ * vocabulary changes.
  */
 export const SITE_PATHS = ['/', '/el-projecte/', '/credits/', '/accessibilitat/'] as const;
 

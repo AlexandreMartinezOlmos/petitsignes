@@ -1,16 +1,18 @@
 ---
 import { createTranslator } from '../lib/i18n.ts';
-import {
-  LANGUAGE_TO_SIGN_LANGUAGE,
-  type Category,
-  type Language,
-  type SignEntry,
-} from '../lib/types.ts';
+import { localeHref, type RoutedLocale } from '../lib/routing.ts';
+import { signPath } from '../lib/signs.ts';
+import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../lib/types.ts';
 
 interface Props {
   sign: SignEntry;
   category: Category;
-  language: Language;
+  /**
+   * Narrower than `Language` on purpose: a card links to the sign's own page,
+   * and only the routed locales have one. An unrouted language would have to
+   * build a URL that is not published.
+   */
+  language: RoutedLocale;
   /**
    * Whether the category chip says anything this card is not already under.
    *
@@ -44,11 +46,22 @@ const video = sign.videos.find((item) => item.signLanguage === signLanguage);
 const isLsc = signLanguage === 'lsc';
 const fullName = isLsc ? t('signLanguage.lscFull') : t('signLanguage.lseFull');
 const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
+
+/**
+ * The word is the link to its own page.
+ *
+ * Only the title, not the whole card: the card already carries three controls of
+ * its own, and a card-wide link would swallow the taps meant for them and make
+ * every toggle a nested interactive element. A heading that is a link is also
+ * what gives a screen reader a route out of the heading list.
+ */
+const href = localeHref(signPath(sign.id), language);
 ---
 
 <article
   class="sign-card"
   data-sign-id={sign.id}
+  data-progress-for={sign.id}
   data-category={sign.category}
   data-first-sign={sign.isFirstSign ? 'true' : 'false'}
   data-label-ca={sign.labels.ca}
@@ -132,7 +145,25 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
           /* h3: the grid is grouped under section headings, and a card belongs to
             one of them rather than sitting beside it. */
         }
-        <h3 class="sign-card__title">{label}</h3>
+        <h3 class="sign-card__title">
+          {
+            /*
+            The visually hidden half is the same pattern the CTAs use, and it is
+            here for two reasons that happen to agree. A screen reader listing
+            the links of this page would otherwise hear 194 bare words with no
+            hint of where any of them goes; and Lighthouse rejects a link whose
+            entire text sits in its blocklist of generic words, which on a page
+            made of vocabulary is a matter of time — "ir" tripped it and scored
+            the Spanish catalogue 0.92 on SEO. It says "fitxa" rather than
+            "veure el signe" on purpose: the play button on the same card is
+            already called that, and two links a card apart with the same name
+            and different destinations is the confusion this is meant to avoid.
+          */
+          }
+          <a class="sign-card__link" href={href}>
+            {label}<span class="sr-only">: {t('card.openEntry')}</span>
+          </a>
+        </h3>
         {
           showCategory && (
             <span class="sign-card__chip" data-category={sign.category}>

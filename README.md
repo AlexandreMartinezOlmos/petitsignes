@@ -11,7 +11,7 @@ es un recuento anónimo y agregado de visitas ([GoatCounter](https://www.goatcou
 identificadores y sin seguir a nadie entre visitas — por eso no hay aviso de cookies.
 
 > **Estado:** MVP funcional. Catálogo, búsqueda, filtros, progreso local, reproductor e interfaz
-> en catalán y castellano. **195 conceptos, todos con vídeo LSC y enlace LSE.** Cada vídeo
+> en catalán y castellano. **194 conceptos, todos con vídeo LSC y enlace LSE.** Cada vídeo
 > declara su fuente, su licencia y su fecha (ver
 > [Estado del contenido](#estado-del-contenido)).
 
@@ -100,14 +100,14 @@ bebé. Ver la sección siguiente para el detalle de cómo se muestran estos víd
 
 ## Estado del contenido
 
-El catálogo tiene **195 conceptos** curados con etiquetas en catalán, castellano e inglés,
+El catálogo tiene **194 conceptos** curados con etiquetas en catalán, castellano e inglés,
 repartidos en 15 categorías, más una ruta guiada de 11 "primeros signos". Todos tienen vídeo LSC
 y enlace LSE: un concepto sin fuente oficial para alguna de las dos lenguas no entra en el
 catálogo.
 
 |                     | LSC                         | LSE                        |
 | ------------------- | --------------------------- | -------------------------- |
-| Conceptos con vídeo | **195** de 195              | **195** de 195             |
+| Conceptos con vídeo | **194** de 194              | **194** de 194             |
 | Cómo se muestra     | vídeo de YouTube incrustado | enlace a la ficha de DILSE |
 
 **Ningún vídeo se aloja en este proyecto.** Las condiciones de reutilización de las dos fuentes

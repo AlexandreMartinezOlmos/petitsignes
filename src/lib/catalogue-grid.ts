@@ -170,8 +170,12 @@ function setToggleState(button: HTMLButtonElement, pressed: boolean): void {
  */
 export function mountSignCards(root: HTMLElement): () => void {
   const byId = new Map<string, HTMLElement>();
-  for (const element of root.querySelectorAll<HTMLElement>('.sign-card')) {
-    const id = element.dataset.signId;
+  // `data-progress-for` rather than `.sign-card`: a class is a look, and the
+  // sign's own page shows the same two toggles without being a card. The
+  // attribute states the contract instead — this element carries the progress
+  // state of that id — so a third presentation needs no change here.
+  for (const element of root.querySelectorAll<HTMLElement>('[data-progress-for]')) {
+    const id = element.dataset.progressFor;
     if (id) byId.set(id, element);
   }
 
@@ -257,7 +261,7 @@ export function mountCatalogue(root: HTMLElement): () => void {
 
   // Headings printed between the runs of signs. Which run a card belongs to is
   // derived rather than stored on the element: the grouping is already implied
-  // by `isFirstSign` and the category, and a third attribute on 195 cards
+  // by `isFirstSign` and the category, and a third attribute on 194 cards
   // could only ever disagree with them.
   const sectionElements = new Map<string, HTMLElement>();
   for (const element of root.querySelectorAll<HTMLElement>('[data-section]')) {

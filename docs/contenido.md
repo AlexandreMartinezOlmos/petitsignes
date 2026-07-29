@@ -186,7 +186,7 @@ real, nunca al revés**. Si no aparece ninguna fuente válida, el concepto no en
 
 ## Estado actual
 
-195 conceptos, **todos con vídeo LSC y enlace LSE**. El catálogo completo, con los enlaces
+194 conceptos, **todos con vídeo LSC y enlace LSE**. El catálogo completo, con los enlaces
 clicables, se genera en [`vocabulari.md`](vocabulari.md).
 
 Las condiciones de reutilización de cada fuente están analizadas en
