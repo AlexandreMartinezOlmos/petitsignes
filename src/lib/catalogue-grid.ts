@@ -261,7 +261,7 @@ export function mountCatalogue(root: HTMLElement): () => void {
 
   // Headings printed between the runs of signs. Which run a card belongs to is
   // derived rather than stored on the element: the grouping is already implied
-  // by `isFirstSign` and the category, and a third attribute on 195 cards
+  // by `isFirstSign` and the category, and a third attribute on 194 cards
   // could only ever disagree with them.
   const sectionElements = new Map<string, HTMLElement>();
   for (const element of root.querySelectorAll<HTMLElement>('[data-section]')) {

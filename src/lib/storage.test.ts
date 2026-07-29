@@ -21,7 +21,7 @@ describe('mergeSnapshots', () => {
   it('keeps every id when it is not told what the catalogue holds', () => {
     // The store must stay usable without the catalogue: it is the interface a
     // future remote implementation has to satisfy, and that one will not have
-    // 195 ids to hand either. No filter is not the same as an empty filter.
+    // 194 ids to hand either. No filter is not the same as an empty filter.
     const { snapshot: merged, result } = mergeSnapshots(snapshot([]), snapshot(['cualquiera']));
 
     expect(merged.favorites).toEqual(['cualquiera']);

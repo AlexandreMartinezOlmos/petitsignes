@@ -19,7 +19,7 @@ import { SITE_ORIGIN } from './site.ts';
  * without a sitemap entry is a test failure rather than an omission nobody
  * notices.
  *
- * The 195 sign pages are deliberately NOT here: they come from the content
+ * The 194 sign pages are deliberately NOT here: they come from the content
  * collection, which the endpoint appends (see `sitemap.xml.ts`). A list of words
  * written out twice is a list that disagrees with itself the first time the
  * vocabulary changes.

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import SignView from '../../../components/views/SignView.astro';
 import type { SignEntry } from '../../../lib/types.ts';
 
-/** The same 195 pages in Spanish, and therefore in LSE. See `/signe/[id]`. */
+/** The same 194 pages in Spanish, and therefore in LSE. See `/signe/[id]`. */
 export async function getStaticPaths() {
   const signs = await getCollection('signs');
   return signs.map((entry) => ({
