@@ -18,7 +18,6 @@ function row(overrides: Partial<VocabularyRow> = {}): VocabularyRow {
     id: 'gato',
     category: 'animals',
     firstSignOrder: null,
-    difficulty: null,
     ca: 'gat',
     es: 'gato',
     en: 'cat',
@@ -115,18 +114,6 @@ describe('applyRow', () => {
     expect(lse.videoUrl).toContain('buscar=gato');
     expect(lse.updatedAt).toBe(TODAY);
   });
-
-  it('preserves tips it does not manage', () => {
-    const existing: SignData = {
-      labels: { ca: 'gat', es: 'gato', en: 'cat' },
-      category: 'animals',
-      isFirstSign: false,
-      tips: { ca: 't', es: 't', en: 't' },
-      videos: [],
-    };
-    const data = applyRow(row(), existing, TODAY);
-    expect(data.tips).toEqual({ ca: 't', es: 't', en: 't' });
-  });
 });
 
 describe('tsv round-trip', () => {
@@ -137,7 +124,6 @@ describe('tsv round-trip', () => {
         id: 'leche',
         category: 'food',
         firstSignOrder: 1,
-        difficulty: 1,
         lscYouTube: ['a1b2c3d4e5f', 'z9y8x7w6v5u'],
       }),
     ];
@@ -165,7 +151,13 @@ describe('tsv round-trip', () => {
     expect(() => parseTsv(tsv)).toThrow(TsvError);
   });
 
-  it('rejects a bad difficulty', () => {
-    expect(() => parseTsv(serializeTsv([row()]).replace('\t\tgat', '\t9\tgat'))).toThrow(TsvError);
+  it('rejects a header that is not the columns this build expects', () => {
+    // Dropping `difficulty` changed the shape of every row. A manifest written
+    // against the old header would otherwise be read with every cell shifted by
+    // one — labels landing in the wrong language, a YouTube id read as a search
+    // term — and each of those is a wrong sign shown to a parent, which is the
+    // one failure this project cannot have. Better to refuse the file.
+    const stale = serializeTsv([row()]).replace('first_sign_order', 'first_sign_order\tdifficulty');
+    expect(() => parseTsv(stale)).toThrow(TsvError);
   });
 });

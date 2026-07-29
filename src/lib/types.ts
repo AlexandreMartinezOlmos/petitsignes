@@ -106,8 +106,6 @@ export interface SignEntry {
   category: CategoryId;
   isFirstSign: boolean;
   firstSignOrder?: number;
-  difficulty?: 1 | 2 | 3;
-  tips?: LocalizedText;
   videos: SignVideo[];
 }
 

@@ -27,8 +27,6 @@ function serialize(data: SignData): string {
     category: data.category,
     isFirstSign: data.isFirstSign,
     ...(data.firstSignOrder !== undefined ? { firstSignOrder: data.firstSignOrder } : {}),
-    ...(data.difficulty !== undefined ? { difficulty: data.difficulty } : {}),
-    ...(data.tips !== undefined ? { tips: data.tips } : {}),
     videos: data.videos,
   };
   return `${JSON.stringify(ordered, null, 2)}\n`;
