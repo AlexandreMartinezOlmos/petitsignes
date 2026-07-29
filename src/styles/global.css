@@ -1450,6 +1450,43 @@
   hyphens: auto;
 }
 
+/* The word is the route to its own page, so the heading holds a link. It
+   inherits the title's whole treatment and shows nothing extra at rest: an
+   underline on 195 headings would turn the grid into a wall of rules, and the
+   card is already unmistakably one thing you can act on. The underline appears
+   on hover and on focus, where it is the confirmation that this particular word
+   is the target — and the focus ring is the system's, untouched. */
+.sign-card__link {
+  color: inherit;
+  text-decoration: none;
+  /* WCAG 2.5.8 asks 24×24 of a target that is not inline in a sentence, and a
+     heading link is not. Both axes need the floor and for different reasons:
+     at the smallest step of the scale the line box is 1.25rem × 1.15 = 23px,
+     and the catalogue is full of two-letter words — "sí" measured 15×24, "jo"
+     17×24. The e2e target-size test is what found them.
+
+     Deliberately not the 44px the buttons carry: that would add a finger's
+     width of empty space around the word on all 195 cards to protect a target
+     nobody has trouble hitting. */
+  display: inline-block;
+  min-inline-size: 1.5rem;
+  min-block-size: 1.5rem;
+}
+
+@media (hover: hover) {
+  .sign-card__link:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+}
+
+.sign-card__link:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
 /* --- Card toggles ----------------------------------------------------------
    On a wide card they sit on the image, stacked down its trailing edge. They
    used to live under the word, inside its block, where two 44px targets and a

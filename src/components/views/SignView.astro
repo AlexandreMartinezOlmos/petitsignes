@@ -1,0 +1,491 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
+import { createTranslator } from '../../lib/i18n.ts';
+import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
+import { relatedSigns, signPath } from '../../lib/signs.ts';
+import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
+
+interface Props {
+  language: RoutedLocale;
+  sign: SignEntry;
+}
+
+/**
+ * One sign, at its own address.
+ *
+ * The catalogue publishes 195 concepts on one page, which is one thing as far as
+ * a search engine is concerned — while the question a parent actually types is
+ * "how do you sign milk in LSC". This page is the answer to exactly that
+ * question, and it is also the link you can send someone.
+ *
+ * Like every other page it ships only its own sign language (§4.4). The two
+ * locales are two builds of the same file, so an LSE gesture can no more reach
+ * the Catalan page here than it can in the grid.
+ *
+ * There are no posters and there cannot be (§2.1), so the media block is the
+ * same neutral category marker the card uses. Nothing on this page describes how
+ * the gesture is made: it names the word, credits the source and gets out of the
+ * way of the video.
+ */
+const { language, sign } = Astro.props;
+const t = createTranslator(language);
+
+const signLanguage = LANGUAGE_TO_SIGN_LANGUAGE[language];
+const video = sign.videos.find((item) => item.signLanguage === signLanguage);
+const isLsc = signLanguage === 'lsc';
+const fullName = isLsc ? t('signLanguage.lscFull') : t('signLanguage.lseFull');
+const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
+
+const label = sign.labels[language];
+
+const categoryEntries = await getCollection('categories');
+const categoryEntry = categoryEntries.find((item) => item.data.id === sign.category);
+if (!categoryEntry) {
+  throw new Error(`Sign "${sign.id}" is in category "${sign.category}", which does not exist`);
+}
+const category = categoryEntry.data as Category;
+
+const signEntries = await getCollection('signs');
+const allSigns: SignEntry[] = signEntries.map((entry) => ({ id: entry.id, ...entry.data }));
+const related = relatedSigns(sign, allSigns, language);
+
+const catalogueHref = localeHref('/', language);
+
+/**
+ * The description is the sentence a search result shows, so it says what the
+ * page can actually deliver. When a sign language has no video for this concept
+ * the page still exists and is still worth reaching — but promising a video it
+ * does not have would be the same false claim §2.1 forbids on the card.
+ */
+const description = video
+  ? t('sign.meta', { label, signLanguage: fullName })
+  : t('sign.metaNoVideo', { label, signLanguage: fullName });
+
+/**
+ * The date the source last updated this entry. Showing it is not a nicety: the
+ * Vocabulari is reused under Llei 19/2014 art. 17.1, which requires citing both
+ * the source and the date of the version being reused.
+ */
+const updatedAt = video
+  ? new Intl.DateTimeFormat(language, { dateStyle: 'long' }).format(new Date(video.updatedAt))
+  : null;
+---
+
+<BaseLayout language={language} path={signPath(sign.id)} title={label} description={description}>
+  <div class="sign-page">
+    <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
+      <a class="breadcrumb__link" href={catalogueHref}>{t('nav.catalogue')}</a>
+      <span class="breadcrumb__sep" aria-hidden="true">/</span>
+      <span class="breadcrumb__current" aria-current="page">{label}</span>
+    </nav>
+
+    {
+      /*
+      `data-progress-for` is what wires the two toggles below to the same
+      storage the catalogue writes: favouriting a sign here and going back to
+      the grid has to show it favourited there.
+    */
+    }
+    <article class="sign-detail" data-progress-for={sign.id}>
+      <div class="sign-detail__media">
+        <svg class="icon-lg" aria-hidden="true" focusable="false">
+          <use href={`#i-${category.icon}`}></use>
+        </svg>
+        <span class="sr-only">{t('card.posterPending')}</span>
+      </div>
+
+      <div class="sign-detail__body">
+        <p class="sign-detail__category">
+          <span class="sign-card__chip" data-category={sign.category}>
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href={`#i-${category.icon}`}></use>
+            </svg>
+            {category.labels[language]}
+          </span>
+        </p>
+
+        <h1 class="sign-detail__title">{label}</h1>
+        <p class="sign-detail__subtitle">{t('sign.subtitle', { signLanguage: fullName })}</p>
+
+        <div class="sign-detail__actions">
+          {
+            video === undefined ? (
+              /* A statement of fact, not a control — the same wording and the
+                 same reasoning as on the card: this sign language has no entry
+                 we may show, and by §2.1 we will not invent one. */
+              <p class="sign-card__novideo">
+                <svg class="icon-sm" aria-hidden="true" focusable="false">
+                  <use href="#i-video-off" />
+                </svg>
+                {t('card.noVideo', { signLanguage: shortName })}
+              </p>
+            ) : video.delivery === 'youtube-embed' ? (
+              <button
+                type="button"
+                class="sign-card__cta sign-detail__cta"
+                data-action="play"
+                data-sign-id={sign.id}
+                data-sign-language={signLanguage}
+                data-label={label}
+                data-video-url={video.videoUrl}
+                data-poster-url={video.posterUrl}
+                data-source={video.source}
+                data-source-url={video.sourceUrl}
+                data-license={video.license}
+              >
+                <svg class="icon-sm" aria-hidden="true" focusable="false">
+                  <use href="#i-play" />
+                </svg>
+                {t('card.watchSign')}
+                <span class="sr-only">: {label}</span>
+              </button>
+            ) : (
+              <a
+                class="sign-card__cta sign-card__cta--external sign-detail__cta"
+                href={video.videoUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {t('card.watchAtSource', { source: video.source })}
+                <span class="sr-only">: {label}</span>
+                <svg class="icon-sm" aria-hidden="true" focusable="false">
+                  <use href="#i-external" />
+                </svg>
+              </a>
+            )
+          }
+
+          <div class="sign-detail__toggles">
+            <button
+              type="button"
+              class="sign-detail__toggle"
+              data-action="favorite"
+              data-sign-id={sign.id}
+              aria-pressed="false"
+              aria-label={t('card.addFavorite')}
+              data-label-on={t('card.removeFavorite')}
+              data-label-off={t('card.addFavorite')}
+            >
+              <svg class="icon" aria-hidden="true" focusable="false">
+                <use href="#i-star"></use>
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="sign-detail__toggle"
+              data-action="learned"
+              data-sign-id={sign.id}
+              aria-pressed="false"
+              aria-label={t('card.markLearned')}
+              data-label-on={t('card.unmarkLearned')}
+              data-label-off={t('card.markLearned')}
+            >
+              <svg class="icon" aria-hidden="true" focusable="false">
+                <use href="#i-check"></use>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    {
+      /*
+      The videos are not ours. Every one of them travels with its source, the
+      licence it is used under and the date of that version — which is what the
+      Vocabulari's terms require, not a courtesy. On the card this only fits
+      inside the player; here there is room to print it in full.
+    */
+    }
+    {
+      video && (
+        <section class="sign-source" aria-labelledby="sign-source-title">
+          <h2 class="sign-source__title" id="sign-source-title">
+            {t('sign.sourceTitle')}
+          </h2>
+          <dl class="sign-source__list">
+            <dt>{t('sign.sourceName')}</dt>
+            <dd>{video.source}</dd>
+
+            <dt>{t('sign.sourceEntry')}</dt>
+            <dd>
+              <a href={video.sourceUrl} target="_blank" rel="noreferrer noopener">
+                {video.sourceUrl}
+              </a>
+            </dd>
+
+            {video.variant && (
+              <Fragment>
+                <dt>{t('sign.variant')}</dt>
+                <dd>{video.variant}</dd>
+              </Fragment>
+            )}
+
+            <dt>{t('sign.sourceUpdated')}</dt>
+            <dd>
+              <time datetime={video.updatedAt}>{updatedAt}</time>
+            </dd>
+          </dl>
+          <p class="sign-source__license">{video.license}</p>
+        </section>
+      )
+    }
+
+    {
+      /*
+      The way onward. A page with one word and one video is a dead end, and 195
+      of them reachable only from the index is a catalogue a crawler walks once
+      and never again. These are the same category the visitor is already in,
+      which is the only relationship the data actually states.
+    */
+    }
+    {
+      related.length > 0 && (
+        <section class="sign-related" aria-labelledby="sign-related-title">
+          <h2 class="sign-related__title" id="sign-related-title">
+            {t('sign.relatedTitle', { category: category.labels[language] })}
+          </h2>
+          <ul class="sign-related__list">
+            {related.map((other) => (
+              <li>
+                <a class="sign-related__link" href={localeHref(signPath(other.id), language)}>
+                  {other.labels[language]}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p>
+            <a class="sign-related__all" href={catalogueHref}>
+              {t('sign.relatedAll')}
+            </a>
+          </p>
+        </section>
+      )
+    }
+  </div>
+
+  <SignVideoDialog language={language} client:idle />
+</BaseLayout>
+
+<script>
+  import { mountSignCards } from '../../lib/catalogue-grid.ts';
+
+  /**
+   * The same wiring a card gets in the grid: the two toggles persist to storage
+   * and the CTA opens the player. Nothing here knows it is not a card, because
+   * `mountSignCards` looks for `data-progress-for` rather than for a class.
+   */
+  const root = document.querySelector<HTMLElement>('.sign-page');
+  if (root) mountSignCards(root);
+</script>
+
+<style>
+  /* Only this page uses these, so they stay here rather than in global.css —
+     the design system is for what repeats. The chip, the CTA and the
+     missing-video note are the exception: they are the catalogue's own
+     components and are reused as they are, so that a sign looks the same
+     wherever it is met. */
+  .sign-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-inline-size: 46rem;
+  }
+
+  /* Stacked on a phone, side by side as soon as there is room. The media block
+     leads because it is what the eye lands on, and because on a narrow screen
+     it is the only thing that says which category this word belongs to before
+     the chip is read. */
+  .sign-detail {
+    display: grid;
+    gap: 1.25rem;
+    align-items: center;
+  }
+
+  /* A short band on a phone, not a 4:3 block. There is no poster and there
+     cannot be (§2.1), so this is a category marker rather than an image: at the
+     full width of a 375px screen it was 281px of empty surface pushing the word
+     — the one thing the visitor came for — below the fold. It earns its 4:3 back
+     at the width where it sits beside the text instead of above it. */
+  .sign-detail__media {
+    display: grid;
+    place-items: center;
+    block-size: 8rem;
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface-sunken);
+    color: var(--color-brand);
+  }
+
+  .sign-detail__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .sign-detail__category {
+    display: flex;
+  }
+
+  /* The word, as loud as the site's own title elsewhere: on this page it is the
+     content, not a label for it. */
+  .sign-detail__title {
+    font-size: var(--text-display);
+    font-weight: var(--font-weight-heavy);
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+    color: var(--color-ink);
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .sign-detail__subtitle {
+    font-size: var(--text-base);
+    color: var(--color-ink-muted);
+  }
+
+  .sign-detail__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-block-start: 0.5rem;
+  }
+
+  .sign-detail__cta {
+    /* Wider than in the grid: here it is the page's one primary action rather
+       than one card's among 195. */
+    padding-inline: 1.5rem;
+  }
+
+  .sign-detail__toggles {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  /* Declared here rather than reusing `.sign-card__toggle`: that one is
+     absolutely positioned over the card's image and carries a solid pill so it
+     stays legible on an arbitrary category tint. On this page they sit in the
+     normal flow on a known surface, so they are plain 44px buttons. */
+  .sign-detail__toggle {
+    display: inline-flex;
+    min-inline-size: var(--spacing-touch);
+    min-block-size: var(--spacing-touch);
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    color: var(--color-ink-muted);
+    background-color: var(--color-surface);
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .sign-detail__toggle[aria-pressed='true'] {
+    color: var(--color-brand-ink);
+    border-color: var(--color-brand);
+    background-color: var(--color-brand-soft);
+  }
+
+  @media (hover: hover) {
+    .sign-detail__toggle:hover {
+      color: var(--color-ink);
+      border-color: var(--color-ink-muted);
+    }
+  }
+
+  .sign-source__title,
+  .sign-related__title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-display);
+    color: var(--color-ink);
+    margin-block-end: 0.75rem;
+  }
+
+  /* A definition list because that is what this is: four labelled facts about
+     one thing. The grid keeps the labels in a column of their own without the
+     markup pretending to be a table. */
+  .sign-source__list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.375rem 1rem;
+    font-size: var(--text-sm);
+  }
+
+  .sign-source__list dt {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-ink);
+  }
+
+  .sign-source__list dd {
+    color: var(--color-ink-muted);
+    /* A source URL is long and has no spaces the browser may break at, so
+       without this it decides the width of the whole page at 320px. */
+    overflow-wrap: anywhere;
+  }
+
+  /* The one link in this block sat in muted grey with no underline, which made
+     it indistinguishable from the three facts around it — colour alone would not
+     have been enough either (WCAG 1.4.1). */
+  .sign-source__list a {
+    color: var(--color-brand-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .sign-source__license {
+    margin-block-start: 0.75rem;
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+  }
+
+  .sign-related__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-block-end: 1rem;
+  }
+
+  .sign-related__link {
+    display: inline-flex;
+    min-block-size: var(--spacing-touch);
+    align-items: center;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-chip);
+    color: var(--color-ink);
+    background-color: var(--color-surface);
+  }
+
+  @media (hover: hover) {
+    .sign-related__link:hover {
+      border-color: var(--color-brand);
+      background-color: var(--color-brand-soft);
+    }
+  }
+
+  .sign-related__all {
+    display: inline-flex;
+    min-block-size: var(--spacing-touch);
+    align-items: center;
+    color: var(--color-brand-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (width >= 40rem) {
+    .sign-detail {
+      grid-template-columns: 16rem 1fr;
+      gap: 2rem;
+    }
+
+    .sign-detail__media {
+      block-size: auto;
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>
