@@ -23,8 +23,6 @@ export interface SignData {
   category: CategoryId;
   isFirstSign: boolean;
   firstSignOrder?: number;
-  difficulty?: 1 | 2 | 3;
-  tips?: LocalizedText;
   videos: SignVideo[];
 }
 
@@ -33,7 +31,6 @@ export interface VocabularyRow {
   id: string;
   category: CategoryId;
   firstSignOrder: number | null;
-  difficulty: 1 | 2 | 3 | null;
   ca: string;
   es: string;
   en: string;
@@ -47,7 +44,6 @@ export const TSV_COLUMNS = [
   'id',
   'category',
   'first_sign_order',
-  'difficulty',
   'ca',
   'es',
   'en',
@@ -95,7 +91,6 @@ export function entryToRow(id: string, data: SignData): VocabularyRow {
     id,
     category: data.category,
     firstSignOrder: data.firstSignOrder ?? null,
-    difficulty: data.difficulty ?? null,
     ca: data.labels.ca,
     es: data.labels.es,
     en: data.labels.en,
@@ -139,8 +134,7 @@ function lseVideo(term: string, existing: SignVideo | undefined, today: string):
 /**
  * Merges a manifest row into an existing entry (or creates one). Videos are
  * rebuilt from the row's ids/term, but variant labels and the recorded date
- * survive whenever the id/term is unchanged. Non-video fields the manifest does
- * not carry (`tips`) are kept.
+ * survive whenever the id/term is unchanged.
  */
 export function applyRow(row: VocabularyRow, existing: SignData | null, today: string): SignData {
   const previousLsc = new Map(
@@ -160,8 +154,6 @@ export function applyRow(row: VocabularyRow, existing: SignData | null, today: s
     category: row.category,
     isFirstSign: row.firstSignOrder !== null,
     ...(row.firstSignOrder !== null ? { firstSignOrder: row.firstSignOrder } : {}),
-    ...(row.difficulty !== null ? { difficulty: row.difficulty } : {}),
-    ...(existing?.tips !== undefined ? { tips: existing.tips } : {}),
     videos,
   };
 }
@@ -179,7 +171,6 @@ export function serializeTsv(rows: VocabularyRow[]): string {
       row.id,
       row.category,
       row.firstSignOrder ?? '',
-      row.difficulty ?? '',
       row.ca,
       row.es,
       row.en,
@@ -216,17 +207,8 @@ export function parseTsv(text: string): VocabularyRow[] {
   const seen = new Set<string>();
   return lines.slice(1).map((line) => {
     const cells = line.split('\t');
-    const [
-      id = '',
-      category = '',
-      order = '',
-      difficulty = '',
-      ca = '',
-      es = '',
-      en = '',
-      lsc = '',
-      lse = '',
-    ] = cells.map((c) => c ?? '');
+    const [id = '', category = '', order = '', ca = '', es = '', en = '', lsc = '', lse = ''] =
+      cells.map((c) => c ?? '');
 
     if (!id.trim()) throw new TsvError('A row has no id');
     if (seen.has(id)) throw new TsvError(`Duplicate id "${id}"`);
@@ -236,16 +218,10 @@ export function parseTsv(text: string): VocabularyRow[] {
       throw new TsvError(`Row "${id}": every label (ca, es, en) is required`);
     }
 
-    const difficultyValue = parseIntOrNull(difficulty, 'difficulty', id);
-    if (difficultyValue !== null && ![1, 2, 3].includes(difficultyValue)) {
-      throw new TsvError(`Row "${id}": difficulty must be 1, 2 or 3`);
-    }
-
     return {
       id: id.trim(),
       category,
       firstSignOrder: parseIntOrNull(order, 'first_sign_order', id),
-      difficulty: difficultyValue as 1 | 2 | 3 | null,
       ca: ca.trim(),
       es: es.trim(),
       en: en.trim(),

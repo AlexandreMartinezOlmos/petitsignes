@@ -21,8 +21,7 @@ Un fichero por signo: los diffs son pequeños y una corrección se revisa de un 
 ## Dos formas de editar
 
 **A) Directamente en el JSON.** Para una corrección puntual, edita
-`src/content/signs/<slug>.json` (formato abajo). Es lo mejor para tocar `tips` o una variante
-concreta.
+`src/content/signs/<slug>.json` (formato abajo). Es lo mejor para tocar una variante concreta.
 
 **B) Con la hoja de vocabulario.** Para añadir palabras o revisar la cobertura de un vistazo, usa
 la tabla editable. Los JSON siguen siendo la fuente de verdad; la tabla es una capa cómoda encima
@@ -42,13 +41,12 @@ Columnas de `vocabulary.tsv`:
 | `id` | Slug estable = nombre del fichero. No lo cambies (rompe los favoritos guardados). |
 | `category` | Una de las 15 categorías. |
 | `first_sign_order` | Número → entra en la ruta "Primeros signos"; vacío → no. |
-| `difficulty` | 1–3 opcional. |
 | `ca` / `es` / `en` | Las tres etiquetas (obligatorias). |
 | `lsc_youtube` | Id(s) de YouTube del Vocabulari bàsic. Varios separados por coma = variantes. Vacío = sin LSC. |
 | `lse_dilse_term` | Término de búsqueda de DILSE (`?buscar=…`). Vacío = sin LSE. |
 
 El `import` **conserva** lo que no está en la tabla: la etiqueta de `variant` y la fecha de origen
-sobreviven mientras el id/término no cambie, y los `tips` se mantienen. Cambiar un enlace hace que
+sobreviven mientras el id/término no cambie. Cambiar un enlace hace que
 ese vídeo pase a llevar la fecha de hoy, porque es una fuente nueva. Un concepto que ya no esté en
 la tabla **no se borra** automáticamente: el script lo avisa y lo borras a mano si es
 intencionado.
@@ -65,12 +63,6 @@ rompe el build igual que un error en el JSON.
   "category": "food",
   "isFirstSign": true,
   "firstSignOrder": 1,
-  "difficulty": 1,
-  "tips": {
-    "ca": "…",
-    "es": "…",
-    "en": "…"
-  },
   "videos": []
 }
 ```
@@ -81,9 +73,11 @@ rompe el build igual que un error en el JSON.
 | `category` | sí | Una de las 15 de `categories.json`. |
 | `isFirstSign` | sí | Si es `true`, `firstSignOrder` pasa a ser obligatorio. |
 | `firstSignOrder` | condicional | Posición en la ruta guiada. |
-| `difficulty` | no | 1–3, dificultad motriz aproximada. |
-| `tips` | no | Consejo de **uso** (cuándo signarlo), nunca descripción del gesto. |
 | `videos` | sí | Puede ser `[]`. |
+
+El esquema es cerrado (`.strict()`): un campo que no esté en esta tabla hace fallar el build. Es
+deliberado — un campo que el dato declara y el producto no enseña no es una funcionalidad futura,
+es una promesa que nadie está cumpliendo.
 
 El `id` sale del nombre del fichero, así que el slug debe ser estable: cambiarlo rompe los
 favoritos que la gente tenga guardados.
@@ -139,7 +133,7 @@ se queda fuera del catálogo; no entra a medias.
 |---|---|
 | Iconos de categoría, ilustraciones decorativas, marca | Cualquier representación del gesto que no venga del vídeo real |
 | Traducciones de las etiquetas (ca/es/en) | Describir cómo se hace un signo "de memoria" |
-| Consejos de uso (`tips`) | Sustituir un signo que falta en una lengua por el de la otra |
+| Traducir la interfaz | Sustituir un signo que falta en una lengua por el de la otra |
 
 La cara de la tarjeta cuando no hay vídeo es un marcador neutro con el icono de la categoría.
 Es deliberado: comunica "todavía no lo tenemos" sin enseñar nada incorrecto.
