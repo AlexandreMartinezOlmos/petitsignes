@@ -82,6 +82,20 @@ const MESSAGES = {
     'signLanguage.lscFull': 'Llengua de Signes Catalana',
     'signLanguage.lseFull': 'Llengua de Signes Espanyola',
 
+    'sign.subtitle': 'en {signLanguage}',
+    'sign.meta':
+      'Com es signa «{label}» en {signLanguage}, amb el vídeo de la font oficial i l’enllaç a la fitxa original.',
+    'sign.metaNoVideo':
+      '«{label}» al catàleg de Petits Signes. Encara no en tenim el vídeo en {signLanguage}.',
+    'sign.sourceTitle': 'D’on surt aquest signe',
+    'sign.sourceName': 'Font',
+    'sign.sourceEntry': 'Fitxa original',
+    'sign.sourceUpdated': 'Data de la font',
+    'sign.variant': 'Variant',
+    'sign.category': 'Categoria',
+    'sign.relatedTitle': 'Altres signes de {category}',
+    'sign.relatedAll': 'Veure tot el catàleg',
+
     'player.close': 'Tanca el vídeo',
     'player.speed': 'Velocitat de reproducció',
     'player.speedNormal': 'Velocitat normal',
@@ -101,8 +115,11 @@ const MESSAGES = {
     'progress.exportHint': 'Descarrega un fitxer JSON amb els teus preferits i signes apresos.',
     'progress.import': 'Importa el progrés',
     'progress.importHint':
-      'Tria un fitxer exportat abans. Substituirà el progrés d’aquest navegador.',
-    'progress.imported': 'Progrés importat: {summary}.',
+      'Tria un fitxer exportat abans. S’afegeix al progrés d’aquest navegador: no n’esborra res.',
+    'progress.importedAdded': 'S’han afegit {favorites} i {learned}.',
+    'progress.importedNothing': 'Aquest fitxer no portava res de nou: ja ho tenies tot.',
+    'progress.importedSkipped': '{count} signes del fitxer ja no són al catàleg i s’han omès.',
+    'progress.importedSkippedOne': '1 signe del fitxer ja no és al catàleg i s’ha omès.',
     'progress.importError': 'Aquest fitxer no sembla una exportació de Petits Signes.',
     'progress.reset': 'Reinicia el progrés',
     'progress.resetHint':
@@ -182,6 +199,20 @@ const MESSAGES = {
     'signLanguage.lscFull': 'Lengua de Signos Catalana',
     'signLanguage.lseFull': 'Lengua de Signos Española',
 
+    'sign.subtitle': 'en {signLanguage}',
+    'sign.meta':
+      'Cómo se signa «{label}» en {signLanguage}, con el vídeo de la fuente oficial y el enlace a la ficha original.',
+    'sign.metaNoVideo':
+      '«{label}» en el catálogo de Petits Signes. Todavía no tenemos su vídeo en {signLanguage}.',
+    'sign.sourceTitle': 'De dónde sale este signo',
+    'sign.sourceName': 'Fuente',
+    'sign.sourceEntry': 'Ficha original',
+    'sign.sourceUpdated': 'Fecha de la fuente',
+    'sign.variant': 'Variante',
+    'sign.category': 'Categoría',
+    'sign.relatedTitle': 'Otros signos de {category}',
+    'sign.relatedAll': 'Ver todo el catálogo',
+
     'player.close': 'Cerrar el vídeo',
     'player.speed': 'Velocidad de reproducción',
     'player.speedNormal': 'Velocidad normal',
@@ -201,8 +232,12 @@ const MESSAGES = {
     'progress.exportHint': 'Descarga un archivo JSON con tus favoritos y signos aprendidos.',
     'progress.import': 'Importar el progreso',
     'progress.importHint':
-      'Elige un archivo exportado antes. Sustituirá el progreso de este navegador.',
-    'progress.imported': 'Progreso importado: {summary}.',
+      'Elige un archivo exportado antes. Se añade al progreso de este navegador: no borra nada.',
+    'progress.importedAdded': 'Se han añadido {favorites} y {learned}.',
+    'progress.importedNothing': 'Este archivo no traía nada nuevo: ya lo tenías todo.',
+    'progress.importedSkipped':
+      '{count} signos del archivo ya no están en el catálogo y se han omitido.',
+    'progress.importedSkippedOne': '1 signo del archivo ya no está en el catálogo y se ha omitido.',
     'progress.importError': 'Este archivo no parece una exportación de Petits Signes.',
     'progress.reset': 'Reiniciar el progreso',
     'progress.resetHint':
@@ -282,6 +317,20 @@ const MESSAGES = {
     'signLanguage.lscFull': 'Catalan Sign Language',
     'signLanguage.lseFull': 'Spanish Sign Language',
 
+    'sign.subtitle': 'in {signLanguage}',
+    'sign.meta':
+      'How to sign “{label}” in {signLanguage}, with the video from the official source and a link to the original entry.',
+    'sign.metaNoVideo':
+      '“{label}” in the Petits Signes catalogue. We do not have its {signLanguage} video yet.',
+    'sign.sourceTitle': 'Where this sign comes from',
+    'sign.sourceName': 'Source',
+    'sign.sourceEntry': 'Original entry',
+    'sign.sourceUpdated': 'Source date',
+    'sign.variant': 'Variant',
+    'sign.category': 'Category',
+    'sign.relatedTitle': 'More signs from {category}',
+    'sign.relatedAll': 'Browse the whole catalogue',
+
     'player.close': 'Close the video',
     'player.speed': 'Playback speed',
     'player.speedNormal': 'Normal speed',
@@ -301,8 +350,13 @@ const MESSAGES = {
     'progress.exportHint': 'Downloads a JSON file with your favourites and learned signs.',
     'progress.import': 'Import progress',
     'progress.importHint':
-      'Pick a file you exported earlier. It replaces the progress in this browser.',
-    'progress.imported': 'Progress imported: {summary}.',
+      'Pick a file you exported earlier. It is added to this browser’s progress; nothing is removed.',
+    'progress.importedAdded': 'Added {favorites} and {learned}.',
+    'progress.importedNothing': 'Nothing new in that file: you already had all of it.',
+    'progress.importedSkipped':
+      '{count} signs in the file are no longer in the catalogue and were skipped.',
+    'progress.importedSkippedOne':
+      '1 sign in the file is no longer in the catalogue and was skipped.',
     'progress.importError': 'This file does not look like a Petits Signes export.',
     'progress.reset': 'Reset progress',
     'progress.resetHint':

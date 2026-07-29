@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import PageShell, { type PageSection } from '../PageShell.astro';
 import ProgressData from '../../islands/ProgressData.tsx';
 import { createTranslator } from '../../lib/i18n.ts';
@@ -12,6 +13,11 @@ interface Props {
 const { language } = Astro.props;
 const t = createTranslator(language);
 const creditsHref = localeHref('/credits/', language);
+
+// The catalogue is the authority on which ids are real, and this is the only
+// page that needs to know: an import drops the rest, and the summary counts what
+// is left. Sorted so the emitted markup does not reshuffle between builds.
+const signIds = (await getCollection('signs')).map((entry) => entry.id).sort();
 
 // User-facing prose (not developer docs), so it is translated by hand rather
 // than machine-fed. Mirrors the purpose stated in the repository README.
@@ -107,7 +113,7 @@ const sections: PageSection[] = [
        Its own section now, so it appears in the contents list — with no
        accounts, this is the only way anyone keeps their progress. */
   }
-  <ProgressData slot="data" language={language} client:visible />
+  <ProgressData slot="data" language={language} signIds={signIds} client:visible />
 
   <p slot="privacy">{c.privacyBody}</p>
 

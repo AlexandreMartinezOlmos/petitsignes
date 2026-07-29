@@ -7,8 +7,49 @@ import {
   SCHEMA_VERSION,
   STORAGE_KEY,
   createEmptySnapshot,
+  mergeSnapshots,
   parseSnapshot,
 } from './storage.ts';
+
+describe('mergeSnapshots', () => {
+  const snapshot = (favorites: string[], learned: string[] = []) => ({
+    ...createEmptySnapshot(),
+    favorites,
+    learned,
+  });
+
+  it('keeps every id when it is not told what the catalogue holds', () => {
+    // The store must stay usable without the catalogue: it is the interface a
+    // future remote implementation has to satisfy, and that one will not have
+    // 195 ids to hand either. No filter is not the same as an empty filter.
+    const { snapshot: merged, result } = mergeSnapshots(snapshot([]), snapshot(['cualquiera']));
+
+    expect(merged.favorites).toEqual(['cualquiera']);
+    expect(result.skipped).toBe(0);
+  });
+
+  it('discards everything from a file whose ids are all gone', () => {
+    const { snapshot: merged, result } = mergeSnapshots(
+      snapshot(['leche']),
+      snapshot(['viejo', 'antiguo']),
+      new Set(['leche']),
+    );
+
+    expect(merged.favorites).toEqual(['leche']);
+    expect(result).toEqual({ addedFavorites: 0, addedLearned: 0, skipped: 2 });
+  });
+
+  it('never removes what this browser already had', () => {
+    const { snapshot: merged } = mergeSnapshots(
+      snapshot(['leche', 'agua'], ['pan']),
+      snapshot([], []),
+      new Set(['leche', 'agua', 'pan']),
+    );
+
+    expect(merged.favorites).toEqual(['leche', 'agua']);
+    expect(merged.learned).toEqual(['pan']);
+  });
+});
 
 describe('parseSnapshot', () => {
   it('accepts a well-formed snapshot', () => {
@@ -158,21 +199,83 @@ describe('LocalStorageProgressStore', () => {
     expect(await store.getPreferences()).toEqual({ language: 'en', signLanguage: 'lse' });
   });
 
-  it('round-trips through export and import', async () => {
+  it('carries the progress over to an empty browser', async () => {
     const source = new LocalStorageProgressStore();
     await source.toggleFavorite('leche');
     await source.toggleLearned('agua');
-    await source.setPreferences({ language: 'es', signLanguage: 'lse' });
 
     const exported = await source.export();
 
     localStorage.clear();
     const target = new LocalStorageProgressStore();
-    await target.import(exported);
+    const result = await target.import(exported);
 
     expect(await target.getFavorites()).toEqual(['leche']);
     expect(await target.getLearned()).toEqual(['agua']);
-    expect(await target.getPreferences()).toEqual({ language: 'es', signLanguage: 'lse' });
+    expect(result).toEqual({ addedFavorites: 1, addedLearned: 1, skipped: 0 });
+  });
+
+  // Was asserted the other way round while `import` replaced the snapshot
+  // wholesale. Now that it merges, an imported preference is the one thing in
+  // the file that is about the reader rather than about the signs — and the
+  // interface language is decided by the URL anyway, so honouring it would
+  // rewrite a stored answer without changing anything on screen.
+  it('keeps this browser’s preferences when a file brings its own', async () => {
+    const source = new LocalStorageProgressStore();
+    await source.setPreferences({ language: 'es', signLanguage: 'lse' });
+    const exported = await source.export();
+
+    localStorage.clear();
+    const target = new LocalStorageProgressStore();
+    await target.setPreferences({ language: 'ca', signLanguage: 'lsc' });
+    await target.import(exported);
+
+    expect(await target.getPreferences()).toEqual({ language: 'ca', signLanguage: 'lsc' });
+  });
+
+  it('adds to what is already here instead of replacing it', async () => {
+    const store = new LocalStorageProgressStore();
+    await store.toggleFavorite('leche');
+    await store.toggleLearned('agua');
+
+    const result = await store.import(
+      JSON.stringify({ schemaVersion: 1, favorites: ['pan'], learned: [] }),
+    );
+
+    // The whole reason the merge exists: two carers of the same baby swap
+    // files, and neither of them loses what they had.
+    expect(await store.getFavorites()).toEqual(['leche', 'pan']);
+    expect(await store.getLearned()).toEqual(['agua']);
+    expect(result.addedFavorites).toBe(1);
+  });
+
+  it('counts only what the file actually contributed', async () => {
+    const store = new LocalStorageProgressStore();
+    await store.toggleFavorite('leche');
+
+    const result = await store.import(
+      JSON.stringify({ schemaVersion: 1, favorites: ['leche', 'pan'], learned: [] }),
+    );
+
+    // Two ids in the file, one of them already here: saying "2 preferits" would
+    // be a number the summary above the button then contradicts.
+    expect(result.addedFavorites).toBe(1);
+    expect(await store.getFavorites()).toEqual(['leche', 'pan']);
+  });
+
+  it('drops ids the catalogue no longer has, and says how many', async () => {
+    const store = new LocalStorageProgressStore();
+
+    const result = await store.import(
+      JSON.stringify({ schemaVersion: 1, favorites: ['leche', 'retirado'], learned: ['retirado'] }),
+      { knownIds: new Set(['leche', 'agua']) },
+    );
+
+    expect(await store.getFavorites()).toEqual(['leche']);
+    expect(await store.getLearned()).toEqual([]);
+    // One word gone from the vocabulary, not two entries: it is counted once
+    // even though it appeared in both lists.
+    expect(result.skipped).toBe(1);
   });
 
   it('rejects an import that is not JSON', async () => {

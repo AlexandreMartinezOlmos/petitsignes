@@ -53,6 +53,31 @@ export interface ProgressSnapshot {
   preferences: Preferences;
 }
 
+export interface ImportOptions {
+  /**
+   * The sign ids that still exist in the catalogue. Anything outside this set is
+   * dropped from the file instead of being stored.
+   *
+   * Optional, and passed in rather than looked up, because this module knows
+   * nothing about the catalogue and must not start to: the whole point of §4.1
+   * is that a future remote store is a new class here, not a rewrite of the app.
+   * The caller has the collection; the store is merely told what is real.
+   */
+  knownIds?: ReadonlySet<string>;
+}
+
+/** What an import actually did, in the terms the visitor is told about. */
+export interface ImportResult {
+  addedFavorites: number;
+  addedLearned: number;
+  /**
+   * Distinct ids in the file that are no longer in the catalogue. Counted once
+   * each: a sign that was both a favourite and learned is one word gone from the
+   * catalogue, not two, and that is what the message says.
+   */
+  skipped: number;
+}
+
 export interface ProgressStore {
   getFavorites(): Promise<string[]>;
   toggleFavorite(id: string): Promise<void>;
@@ -61,7 +86,17 @@ export interface ProgressStore {
   getPreferences(): Promise<Preferences>;
   setPreferences(preferences: Partial<Preferences>): Promise<void>;
   export(): Promise<string>;
-  import(json: string): Promise<void>;
+  /**
+   * Adds the contents of an exported file to what this browser already has.
+   *
+   * It merges rather than replaces. Replacing made importing a decision with a
+   * cost — the honest hint had to warn that it would overwrite — and it made the
+   * one case the feature exists for, two carers of the same baby swapping their
+   * progress, destroy one of the two files. Merging cannot lose anything, so the
+   * button is safe to press. Replacing is still available and still says what it
+   * does: reset, then import.
+   */
+  import(json: string, options?: ImportOptions): Promise<ImportResult>;
   reset(): Promise<void>;
   subscribe(listener: (snapshot: ProgressSnapshot) => void): () => void;
 }
@@ -148,6 +183,49 @@ export function parseSnapshot(value: unknown): ProgressSnapshot {
     preferences: {
       language: language ?? DEFAULT_PREFERENCES.language,
       signLanguage: signLanguage ?? DEFAULT_PREFERENCES.signLanguage,
+    },
+  };
+}
+
+/**
+ * Folds an imported snapshot into the one this browser already holds.
+ *
+ * Pure, so the rules below can be pinned without a browser or a file picker:
+ *
+ * - **Nothing local is ever removed.** The result is the union, which is what
+ *   makes importing safe to press rather than a decision.
+ * - **Ids the catalogue no longer has are dropped**, and counted so the visitor
+ *   is told rather than left to wonder why the numbers do not add up. A word
+ *   retired from the vocabulary would otherwise sit in storage forever, invisible
+ *   on every page and yet counted in the summary.
+ * - **Local preferences win.** The interface language is decided by the URL, so
+ *   an imported one changes nothing on screen — but it would quietly rewrite the
+ *   stored answer, and importing a friend's favourites is not a statement about
+ *   what language you read the site in.
+ */
+export function mergeSnapshots(
+  current: ProgressSnapshot,
+  incoming: ProgressSnapshot,
+  knownIds?: ReadonlySet<string>,
+): { snapshot: ProgressSnapshot; result: ImportResult } {
+  const skipped = new Set<string>();
+
+  const keepKnown = (ids: readonly string[]): string[] =>
+    ids.filter((id) => {
+      if (knownIds === undefined || knownIds.has(id)) return true;
+      skipped.add(id);
+      return false;
+    });
+
+  const favorites = uniqueStrings([...current.favorites, ...keepKnown(incoming.favorites)]);
+  const learned = uniqueStrings([...current.learned, ...keepKnown(incoming.learned)]);
+
+  return {
+    snapshot: { ...current, favorites, learned },
+    result: {
+      addedFavorites: favorites.length - current.favorites.length,
+      addedLearned: learned.length - current.learned.length,
+      skipped: skipped.size,
     },
   };
 }
@@ -240,14 +318,21 @@ export class LocalStorageProgressStore implements ProgressStore {
     return JSON.stringify(this.#memory, null, 2);
   }
 
-  async import(json: string): Promise<void> {
+  async import(json: string, options: ImportOptions = {}): Promise<ImportResult> {
     let parsed: unknown;
     try {
       parsed = JSON.parse(json);
     } catch {
       throw new InvalidProgressFileError('not valid JSON');
     }
-    this.#write(parseSnapshot(parsed));
+
+    const { snapshot, result } = mergeSnapshots(
+      this.#memory,
+      parseSnapshot(parsed),
+      options.knownIds,
+    );
+    this.#write(snapshot);
+    return result;
   }
 
   async reset(): Promise<void> {
