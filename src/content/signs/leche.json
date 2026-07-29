@@ -7,12 +7,6 @@
   "category": "food",
   "isFirstSign": true,
   "firstSignOrder": 1,
-  "difficulty": 1,
-  "tips": {
-    "ca": "Signa'l cada vegada que li ofereixis el pit o el biberó: la repetició en el mateix moment és el que el fa evident.",
-    "es": "Sígnalo cada vez que le ofrezcas el pecho o el biberón: la repetición en el mismo momento es lo que lo hace evidente.",
-    "en": "Sign it every time you offer the breast or bottle: repeating it at the same moment is what makes it click."
-  },
   "videos": [
     {
       "signLanguage": "lsc",

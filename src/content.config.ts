@@ -48,8 +48,6 @@ const signs = defineCollection({
       category: z.enum(CATEGORY_IDS),
       isFirstSign: z.boolean().default(false),
       firstSignOrder: z.number().int().positive().optional(),
-      difficulty: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
-      tips: localizedText.optional(),
       // 0..n: a concept may have no video yet, or one per sign language, or
       // several when a sign language documents territorial variants (§6.4).
       videos: z.array(signVideo).default([]),
