@@ -15,7 +15,7 @@ interface Props {
 /**
  * One sign, at its own address.
  *
- * The catalogue publishes 195 concepts on one page, which is one thing as far as
+ * The catalogue publishes 194 concepts on one page, which is one thing as far as
  * a search engine is concerned — while the question a parent actually types is
  * "how do you sign milk in LSC". This page is the answer to exactly that
  * question, and it is also the link you can send someone.
@@ -160,7 +160,7 @@ const updatedAt = video
           <div class="sign-detail__toggles">
             <button
               type="button"
-              class="sign-detail__toggle"
+              class="sign-card__toggle"
               data-action="favorite"
               data-sign-id={sign.id}
               aria-pressed="false"
@@ -175,7 +175,7 @@ const updatedAt = video
 
             <button
               type="button"
-              class="sign-detail__toggle"
+              class="sign-card__toggle"
               data-action="learned"
               data-sign-id={sign.id}
               aria-pressed="false"
@@ -236,7 +236,7 @@ const updatedAt = video
 
     {
       /*
-      The way onward. A page with one word and one video is a dead end, and 195
+      The way onward. A page with one word and one video is a dead end, and 194
       of them reachable only from the index is a catalogue a crawler walks once
       and never again. These are the same category the visitor is already in,
       which is the only relationship the data actually states.
@@ -360,45 +360,13 @@ const updatedAt = video
 
   .sign-detail__cta {
     /* Wider than in the grid: here it is the page's one primary action rather
-       than one card's among 195. */
+       than one card's among 194. */
     padding-inline: 1.5rem;
   }
 
   .sign-detail__toggles {
     display: flex;
     gap: 0.5rem;
-  }
-
-  /* Declared here rather than reusing `.sign-card__toggle`: that one is
-     absolutely positioned over the card's image and carries a solid pill so it
-     stays legible on an arbitrary category tint. On this page they sit in the
-     normal flow on a known surface, so they are plain 44px buttons. */
-  .sign-detail__toggle {
-    display: inline-flex;
-    min-inline-size: var(--spacing-touch);
-    min-block-size: var(--spacing-touch);
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-control);
-    color: var(--color-ink-muted);
-    background-color: var(--color-surface);
-    transition:
-      color var(--duration-fast) var(--ease-out),
-      border-color var(--duration-fast) var(--ease-out);
-  }
-
-  .sign-detail__toggle[aria-pressed='true'] {
-    color: var(--color-brand-ink);
-    border-color: var(--color-brand);
-    background-color: var(--color-brand-soft);
-  }
-
-  @media (hover: hover) {
-    .sign-detail__toggle:hover {
-      color: var(--color-ink);
-      border-color: var(--color-ink-muted);
-    }
   }
 
   .sign-source__title,

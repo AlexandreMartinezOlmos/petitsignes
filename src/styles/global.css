@@ -1452,7 +1452,7 @@
 
 /* The word is the route to its own page, so the heading holds a link. It
    inherits the title's whole treatment and shows nothing extra at rest: an
-   underline on 195 headings would turn the grid into a wall of rules, and the
+   underline on 194 headings would turn the grid into a wall of rules, and the
    card is already unmistakably one thing you can act on. The underline appears
    on hover and on focus, where it is the confirmation that this particular word
    is the target — and the focus ring is the system's, untouched. */
@@ -1466,7 +1466,7 @@
      17×24. The e2e target-size test is what found them.
 
      Deliberately not the 44px the buttons carry: that would add a finger's
-     width of empty space around the word on all 195 cards to protect a target
+     width of empty space around the word on all 194 cards to protect a target
      nobody has trouble hitting. */
   display: inline-block;
   min-inline-size: 1.5rem;
@@ -1509,8 +1509,14 @@
   gap: 0.25rem;
 }
 
+/* Scoped to `.sign-card` on purpose, unlike the rules above it.
+
+   Everything in this block is a consequence of one thing: on a wide card the
+   toggles float over the media panel. Nothing else needs it — the sign page
+   uses the same `.sign-card__toggle` in ordinary flow on a known surface, and
+   inheriting a raised pill there would give the same control two looks. */
 @media (width >= 40rem) and (height >= 34rem) {
-  .sign-card__toggles {
+  .sign-card .sign-card__toggles {
     position: absolute;
     z-index: 1;
     inset-block-start: 0.5rem;
@@ -1524,7 +1530,7 @@
      see. The icon inside carries the criterion (4.31:1 at worst, past the 3:1
      of WCAG 1.4.11), but a control whose boundary dissolves into the picture
      behind it is still a control that is hard to aim at. */
-  .sign-card__toggle {
+  .sign-card .sign-card__toggle {
     border: 1px solid var(--color-border-strong);
     background-color: var(--color-surface-raised);
     box-shadow: var(--elevation-1);

@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test';
 /**
  * One page per sign.
  *
- * The catalogue publishes 195 concepts at a single address, which for a search
- * engine is one thing rather than 195 — while the question a parent types is
+ * The catalogue publishes 194 concepts at a single address, which for a search
+ * engine is one thing rather than 194 — while the question a parent types is
  * "how do you sign milk in LSC". These pages are the answer, and they are also
  * the link somebody can send.
  *
@@ -131,6 +131,54 @@ test.describe('a sign page is not a dead card', () => {
     await expect(
       page.locator('.sign-card[data-sign-id="leche"] [data-action="favorite"]'),
     ).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  /**
+   * The same control, not a lookalike.
+   *
+   * These buttons first shipped with a set of styles of their own — a bordered
+   * square that turned brand-soft when pressed — so the star that goes yellow in
+   * the grid went beige here, and the learned pill that fills green did not fill
+   * at all. Two looks for one control teaches the visitor that they are two
+   * different things.
+   *
+   * The tokens are read from `:root` rather than written in as hex, so this
+   * asserts "the same colour the design system calls star" and not "the colour
+   * star happened to be the day this was written".
+   */
+  test('wears the catalogue’s toggles rather than a second set of its own', async ({ page }) => {
+    await page.goto(CA);
+
+    const tokens = await page.evaluate(() => {
+      const root = getComputedStyle(document.documentElement);
+      const resolve = (name: string) => {
+        const probe = document.createElement('span');
+        probe.style.color = root.getPropertyValue(name).trim();
+        document.body.append(probe);
+        const value = getComputedStyle(probe).color;
+        probe.remove();
+        return value;
+      };
+      return { star: resolve('--color-star'), learned: resolve('--color-learned') };
+    });
+
+    const favorite = page.locator('.sign-detail [data-action="favorite"]');
+    const learned = page.locator('.sign-detail [data-action="learned"]');
+
+    // Unpressed it is the bare 44px pill: the raised, bordered variant belongs
+    // to a card, where the toggles float over the media panel and need to stay
+    // legible on an arbitrary category tint.
+    await expect(favorite).toHaveCSS('border-top-width', '0px');
+    await expect(favorite).toHaveCSS('border-top-left-radius', '999px');
+    await expect(favorite).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+
+    await favorite.click();
+    await expect(favorite).toHaveAttribute('aria-pressed', 'true');
+    await expect(favorite).toHaveCSS('color', tokens.star);
+
+    await learned.click();
+    await expect(learned).toHaveAttribute('aria-pressed', 'true');
+    await expect(learned).toHaveCSS('background-color', tokens.learned);
   });
 
   /**
