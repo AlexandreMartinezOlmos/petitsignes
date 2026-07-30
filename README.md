@@ -135,12 +135,17 @@ Al tratarse de un proyecto sobre lengua de signos, la accesibilidad no es un añ
 coherencia con el propósito. Hay una declaración de accesibilidad publicada en el propio sitio,
 en catalán y castellano.
 
-Cada cambio se comprueba con axe-core sobre las ocho páginas y en modo oscuro, más un test
+Cada cambio se comprueba con axe-core sobre **cada tipo de página, en los dos idiomas** —catálogo,
+categoría, ficha de signo, las tres páginas de texto y el 404— y en modo oscuro, más un test
 específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo falla, el CI falla.
 
 ## Arquitectura en una pantalla
 
 - **Astro** genera el catálogo entero como HTML estático en el build.
+- El sitio tiene **tres niveles de dirección**: el catálogo (`/`), una página por categoría
+  (`/categoria/menjar-i-beure/`) y una por signo (`/signe/llet/`). Las migas de una ficha recorren
+  los tres y cada categoría enlaza con las otras catorce, así que se puede recorrer el catálogo
+  entero desde cualquier entrada. Los slugs son catalanes en los dos idiomas.
 - Tres **islas de React** aportan la interactividad: la barra de herramientas (búsqueda y
   filtros), el reproductor de vídeo y la gestión de tus datos en la página del proyecto.
 - Un controlador ligero conecta esas islas con la rejilla estática mostrando y ocultando

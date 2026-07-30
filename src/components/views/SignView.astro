@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
 import { createTranslator } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
+import { categoryPath } from '../../lib/categories.ts';
 import { relatedSigns, signPath } from '../../lib/signs.ts';
 import { newIssueUrl } from '../../lib/site.ts';
 import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
@@ -52,6 +53,10 @@ const signEntries = await getCollection('signs');
 const allSigns: SignEntry[] = signEntries.map((entry) => ({ id: entry.id, ...entry.data }));
 const related = relatedSigns(sign, allSigns, language);
 
+// Counted, not written down: the link says how many are on the category page,
+// and a number that drifts from the page it points at is worse than no number.
+const categoryCount = allSigns.filter((other) => other.category === sign.category).length;
+
 const catalogueHref = localeHref('/', language);
 
 /**
@@ -97,8 +102,20 @@ const reportUrl = newIssueUrl(
 
 <BaseLayout language={language} path={signPath(sign.id)} title={label} description={description}>
   <div class="sign-page">
+    {
+      /*
+      Three steps now, not two. The category in the middle is the route that
+      makes its page reachable by a person rather than only by a crawler, and it
+      is also the honest shape of where this page sits: a sign belongs to a
+      category, which belongs to the catalogue.
+    */
+    }
     <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
       <a class="breadcrumb__link" href={catalogueHref}>{t('nav.catalogue')}</a>
+      <span class="breadcrumb__sep" aria-hidden="true">/</span>
+      <a class="breadcrumb__link" href={localeHref(categoryPath(category.id), language)}>
+        {category.labels[language]}
+      </a>
       <span class="breadcrumb__sep" aria-hidden="true">/</span>
       <span class="breadcrumb__current" aria-current="page">{label}</span>
     </nav>
@@ -305,9 +322,15 @@ const reportUrl = newIssueUrl(
               </li>
             ))}
           </ul>
+          {/* Six of the category is a sample; this is where the rest of them
+              are. It used to point at the whole catalogue, which was the only
+              destination that existed — the breadcrumb above still offers it. */}
           <p>
-            <a class="sign-related__all" href={catalogueHref}>
-              {t('sign.relatedAll')}
+            <a class="sign-related__all" href={localeHref(categoryPath(category.id), language)}>
+              {t('sign.relatedAll', {
+                count: categoryCount,
+                category: category.labels[language],
+              })}
             </a>
           </p>
         </section>

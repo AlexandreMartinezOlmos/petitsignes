@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import CategoryView from '../../../components/views/CategoryView.astro';
+import { CATEGORY_SLUGS } from '../../../lib/categories.ts';
+import type { Category } from '../../../lib/types.ts';
+
+/** The same fifteen pages in Spanish, and therefore in LSE. See `/categoria/[slug]`. */
+export async function getStaticPaths() {
+  const categories = await getCollection('categories');
+  return categories.map((entry) => ({
+    params: { slug: CATEGORY_SLUGS[entry.data.id] },
+    props: { category: entry.data as Category },
+  }));
+}
+
+const { category } = Astro.props;
+---
+
+<CategoryView language="es" category={category} />

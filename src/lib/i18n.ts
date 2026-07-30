@@ -95,7 +95,17 @@ const MESSAGES = {
     'sign.variant': 'Variant',
     'sign.category': 'Categoria',
     'sign.relatedTitle': 'Altres signes de {category}',
-    'sign.relatedAll': 'Veure tot el catàleg',
+    'sign.relatedAll': 'Veure els {count} signes de {category}',
+    'category.title': 'Signes de {category}',
+    'category.lead':
+      '{count} signes de {category} per al dia a dia amb el teu nadó, cadascun amb el vídeo de la seva font oficial.',
+    'category.leadOne':
+      'Un signe de {category} per al dia a dia amb el teu nadó, amb el vídeo de la seva font oficial.',
+    'category.meta':
+      'Com es signen les paraules de {category} en {signLanguage}. Vídeos de fonts oficials, per a famílies amb nadons.',
+    'category.othersTitle': 'Altres categories',
+    'category.all': 'Veure tot el catàleg',
+
     'sign.report': 'Hi has vist un error?',
     'sign.reportHint':
       'Obre una incidència a GitHub amb les dades d’aquest signe ja emplenades. Cal un compte de GitHub.',
@@ -219,7 +229,17 @@ const MESSAGES = {
     'sign.variant': 'Variante',
     'sign.category': 'Categoría',
     'sign.relatedTitle': 'Otros signos de {category}',
-    'sign.relatedAll': 'Ver todo el catálogo',
+    'sign.relatedAll': 'Ver los {count} signos de {category}',
+    'category.title': 'Signos de {category}',
+    'category.lead':
+      '{count} signos de {category} para el día a día con tu bebé, cada uno con el vídeo de su fuente oficial.',
+    'category.leadOne':
+      'Un signo de {category} para el día a día con tu bebé, con el vídeo de su fuente oficial.',
+    'category.meta':
+      'Cómo se signan las palabras de {category} en {signLanguage}. Vídeos de fuentes oficiales, para familias con bebés.',
+    'category.othersTitle': 'Otras categorías',
+    'category.all': 'Ver todo el catálogo',
+
     'sign.report': '¿Has visto un error?',
     'sign.reportHint':
       'Abre una incidencia en GitHub con los datos de este signo ya rellenados. Hace falta una cuenta de GitHub.',
@@ -344,7 +364,17 @@ const MESSAGES = {
     'sign.variant': 'Variant',
     'sign.category': 'Category',
     'sign.relatedTitle': 'More signs from {category}',
-    'sign.relatedAll': 'Browse the whole catalogue',
+    'sign.relatedAll': 'See all {count} {category} signs',
+    'category.title': '{category} signs',
+    'category.lead':
+      '{count} signs for {category}, for everyday moments with your baby, each with the video from its official source.',
+    'category.leadOne':
+      'One sign for {category}, for everyday moments with your baby, with the video from its official source.',
+    'category.meta':
+      'How to sign words for {category} in {signLanguage}. Videos from official sources, for families with babies.',
+    'category.othersTitle': 'Other categories',
+    'category.all': 'Browse the whole catalogue',
+
     'sign.report': 'Spotted a mistake?',
     'sign.reportHint':
       'Opens an issue on GitHub with this sign’s details filled in. A GitHub account is needed.',

@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import CategoryView from '../../components/views/CategoryView.astro';
+import { CATEGORY_SLUGS } from '../../lib/categories.ts';
+import type { Category } from '../../lib/types.ts';
+
+/**
+ * One page per category, in Catalan and therefore in LSC.
+ *
+ * The Spanish route is a second file rather than a locale param, for the same
+ * reason the sign pages and the 404 are: each build then emits exactly one sign
+ * language, and the other cannot reach the markup by any route (§4.4).
+ *
+ * The routes come from the collection but the addresses come from
+ * `CATEGORY_SLUGS`, which is what keeps a slug a deliberate, permanent choice
+ * rather than something derived from a label somebody may reword.
+ */
+export async function getStaticPaths() {
+  const categories = await getCollection('categories');
+  return categories.map((entry) => ({
+    params: { slug: CATEGORY_SLUGS[entry.data.id] },
+    props: { category: entry.data as Category },
+  }));
+}
+
+const { category } = Astro.props;
+---
+
+<CategoryView language="ca" category={category} />
