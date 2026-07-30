@@ -50,7 +50,17 @@ const category = categoryEntry.data as Category;
     <p class="not-found__lead">{t('notFound.lead')}</p>
 
     <div class="not-found__card">
-      <SignCard sign={sign} category={category} language={language} showCategory={false} />
+      {
+        /* Directly under this page's `h1`, so `h2` — the grid's `h3` would skip
+          a level here. */
+      }
+      <SignCard
+        sign={sign}
+        category={category}
+        language={language}
+        showCategory={false}
+        headingLevel={2}
+      />
     </div>
 
     {

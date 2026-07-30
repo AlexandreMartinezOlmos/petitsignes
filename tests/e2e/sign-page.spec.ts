@@ -155,7 +155,14 @@ test.describe('what a sign page says', () => {
     expect(hrefs.every((href) => /^\/signe\/[a-z0-9-]+\/$/.test(href ?? ''))).toBe(true);
     expect(hrefs).not.toContain(CA);
 
-    await expect(page.locator('.breadcrumb__link')).toHaveAttribute('href', '/');
+    // Three steps since the category pages arrived, and the order is the claim:
+    // a sign belongs to a category, which belongs to the catalogue. Asserting
+    // the whole trail rather than "a link to /" is what would catch the middle
+    // step being dropped or the two being swapped.
+    const trail = await page
+      .locator('.breadcrumb__link')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(trail).toEqual(['/', '/categoria/menjar-i-beure/']);
   });
 });
 
