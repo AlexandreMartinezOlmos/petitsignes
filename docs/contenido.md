@@ -124,6 +124,22 @@ El build valida todo esto con Zod: si algo no cuadra, el build falla. Es intenci
    `updatedAt` con la fecha en que lo comprobaste.
 5. `npm run build` para validar y `npm test` antes de abrir el PR.
 
+## Cómo llegan los errores
+
+Cada ficha de signo lleva al pie un enlace **«¿Has visto un error?»** que abre una incidencia en
+GitHub con el concepto, su id, la lengua de signos y la URL de la página ya rellenados. Se compone
+en build (ver `newIssueUrl` en [`../src/lib/site.ts`](../src/lib/site.ts)) y no lleva nada escrito
+por quien visita, así que no toca §2.2.
+
+Está ahí porque §2.1 —«ningún signo inventado»— solo se sostiene si quien sabe LSC o LSE puede
+avisarnos, y la ficha es la única pantalla donde el error se ve. Prellenarlo es la mitad del valor:
+un aviso que identifica la entrada y la lengua es accionable; «el vídeo de leche está mal» obliga a
+buscar entre 194 ficheros.
+
+**Asumido a sabiendas:** hace falta una cuenta de GitHub, así que una madre que detecte un error
+probablemente no lo reportará. El enlace apunta a quien conoce la lengua, que es quien puede
+detectarlo. La pista bajo el enlace lo dice antes de pulsarlo, no después.
+
 Si en el paso 2 o 3 no llegas a estar seguro, **no lo añadas**. Un concepto sin fuente confirmada
 se queda fuera del catálogo; no entra a medias.
 
