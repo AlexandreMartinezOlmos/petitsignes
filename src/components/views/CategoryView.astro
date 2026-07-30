@@ -1,0 +1,249 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SignCard from '../SignCard.astro';
+import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
+import { categoryPath } from '../../lib/categories.ts';
+import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
+import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
+import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
+
+interface Props {
+  language: RoutedLocale;
+  category: Category;
+}
+
+/**
+ * One category, at its own address.
+ *
+ * The step that was missing. The catalogue is 194 concepts at one URL and a sign
+ * page is one concept at its own, with nothing in between — while "signes de
+ * menjar per a nadons" is as ordinary a search as "com es signa llet".
+ *
+ * It also closes the loop for a crawler: each sign links up to its category
+ * through the breadcrumb, each category links across to the other fourteen, so
+ * the catalogue can be walked from any entry instead of only from the index.
+ *
+ * No toolbar. Search and filters belong to the catalogue, which is one link
+ * away; repeating them here would offer to filter a list of thirty things and
+ * put a second search box on the site. The cards are still live — the two
+ * toggles and the video CTA work exactly as they do in the grid.
+ */
+const { language, category } = Astro.props;
+const t = createTranslator(language);
+
+const signLanguage = LANGUAGE_TO_SIGN_LANGUAGE[language];
+const fullName = signLanguage === 'lsc' ? t('signLanguage.lscFull') : t('signLanguage.lseFull');
+
+const label = category.labels[language];
+
+// The label as it reads inside a sentence: lowercased, and in Catalan carrying
+// the preposition so it can elide before a vowel. See `categoryInSentence`.
+const ofCategory = categoryInSentence(language, label);
+
+const signEntries = await getCollection('signs');
+const signs: SignEntry[] = signEntries
+  .map((entry) => ({ id: entry.id, ...entry.data }) as SignEntry)
+  .filter((sign) => sign.category === category.id)
+  .sort((a, b) => a.labels[language].localeCompare(b.labels[language], language));
+
+/**
+ * The other categories, so this page is a junction rather than a siding. Read
+ * from the collection and sorted the way the catalogue sorts them, so a category
+ * added tomorrow appears here without anyone remembering to add it.
+ */
+const categoryEntries = await getCollection('categories');
+const others: Category[] = categoryEntries
+  .map((entry) => entry.data as Category)
+  .filter((other) => other.id !== category.id)
+  .sort((a, b) => a.order - b.order);
+
+const catalogueHref = localeHref('/', language);
+
+// Counted from what is actually rendered, never from a number written by hand:
+// a lead claiming thirty signs above twenty-nine cards is the kind of small lie
+// nobody checks.
+const lead =
+  signs.length === 1
+    ? t('category.leadOne', { ofCategory })
+    : t('category.lead', { count: signs.length, ofCategory });
+---
+
+<BaseLayout
+  language={language}
+  path={categoryPath(category.id)}
+  title={t('category.title', { ofCategory })}
+  description={t('category.meta', { ofCategory, signLanguage: fullName })}
+>
+  <div class="category-page">
+    <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
+      <a class="breadcrumb__link" href={catalogueHref}>{t('nav.catalogue')}</a>
+      <span class="breadcrumb__sep" aria-hidden="true">/</span>
+      <span class="breadcrumb__current" aria-current="page">{label}</span>
+    </nav>
+
+    <header class="category-hero">
+      <p class="category-hero__chip">
+        <span class="sign-card__chip" data-category={category.id}>
+          <svg class="icon-sm" aria-hidden="true" focusable="false">
+            <use href={`#i-${category.icon}`}></use>
+          </svg>
+          {label}
+        </span>
+      </p>
+      <h1 class="category-hero__title">{t('category.title', { ofCategory })}</h1>
+      <p class="category-hero__lead">{lead}</p>
+    </header>
+
+    {
+      /*
+      The same grid classes as the catalogue, so a card is the same shape
+      wherever it appears and the compact row still takes over on a phone.
+      `showCategory` is false throughout: every card here is in the category the
+      heading above already names.
+    */
+    }
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+      {
+        signs.map((sign) => (
+          <SignCard
+            sign={sign}
+            category={category}
+            language={language}
+            showCategory={false}
+            headingLevel={2}
+          />
+        ))
+      }
+    </div>
+
+    <nav class="category-others" aria-labelledby="category-others-title">
+      <h2 class="category-others__title" id="category-others-title">
+        {t('category.othersTitle')}
+      </h2>
+      <ul class="category-others__list">
+        {
+          others.map((other) => (
+            <li>
+              <a class="category-others__link" href={localeHref(categoryPath(other.id), language)}>
+                <svg class="icon-sm" aria-hidden="true" focusable="false">
+                  <use href={`#i-${other.icon}`} />
+                </svg>
+                {other.labels[language]}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p>
+        <a class="category-others__all" href={catalogueHref}>{t('category.all')}</a>
+      </p>
+    </nav>
+  </div>
+
+  <SignVideoDialog language={language} client:idle />
+</BaseLayout>
+
+<script>
+  import { mountSignCards } from '../../lib/catalogue-grid.ts';
+
+  /**
+   * The same wiring the grid gives its cards, minus the filtering: the toggles
+   * persist and the CTA opens the player. Cards whose controls did nothing here
+   * would be the same broken promise as a disabled-looking button.
+   */
+  const root = document.querySelector<HTMLElement>('.category-page');
+  if (root) mountSignCards(root);
+</script>
+
+<style>
+  /* Only this page uses these, so they stay here rather than in global.css —
+     the design system is for what repeats. */
+  .category-hero {
+    margin-block: 1.5rem 2rem;
+  }
+
+  .category-hero__chip {
+    margin-block-end: 0.5rem;
+  }
+
+  .category-hero__title {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-display);
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+    color: var(--color-ink);
+  }
+
+  .category-hero__lead {
+    margin-block-start: 0.5rem;
+    max-inline-size: 60ch;
+    font-size: var(--text-base);
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  .category-others {
+    margin-block-start: 3rem;
+  }
+
+  .category-others__title {
+    margin-block-end: 0.75rem;
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-display);
+    color: var(--color-ink);
+  }
+
+  /* Wraps rather than scrolls sideways, for the same reason the catalogue's
+     category chips do: a scrolling row hides most of the list behind a gesture
+     nobody knows is available. */
+  .category-others__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-block-end: 1rem;
+  }
+
+  .category-others__link {
+    display: inline-flex;
+    min-block-size: var(--spacing-touch);
+    align-items: center;
+    gap: 0.4rem;
+    padding-inline: 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-chip);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-ink);
+    background-color: var(--color-surface);
+    transition:
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .category-others__link:hover {
+      border-color: var(--color-brand);
+      background-color: var(--color-brand-soft);
+    }
+  }
+
+  .category-others__all {
+    display: inline-flex;
+    min-block-size: var(--spacing-touch);
+    align-items: center;
+    color: var(--color-brand-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (width >= 40rem) {
+    .category-hero__title {
+      font-size: var(--text-display);
+    }
+
+    .category-hero__lead {
+      font-size: var(--text-lg);
+    }
+  }
+</style>

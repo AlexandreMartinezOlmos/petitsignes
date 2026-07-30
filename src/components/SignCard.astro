@@ -22,9 +22,24 @@ interface Props {
    * `CatalogueView.astro`); a card cannot know what is written above it.
    */
   showCategory: boolean;
+  /**
+   * Heading level of the word, which depends on what is above the card rather
+   * than on the card itself.
+   *
+   * In the catalogue every run of cards sits under an `h2` section heading, so
+   * `h3` is right. On a category page and on the 404 the cards sit directly
+   * under the `h1`, and a hardcoded `h3` skipped a level — a real defect that
+   * axe does not report, because `heading-order` is tagged `best-practice`
+   * rather than WCAG, and only Lighthouse flagged it.
+   *
+   * The caller owns it for the same reason it owns `showCategory`: a card
+   * cannot know what is written above it.
+   */
+  headingLevel?: 2 | 3;
 }
 
-const { sign, category, language, showCategory } = Astro.props;
+const { sign, category, language, showCategory, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
 const t = createTranslator(language);
 
 const label = sign.labels[language];
@@ -142,10 +157,11 @@ const href = localeHref(signPath(sign.id), language);
       }
       <div class="sign-card__label">
         {
-          /* h3: the grid is grouped under section headings, and a card belongs to
-            one of them rather than sitting beside it. */
+          /* The level comes from the caller: in the grid a card belongs to a
+             section heading, on a category page it belongs to the page's own
+             title. See `headingLevel` above. */
         }
-        <h3 class="sign-card__title">
+        <Heading class="sign-card__title">
           {
             /*
             The visually hidden half is the same pattern the CTAs use, and it is
@@ -163,7 +179,7 @@ const href = localeHref(signPath(sign.id), language);
           <a class="sign-card__link" href={href}>
             {label}<span class="sr-only">: {t('card.openEntry')}</span>
           </a>
-        </h3>
+        </Heading>
         {
           showCategory && (
             <span class="sign-card__chip" data-category={sign.category}>

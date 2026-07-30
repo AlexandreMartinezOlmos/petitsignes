@@ -117,6 +117,30 @@ haría que dos funciones de accesibilidad borrasen los filtros.
 Compartir una vista filtrada lo resuelven las páginas de categoría, que son direcciones reales con
 contenido detrás.
 
+### 4 bis. Tres niveles de dirección: catálogo, categoría y signo
+
+```
+/                        194 conceptos, con búsqueda y filtros
+/categoria/<slug>/       los signos de una categoría          ← el escalón que faltaba
+/signe/<id>/             un signo, su vídeo y su atribución
+```
+
+Las migas de una ficha recorren los tres (`Catàleg / Menjar i beure / llet`) y cada categoría enlaza
+con las otras catorce, así que un rastreador que aterrice en cualquier entrada puede recorrer el
+catálogo entero sin volver al índice.
+
+**El slug de categoría es catalán en los dos idiomas** (`/categoria/menjar-i-beure/` y
+`/es/categoria/menjar-i-beure/`), como `/el-projecte/` y `/accessibilitat/`. Los ids (`food`,
+`routines`) son ingleses porque son **código** —un tipo de TypeScript, un atributo `data-category`,
+un enum de Zod— y eso no dice nada sobre qué va en una dirección. Mantener un único path
+independiente del idioma es lo que permite que `canonical`, `hreflang` y el sitemap sigan saliendo
+de `localeHref` sin tocarse.
+
+Y el mapa `CATEGORY_SLUGS` está **escrito a mano, no derivado de las etiquetas**: generar
+`menjar-i-beure` a partir de «Menjar i beure» ataría una URL pública permanente a un texto editable,
+y reescribir una etiqueta para que quepa mejor en un chip rompería en silencio todos los enlaces
+compartidos. Cambiar un valor de ese mapa rompe enlaces; cambiar una etiqueta, no.
+
 ### 5. La persistencia está detrás de una interfaz
 
 `ProgressStore` (ver [`../src/lib/storage.ts`](../src/lib/storage.ts)) define métodos **async**

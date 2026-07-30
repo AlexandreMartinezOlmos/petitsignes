@@ -11,6 +11,7 @@
  * rename one; now it is two, because a rename breaks external links as well.
  */
 
+import { isUrlSlug } from './slug.ts';
 import type { Language, SignEntry } from './types.ts';
 
 /**
@@ -24,17 +25,14 @@ import type { Language, SignEntry } from './types.ts';
 export const SIGN_PATH_PREFIX = '/signe/';
 
 /**
- * The shape an id has to have to survive being put in a URL.
+ * Whether an id can be a public address.
  *
- * Lowercase ASCII, digits and single hyphens. Anything else — an accent, a
- * space, an uppercase letter — either gets percent-encoded into an address
- * nobody can read aloud or makes two ids collide on a case-insensitive
- * filesystem. There is a test that holds every id in the collection to this.
+ * The rule lives in `slug.ts` because a category slug has to satisfy exactly the
+ * same one, and two copies of it would drift. There is a test holding every id
+ * in the collection to it.
  */
-const SIGN_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
 export function isSignSlug(id: string): boolean {
-  return SIGN_SLUG.test(id);
+  return isUrlSlug(id);
 }
 
 /** Locale-independent path of a sign's page, for `localeHref`. */

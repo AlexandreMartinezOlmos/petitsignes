@@ -12,7 +12,9 @@
         "http://localhost/accessibilitat/index.html",
         "http://localhost/es/accessibilitat/index.html",
         "http://localhost/signe/leche/index.html",
-        "http://localhost/es/signe/leche/index.html"
+        "http://localhost/es/signe/leche/index.html",
+        "http://localhost/categoria/menjar-i-beure/index.html",
+        "http://localhost/es/categoria/menjar-i-beure/index.html"
       ],
       "numberOfRuns": 3,
       "settings": {

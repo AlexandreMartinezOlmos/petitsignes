@@ -25,6 +25,10 @@ const PAGES = [
   // a declared variant in the source block.
   { name: 'sign (ca)', path: '/signe/leche/' },
   { name: 'sign (es)', path: '/es/signe/leche/' },
+  // One template, 30 pages. Food is the largest category, so it is the one whose
+  // grid and fourteen sibling chips are most likely to break a rule.
+  { name: 'category (ca)', path: '/categoria/menjar-i-beure/' },
+  { name: 'category (es)', path: '/es/categoria/menjar-i-beure/' },
 ];
 
 for (const { name, path } of PAGES) {
@@ -48,8 +52,14 @@ for (const { name, path } of PAGES) {
         }),
     );
 
+    // `heading-order` is not in any WCAG tag — axe files it under
+    // `best-practice` — so this sweep was blind to a skipped heading level until
+    // Lighthouse reported one: the category page went `h1` straight to the
+    // cards' `h3`. Naming the rule rather than pulling in the whole
+    // `best-practice` set keeps the sweep about defects and not about style.
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .withRules(['heading-order'])
       .analyze();
 
     expect(results.violations).toEqual([]);

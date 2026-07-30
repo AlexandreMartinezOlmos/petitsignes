@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MESSAGES, createTranslator, isLanguage } from './i18n.ts';
+import { MESSAGES, categoryInSentence, createTranslator, isLanguage } from './i18n.ts';
 import type { StatusFilter } from './stores.ts';
 import { LANGUAGES } from './types.ts';
 
@@ -94,5 +94,50 @@ describe('isLanguage', () => {
   it('rejects a sign language: the two axes are separate', () => {
     expect(isLanguage('lsc')).toBe(false);
     expect(isLanguage('lse')).toBe(false);
+  });
+});
+
+describe('categoryInSentence', () => {
+  /**
+   * The labels are written for a chip, where "Menjar i beure" is correctly
+   * capitalised. Dropped into a heading it read "Signes de Menjar i beure",
+   * which is a typo to anyone who speaks the language — and it was about to be
+   * the `h1` and the `<title>` of thirty pages.
+   */
+  it('lowercases a label written for a chip', () => {
+    expect(categoryInSentence('es', 'Comida y bebida')).toBe('comida y bebida');
+    expect(categoryInSentence('en', 'Food and drink')).toBe('food and drink');
+  });
+
+  /**
+   * Catalan grammar, not a nicety: `de` elides before a vowel, so "de objectes"
+   * is wrong where "d'objectes" is right. Four of the fifteen categories start
+   * with a vowel, so this was on a quarter of the pages.
+   */
+  it('elides the Catalan preposition before a vowel', () => {
+    expect(categoryInSentence('ca', 'Animals')).toBe('d’animals');
+    expect(categoryInSentence('ca', 'Emocions')).toBe('d’emocions');
+    expect(categoryInSentence('ca', 'Objectes i joguines')).toBe('d’objectes i joguines');
+    expect(categoryInSentence('ca', 'Accions')).toBe('d’accions');
+  });
+
+  it('keeps the Catalan preposition whole before a consonant', () => {
+    expect(categoryInSentence('ca', 'Menjar i beure')).toBe('de menjar i beure');
+    expect(categoryInSentence('ca', 'Cos')).toBe('de cos');
+    expect(categoryInSentence('ca', 'Roba')).toBe('de roba');
+  });
+
+  /** `h` is silent in Catalan, so it elides too. */
+  it('treats a silent h as a vowel', () => {
+    expect(categoryInSentence('ca', 'Hivern')).toBe('d’hivern');
+  });
+
+  /**
+   * Only Catalan elides. Spanish and English carry whatever preposition they
+   * need inside the message, so handing them one here would double it.
+   */
+  it('adds no preposition outside Catalan', () => {
+    expect(categoryInSentence('es', 'Animales')).toBe('animales');
+    expect(categoryInSentence('en', 'Animals')).toBe('animals');
   });
 });
