@@ -11,7 +11,7 @@ import {
   $visibleCount,
   clearFilters,
   hydrateFromStorage,
-  type StatusFilter,
+  STATUS_FILTERS,
 } from '../lib/stores.ts';
 import type { CategoryId, Language } from '../lib/types.ts';
 
@@ -26,13 +26,6 @@ interface Props {
   /** Total rendered at build time, shown until the grid controller reports. */
   initialCount: number;
 }
-
-/**
- * Each filter's label is `filter.<value>`, so the value alone is enough — a
- * parallel key field could only ever drift from it. `src/lib/i18n.test.ts`
- * pins the fact that every value here has a message.
- */
-const STATUS_FILTERS: readonly StatusFilter[] = ['all', 'favorites', 'learned', 'pending'];
 
 export default function CatalogueToolbar({ categories, language, initialCount }: Props) {
   const t = createTranslator(language);

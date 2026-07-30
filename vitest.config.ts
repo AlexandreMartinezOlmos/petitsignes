@@ -19,8 +19,8 @@ export default defineConfig({
       reporter: ['text', 'lcov'],
       /**
        * A ratchet, not a target. The floor sits just under what the suite
-       * measures today (70.81% statements, 65.34% branches, 81.66% functions,
-       * 71.73% lines), so it fails when coverage *drops* and never on the day
+       * measures today (73.21% statements, 67.15% branches, 83.58% functions,
+       * 74.39% lines), so it fails when coverage *drops* and never on the day
        * it is set — a threshold above reality gets lowered on first contact and
        * then means nothing.
        *
@@ -30,9 +30,9 @@ export default defineConfig({
        * to prevent. A floor that stops following the ceiling stops being a floor.
        *
        * It reads low because it only counts unit tests: the DOM controller in
-       * `catalogue-grid.ts` and the wiring in `stores.ts` are exercised
-       * end to end by Playwright, which v8 does not see. Do not chase those
-       * numbers by unit-testing the browser — jsdom mocks would buy a nicer
+       * `catalogue-grid.ts` and the history wiring in `catalogue-history.ts` are
+       * exercised end to end by Playwright, which v8 does not see. Do not chase
+       * those numbers by unit-testing the browser — jsdom mocks would buy a nicer
        * percentage and less real confidence.
        *
        * That blind spot is also the only reason this ever moves *down*, and it
@@ -42,12 +42,21 @@ export default defineConfig({
        * and none of them visible to v8, so the percentage fell while real
        * coverage rose. Lowering the floor for any other reason is the move this
        * comment exists to make someone justify in writing.
+       *
+       * Which is the point of the last move *up*. Restoring the catalogue's
+       * filters added another forty statements of that same unmeasurable wiring
+       * and the floor looked like it had to come down — until the table showed
+       * `stores.ts` at 0% of its functions. Those are not browser-bound at all:
+       * they work against the `ProgressStore` interface, and `setProgressStore`
+       * had been sitting there the whole time for exactly this. Closing that gap
+       * (33% → 97%) put every metric above where it started. Read the per-file
+       * table before believing a drop is structural.
        */
       thresholds: {
-        statements: 70,
-        branches: 65,
-        functions: 81,
-        lines: 71,
+        statements: 73,
+        branches: 67,
+        functions: 83,
+        lines: 74,
       },
     },
   },

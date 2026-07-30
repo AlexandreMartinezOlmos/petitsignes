@@ -7,6 +7,7 @@ import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
 import { createTranslator } from '../../lib/i18n.ts';
 import { type Category, type SignEntry } from '../../lib/types.ts';
 import type { RoutedLocale } from '../../lib/routing.ts';
+import { CATALOGUE_RESTORING_ATTR, CATALOGUE_STATE_KEY } from '../../lib/catalogue-history.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -122,6 +123,48 @@ for (const sign of signs) {
   }
   <a class="bypass-link" href="#footer-nav">{t('nav.skipCatalogue')}</a>
 
+  {
+    /*
+    Stops the grid being shown unfiltered to someone who is coming back to a
+    filtered one.
+
+    The grid is static HTML with all 194 cards visible; the controller hides what
+    the filters exclude once its module has loaded. Measured on the built site
+    with the CPU throttled 20× — a cheap Android, which is the device this is
+    designed for — the full catalogue stayed on screen for several frames before
+    collapsing to the 11 matches. Blank for an instant is honest; showing someone
+    the wrong answer and correcting it is not.
+
+    `is:inline` and placed before the grid so it runs during parsing, before a
+    single card exists. It only fires when `history.state` already carries our
+    envelope, which cannot happen unless our JavaScript ran on a previous visit —
+    so a visitor without JavaScript never reaches this branch and never sees a
+    hidden grid. The timeout is the net for the remaining case: JavaScript
+    enabled, but the controller's module never arrives.
+
+    A cold first load has no state, so nothing is hidden and the Lighthouse
+    budget measures exactly what it measured before.
+  */
+  }
+  <script is:inline define:vars={{ stateKey: CATALOGUE_STATE_KEY, attr: CATALOGUE_RESTORING_ATTR }}>
+    try {
+      const stored = window.history.state?.[stateKey];
+      const filtered =
+        stored != null &&
+        (Boolean(stored.query) ||
+          Boolean(stored.category) ||
+          stored.onlyFirstSigns === true ||
+          (typeof stored.statusFilter === 'string' && stored.statusFilter !== 'all'));
+
+      if (filtered) {
+        document.documentElement.setAttribute(attr, 'true');
+        setTimeout(() => document.documentElement.removeAttribute(attr), 3000);
+      }
+    } catch {
+      // A document that refuses history access. Nothing to restore, nothing to hide.
+    }
+  </script>
+
   <div
     id="sign-grid"
     data-lang={language}
@@ -161,7 +204,14 @@ for (const sign of signs) {
 
 <script>
   import { mountCatalogue } from '../../lib/catalogue-grid.ts';
-  import { $query, $statusFilter, $visibleCount, rememberLanguage } from '../../lib/stores.ts';
+  import { mountCatalogueHistory, revealCatalogue } from '../../lib/catalogue-history.ts';
+  import {
+    $query,
+    $statusFilter,
+    $visibleCount,
+    hydrateFromStorage,
+    rememberLanguage,
+  } from '../../lib/stores.ts';
   import { createTranslator, type MessageKey } from '../../lib/i18n.ts';
   import { isRoutedLocale } from '../../lib/routing.ts';
   import { isSearchable } from '../../lib/search.ts';
@@ -170,7 +220,18 @@ for (const sign of signs) {
   const emptyState = document.getElementById('no-results');
 
   if (grid) {
+    // Before the grid: this restores the filters the visitor left behind, so the
+    // controller's first pass already hides what it should instead of showing
+    // the whole catalogue and correcting itself.
+    mountCatalogueHistory();
     mountCatalogue(grid);
+
+    // Filters are applied synchronously above, but `favorites` and `pending`
+    // depend on what is in storage, which is not. Waiting means a restored
+    // favourites filter reveals the right cards instead of briefly showing none;
+    // `hydrateFromStorage` memoises its promise, so this awaits the same read
+    // the cards themselves are waiting on rather than starting a second one.
+    void hydrateFromStorage().then(revealCatalogue).catch(revealCatalogue);
 
     // Read the page language from the DOM so this script matches whichever
     // localised page it runs on.

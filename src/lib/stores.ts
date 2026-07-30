@@ -17,6 +17,19 @@ import { signLanguageOf, type CategoryId, type Language } from './types.ts';
 
 export type StatusFilter = 'all' | 'favorites' | 'learned' | 'pending';
 
+/**
+ * The closed set of status filters, in the order the toolbar offers them.
+ *
+ * Declared next to the type rather than in the toolbar because it is no longer
+ * only a list of buttons: `catalogue-history.ts` validates a restored value
+ * against it, and a second copy of the set is a second thing to forget.
+ *
+ * Each value doubles as its own message key (`filter.favorites`), so no parallel
+ * label field exists to drift from it; `i18n.test.ts` pins that every value here
+ * has a message in all three languages.
+ */
+export const STATUS_FILTERS: readonly StatusFilter[] = ['all', 'favorites', 'learned', 'pending'];
+
 export const $query = atom<string>('');
 export const $category = atom<CategoryId | null>(null);
 export const $onlyFirstSigns = atom<boolean>(false);
@@ -49,20 +62,30 @@ export function getProgressStore(): ProgressStore {
 /** Test seam: lets a test inject its own implementation. */
 export function setProgressStore(store: ProgressStore | null): void {
   progressStore = store;
+  hydration = null;
 }
 
-let hydrated = false;
+let hydration: Promise<void> | null = null;
 
-/** Loads persisted favourites and learned signs into the stores. */
-export async function hydrateFromStorage(): Promise<void> {
-  if (hydrated) return;
-  hydrated = true;
+/**
+ * Loads persisted favourites and learned signs into the stores.
+ *
+ * The promise is memoised rather than guarded by a boolean, so that every caller
+ * awaits the same work. With a flag, the second caller returned an
+ * already-resolved promise while the first was still reading storage — fine when
+ * nobody awaited it, wrong now that the catalogue waits for this before showing a
+ * grid filtered by favourites.
+ */
+export function hydrateFromStorage(): Promise<void> {
+  hydration ??= (async () => {
+    const store = getProgressStore();
+    const [favorites, learned] = await Promise.all([store.getFavorites(), store.getLearned()]);
 
-  const store = getProgressStore();
-  const [favorites, learned] = await Promise.all([store.getFavorites(), store.getLearned()]);
+    $favorites.set(favorites);
+    $learned.set(learned);
+  })();
 
-  $favorites.set(favorites);
-  $learned.set(learned);
+  return hydration;
 }
 
 /**
