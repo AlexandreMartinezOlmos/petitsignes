@@ -1219,6 +1219,23 @@
   display: none;
 }
 
+/* Held back while a returning visitor's filters are being reapplied.
+
+   The grid ships as static HTML with every card visible and the controller hides
+   what the filters exclude, so a restored search would otherwise show all 194
+   cards first. Measured on the built site with the CPU throttled 20× — a cheap
+   Android, the device this is designed for — the full catalogue stayed up for
+   several frames before collapsing to the matches.
+
+   `visibility`, not `display`: the grid keeps its box, so revealing it does not
+   reflow the page or move the footer under someone's thumb. The attribute is set
+   by an inline script in `CatalogueView.astro` only when there is state to
+   restore, and cleared by `revealCatalogue` — a cold first load never has it, so
+   nothing about the usual arrival changes. */
+[data-catalogue-restoring] #sign-grid {
+  visibility: hidden;
+}
+
 /* Wraps rather than scrolls sideways. A scrolling row put 14 of 17 filters
    off-screen with nothing to suggest they existed; wrapping means the list is
    as long as it is, and the component only renders the chips it is currently
