@@ -94,15 +94,15 @@ const MESSAGES = {
     'sign.sourceUpdated': 'Data de la font',
     'sign.variant': 'Variant',
     'sign.category': 'Categoria',
-    'sign.relatedTitle': 'Altres signes de {category}',
-    'sign.relatedAll': 'Veure els {count} signes de {category}',
-    'category.title': 'Signes de {category}',
+    'sign.relatedTitle': 'Altres signes {ofCategory}',
+    'sign.relatedAll': 'Veure els {count} signes {ofCategory}',
+    'category.title': 'Signes {ofCategory}',
     'category.lead':
-      '{count} signes de {category} per al dia a dia amb el teu nadó, cadascun amb el vídeo de la seva font oficial.',
+      '{count} signes {ofCategory} per al dia a dia amb el teu nadó, cadascun amb el vídeo de la seva font oficial.',
     'category.leadOne':
-      'Un signe de {category} per al dia a dia amb el teu nadó, amb el vídeo de la seva font oficial.',
+      'Un signe {ofCategory} per al dia a dia amb el teu nadó, amb el vídeo de la seva font oficial.',
     'category.meta':
-      'Com es signen les paraules de {category} en {signLanguage}. Vídeos de fonts oficials, per a famílies amb nadons.',
+      'Com es signen les paraules {ofCategory} en {signLanguage}. Vídeos de fonts oficials, per a famílies amb nadons.',
     'category.othersTitle': 'Altres categories',
     'category.all': 'Veure tot el catàleg',
 
@@ -228,15 +228,15 @@ const MESSAGES = {
     'sign.sourceUpdated': 'Fecha de la fuente',
     'sign.variant': 'Variante',
     'sign.category': 'Categoría',
-    'sign.relatedTitle': 'Otros signos de {category}',
-    'sign.relatedAll': 'Ver los {count} signos de {category}',
-    'category.title': 'Signos de {category}',
+    'sign.relatedTitle': 'Otros signos de {ofCategory}',
+    'sign.relatedAll': 'Ver los {count} signos de {ofCategory}',
+    'category.title': 'Signos de {ofCategory}',
     'category.lead':
-      '{count} signos de {category} para el día a día con tu bebé, cada uno con el vídeo de su fuente oficial.',
+      '{count} signos de {ofCategory} para el día a día con tu bebé, cada uno con el vídeo de su fuente oficial.',
     'category.leadOne':
-      'Un signo de {category} para el día a día con tu bebé, con el vídeo de su fuente oficial.',
+      'Un signo de {ofCategory} para el día a día con tu bebé, con el vídeo de su fuente oficial.',
     'category.meta':
-      'Cómo se signan las palabras de {category} en {signLanguage}. Vídeos de fuentes oficiales, para familias con bebés.',
+      'Cómo se signan las palabras de {ofCategory} en {signLanguage}. Vídeos de fuentes oficiales, para familias con bebés.',
     'category.othersTitle': 'Otras categorías',
     'category.all': 'Ver todo el catálogo',
 
@@ -363,15 +363,15 @@ const MESSAGES = {
     'sign.sourceUpdated': 'Source date',
     'sign.variant': 'Variant',
     'sign.category': 'Category',
-    'sign.relatedTitle': 'More signs from {category}',
-    'sign.relatedAll': 'See all {count} {category} signs',
-    'category.title': '{category} signs',
+    'sign.relatedTitle': 'More signs from {ofCategory}',
+    'sign.relatedAll': 'See all {count} {ofCategory} signs',
+    'category.title': '{ofCategory} signs',
     'category.lead':
-      '{count} signs for {category}, for everyday moments with your baby, each with the video from its official source.',
+      '{count} signs for {ofCategory}, for everyday moments with your baby, each with the video from its official source.',
     'category.leadOne':
-      'One sign for {category}, for everyday moments with your baby, with the video from its official source.',
+      'One sign for {ofCategory}, for everyday moments with your baby, with the video from its official source.',
     'category.meta':
-      'How to sign words for {category} in {signLanguage}. Videos from official sources, for families with babies.',
+      'How to sign words for {ofCategory} in {signLanguage}. Videos from official sources, for families with babies.',
     'category.othersTitle': 'Other categories',
     'category.all': 'Browse the whole catalogue',
 
@@ -432,6 +432,33 @@ function interpolate(template: string, values?: Record<string, string | number>)
 export function createTranslator(language: Language = DEFAULT_LANGUAGE): Translator {
   const dictionary = MESSAGES[language];
   return (key, values) => interpolate(dictionary[key], values);
+}
+
+/**
+ * A category label ready to be dropped into a sentence.
+ *
+ * Two things happen here, and both are about the text being read by someone who
+ * speaks the language rather than assembled by a template.
+ *
+ * **The capital goes.** Labels are written for a chip, where "Menjar i beure" is
+ * right; inside a heading it produced "Signes de Menjar i beure", which reads as
+ * a typo. Safe for all fifteen because they are common nouns — a category named
+ * after a place or a person would need a form of its own.
+ *
+ * **Catalan elides the preposition before a vowel.** "de menjar i beure", but
+ * "d'animals" — `de objectes` is simply wrong, and four of the fifteen
+ * categories start with a vowel. Spanish does not elide, and English does not
+ * use a preposition in these phrases at all, so both get the bare label and the
+ * message supplies whatever they need around it.
+ */
+export function categoryInSentence(language: Language, label: string): string {
+  const lowered = label.charAt(0).toLocaleLowerCase(language) + label.slice(1);
+
+  if (language !== 'ca') return lowered;
+
+  // Accented vowels included: a label could legitimately begin with one, and
+  // `h` is silent in Catalan, so it elides too ("d'hivern").
+  return /^[aeiouàèéíòóúüh]/i.test(lowered) ? `d’${lowered}` : `de ${lowered}`;
 }
 
 export function isLanguage(value: string): value is Language {

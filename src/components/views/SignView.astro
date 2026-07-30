@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
-import { createTranslator } from '../../lib/i18n.ts';
+import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { categoryPath } from '../../lib/categories.ts';
 import { relatedSigns, signPath } from '../../lib/signs.ts';
@@ -56,6 +56,11 @@ const related = relatedSigns(sign, allSigns, language);
 // Counted, not written down: the link says how many are on the category page,
 // and a number that drifts from the page it points at is worse than no number.
 const categoryCount = allSigns.filter((other) => other.category === sign.category).length;
+
+// The category as it reads inside a sentence — "els 27 signes d'animals", not
+// "de Animals". The chip and the breadcrumb keep the label as written; only
+// prose gets this. See `categoryInSentence`.
+const ofCategory = categoryInSentence(language, category.labels[language]);
 
 const catalogueHref = localeHref('/', language);
 
@@ -308,7 +313,7 @@ const reportUrl = newIssueUrl(
       related.length > 0 && (
         <section class="sign-related" aria-labelledby="sign-related-title">
           <h2 class="sign-related__title" id="sign-related-title">
-            {t('sign.relatedTitle', { category: category.labels[language] })}
+            {t('sign.relatedTitle', { ofCategory })}
           </h2>
           <ul class="sign-related__list">
             {related.map((other) => (
@@ -329,7 +334,7 @@ const reportUrl = newIssueUrl(
             <a class="sign-related__all" href={localeHref(categoryPath(category.id), language)}>
               {t('sign.relatedAll', {
                 count: categoryCount,
-                category: category.labels[language],
+                ofCategory,
               })}
             </a>
           </p>

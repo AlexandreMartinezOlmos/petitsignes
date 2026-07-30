@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SignCard from '../SignCard.astro';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
 import { categoryPath } from '../../lib/categories.ts';
-import { createTranslator } from '../../lib/i18n.ts';
+import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
 
@@ -37,6 +37,10 @@ const fullName = signLanguage === 'lsc' ? t('signLanguage.lscFull') : t('signLan
 
 const label = category.labels[language];
 
+// The label as it reads inside a sentence: lowercased, and in Catalan carrying
+// the preposition so it can elide before a vowel. See `categoryInSentence`.
+const ofCategory = categoryInSentence(language, label);
+
 const signEntries = await getCollection('signs');
 const signs: SignEntry[] = signEntries
   .map((entry) => ({ id: entry.id, ...entry.data }) as SignEntry)
@@ -61,15 +65,15 @@ const catalogueHref = localeHref('/', language);
 // nobody checks.
 const lead =
   signs.length === 1
-    ? t('category.leadOne', { category: label })
-    : t('category.lead', { count: signs.length, category: label });
+    ? t('category.leadOne', { ofCategory })
+    : t('category.lead', { count: signs.length, ofCategory });
 ---
 
 <BaseLayout
   language={language}
   path={categoryPath(category.id)}
-  title={t('category.title', { category: label })}
-  description={t('category.meta', { category: label, signLanguage: fullName })}
+  title={t('category.title', { ofCategory })}
+  description={t('category.meta', { ofCategory, signLanguage: fullName })}
 >
   <div class="category-page">
     <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
@@ -87,7 +91,7 @@ const lead =
           {label}
         </span>
       </p>
-      <h1 class="category-hero__title">{t('category.title', { category: label })}</h1>
+      <h1 class="category-hero__title">{t('category.title', { ofCategory })}</h1>
       <p class="category-hero__lead">{lead}</p>
     </header>
 

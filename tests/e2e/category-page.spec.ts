@@ -32,7 +32,21 @@ test.describe('finding a category page', () => {
 
     await crumb.click();
     await expect(page).toHaveURL(new RegExp(`${CA}$`));
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Signes de Menjar i beure');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Signes de menjar i beure');
+  });
+
+  /**
+   * Catalan elides `de` before a vowel, so four of the fifteen categories read
+   * "d'animals" rather than "de animals". Asserted on a real page and not only
+   * on the helper, because getting the grammar right and forgetting to wire it
+   * up looks identical from the unit test's side.
+   */
+  test('the Catalan preposition elides before a vowel', async ({ page }) => {
+    await page.goto('/categoria/animals/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Signes d’animals');
+
+    await page.goto(CA);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Signes de menjar i beure');
   });
 
   test('a sign offers the rest of its category, not the whole catalogue', async ({ page }) => {
@@ -98,7 +112,7 @@ test.describe('what a category page holds', () => {
   test('describes itself to search engines and declares its translation', async ({ request }) => {
     const html = await (await request.get(CA)).text();
 
-    expect(html).toMatch(/<meta name="description" content="[^"]*Menjar i beure/);
+    expect(html).toMatch(/<meta name="description" content="[^"]*menjar i beure/);
     expect(html).toContain(`<link rel="canonical" href="https://petitsignes.cat${CA}"`);
     expect(html).toContain(`hreflang="es" href="https://petitsignes.cat${ES}"`);
   });
