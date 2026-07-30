@@ -95,6 +95,51 @@ test.describe('what a sign page says', () => {
     expect(html).toContain('hreflang="es" href="https://petitsignes.cat/es/signe/leche/"');
   });
 
+  /**
+   * The route for someone who can tell us a sign is wrong.
+   *
+   * "Never invent a sign" only holds if the people who know LSC or LSE can
+   * report a breach, and this page is the one screen where a mistake is
+   * visible. Prefilling matters as much as the link: a report that arrives
+   * naming the entry and the sign language is actionable, "the video for milk
+   * looks wrong" is a hunt through 194 files.
+   */
+  test('lets someone report a wrong sign, with the entry already identified', async ({ page }) => {
+    await page.goto(CA);
+
+    const link = page.locator('.sign-report__link');
+    const href = await link.getAttribute('href');
+    const url = new URL(href ?? '');
+
+    expect(url.origin).toBe('https://github.com');
+    expect(url.pathname).toMatch(/\/issues\/new$/);
+
+    // Decoded, because the maintainer reads the form, not the query string.
+    expect(url.searchParams.get('title')).toContain('llet');
+    const body = url.searchParams.get('body') ?? '';
+    expect(body).toContain('leche');
+    expect(body).toContain('LSC');
+    expect(body).toContain('/signe/leche/');
+
+    // No placeholder survived into what someone is about to send.
+    expect(href).not.toContain('{');
+
+    await expect(link).toHaveAttribute('rel', /noopener/);
+    expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  });
+
+  /** The Spanish page must report the LSE entry, not the Catalan one. */
+  test('reports the sign language of the page it was opened from', async ({ page }) => {
+    await page.goto(ES);
+
+    const href = (await page.locator('.sign-report__link').getAttribute('href')) ?? '';
+    const body = new URL(href).searchParams.get('body') ?? '';
+
+    expect(body).toContain('LSE');
+    expect(body).not.toContain('LSC');
+    expect(body).toContain('/es/signe/leche/');
+  });
+
   test('offers a way onward rather than being a dead end', async ({ page }) => {
     await page.goto(CA);
 

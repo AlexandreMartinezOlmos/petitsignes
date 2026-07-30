@@ -5,6 +5,7 @@ import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
 import { createTranslator } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { relatedSigns, signPath } from '../../lib/signs.ts';
+import { newIssueUrl } from '../../lib/site.ts';
 import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
 
 interface Props {
@@ -71,6 +72,27 @@ const description = video
 const updatedAt = video
   ? new Intl.DateTimeFormat(language, { dateStyle: 'long' }).format(new Date(video.updatedAt))
   : null;
+
+/**
+ * The route for someone who can tell us we got a sign wrong.
+ *
+ * §2.1 is the promise the project rests on, and the only people able to catch a
+ * breach of it are the ones who know LSC or LSE. The project page invited them
+ * to open an issue; this page — the one screen where the mistake is visible —
+ * had no route at all.
+ *
+ * Prefilled from build-time data only: the concept's id, its label, the sign
+ * language and this page's address. Nothing a visitor typed goes near it, so it
+ * raises none of the questions §2.2 answers.
+ *
+ * The page URL is absolute and built from `Astro.site`, so a report opened from
+ * a branch preview says so instead of pointing the maintainer at production.
+ */
+const pageUrl = new URL(localeHref(signPath(sign.id), language), Astro.site).href;
+const reportUrl = newIssueUrl(
+  t('sign.issueTitle', { label, signLanguage: shortName }),
+  t('sign.issueBody', { label, signId: sign.id, signLanguage: shortName, pageUrl }),
+);
 ---
 
 <BaseLayout language={language} path={signPath(sign.id)} title={label} description={description}>
@@ -233,6 +255,29 @@ const updatedAt = video
         </section>
       )
     }
+
+    {
+      /*
+      Right after the attribution, because that is the moment someone who knows
+      the language has just checked where the video came from. Outside the
+      `video &&` block above on purpose: a label can be wrong in a concept that
+      has no video at all, and those are the entries least likely to be checked
+      by anyone else.
+
+      Deliberately quiet — a line of text, not a call to action. It competes with
+      nothing on a page whose job is to show one sign, and someone who has
+      spotted a mistake is already looking for a way to say so.
+    */
+    }
+    <p class="sign-report">
+      <a class="sign-report__link" href={reportUrl} target="_blank" rel="noreferrer noopener">
+        {t('sign.report')}
+        <svg class="icon-sm" aria-hidden="true" focusable="false">
+          <use href="#i-external"></use>
+        </svg>
+      </a>
+      <span class="sign-report__hint">{t('sign.reportHint')}</span>
+    </p>
 
     {
       /*
@@ -446,6 +491,37 @@ const updatedAt = video
     color: var(--color-brand-ink);
     text-decoration: underline;
     text-underline-offset: 3px;
+  }
+
+  /* Two lines that wrap independently: the link keeps its own 44px target and
+     the explanation sits under it, rather than the two sharing a line that
+     leaves a tappable area running the width of a paragraph. */
+  .sign-report {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-block-start: 2rem;
+  }
+
+  .sign-report__link {
+    display: inline-flex;
+    min-block-size: var(--spacing-touch);
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-brand-ink);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* The honest half. This link goes somewhere that asks for an account, and a
+     parent who taps it and lands on a login wall has been sent to a dead end —
+     so it says so before the tap, not after. */
+  .sign-report__hint {
+    max-inline-size: 52ch;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--color-ink-muted);
   }
 
   @media (width >= 40rem) {
