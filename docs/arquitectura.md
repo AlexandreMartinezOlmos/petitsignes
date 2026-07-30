@@ -94,6 +94,29 @@ React y el controlador de la rejilla necesitan la misma verdad (qué se busca, q
 activo, qué es favorito). nanostores pesa ~1 KB y permite que ambos mundos se suscriban sin
 acoplarlos.
 
+#### Los filtros se recuerdan en `history.state`, nunca en la URL
+
+Mientras el catálogo vivía en una sola página nadie salía de ella, así que tener los filtros solo en
+memoria no costaba nada. Desde que cada signo tiene su dirección, volver atrás aterrizaba en una
+rejilla sin filtrar. El estado viaja ahora en `history.state`, que el navegador guarda junto a la
+entrada del historial y **no envía a ningún sitio** (ver
+[`../src/lib/catalogue-history.ts`](../src/lib/catalogue-history.ts)).
+
+**La query string no es una opción, y no por estilo.** El `count.js` de GoatCounter compone su
+petición con `q: location.search`, leído directamente de la barra de direcciones y enviado en cada
+visita; las opciones que respeta son `no_onload`, `no_events`, `allow_local`, `allow_frame`, `path`,
+`title`, `referrer` y `event`, y `q` no está entre ellas. Su `get_path()` añade `location.search` una
+segunda vez. Es decir: un `?q=` publicaría lo que una madre escribe en el buscador, que es
+exactamente lo que §2.2 promete que no pasa nunca, y ninguna configuración lo evita. Hay un test e2e
+que comprueba que la URL no gana nunca ni query string ni fragmento.
+
+El fragmento (`#q=…`) sería inmune, porque no sale del navegador, pero esta página ya gasta su
+fragmento en `#main` y `#footer-nav` —el enlace de salto y el de bypass—, así que guardar estado ahí
+haría que dos funciones de accesibilidad borrasen los filtros.
+
+Compartir una vista filtrada lo resuelven las páginas de categoría, que son direcciones reales con
+contenido detrás.
+
 ### 5. La persistencia está detrás de una interfaz
 
 `ProgressStore` (ver [`../src/lib/storage.ts`](../src/lib/storage.ts)) define métodos **async**
