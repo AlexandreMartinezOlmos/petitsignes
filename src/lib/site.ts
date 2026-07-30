@@ -7,6 +7,32 @@ export const REPO_URL = 'https://github.com/AlexandreMartinezOlmos/petitsignes';
 export const REPO_ISSUES_URL = `${REPO_URL}/issues`;
 
 /**
+ * A link that opens GitHub's new-issue form with the fields already written.
+ *
+ * "Never invent a sign" is the promise the whole project rests on, and the only
+ * people who can tell us we have broken it are the ones who know LSC or LSE. The
+ * project page invited them to open an issue; the sign page — the one screen
+ * where an error is actually visible — offered no route at all. This is that
+ * route, and prefilling it means the report arrives identifying which entry and
+ * which sign language, instead of "the video for milk looks wrong".
+ *
+ * No `labels` parameter: the repository carries GitHub's default set, none of
+ * which fits, and naming a label that does not exist makes the link fail rather
+ * than degrade. The title carries the identification instead.
+ *
+ * It is built here rather than in the view because a query string assembled by
+ * hand is how an accent or a line break ends up truncating someone's report.
+ */
+export function newIssueUrl(
+  title: string,
+  body: string,
+  issuesUrl: string = REPO_ISSUES_URL,
+): string {
+  const params = new URLSearchParams({ title, body });
+  return `${issuesUrl}/new?${params.toString()}`;
+}
+
+/**
  * The origin every canonical link, hreflang and sitemap entry is built from.
  *
  * It lives here, in the repository, and not only in a hosting dashboard: this
