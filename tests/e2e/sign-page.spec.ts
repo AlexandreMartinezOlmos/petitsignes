@@ -234,6 +234,28 @@ test.describe('a sign page is not a dead card', () => {
   });
 
   /**
+   * H1: the media panel used to be `--color-surface-sunken` while the chip
+   * two lines below it carried the category's tint — the panel and the chip
+   * of the same entry read as two different components. Compared against the
+   * card's own placeholder rather than a hardcoded colour, so this is really
+   * asking "does it read `--cat-bg`/`--cat-fg` off the same element the card
+   * does", not "is it beige today".
+   */
+  test('the media panel wears the card’s placeholder, not a lookalike', async ({ page }) => {
+    await page.goto('/');
+    const card = page.locator('.sign-card[data-sign-id="leche"] .sign-card__placeholder');
+    const cardStyle = await card.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { backgroundImage: cs.backgroundImage, color: cs.color };
+    });
+
+    await page.goto(CA);
+    const panel = page.locator('.sign-detail__media .sign-card__placeholder');
+    await expect(panel).toHaveCSS('background-image', cardStyle.backgroundImage);
+    await expect(panel).toHaveCSS('color', cardStyle.color);
+  });
+
+  /**
    * §4.3: the card never plays on its own, and browsing must not contact
    * YouTube. A page dedicated to one sign is exactly where that rule would be
    * quietly dropped, so it is checked here too — matched on hostname, because a
