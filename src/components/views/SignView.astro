@@ -132,12 +132,27 @@ const reportUrl = newIssueUrl(
       the grid has to show it favourited there.
     */
     }
-    <article class="sign-detail" data-progress-for={sign.id}>
+    <article class="sign-detail" data-progress-for={sign.id} data-category={sign.category}>
+      {
+        /*
+        Reuses the card's own placeholder — same gradient, same halo, same
+        icon colour — rather than a lookalike built from scratch. `data-category`
+        moved up to the article so this and the chip below read the same custom
+        properties; a panel painted from a different rule than the chip beside
+        it read as a different component wearing the category's colours by
+        coincidence. There is no poster and there cannot be one (§2.1), so this
+        stays the concept marker; the day a source grants a still image the
+        card's own `posterUrl` branch is what gets mirrored here, not this
+        placeholder.
+      */
+      }
       <div class="sign-detail__media">
-        <svg class="icon-lg" aria-hidden="true" focusable="false">
-          <use href={`#i-${category.icon}`}></use>
-        </svg>
-        <span class="sr-only">{t('card.posterPending')}</span>
+        <div class="sign-card__placeholder">
+          <svg class="icon-lg" aria-hidden="true" focusable="false">
+            <use href={`#i-${category.icon}`}></use>
+          </svg>
+          <span class="sr-only">{t('card.posterPending')}</span>
+        </div>
       </div>
 
       <div class="sign-detail__body">
@@ -152,86 +167,94 @@ const reportUrl = newIssueUrl(
 
         <h1 class="sign-detail__title">{label}</h1>
         <p class="sign-detail__subtitle">{t('sign.subtitle', { signLanguage: fullName })}</p>
+      </div>
 
-        <div class="sign-detail__actions">
-          {
-            video === undefined ? (
-              /* A statement of fact, not a control — the same wording and the
-                 same reasoning as on the card: this sign language has no entry
-                 we may show, and by §2.1 we will not invent one. */
-              <p class="sign-card__novideo">
-                <svg class="icon-sm" aria-hidden="true" focusable="false">
-                  <use href="#i-video-off" />
-                </svg>
-                {t('card.noVideo', { signLanguage: shortName })}
-              </p>
-            ) : video.delivery === 'youtube-embed' ? (
-              <button
-                type="button"
-                class="sign-card__cta sign-detail__cta"
-                data-action="play"
-                data-sign-id={sign.id}
-                data-sign-language={signLanguage}
-                data-label={label}
-                data-video-url={video.videoUrl}
-                data-poster-url={video.posterUrl}
-                data-source={video.source}
-                data-source-url={video.sourceUrl}
-                data-license={video.license}
-              >
-                <svg class="icon-sm" aria-hidden="true" focusable="false">
-                  <use href="#i-play" />
-                </svg>
-                {t('card.watchSign')}
-                <span class="sr-only">: {label}</span>
-              </button>
-            ) : (
-              <a
-                class="sign-card__cta sign-card__cta--external sign-detail__cta"
-                href={video.videoUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                {t('card.watchAtSource', { source: video.source })}
-                <span class="sr-only">: {label}</span>
-                <svg class="icon-sm" aria-hidden="true" focusable="false">
-                  <use href="#i-external" />
-                </svg>
-              </a>
-            )
-          }
-
-          <div class="sign-detail__toggles">
+      {
+        /*
+        A third grid area rather than nested inside `body`: from 320px up the
+        CTA needs the row's full width, not the narrow column beside a square
+        media panel — the same reason the card keeps its actions out of the
+        label wrapper in its own compact row. See the `.sign-detail` rule.
+      */
+      }
+      <div class="sign-detail__actions">
+        {
+          video === undefined ? (
+            /* A statement of fact, not a control — the same wording and the
+               same reasoning as on the card: this sign language has no entry
+               we may show, and by §2.1 we will not invent one. */
+            <p class="sign-card__novideo">
+              <svg class="icon-sm" aria-hidden="true" focusable="false">
+                <use href="#i-video-off" />
+              </svg>
+              {t('card.noVideo', { signLanguage: shortName })}
+            </p>
+          ) : video.delivery === 'youtube-embed' ? (
             <button
               type="button"
-              class="sign-card__toggle"
-              data-action="favorite"
+              class="sign-card__cta sign-detail__cta"
+              data-action="play"
               data-sign-id={sign.id}
-              aria-pressed="false"
-              aria-label={t('card.addFavorite')}
-              data-label-on={t('card.removeFavorite')}
-              data-label-off={t('card.addFavorite')}
+              data-sign-language={signLanguage}
+              data-label={label}
+              data-video-url={video.videoUrl}
+              data-poster-url={video.posterUrl}
+              data-source={video.source}
+              data-source-url={video.sourceUrl}
+              data-license={video.license}
             >
-              <svg class="icon" aria-hidden="true" focusable="false">
-                <use href="#i-star"></use>
+              <svg class="icon-sm" aria-hidden="true" focusable="false">
+                <use href="#i-play" />
               </svg>
+              {t('card.watchSign')}
+              <span class="sr-only">: {label}</span>
             </button>
+          ) : (
+            <a
+              class="sign-card__cta sign-card__cta--external sign-detail__cta"
+              href={video.videoUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {t('card.watchAtSource', { source: video.source })}
+              <span class="sr-only">: {label}</span>
+              <svg class="icon-sm" aria-hidden="true" focusable="false">
+                <use href="#i-external" />
+              </svg>
+            </a>
+          )
+        }
 
-            <button
-              type="button"
-              class="sign-card__toggle"
-              data-action="learned"
-              data-sign-id={sign.id}
-              aria-pressed="false"
-              aria-label={t('card.markLearned')}
-              data-label-on={t('card.unmarkLearned')}
-              data-label-off={t('card.markLearned')}
-            >
-              <svg class="icon" aria-hidden="true" focusable="false">
-                <use href="#i-check"></use>
-              </svg>
-            </button>
-          </div>
+        <div class="sign-detail__toggles">
+          <button
+            type="button"
+            class="sign-card__toggle"
+            data-action="favorite"
+            data-sign-id={sign.id}
+            aria-pressed="false"
+            aria-label={t('card.addFavorite')}
+            data-label-on={t('card.removeFavorite')}
+            data-label-off={t('card.addFavorite')}
+          >
+            <svg class="icon" aria-hidden="true" focusable="false">
+              <use href="#i-star"></use>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="sign-card__toggle"
+            data-action="learned"
+            data-sign-id={sign.id}
+            aria-pressed="false"
+            aria-label={t('card.markLearned')}
+            data-label-on={t('card.unmarkLearned')}
+            data-label-off={t('card.markLearned')}
+          >
+            <svg class="icon" aria-hidden="true" focusable="false">
+              <use href="#i-check"></use>
+            </svg>
+          </button>
         </div>
       </div>
     </article>
@@ -371,31 +394,38 @@ const reportUrl = newIssueUrl(
     max-inline-size: 46rem;
   }
 
-  /* Stacked on a phone, side by side as soon as there is room. The media block
-     leads because it is what the eye lands on, and because on a narrow screen
-     it is the only thing that says which category this word belongs to before
-     the chip is read. */
+  /* Paired with the word from 320px up — the same shape the card itself takes
+     below `sm` (see the compact row in global.css) — rather than a full-width
+     band above the text. Measured at 343×128 on a 375px screen, the band was
+     2.7:1: a ratio nothing square reads well in, and the one place this panel
+     did not match the card it is a smaller copy of. `actions` is a third grid
+     area, not nested in `body`, because the CTA needs the row's full width;
+     media spans both rows only once there is room to stand the panel upright
+     again (see the `40rem` query below). */
   .sign-detail {
     display: grid;
-    gap: 1.25rem;
+    grid-template-columns: 6rem 1fr;
+    grid-template-areas: 'media body' 'actions actions';
+    column-gap: 1rem;
+    row-gap: 1.25rem;
     align-items: center;
   }
 
-  /* A short band on a phone, not a 4:3 block. There is no poster and there
-     cannot be (§2.1), so this is a category marker rather than an image: at the
-     full width of a 375px screen it was 281px of empty surface pushing the word
-     — the one thing the visitor came for — below the fold. It earns its 4:3 back
-     at the width where it sits beside the text instead of above it. */
+  /* Reuses `.sign-card__placeholder` for the gradient, halo and icon — see the
+     comment on the element itself. This box only sets the shape: a square
+     stands a pictogram upright the way the band above it could not, and
+     `overflow: hidden` is what lets the halo (sized for the card, not this
+     panel) sit behind the icon instead of spilling past the rounded corners. */
   .sign-detail__media {
-    display: grid;
-    place-items: center;
-    block-size: 8rem;
+    grid-area: media;
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
     border-radius: var(--radius-card);
-    background-color: var(--color-surface-sunken);
-    color: var(--color-brand);
   }
 
   .sign-detail__body {
+    grid-area: body;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -424,11 +454,11 @@ const reportUrl = newIssueUrl(
   }
 
   .sign-detail__actions {
+    grid-area: actions;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
-    margin-block-start: 0.5rem;
   }
 
   .sign-detail__cta {
@@ -552,14 +582,22 @@ const reportUrl = newIssueUrl(
     color: var(--color-ink-muted);
   }
 
-  @media (width >= 40rem) {
+  /* Media stands up again once there is room: 4:3 rather than square, and
+     spanning both rows so it sits beside the word and the actions together,
+     the way it did before H1 — that part was never the problem, only the
+     paired media panel below `sm` was missing it. `height >= 34rem` keeps a
+     landscape phone (short but wide) on the paired-row layout above, for the
+     same reason the card's compact row checks both axes: a stood-up panel at
+     390px of height leaves no room for the word under it. */
+  @media (width >= 40rem) and (height >= 34rem) {
     .sign-detail {
       grid-template-columns: 16rem 1fr;
-      gap: 2rem;
+      grid-template-areas: 'media body' 'media actions';
+      column-gap: 2rem;
+      row-gap: 0.75rem;
     }
 
     .sign-detail__media {
-      block-size: auto;
       aspect-ratio: 4 / 3;
     }
   }
