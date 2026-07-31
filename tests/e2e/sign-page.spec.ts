@@ -286,6 +286,57 @@ test.describe('a sign page is not a dead card', () => {
   });
 });
 
+test.describe('H5: the citation repositions, never disappears', () => {
+  /**
+   * §2.4's attribution is required, not decorative — unlike the text pages'
+   * contents list, which this two-column shape is modelled on and which is
+   * safe to hide below `lg` because it only repeats the article. Copying
+   * `.page-aside` verbatim would have copied its `display: none` default
+   * too, and silently dropped the citation from every phone. This is the one
+   * thing that check exists to catch.
+   */
+  test('the citation stays visible on a phone, in the same reading order', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 1200 });
+    await page.goto(CA);
+
+    await expect(page.locator('.sign-source')).toBeVisible();
+
+    // Right after the article, before the report link and the related
+    // signs — the same order the comment above `.sign-source` in the
+    // component describes, at every width.
+    const [detailTop = -1, sourceTop = -1, reportTop = -1, relatedTop = -1] = await page.evaluate(
+      () =>
+        ['.sign-detail', '.sign-source', '.sign-report', '.sign-related'].map(
+          (selector) => document.querySelector(selector)?.getBoundingClientRect().top ?? -1,
+        ),
+    );
+    expect(detailTop).toBeLessThan(sourceTop);
+    expect(sourceTop).toBeLessThan(reportTop);
+    expect(reportTop).toBeLessThan(relatedTop);
+  });
+
+  /** The 416px that used to sit empty next to a 736px column. */
+  test('the citation sits beside the article on a wide screen', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(CA);
+
+    const detail = await page.locator('.sign-detail').boundingBox();
+    const source = await page.locator('.sign-source').boundingBox();
+    const related = await page.locator('.sign-related').boundingBox();
+    if (!detail || !source || !related) throw new Error('expected all three blocks on screen');
+
+    // Beside, not below: the citation starts to the right of the article, on
+    // roughly the same row.
+    expect(source.x).toBeGreaterThan(detail.x + detail.width);
+    expect(Math.abs(source.y - detail.y)).toBeLessThan(20);
+
+    // Related signs never move into the aside — only the citation does.
+    // They stay in the main column, under the article.
+    expect(related.x).toBeLessThan(source.x);
+    expect(related.y).toBeGreaterThan(detail.y);
+  });
+});
+
 test.describe('a sign page on a phone', () => {
   test.use({ viewport: { width: 320, height: 640 } });
 

@@ -106,25 +106,42 @@ const reportUrl = newIssueUrl(
 ---
 
 <BaseLayout language={language} path={signPath(sign.id)} title={label} description={description}>
-  <div class="sign-page">
-    {
-      /*
-      Three steps now, not two. The category in the middle is the route that
-      makes its page reachable by a person rather than only by a crawler, and it
-      is also the honest shape of where this page sits: a sign belongs to a
-      category, which belongs to the catalogue.
-    */
-    }
-    <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
-      <a class="breadcrumb__link" href={catalogueHref}>{t('nav.catalogue')}</a>
-      <span class="breadcrumb__sep" aria-hidden="true">/</span>
-      <a class="breadcrumb__link" href={localeHref(categoryPath(category.id), language)}>
-        {category.labels[language]}
-      </a>
-      <span class="breadcrumb__sep" aria-hidden="true">/</span>
-      <span class="breadcrumb__current" aria-current="page">{label}</span>
-    </nav>
+  {
+    /*
+    Three steps now, not two. The category in the middle is the route that
+    makes its page reachable by a person rather than only by a crawler, and it
+    is also the honest shape of where this page sits: a sign belongs to a
+    category, which belongs to the catalogue. Outside the grid below, same as
+    `PageShell`'s own breadcrumb: it is a way back, not part of what the two
+    columns are dividing up.
+  */
+  }
+  <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
+    <a class="breadcrumb__link" href={catalogueHref}>{t('nav.catalogue')}</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <a class="breadcrumb__link" href={localeHref(categoryPath(category.id), language)}>
+      {category.labels[language]}
+    </a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current" aria-current="page">{label}</span>
+  </nav>
 
+  {
+    /*
+    H5: 416px sat empty to the right of this column on a 1280px screen — the
+    same shape `global.css` already named and fixed on the text pages, with a
+    second grid column that only appears from `lg`. Not reused verbatim:
+    `.page-aside` hides below `lg` because its content (a contents list)
+    repeats what the article already says, and this page's citation does not
+    — it is the only place §2.4's attribution lives, so it cannot disappear on
+    a phone. `.sign-page` is one grid for both layouts instead: four named
+    areas that stack in DOM order below `lg` and split into two columns above
+    it, so the citation's *position* moves with the viewport but it is never
+    removed, and related signs — the one way onward this page offers — never
+    depend on a breakpoint to exist.
+  */
+  }
+  <div class:list={['sign-page', { 'sign-page--no-source': !video }]}>
     {
       /*
       `data-progress-for` is what wires the two toggles below to the same
@@ -289,11 +306,16 @@ const reportUrl = newIssueUrl(
       licence it is used under and the date of that version — which is what the
       Vocabulari's terms require, not a courtesy. On the card this only fits
       inside the player; here there is room to print it in full.
+
+      An `aside` landmark, not a `section`: from `lg` this sits beside the
+      article rather than under it (see the `.sign-page` rule), which is what
+      the element is for. Below `lg` it reads as the next block down, same as
+      it always did.
     */
     }
     {
       video && (
-        <section class="sign-source" aria-labelledby="sign-source-title">
+        <aside class="sign-source" aria-labelledby="sign-source-title">
           <h2 class="sign-source__title" id="sign-source-title">
             {t('sign.sourceTitle')}
           </h2>
@@ -321,17 +343,19 @@ const reportUrl = newIssueUrl(
             </dd>
           </dl>
           <p class="sign-source__license">{video.license}</p>
-        </section>
+        </aside>
       )
     }
 
     {
       /*
-      Right after the attribution, because that is the moment someone who knows
-      the language has just checked where the video came from. Outside the
-      `video &&` block above on purpose: a label can be wrong in a concept that
-      has no video at all, and those are the entries least likely to be checked
-      by anyone else.
+      Right after the article in the DOM at every width, which is what keeps
+      this reachable the moment someone finishes checking where the video came
+      from — H5 only moved *where the citation sits on screen*, not this
+      block's position in the document, so that is still true regardless of
+      viewport. Outside the `video &&` block above on purpose: a label can be
+      wrong in a concept that has no video at all, and those are the entries
+      least likely to be checked by anyone else.
 
       Deliberately quiet — a line of text, not a call to action. It competes with
       nothing on a page whose job is to show one sign, and someone who has
@@ -411,11 +435,38 @@ const reportUrl = newIssueUrl(
      missing-video note are the exception: they are the catalogue's own
      components and are reused as they are, so that a sign looks the same
      wherever it is met. */
+  /* One grid for both layouts, rather than a flex column wrapped in a grid
+     above `lg` — see the comment on the element itself for why `.page-aside`'s
+     hide-below-`lg` habit could not simply be reused here. `grid-template-areas`
+     keeps DOM order (detail, source, report, related) as the only reading
+     order there is; only where `source` is drawn changes at the wide
+     breakpoint — the same divergence the text pages' contents list already
+     ships with. */
   .sign-page {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    display: grid;
+    row-gap: 2rem;
+    grid-template-areas: 'detail' 'source' 'report' 'related';
     max-inline-size: 46rem;
+  }
+
+  /* No video, no citation: the area drops out rather than reserving a row
+     nothing fills — leaving it in would have doubled `row-gap` around an
+     empty track, the same shape of bug H4 removes a few rules down. */
+  .sign-page--no-source {
+    grid-template-areas: 'detail' 'report' 'related';
+  }
+
+  @media (width >= 64rem) {
+    .sign-page:not(.sign-page--no-source) {
+      max-inline-size: none;
+      column-gap: 2.5rem;
+      grid-template-columns: minmax(0, 46rem) minmax(0, 18rem);
+      grid-template-areas:
+        'detail  source'
+        'report  source'
+        'related source';
+      align-items: start;
+    }
   }
 
   /* Paired with the word from 320px up — the same shape the card itself takes
@@ -427,6 +478,7 @@ const reportUrl = newIssueUrl(
      media spans both rows only once there is room to stand the panel upright
      again (see the `40rem` query below). */
   .sign-detail {
+    grid-area: detail;
     display: grid;
     grid-template-columns: 6rem 1fr;
     grid-template-areas: 'media body' 'actions actions';
@@ -511,6 +563,25 @@ const reportUrl = newIssueUrl(
     color: var(--color-ink-muted);
   }
 
+  .sign-source {
+    grid-area: source;
+  }
+
+  /* Same offset the text pages' contents list sticks at — both clear the same
+     shared header. Only from `lg`: below it `.sign-page` is one column and
+     this is simply the next block down, not a sidebar with anywhere to
+     stick. */
+  @media (width >= 64rem) {
+    .sign-source {
+      position: sticky;
+      top: 9rem;
+    }
+  }
+
+  .sign-related {
+    grid-area: related;
+  }
+
   .sign-source__title,
   .sign-related__title {
     font-size: var(--text-lg);
@@ -592,12 +663,15 @@ const reportUrl = newIssueUrl(
 
   /* Two lines that wrap independently: the link keeps its own 44px target and
      the explanation sits under it, rather than the two sharing a line that
-     leaves a tappable area running the width of a paragraph. */
-  /* H4: this used to carry its own `margin-block-start: 2rem` on top of
-     `.sign-page`'s `gap: 2rem`, doubling to 64px above this block alone with
-     nothing in the comment above to say why. No reason survived scrutiny, so
-     it spaces like every other block on the page now — the parent's gap. */
+     leaves a tappable area running the width of a paragraph.
+
+     H4: this used to carry its own `margin-block-start: 2rem` on top of
+     `.sign-page`'s `gap`/`row-gap`, doubling to 64px above this block alone
+     with nothing in the comment above to say why. No reason survived
+     scrutiny, so it spaces like every other block on the page now — the
+     parent's gap. */
   .sign-report {
+    grid-area: report;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
