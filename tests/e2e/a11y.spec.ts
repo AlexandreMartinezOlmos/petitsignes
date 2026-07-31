@@ -177,35 +177,53 @@ for (const path of ['/', '/el-projecte/', '/credits/', '/accessibilitat/']) {
  *
  * Swept rather than asserted case by case: the next control to grow an
  * `aria-label` is caught without anyone remembering to add a test.
+ *
+ * Looped across every page in `PAGES`, not only `/`: H3 gave the sign page's
+ * two toggles a visible caption (`aria-hidden`, sitting beside the icon) that
+ * the state-changing `aria-label` has to keep containing. `textContent` reads
+ * straight through `aria-hidden` — it is a DOM property, not an accessibility
+ * one — so this check exercises the real rendered markup exactly the way the
+ * `i18n.test.ts` string-level pin cannot: it would catch the caption ending up
+ * outside the button, or the wrong translation key, not only a mismatched pair
+ * of strings.
  */
-test('every visible label is contained in its accessible name', async ({ page }) => {
-  await page.goto('/');
-  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+for (const { name, path } of PAGES) {
+  test(`every visible label is contained in its accessible name (${name})`, async ({ page }) => {
+    await page.goto(path);
 
-  const violations = await page.evaluate(() => {
-    // Punctuation and case are not what a speech engine matches on.
-    const normalise = (value: string) =>
-      value
-        .toLowerCase()
-        .replace(/[^\p{L}\p{N} ]/gu, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+    // Same as the axe sweep above: `/el-projecte/` hydrates `ProgressData`
+    // with `client:visible`, so its controls never mount — and this check
+    // never finishes waiting for their `ssr` attribute to clear — without
+    // scrolling it into view first.
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+    await page.evaluate(() => window.scrollTo(0, 0));
 
-    return (
-      [...document.querySelectorAll('button[aria-label], a[aria-label]')]
-        .map((el) => ({
-          visible: (el.textContent ?? '').replace(/\s+/g, ' ').trim(),
-          name: el.getAttribute('aria-label') ?? '',
-        }))
-        // An icon-only control has no visible label, so the criterion does not apply.
-        .filter(({ visible }) => visible !== '')
-        .filter(({ visible, name }) => !normalise(name).includes(normalise(visible)))
-        .map(({ visible, name }) => `"${visible}" is announced as "${name}"`)
-    );
+    const violations = await page.evaluate(() => {
+      // Punctuation and case are not what a speech engine matches on.
+      const normalise = (value: string) =>
+        value
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N} ]/gu, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+      return (
+        [...document.querySelectorAll('button[aria-label], a[aria-label]')]
+          .map((el) => ({
+            visible: (el.textContent ?? '').replace(/\s+/g, ' ').trim(),
+            name: el.getAttribute('aria-label') ?? '',
+          }))
+          // An icon-only control has no visible label, so the criterion does not apply.
+          .filter(({ visible }) => visible !== '')
+          .filter(({ visible, name }) => !normalise(name).includes(normalise(visible)))
+          .map(({ visible, name }) => `"${visible}" is announced as "${name}"`)
+      );
+    });
+
+    expect(violations).toEqual([]);
   });
-
-  expect(violations).toEqual([]);
-});
+}
 
 /**
  * WCAG 2.2 §2.5.8 asks 24px; this project's design system promises 44px for
