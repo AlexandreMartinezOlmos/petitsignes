@@ -225,36 +225,60 @@ const reportUrl = newIssueUrl(
           )
         }
 
+        {
+          /*
+          H3: on the card the icon is the whole story — there is no room in a
+          44px square for more. Here there is, and two unlabelled icons under
+          a big CTA read as decoration rather than controls (the screenshot
+          that started this audit shows exactly that). The caption is
+          `aria-hidden`: the button's own `aria-label` is still the full,
+          state-aware accessible name ("Afegeix a preferits" reads better than
+          a static "Preferit"), so the caption only has to *contain* what the
+          name already announces (WCAG 2.5.3) rather than replace it —
+          `card.favoriteLabel`/`card.learnedLabel` are pinned in `i18n.test.ts`
+          against both states of the name, in every language.
+        */
+        }
         <div class="sign-detail__toggles">
-          <button
-            type="button"
-            class="sign-card__toggle"
-            data-action="favorite"
-            data-sign-id={sign.id}
-            aria-pressed="false"
-            aria-label={t('card.addFavorite')}
-            data-label-on={t('card.removeFavorite')}
-            data-label-off={t('card.addFavorite')}
-          >
-            <svg class="icon" aria-hidden="true" focusable="false">
-              <use href="#i-star"></use>
-            </svg>
-          </button>
+          <div class="sign-detail__toggle-item">
+            <button
+              type="button"
+              class="sign-card__toggle"
+              data-action="favorite"
+              data-sign-id={sign.id}
+              aria-pressed="false"
+              aria-label={t('card.addFavorite')}
+              data-label-on={t('card.removeFavorite')}
+              data-label-off={t('card.addFavorite')}
+            >
+              <svg class="icon" aria-hidden="true" focusable="false">
+                <use href="#i-star"></use>
+              </svg>
+            </button>
+            <span class="sign-detail__toggle-caption" aria-hidden="true">
+              {t('card.favoriteLabel')}
+            </span>
+          </div>
 
-          <button
-            type="button"
-            class="sign-card__toggle"
-            data-action="learned"
-            data-sign-id={sign.id}
-            aria-pressed="false"
-            aria-label={t('card.markLearned')}
-            data-label-on={t('card.unmarkLearned')}
-            data-label-off={t('card.markLearned')}
-          >
-            <svg class="icon" aria-hidden="true" focusable="false">
-              <use href="#i-check"></use>
-            </svg>
-          </button>
+          <div class="sign-detail__toggle-item">
+            <button
+              type="button"
+              class="sign-card__toggle"
+              data-action="learned"
+              data-sign-id={sign.id}
+              aria-pressed="false"
+              aria-label={t('card.markLearned')}
+              data-label-on={t('card.unmarkLearned')}
+              data-label-off={t('card.markLearned')}
+            >
+              <svg class="icon" aria-hidden="true" focusable="false">
+                <use href="#i-check"></use>
+              </svg>
+            </button>
+            <span class="sign-detail__toggle-caption" aria-hidden="true">
+              {t('card.learnedLabel')}
+            </span>
+          </div>
         </div>
       </div>
     </article>
@@ -469,7 +493,22 @@ const reportUrl = newIssueUrl(
 
   .sign-detail__toggles {
     display: flex;
-    gap: 0.5rem;
+    gap: 1.25rem;
+  }
+
+  /* Icon and caption stacked, centred on each other rather than the button
+     alone: a caption left-aligned under a centred circle reads as
+     misaligned, not as a label for it. */
+  .sign-detail__toggle-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+  }
+
+  .sign-detail__toggle-caption {
+    font-size: var(--text-xs);
+    color: var(--color-ink-muted);
   }
 
   .sign-source__title,
@@ -554,11 +593,14 @@ const reportUrl = newIssueUrl(
   /* Two lines that wrap independently: the link keeps its own 44px target and
      the explanation sits under it, rather than the two sharing a line that
      leaves a tappable area running the width of a paragraph. */
+  /* H4: this used to carry its own `margin-block-start: 2rem` on top of
+     `.sign-page`'s `gap: 2rem`, doubling to 64px above this block alone with
+     nothing in the comment above to say why. No reason survived scrutiny, so
+     it spaces like every other block on the page now — the parent's gap. */
   .sign-report {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-block-start: 2rem;
   }
 
   .sign-report__link {

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { MESSAGES, categoryInSentence, createTranslator, isLanguage } from './i18n.ts';
+import {
+  MESSAGES,
+  categoryInSentence,
+  createTranslator,
+  isLanguage,
+  type MessageKey,
+} from './i18n.ts';
 import type { StatusFilter } from './stores.ts';
 import { LANGUAGES } from './types.ts';
 
@@ -72,6 +78,42 @@ describe('message catalogue', () => {
         announced.startsWith(visible),
         `${language}: "${announced}" must start with the visible "${visible}"`,
       ).toBe(true);
+    }
+  });
+
+  /**
+   * WCAG 2.2 §2.5.3 (Label in Name) again, for the sign page's two toggles.
+   *
+   * The card's toggles stay icon-only — no room in a 44px square — but the
+   * sign page has space, so H3 gave them a visible caption. The caption is a
+   * fixed noun ("Preferit") while the announced name still changes with state
+   * ("Afegeix a preferits" / "Treu de preferits"), so there is no single pair
+   * to pin a `startsWith` on; instead the caption has to survive inside *both*
+   * states, in every language, or a translator changing one string in
+   * isolation could silently break the criterion again.
+   *
+   * Compared case-insensitively: the WCAG technique (G208) normalises case,
+   * and so does the assistive tech that relies on it, so `Preferit` matching
+   * lowercase `preferits` is a real pass, not a loophole.
+   */
+  it('keeps the toggle caption inside its own announced name, in both states', () => {
+    const pairs: Array<[MessageKey, MessageKey, MessageKey]> = [
+      ['card.favoriteLabel', 'card.addFavorite', 'card.removeFavorite'],
+      ['card.learnedLabel', 'card.markLearned', 'card.unmarkLearned'],
+    ];
+
+    for (const language of LANGUAGES) {
+      for (const [captionKey, onKey, offKey] of pairs) {
+        const caption = MESSAGES[language][captionKey].toLowerCase();
+
+        for (const stateKey of [onKey, offKey]) {
+          const announced = MESSAGES[language][stateKey].toLowerCase();
+          expect(
+            announced.includes(caption),
+            `${language}: "${MESSAGES[language][stateKey]}" must contain the visible "${MESSAGES[language][captionKey]}"`,
+          ).toBe(true);
+        }
+      }
     }
   });
 
