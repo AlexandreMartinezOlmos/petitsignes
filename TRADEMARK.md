@@ -12,11 +12,12 @@ that nobody has to guess.
 
 - The name **Petits Signes**, alone or as part of a longer name.
 - The wordmark, the logo, the category icons as a set, and the visual identity
-  as a whole.
+  as a whole. The logo's design also carries its own copyright, automatically
+  and separately from this policy — a fact, not a request.
 - The domain **petitsignes.cat** and any confusingly similar domain.
 
 These have been in continuous public use as the identity of this project since
-**July 2026**.
+**July 2026**, verifiable in this repository's own commit history.
 
 ## What you may do
 
