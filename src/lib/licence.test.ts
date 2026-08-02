@@ -140,13 +140,78 @@ describe('TRADEMARK.md', () => {
     expect(TRADEMARK).toContain('petitsignes.cat');
   });
 
-  /**
-   * The mark is unregistered and there is no plan to register it. `®` asserts a
-   * registration; using it without one is itself a false claim, and a brand
-   * policy that overstates its footing is worth less than none.
-   */
-  it('claims no registration it does not have', () => {
+  // ® asserts a registration this project does not have; claiming one that
+  // does not exist is a false claim regardless of how it got there.
+  it('never claims a registration it does not have', () => {
     expect(TRADEMARK).not.toContain('®');
-    expect(TRADEMARK).toContain('not registered');
   });
+});
+
+/**
+ * No public document explains the private reasoning behind a legal position.
+ *
+ * TRADEMARK.md briefly carried a section titled "Honest note on legal
+ * standing": it stated, in public, that the mark was unregistered as a
+ * "budget-driven decision", then walked through exactly which enforcement
+ * option was unavailable and named the one that remained "narrower and
+ * harder to invoke". None of that was a licence obligation or a fact a
+ * reader needed. It was a map of the weakest point in the project's legal
+ * position, handed to anyone who might want to use it — the kind of thing
+ * said once in conversation while deciding what to do, never meant to ship.
+ *
+ * A public policy document states the rule and what it asks of a reader. It
+ * does not explain why the owner can or cannot afford to enforce it, and it
+ * does not rank the owner's own remedies from strong to weak. That line holds
+ * regardless of how true or well-argued the reasoning is — true and private
+ * is not the same as safe to publish.
+ *
+ * LICENSE and THIRD-PARTY-NOTICES.md are excluded: both are canonical
+ * third-party licence text quoted verbatim (the AGPL and the MIT/Apache
+ * notices legitimately use words like "infringement"), and LICENSE is
+ * already held to a stricter rule above — no prose of any kind.
+ */
+describe('public documents never explain private legal or financial reasoning', () => {
+  const OWN_PROSE: Record<string, string> = {
+    'TRADEMARK.md': TRADEMARK,
+    NOTICE,
+    'README.md': read('README.md'),
+    'CONTRIBUTING.md': read('CONTRIBUTING.md'),
+  };
+
+  // Specific phrases, not bare words: a single word like "weak" or
+  // "afford" shows up honestly in unrelated technical prose (contrast
+  // ratios, Lighthouse budgets), and a guardrail that fires on those trains
+  // everyone to ignore it. Multi-word phrases are what the incident actually
+  // looked like, in English and in the Spanish this project also writes in.
+  const REDACT_ON_SIGHT = [
+    'budget-driven',
+    'budget driven',
+    "can't afford",
+    'cannot afford',
+    'no plan to register',
+    'no current plan to register',
+    'narrower and harder',
+    'harder to invoke',
+    'didn\'t know" defence',
+    'no trademark infringement action',
+    'legal standing',
+    'no quiero gastar',
+    'no queremos gastar',
+    'decisión de presupuesto',
+    'presupuesto ajustado',
+  ];
+
+  for (const [file, text] of Object.entries(OWN_PROSE)) {
+    it(`${file} carries none of the phrasing from that incident`, () => {
+      const lower = text.toLowerCase();
+      for (const phrase of REDACT_ON_SIGHT) {
+        expect(
+          lower.includes(phrase),
+          `${file} contains "${phrase}" — this is how the trademark ` +
+            `weakness leak read. State the rule, not the reasoning behind ` +
+            `whether or how it can be enforced.`,
+        ).toBe(false);
+      }
+    });
+  }
 });

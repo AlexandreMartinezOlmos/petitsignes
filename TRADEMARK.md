@@ -42,30 +42,6 @@ If you fork this project, **give it your own name**. That is the whole ask, and
 it is also what the AGPL expects: your users should be able to tell whose
 software they are running and who to hold responsible for it.
 
-## Honest note on legal standing
-
-This mark is **not registered**, and there is no current plan to register it.
-That is a deliberate, budget-driven decision and it is stated here rather than
-hidden, because a policy that overstates its own force is worse than none.
-
-What this means in practice:
-
-- The symbol **™** may be used with an unregistered mark. The
-  registered-trademark symbol — a capital R in a circle — may not, and appears
-  nowhere in this project, on the site, or in its assets. A test enforces that,
-  because claiming a registration that does not exist is itself a false claim.
-- Without registration there is no trademark infringement action under the
-  Spanish Ley 17/2001 de Marcas. What remains is the **Ley 3/1991 de
-  Competencia Desleal** — in particular acts of confusion (art. 6) and
-  exploitation of another's reputation (art. 12) — which does not require
-  registration but is narrower and harder to invoke.
-- This document's real work is evidential and practical: it records the prior
-  use and the owner's intent from the start, and it removes the "I didn't know"
-  defence for anyone who copies the identity along with the code.
-
-If the project ever grows enough that this matters, registering the mark is the
-step to take, and this document is the record that supports it.
-
 ## Permission
 
 Uses beyond the above need written permission. Ask first — for genuinely
