@@ -89,6 +89,36 @@ El tipo `content` es para cambios en los datos de signos.
 - Vídeos de signos sin fuente, o generados.
 - Convertir esto en un diccionario general: el foco es el vocabulario de 6 a 24 meses.
 
+## Licencia de las contribuciones
+
+Al abrir un PR declaras dos cosas. Están escritas aquí en vez de en un formulario que
+haya que firmar, pero cuentan igual.
+
+**1. Que puedes aportarlo.** El trabajo es tuyo, o tienes permiso para aportarlo y para
+publicarlo bajo estas condiciones. Nada de código copiado de otro sitio sin comprobar su
+licencia, y —regla nº 1 del proyecto— **ningún signo sin fuente oficial verificable**.
+
+**2. Que se publica bajo la licencia del proyecto.** El código entra bajo
+**AGPL-3.0-or-later** y los datos curados bajo **CC BY-SA 4.0**, igual que el resto (ver
+[`NOTICE`](NOTICE)). Conservas tu autoría y tu copyright: esto no te los quita.
+
+**Y concedes además una licencia no exclusiva para relicenciar.** Es decir: autorizas a
+Alexandre Martínez Olmos, como titular del proyecto, a publicar tu contribución también
+bajo otras licencias, incluida una licencia comercial.
+
+Esto último se dice en voz alta porque es lo justo, y conviene entender para qué sirve.
+La AGPL protege el proyecto de que alguien lo cierre y lo venda, pero tiene un efecto
+secundario: si cada contribución queda atada a su autor, el proyecto **no puede volver a
+cambiar de licencia nunca** sin localizar y convencer a todo el mundo que haya tocado una
+línea. Sin esta cláusula, un solo colaborador ilocalizable congela el proyecto para
+siempre. Con ella, sigue habiendo margen de maniobra.
+
+Lo que **no** significa: no cede tu copyright, no es exclusiva, y no permite retirar de la
+AGPL nada de lo ya publicado — lo que está liberado, liberado se queda. Cualquiera puede
+seguir usando la versión AGPL, siempre.
+
+Si esto no te encaja, dilo en el PR antes de invertir tiempo y lo hablamos.
+
 ## Código de conducta
 
 Ver [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).

@@ -256,9 +256,30 @@ programar, cada signo es un fichero JSON de diez líneas. Ver
 
 ## Licencia
 
-- Código: [MIT](LICENSE).
-- Datos curados (etiquetas, categorías): CC BY-SA 4.0.
-- Vídeos e imágenes de signos: de sus fuentes respectivas ([Vocabulari bàsic de la
-  Generalitat de Catalunya](https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/)
-  y [DILSE, Fundación CNSE](https://fundacioncnse-dilse.org/)), bajo sus propias condiciones. Este
-  proyecto no es su autor y no los redistribuye: solo enlaza o incrusta el reproductor oficial.
+Copyright (C) 2026 Alexandre Martínez Olmos.
+
+Tres materiales distintos, tres condiciones distintas. [`NOTICE`](NOTICE) es el mapa completo.
+
+- **Código: [AGPL-3.0-or-later](LICENSE).** Software libre: puedes usarlo, estudiarlo,
+  modificarlo y redistribuirlo. La contrapartida es el _copyleft_ de red: si publicas una
+  versión modificada —incluso solo sirviéndola en una web— tienes que publicar también su
+  código fuente bajo esta misma licencia. Nadie puede cerrar esto.
+- **Datos curados** (lista de palabras, categorías, etiquetas y metadatos): **CC BY-SA 4.0**.
+  Citando a Petits Signes y compartiendo igual.
+- **Vídeos e imágenes de signos: no son de este proyecto y no se licencian aquí.** Pertenecen
+  a sus fuentes ([Vocabulari bàsic de la Generalitat de
+  Catalunya](https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/)
+  y [DILSE, Fundación CNSE](https://fundacioncnse-dilse.org/)) y se rigen por sus propias
+  condiciones. Este proyecto no los aloja ni los transforma: enlaza o incrusta el reproductor
+  oficial.
+- **El nombre, el logo y el dominio están reservados** y quedan fuera de la licencia. Ver
+  [`TRADEMARK.md`](TRADEMARK.md). Si haces un fork, ponle tu propio nombre.
+- **Código de terceros que se sirve al navegador** (React, Nano Stores, Fuse.js y la tipografía
+  Nunito Sans): sus avisos de copyright están en
+  [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md), porque MIT y la Open Font License piden
+  que acompañen a cada copia y el minificador los borra del bundle.
+
+El sitio sirve JavaScript minificado, que es una forma objeto del programa, así que el §13 de
+la AGPL aplica: **el enlace «Código fuente» del pie de cada página es la oferta de código
+correspondiente** que exige la licencia. Es una obligación, no un adorno — no lo quites en un
+derivado.

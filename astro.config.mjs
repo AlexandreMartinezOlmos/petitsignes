@@ -78,6 +78,25 @@ export default defineConfig({
   integrations: [react(), localised404()],
   vite: {
     plugins: [tailwindcss()],
+    esbuild: {
+      /**
+       * Keep third-party licence banners in the bundle browsers download.
+       *
+       * esbuild strips every comment by default, licence notices included. This
+       * asks it to keep the legal ones — but it only recognises `/*!`,
+       * `@license` and `@preserve`, and **no current dependency uses any of
+       * them**. Measured: identical 292 KB of JS with and without this setting.
+       *
+       * So it is defence for later, not a fix for today. Fuse.js does ship a
+       * copyright banner, in a plain `/**` block esbuild does not treat as
+       * legal, and it is stripped either way; its attribution lives in
+       * THIRD-PARTY-NOTICES.md along with every dependency whose licence sits
+       * in a separate file rather than a banner. That file is what actually
+       * discharges the obligation — this line only stops a future dependency's
+       * notice from being deleted on arrival.
+       */
+      legalComments: 'inline',
+    },
   },
   build: {
     // Emit `/about/index.html` so static hosts serve clean URLs without config.
