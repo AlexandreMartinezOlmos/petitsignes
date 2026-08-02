@@ -337,6 +337,78 @@ test.describe('H5: the citation repositions, never disappears', () => {
   });
 });
 
+test.describe('.sign-page--no-source: the layout when a sign has no video', () => {
+  /**
+   * No sign in the catalogue lacks a video today — all 194 have both LSC and
+   * LSE — so this state has never run against real content, only been
+   * checked by hand in a browser (docs/pendientes.md, H5). Rather than wait
+   * for data that may never arrive, this simulates exactly what
+   * SignView.astro renders when `video` is falsy: the same class the
+   * component would add, the same `<aside>` it would omit (both driven by
+   * the identical `video` check, so they cannot drift from each other).
+   *
+   * Same technique the project already used once for this exact problem:
+   * when every card gained a video, `.sign-card__novideo` had nothing left
+   * to test against, and the fix was to inject the markup the component
+   * would produce and measure its real computed shape, rather than mock the
+   * DOM or drop the guard. See the `qa` skill for that precedent.
+   */
+  const simulateNoSource = () => {
+    document.querySelector('.sign-source')?.remove();
+    document.querySelector('.sign-page')?.classList.add('sign-page--no-source');
+  };
+
+  test('collapses to a single column on a wide screen, with no orphaned gap', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(CA);
+    await page.evaluate(simulateNoSource);
+
+    await expect(page.locator('.sign-source')).toHaveCount(0);
+
+    const detail = await page.locator('.sign-detail').boundingBox();
+    const report = await page.locator('.sign-report').boundingBox();
+    if (!detail || !report) throw new Error('expected both blocks on screen');
+
+    // Stacked, not beside: with nothing to put in a second column, the
+    // two-column rule (`.sign-page:not(.sign-page--no-source)`) must not
+    // apply, or the report would float in the empty column instead of below.
+    expect(report.x).toBeLessThan(detail.x + detail.width);
+    expect(report.y).toBeGreaterThan(detail.y);
+
+    // One `row-gap` (2rem = 32px), not two — the exact shape of bug H4 found
+    // in this same layout: an area left in the template with nothing to
+    // fill it doubles the gap around empty space instead of closing it.
+    const gap = report.y - (detail.y + detail.height);
+    expect(gap).toBeGreaterThan(24);
+    expect(gap).toBeLessThan(40);
+  });
+
+  test('stacks the same way on a phone, where it always did', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 1200 });
+    await page.goto(CA);
+    await page.evaluate(simulateNoSource);
+
+    const detail = await page.locator('.sign-detail').boundingBox();
+    const report = await page.locator('.sign-report').boundingBox();
+    if (!detail || !report) throw new Error('expected both blocks on screen');
+
+    const gap = report.y - (detail.y + detail.height);
+    expect(gap).toBeGreaterThan(24);
+    expect(gap).toBeLessThan(40);
+  });
+
+  test('does not scroll sideways at 320px even with no citation', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await page.goto(CA);
+    await page.evaluate(simulateNoSource);
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+});
+
 test.describe('a sign page on a phone', () => {
   test.use({ viewport: { width: 320, height: 640 } });
 
