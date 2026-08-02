@@ -7,6 +7,35 @@ export const REPO_URL = 'https://github.com/AlexandreMartinezOlmos/petitsignes';
 export const REPO_ISSUES_URL = `${REPO_URL}/issues`;
 
 /**
+ * The licence documents, linked from the credits page.
+ *
+ * `blob/HEAD` rather than `blob/main`: GitHub resolves it to whatever the
+ * default branch is called, so renaming the branch does not silently turn the
+ * licence link — the one link on the site that carries a legal obligation —
+ * into a 404.
+ *
+ * The AGPL's §13 asks that a network-served program offer its Corresponding
+ * Source to users. The site ships minified JavaScript, which is an object form
+ * of the program, so the footer's "source code" link is that offer. These two
+ * point at the terms themselves, which is a different question from where the
+ * code lives, and the credits page is where people come to check them.
+ */
+export const REPO_LICENSE_URL = `${REPO_URL}/blob/HEAD/LICENSE`;
+export const REPO_NOTICE_URL = `${REPO_URL}/blob/HEAD/NOTICE`;
+
+/**
+ * The copyright notices of the third-party code this site serves.
+ *
+ * Not housekeeping: React, Nano Stores and Fuse.js are bundled into the
+ * JavaScript browsers download, and Nunito Sans is served as .woff2 from this
+ * origin. MIT asks its notice to travel with every copy and the SIL Open Font
+ * Licence asks the same of the font files — and the minifier strips comments,
+ * so the bundle cannot carry them. This link is how the notices stay reachable
+ * from the site that redistributes the code, rather than only from the repo.
+ */
+export const REPO_THIRD_PARTY_URL = `${REPO_URL}/blob/HEAD/THIRD-PARTY-NOTICES.md`;
+
+/**
  * A link that opens GitHub's new-issue form with the fields already written.
  *
  * "Never invent a sign" is the promise the whole project rests on, and the only
