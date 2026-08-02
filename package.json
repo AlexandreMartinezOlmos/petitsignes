@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Petits Signes: free and open source web app to learn baby sign vocabulary in Catalan (LSC) and Spanish (LSE) sign languages",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"

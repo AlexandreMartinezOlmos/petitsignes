@@ -1,0 +1,85 @@
+Petits Signes — https://petitsignes.cat
+Copyright (C) 2026 Alexandre Martínez Olmos
+
+This repository holds three kinds of material and they are NOT under the same
+terms. LICENSE covers only the first one. This file is the map.
+
+Nothing here is added to LICENSE itself on purpose: GitHub only recognises a
+licence when the file matches the canonical text, so LICENSE is the verbatim
+GNU AGPL v3.0 and every project-specific note lives here instead.
+
+
+1. SOURCE CODE — GNU Affero General Public License v3.0 or later
+--------------------------------------------------------------------------
+
+Everything under src/, scripts/, tests/ and the build configuration.
+
+    This program is free software: you can redistribute it and/or modify it
+    under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or (at
+    your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+    General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+The site ships minified JavaScript to the browser, which is an object form of
+this program. Section 13 therefore applies: every page links to the source at
+<https://github.com/AlexandreMartinezOlmos/petitsignes> from its footer, and
+that link is the offer of Corresponding Source. Do not remove it from a fork —
+it is a licence obligation, not decoration.
+
+
+2. CURATED DATA — Creative Commons Attribution-ShareAlike 4.0 International
+--------------------------------------------------------------------------
+
+The word list, the categories, the labels in ca/es/en and the per-sign
+metadata: src/content/ and content/vocabulary.tsv.
+
+    <https://creativecommons.org/licenses/by-sa/4.0/>
+
+Attribution goes to "Petits Signes" with a link to https://petitsignes.cat,
+and derivatives must keep the same licence. CC BY-SA 4.0 also covers the EU
+sui generis database right in the selection and arrangement of these entries,
+which is a right separate from copyright in the individual words.
+
+
+3. SIGN VIDEOS AND IMAGES — NOT COVERED BY EITHER LICENCE ABOVE
+--------------------------------------------------------------------------
+
+They are not this project's work and this project cannot license them.
+
+  * Llengua de Signes Catalana (LSC) — Vocabulari bàsic de la LSC,
+    Generalitat de Catalunya (Departament de Cultura), advised by FESOCA.
+    Embedded from the source's own YouTube channel. Reused under Llei
+    19/2014, art. 17.1, citing source and update date.
+
+  * Lengua de Signos Española (LSE) — DILSE, Fundación CNSE. Linked only.
+    DILSE authorises downloading for personal and private use alone, and
+    expressly forbids redistribution, public communication and transformation.
+
+Nothing is re-hosted here. Neither source permits downloading, transcoding or
+extracting frames, which is why this project has no video files and no posters
+— see docs/arquitectura.md. If you fork this repository, these terms bind you
+directly and independently of the AGPL: they come from the sources, not from
+this project, and nothing granted in LICENSE extends to them.
+
+
+4. THE NAME AND THE BRAND — reserved, see TRADEMARK.md
+--------------------------------------------------------------------------
+
+The AGPL grants rights over the code. It grants none over the name "Petits
+Signes", the wordmark, the icons or the domain. See TRADEMARK.md.
+
+
+5. THIRD-PARTY DEPENDENCIES
+--------------------------------------------------------------------------
+
+Runtime and build dependencies keep their own licences (predominantly MIT,
+ISC, BSD and Apache-2.0, plus MPL-2.0 and LGPL-3.0-or-later, all of them
+compatible with the AGPL). The typeface Nunito Sans is under the SIL Open
+Font Licence 1.1. See package-lock.json for the resolved tree.
