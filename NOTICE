@@ -76,10 +76,18 @@ The AGPL grants rights over the code. It grants none over the name "Petits
 Signes", the wordmark, the icons or the domain. See TRADEMARK.md.
 
 
-5. THIRD-PARTY DEPENDENCIES
+5. THIRD-PARTY DEPENDENCIES — see THIRD-PARTY-NOTICES.md
 --------------------------------------------------------------------------
 
-Runtime and build dependencies keep their own licences (predominantly MIT,
-ISC, BSD and Apache-2.0, plus MPL-2.0 and LGPL-3.0-or-later, all of them
-compatible with the AGPL). The typeface Nunito Sans is under the SIL Open
-Font Licence 1.1. See package-lock.json for the resolved tree.
+Dependencies keep their own licences (predominantly MIT, ISC, BSD and
+Apache-2.0, plus MPL-2.0 and LGPL-3.0-or-later, all compatible with the
+AGPL). The full resolved tree is in package-lock.json.
+
+Some of that code is redistributed to visitors: React, Nano Stores and
+Fuse.js are bundled into the JavaScript browsers download, and Nunito Sans
+is served as five .woff2 subsets from this site's own origin. MIT asks its
+notice to travel with every copy, and the SIL Open Font Licence asks the
+same of the font files, so those notices are collected in
+THIRD-PARTY-NOTICES.md rather than left only inside node_modules.
+
+Build-time tooling is not redistributed as code and is not listed there.

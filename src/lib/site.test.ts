@@ -3,6 +3,7 @@ import {
   REPO_ISSUES_URL,
   REPO_LICENSE_URL,
   REPO_NOTICE_URL,
+  REPO_THIRD_PARTY_URL,
   REPO_URL,
   SITE_ORIGIN,
   assertOrigin,
@@ -48,6 +49,7 @@ describe('repository links', () => {
   it('points at the licence documents that exist in the repository', () => {
     expect(REPO_LICENSE_URL).toBe(`${REPO_URL}/blob/HEAD/LICENSE`);
     expect(REPO_NOTICE_URL).toBe(`${REPO_URL}/blob/HEAD/NOTICE`);
+    expect(REPO_THIRD_PARTY_URL).toBe(`${REPO_URL}/blob/HEAD/THIRD-PARTY-NOTICES.md`);
   });
 
   /**
@@ -57,7 +59,7 @@ describe('repository links', () => {
    * notices, because nobody clicks a licence link until they need it.
    */
   it('survives the default branch being renamed', () => {
-    for (const url of [REPO_LICENSE_URL, REPO_NOTICE_URL]) {
+    for (const url of [REPO_LICENSE_URL, REPO_NOTICE_URL, REPO_THIRD_PARTY_URL]) {
       expect(url).toContain('/blob/HEAD/');
       expect(url).not.toContain('/blob/main/');
     }

@@ -86,6 +86,27 @@ test('the credits page keeps the videos outside the licence', async ({ page }) =
   await expect(licences).toContainText('reservats');
 });
 
+/**
+ * The site redistributes other people's code — React, Nano Stores and Fuse.js
+ * inside the bundle, Nunito Sans as .woff2 from this origin — and MIT and the
+ * SIL Open Font Licence both ask their notice to travel with the copy. The
+ * minifier strips comments, so the bundle cannot carry them: this link is the
+ * only route from the site that serves the code to the notices that cover it.
+ */
+test('the credits page reaches the third-party notices', async ({ page }) => {
+  await page.goto('/credits/');
+
+  const link = page
+    .locator('section[aria-labelledby="licences"]')
+    .getByRole('link', { name: 'Avisos de tercers' });
+
+  await expect(link).toHaveAttribute(
+    'href',
+    'https://github.com/AlexandreMartinezOlmos/petitsignes/blob/HEAD/THIRD-PARTY-NOTICES.md',
+  );
+  await expect(link).toBeVisible();
+});
+
 test('the project page links to the licences instead of restating them', async ({ page }) => {
   await page.goto('/el-projecte/');
 

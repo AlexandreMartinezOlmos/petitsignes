@@ -95,6 +95,45 @@ describe('NOTICE', () => {
   });
 });
 
+describe('THIRD-PARTY-NOTICES.md', () => {
+  const THIRD_PARTY = read('THIRD-PARTY-NOTICES.md');
+
+  /**
+   * The obligation this file discharges is easy to miss because nothing breaks
+   * when it is missed. React, Nano Stores and Fuse.js end up inside the bundle
+   * browsers download, and Nunito Sans is served as .woff2 from this origin —
+   * both MIT and the SIL Open Font Licence ask their notice to travel with the
+   * copy, and the minifier strips every comment, so the bundle cannot carry
+   * them. Without this file the site redistributes their code with the
+   * attribution deleted.
+   */
+  it('names every dependency whose code reaches a browser', () => {
+    for (const dep of ['react', 'nanostores', 'fuse.js', 'nunito-sans']) {
+      expect(THIRD_PARTY.toLowerCase()).toContain(dep);
+    }
+  });
+
+  // Copied from each package's own LICENSE, not written from memory: an
+  // attribution to the wrong person is worse than an absent one.
+  it('carries the actual copyright lines, not a summary', () => {
+    expect(THIRD_PARTY).toContain('Copyright (c) Meta Platforms, Inc. and affiliates.');
+    expect(THIRD_PARTY).toContain('Andrey Sitnik');
+    expect(THIRD_PARTY).toContain('Kiro Risk');
+    expect(THIRD_PARTY).toContain('The Nunito Sans Project Authors');
+  });
+
+  // MIT asks for its permission notice verbatim, so a link to it is not enough.
+  it('reproduces the MIT text the notices require', () => {
+    expect(THIRD_PARTY).toContain('THE SOFTWARE IS PROVIDED "AS IS"');
+    expect(THIRD_PARTY).toContain('Apache');
+    expect(THIRD_PARTY).toContain('SIL Open Font License');
+  });
+
+  it('is reachable from NOTICE, which is the map', () => {
+    expect(NOTICE).toContain('THIRD-PARTY-NOTICES.md');
+  });
+});
+
 describe('TRADEMARK.md', () => {
   it('reserves the name the AGPL does not cover', () => {
     expect(TRADEMARK).toContain('Petits Signes');

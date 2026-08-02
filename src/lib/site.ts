@@ -24,6 +24,18 @@ export const REPO_LICENSE_URL = `${REPO_URL}/blob/HEAD/LICENSE`;
 export const REPO_NOTICE_URL = `${REPO_URL}/blob/HEAD/NOTICE`;
 
 /**
+ * The copyright notices of the third-party code this site serves.
+ *
+ * Not housekeeping: React, Nano Stores and Fuse.js are bundled into the
+ * JavaScript browsers download, and Nunito Sans is served as .woff2 from this
+ * origin. MIT asks its notice to travel with every copy and the SIL Open Font
+ * Licence asks the same of the font files — and the minifier strips comments,
+ * so the bundle cannot carry them. This link is how the notices stay reachable
+ * from the site that redistributes the code, rather than only from the repo.
+ */
+export const REPO_THIRD_PARTY_URL = `${REPO_URL}/blob/HEAD/THIRD-PARTY-NOTICES.md`;
+
+/**
  * A link that opens GitHub's new-issue form with the fields already written.
  *
  * "Never invent a sign" is the promise the whole project rests on, and the only

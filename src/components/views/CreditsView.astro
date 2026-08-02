@@ -3,7 +3,12 @@ import { getCollection } from 'astro:content';
 import PageShell, { type PageSection } from '../PageShell.astro';
 import { createTranslator } from '../../lib/i18n.ts';
 import type { RoutedLocale } from '../../lib/routing.ts';
-import { REPO_ISSUES_URL, REPO_LICENSE_URL, REPO_NOTICE_URL } from '../../lib/site.ts';
+import {
+  REPO_ISSUES_URL,
+  REPO_LICENSE_URL,
+  REPO_NOTICE_URL,
+  REPO_THIRD_PARTY_URL,
+} from '../../lib/site.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -48,6 +53,9 @@ const copy = {
       'Vídeos i imatges dels signes: propietat de les fonts respectives, sota les seves condicions de reutilització. Cada fitxa n’enllaça l’origen.',
     licBrand:
       'El nom «Petits Signes», el logotip i el domini queden fora de la llicència: estan reservats. Si en fas una bifurcació, posa-li un nom propi.',
+    licThirdParty:
+      'Programari de tercers que aquest lloc et serveix (React, Nano Stores, Fuse.js i la tipografia Nunito Sans): cadascun manté la seva llicència i el seu avís de drets.',
+    licThirdPartyCta: 'Avisos de tercers',
     licNotice: 'Detall complet de les tres condicions',
     updated: 'Última actualització del contingut:',
     respectTitle: 'Respecte a la comunitat sorda',
@@ -78,6 +86,9 @@ const copy = {
       'Vídeos e imágenes de los signos: propiedad de las fuentes respectivas, bajo sus condiciones de reutilización. Cada ficha enlaza su origen.',
     licBrand:
       'El nombre «Petits Signes», el logotipo y el dominio quedan fuera de la licencia: están reservados. Si haces un fork, ponle tu propio nombre.',
+    licThirdParty:
+      'Software de terceros que este sitio te sirve (React, Nano Stores, Fuse.js y la tipografía Nunito Sans): cada uno mantiene su licencia y su aviso de derechos.',
+    licThirdPartyCta: 'Avisos de terceros',
     licNotice: 'Detalle completo de las tres condiciones',
     updated: 'Última actualización del contenido:',
     respectTitle: 'Respeto a la comunidad sorda',
@@ -147,6 +158,12 @@ const sections: PageSection[] = [
       <li><strong>{c.licData}</strong>: CC BY-SA 4.0.</li>
       <li>{c.licVideos}</li>
       <li>{c.licBrand}</li>
+      <li>
+        {c.licThirdParty}{' '}
+        <a href={REPO_THIRD_PARTY_URL} target="_blank" rel="noreferrer noopener">
+          {c.licThirdPartyCta}
+        </a>.
+      </li>
     </ul>
     <p>
       <a href={REPO_NOTICE_URL} target="_blank" rel="noreferrer noopener">{c.licNotice}</a>

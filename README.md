@@ -274,6 +274,10 @@ Tres materiales distintos, tres condiciones distintas. [`NOTICE`](NOTICE) es el 
   oficial.
 - **El nombre, el logo y el dominio están reservados** y quedan fuera de la licencia. Ver
   [`TRADEMARK.md`](TRADEMARK.md). Si haces un fork, ponle tu propio nombre.
+- **Código de terceros que se sirve al navegador** (React, Nano Stores, Fuse.js y la tipografía
+  Nunito Sans): sus avisos de copyright están en
+  [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md), porque MIT y la Open Font License piden
+  que acompañen a cada copia y el minificador los borra del bundle.
 
 El sitio sirve JavaScript minificado, que es una forma objeto del programa, así que el §13 de
 la AGPL aplica: **el enlace «Código fuente» del pie de cada página es la oferta de código
