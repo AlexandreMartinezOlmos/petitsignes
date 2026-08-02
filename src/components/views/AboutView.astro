@@ -46,7 +46,10 @@ const copy = {
     openTitle: 'Codi obert',
     openBody:
       'Petits Signes és programari lliure. Qualsevol pot veure com està fet, proposar millores o avisar d’un error —en un signe, una traducció o l’accessibilitat— obrint una incidència al repositori.',
-    openCta: 'Veure el projecte a GitHub',
+    openLicence:
+      'Es publica amb la llicència AGPL-3.0, que garanteix que això no es pugui tancar mai: qui en faci una versió modificada i la publiqui, n’ha de compartir el codi amb les mateixes condicions. Els vídeos són a part —són de les seves fonts— i el nom i el logotip queden reservats.',
+    openLicenceCta: 'Consulta les llicències',
+    openCta: 'Veure el codi font a GitHub',
   },
   es: {
     title: 'El proyecto',
@@ -72,7 +75,10 @@ const copy = {
     openTitle: 'Código abierto',
     openBody:
       'Petits Signes es software libre. Cualquiera puede ver cómo está hecho, proponer mejoras o avisar de un error —en un signo, una traducción o la accesibilidad— abriendo una incidencia en el repositorio.',
-    openCta: 'Ver el proyecto en GitHub',
+    openLicence:
+      'Se publica con la licencia AGPL-3.0, que garantiza que esto no se pueda cerrar nunca: quien haga una versión modificada y la publique tiene que compartir su código en las mismas condiciones. Los vídeos van aparte —son de sus fuentes— y el nombre y el logotipo quedan reservados.',
+    openLicenceCta: 'Consulta las licencias',
+    openCta: 'Ver el código fuente en GitHub',
   },
 } as const;
 
@@ -117,8 +123,22 @@ const sections: PageSection[] = [
 
   <p slot="privacy">{c.privacyBody}</p>
 
+  {
+    /* The licence gets its own paragraph rather than a parenthesis in the one
+       above. "Software libre" and "AGPL-3.0" are not the same claim: the first
+       is why someone might trust the project, the second is what binds anyone
+       who copies it, and only the second answers "can I sell this?".
+
+       The repository link is also the AGPL §13 offer of Corresponding Source —
+       the site ships minified JavaScript, which is an object form of the
+       program. The footer carries it on every page, which is what actually
+       satisfies the licence; this one is here because a visitor reading about
+       the project should not have to scroll to the footer to find the code. */
+  }
   <Fragment slot="open">
     <p>{c.openBody}</p>
+    <p>{c.openLicence}</p>
+    <p><a href={`${creditsHref}#licences`}>{c.openLicenceCta}</a></p>
     <p>
       <a href={REPO_URL} target="_blank" rel="noreferrer noopener">{c.openCta}</a>
     </p>

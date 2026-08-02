@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import PageShell, { type PageSection } from '../PageShell.astro';
 import { createTranslator } from '../../lib/i18n.ts';
 import type { RoutedLocale } from '../../lib/routing.ts';
-import { REPO_ISSUES_URL } from '../../lib/site.ts';
+import { REPO_ISSUES_URL, REPO_LICENSE_URL, REPO_NOTICE_URL } from '../../lib/site.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -39,10 +39,16 @@ const copy = {
     lseBody:
       'DILSE — Diccionario normativo de la lengua de signos española, Fundación CNSE para la Supresión de las Barreras de la Comunicación. Enllacem a la fitxa original; no allotgem ni transformem els vídeos.',
     licTitle: 'Llicències',
+    licCopyright: 'Copyright © 2026 Alexandre Martínez Olmos.',
     licCode: 'Codi',
+    licCodeNote:
+      'Programari lliure. Qui en publiqui una versió modificada —encara que només sigui servint-la en un web— també n’ha de publicar el codi amb aquesta mateixa llicència.',
     licData: 'Dades curades (llista de paraules, categories, metadades)',
     licVideos:
       'Vídeos i imatges dels signes: propietat de les fonts respectives, sota les seves condicions de reutilització. Cada fitxa n’enllaça l’origen.',
+    licBrand:
+      'El nom «Petits Signes», el logotip i el domini queden fora de la llicència: estan reservats. Si en fas una bifurcació, posa-li un nom propi.',
+    licNotice: 'Detall complet de les tres condicions',
     updated: 'Última actualització del contingut:',
     respectTitle: 'Respecte a la comunitat sorda',
     respectBody:
@@ -63,10 +69,16 @@ const copy = {
     lseBody:
       'DILSE — Diccionario normativo de la lengua de signos española, Fundación CNSE para la Supresión de las Barreras de la Comunicación. Enlazamos a la ficha original; no alojamos ni transformamos los vídeos.',
     licTitle: 'Licencias',
+    licCopyright: 'Copyright © 2026 Alexandre Martínez Olmos.',
     licCode: 'Código',
+    licCodeNote:
+      'Software libre. Quien publique una versión modificada —aunque solo sea sirviéndola en una web— tiene que publicar también su código con esta misma licencia.',
     licData: 'Datos curados (lista de palabras, categorías, metadatos)',
     licVideos:
       'Vídeos e imágenes de los signos: propiedad de las fuentes respectivas, bajo sus condiciones de reutilización. Cada ficha enlaza su origen.',
+    licBrand:
+      'El nombre «Petits Signes», el logotipo y el dominio quedan fuera de la licencia: están reservados. Si haces un fork, ponle tu propio nombre.',
+    licNotice: 'Detalle completo de las tres condiciones',
     updated: 'Última actualización del contenido:',
     respectTitle: 'Respeto a la comunidad sorda',
     respectBody:
@@ -113,14 +125,32 @@ const sections: PageSection[] = [
     /* The licences are what people come to this page to check rather than to
        read, so they get a surface. The update date sits here because it is not
        a footnote: the Generalitat's terms ask for the source *and its update
-       date*, so it is part of the attribution itself. */
+       date*, so it is part of the attribution itself.
+
+       The code entry carries a sentence explaining what the AGPL asks for.
+       "AGPL-3.0-or-later" alone is an identifier people either recognise or
+       ignore, and the one consequence that matters to someone reading this page
+       — publish your source if you publish a modified version — is not
+       guessable from the name. The brand line is here for the same reason: it
+       is the one thing the licence does *not* grant, so leaving it to
+       TRADEMARK.md would hide it from everyone who never opens the repository. */
   }
   <div class="page-callout" slot="licences">
+    <p class="text-ink-muted text-sm">{c.licCopyright}</p>
     <ul class="page-list">
-      <li><strong>{c.licCode}</strong>: MIT.</li>
+      <li>
+        <strong>{c.licCode}</strong>:{' '}
+        <a href={REPO_LICENSE_URL} target="_blank" rel="noreferrer noopener">
+          AGPL-3.0-or-later
+        </a>. {c.licCodeNote}
+      </li>
       <li><strong>{c.licData}</strong>: CC BY-SA 4.0.</li>
       <li>{c.licVideos}</li>
+      <li>{c.licBrand}</li>
     </ul>
+    <p>
+      <a href={REPO_NOTICE_URL} target="_blank" rel="noreferrer noopener">{c.licNotice}</a>
+    </p>
     {
       lastUpdated && (
         <p class="text-ink-muted text-sm">

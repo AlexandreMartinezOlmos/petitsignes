@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { REPO_ISSUES_URL, REPO_URL, SITE_ORIGIN, assertOrigin, newIssueUrl } from './site.ts';
+import {
+  REPO_ISSUES_URL,
+  REPO_LICENSE_URL,
+  REPO_NOTICE_URL,
+  REPO_URL,
+  SITE_ORIGIN,
+  assertOrigin,
+  newIssueUrl,
+} from './site.ts';
 
 describe('SITE_ORIGIN', () => {
   // Every canonical link, hreflang and Open Graph URL is built from this. A
@@ -35,6 +43,24 @@ describe('repository links', () => {
   it('points issues at the repository', () => {
     expect(REPO_ISSUES_URL.startsWith(REPO_URL)).toBe(true);
     expect(REPO_URL.endsWith('.git')).toBe(false);
+  });
+
+  it('points at the licence documents that exist in the repository', () => {
+    expect(REPO_LICENSE_URL).toBe(`${REPO_URL}/blob/HEAD/LICENSE`);
+    expect(REPO_NOTICE_URL).toBe(`${REPO_URL}/blob/HEAD/NOTICE`);
+  });
+
+  /**
+   * `HEAD`, not `main`. GitHub resolves `blob/HEAD` to whatever the default
+   * branch is called, so renaming it does not turn the licence link — the one
+   * link on the site carrying a legal obligation — into a 404 that nobody
+   * notices, because nobody clicks a licence link until they need it.
+   */
+  it('survives the default branch being renamed', () => {
+    for (const url of [REPO_LICENSE_URL, REPO_NOTICE_URL]) {
+      expect(url).toContain('/blob/HEAD/');
+      expect(url).not.toContain('/blob/main/');
+    }
   });
 });
 
