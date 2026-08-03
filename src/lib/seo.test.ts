@@ -1,3 +1,5 @@
+import { readdirSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { SITE_PATHS, buildRobots, buildSitemap } from './seo.ts';
 import { ROUTED_LOCALES, localeHref } from './routing.ts';
@@ -61,6 +63,31 @@ describe('sitemap', () => {
     const xmlWithAmp = buildSitemap(SITE_ORIGIN, ['/a&b/']);
     expect(xmlWithAmp).toContain('&amp;');
     expect(xmlWithAmp).not.toMatch(/&(?!amp;|lt;|gt;|quot;|apos;)/);
+  });
+});
+
+/**
+ * The sitemap test above builds its expectation from `SITE_PATHS` and checks
+ * `SITE_PATHS` against it — it would pass just as well if a page were added to
+ * `src/pages/` and never added here. This reads the actual files off disk, the
+ * same way `signs.test.ts` reads real ids, so the two lists are compared
+ * against something neither of them generated.
+ */
+describe('SITE_PATHS matches the static pages on disk', () => {
+  const dir = resolve(process.cwd(), 'src/pages');
+  const staticPages = readdirSync(dir, { withFileTypes: true })
+    .filter(
+      (entry) => entry.isFile() && entry.name.endsWith('.astro') && entry.name !== '404.astro',
+    )
+    .map((entry) => entry.name.replace(/\.astro$/, ''))
+    .map((name) => (name === 'index' ? '/' : `/${name}/`));
+
+  it('lists every top-level static page and nothing else', () => {
+    // `404.astro` is excluded on purpose (an error page, not a published
+    // route); `categoria/[slug].astro` and `signe/[id].astro` are excluded
+    // because they are dynamic — their paths come from the content
+    // collections, not this list (see `sitemap.xml.ts`).
+    expect([...staticPages].sort()).toEqual([...SITE_PATHS].sort());
   });
 });
 
