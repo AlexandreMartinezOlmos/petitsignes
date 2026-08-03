@@ -6,7 +6,6 @@ import {
   entryToRow,
   parseTsv,
   serializeTsv,
-  youTubeIdFromUrl,
   type SignData,
   type VocabularyRow,
 } from './vocabulary.ts';
@@ -28,11 +27,6 @@ function row(overrides: Partial<VocabularyRow> = {}): VocabularyRow {
 }
 
 describe('url helpers', () => {
-  it('reads a YouTube id back from a watch URL', () => {
-    expect(youTubeIdFromUrl('https://www.youtube.com/watch?v=kXZylIjwSJI')).toBe('kXZylIjwSJI');
-    expect(youTubeIdFromUrl('https://fundacioncnse-dilse.org/?buscar=gato')).toBeNull();
-  });
-
   it('reads a DILSE term back from a search URL', () => {
     expect(dilseTermFromUrl('https://fundacioncnse-dilse.org/?buscar=buenos%20d%C3%ADas')).toBe(
       'buenos días',
@@ -116,6 +110,45 @@ describe('applyRow', () => {
   });
 });
 
+describe('entryToRow', () => {
+  const dataWith = (videoUrl: string): SignData => ({
+    labels: { ca: 'gat', es: 'gato', en: 'cat' },
+    category: 'animals',
+    isFirstSign: false,
+    videos: [
+      {
+        signLanguage: 'lsc',
+        delivery: 'youtube-embed',
+        videoUrl,
+        source: 'Gencat-VocabulariLSC',
+        sourceUrl: 'x',
+        license: 'x',
+        updatedAt: '2020-01-01',
+      },
+    ],
+  });
+
+  it('reads the id from every URL shape the player itself accepts, not only ?v=', () => {
+    // A narrower regex used to live here and only matched `?v=`. `youtu.be` and
+    // `youtube-nocookie.com` both play fine (src/lib/youtube.ts), so a JSON
+    // file edited by hand with either shape used to export to an empty cell
+    // and re-import as a deleted video — silently.
+    expect(entryToRow('gato', dataWith('https://youtu.be/kXZylIjwSJI')).lscYouTube).toEqual([
+      'kXZylIjwSJI',
+    ]);
+    expect(
+      entryToRow('gato', dataWith('https://www.youtube-nocookie.com/watch?v=kXZylIjwSJI'))
+        .lscYouTube,
+    ).toEqual(['kXZylIjwSJI']);
+  });
+
+  it('refuses to export a video whose url it cannot read an id from', () => {
+    expect(() => entryToRow('gato', dataWith('https://example.com/not-youtube'))).toThrow(
+      /gato.*not a recognised YouTube URL/,
+    );
+  });
+});
+
 describe('tsv round-trip', () => {
   it('survives serialize -> parse unchanged', () => {
     const rows = [
@@ -124,6 +157,9 @@ describe('tsv round-trip', () => {
         id: 'leche',
         category: 'food',
         firstSignOrder: 1,
+        ca: 'llet',
+        es: 'leche',
+        en: 'milk',
         lscYouTube: ['a1b2c3d4e5f', 'z9y8x7w6v5u'],
       }),
     ];
@@ -144,6 +180,29 @@ describe('tsv round-trip', () => {
 
   it('rejects a duplicate id', () => {
     expect(() => parseTsv(serializeTsv([row(), row()]))).toThrow(/Duplicate/);
+  });
+
+  it('rejects an id that could not survive being a URL', () => {
+    // Same rule `isSignSlug` holds every id in the collection to (signs.test.ts)
+    // — checked here too, so a bad id is refused at the manifest, not just
+    // caught after the file already exists.
+    const tsv = serializeTsv([row({ id: 'Gato Grande' })]);
+    expect(() => parseTsv(tsv)).toThrow(/id is not a valid URL slug/);
+  });
+
+  it('rejects two ids that share a label in any language', () => {
+    // The gap I1 went through: two different ids, the same word. `parseTsv`
+    // already rejected a duplicate id; this closes the other half.
+    const tsv = serializeTsv([row(), row({ id: 'gato2' })]);
+    expect(() => parseTsv(tsv)).toThrow(/"gat" \(ca\) is already used/);
+  });
+
+  it('rejects two rows claiming the same first_sign_order', () => {
+    const tsv = serializeTsv([
+      row({ id: 'gato', firstSignOrder: 1 }),
+      row({ id: 'perro', ca: 'gos', es: 'perro', en: 'dog', firstSignOrder: 1 }),
+    ]);
+    expect(() => parseTsv(tsv)).toThrow(/first_sign_order 1 is already used/);
   });
 
   it('rejects a missing label', () => {
