@@ -243,6 +243,47 @@ test.describe('video delivery', () => {
     await expect(link).toHaveAttribute('href', /fundacioncnse-dilse\.org/);
     await expect(link).toHaveAttribute('rel', /noreferrer/);
   });
+
+  /**
+   * I19: a stored url the app cannot read a YouTube id from used to count a
+   * play that never happened and leave the button doing nothing visible — no
+   * dialog, no message, nothing a visitor or a screen reader could act on.
+   * No real content hits this today (every url is validated at build and,
+   * since I15, at export too), so it is reproduced the same way
+   * `.sign-page--no-source` is: injecting the exact state rather than a
+   * simulation of it.
+   */
+  test('a video whose url will not resolve still opens with a visible, accessible fallback', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await waitForHydration(page);
+
+    const button = page.locator(
+      '.sign-card[data-sign-id="leche"] .sign-card__lang[data-sl="lsc"] [data-action="play"]',
+    );
+    await button.evaluate((el) =>
+      el.setAttribute('data-video-url', 'https://example.com/not-a-video'),
+    );
+    await button.click();
+
+    const dialog = page.locator('dialog[open]');
+    await expect(dialog).toBeVisible();
+    // The header — title and close button — must still render: before the
+    // fix, the whole dialog body was gated on the id having parsed, so this
+    // case rendered nothing but an empty, unclosable-by-visible-means dialog.
+    await expect(dialog.getByRole('heading', { name: 'llet' })).toBeVisible();
+    await expect(dialog.locator('[aria-label]').first()).toBeVisible();
+
+    const alert = dialog.getByRole('alert');
+    await expect(alert).toBeVisible();
+    await expect(alert).toContainText('no es pot reproduir');
+
+    const sourceLink = alert.getByRole('link');
+    await expect(sourceLink).toHaveAttribute('href', 'https://example.com/not-a-video');
+
+    await expect(dialog.locator('iframe')).toHaveCount(0);
+  });
 });
 
 /**
