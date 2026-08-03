@@ -14,7 +14,9 @@ import { fileURLToPath } from 'node:url';
 import { CATEGORY_IDS, type CategoryId } from '../src/lib/types.ts';
 import { youtubeId } from '../src/lib/youtube.ts';
 import {
+  categoryLabelsFromJson,
   entryToRow,
+  lastUpdatedOf,
   serializeTsv,
   youtubeWatchUrl,
   dilseSearchUrl,
@@ -25,24 +27,11 @@ import {
 
 const ROOT = path.resolve(fileURLToPath(import.meta.url), '../..');
 const SIGNS_DIR = path.join(ROOT, 'src/content/signs');
+const CATEGORIES_FILE = path.join(ROOT, 'src/content/categories.json');
 
-const CATEGORY_LABEL: Record<CategoryId, string> = {
-  food: 'Menjar i beure',
-  routines: 'Rutines i cura',
-  family: 'Persones i família',
-  emotions: 'Emocions',
-  animals: 'Animals',
-  objects: 'Objectes i joguines',
-  actions: 'Accions',
-  qualities: 'Qualitats',
-  nature: 'Natura i exterior',
-  courtesy: 'Cortesia',
-  body: 'Cos',
-  clothing: 'Roba',
-  colors: 'Colors',
-  numbers: 'Números',
-  time: 'Temps i conceptes',
-};
+async function readCategoryLabels(): Promise<Record<CategoryId, string>> {
+  return categoryLabelsFromJson(await readFile(CATEGORIES_FILE, 'utf8'));
+}
 
 async function readAll(): Promise<{ id: string; data: SignData }[]> {
   const files = (await readdir(SIGNS_DIR)).filter((f) => f.endsWith('.json'));
@@ -59,10 +48,14 @@ function link(url: string, text: string): string {
   return `[${text}](${url})`;
 }
 
-function markdownDoc(entries: { id: string; data: SignData }[]): string {
+function markdownDoc(
+  entries: { id: string; data: SignData }[],
+  categoryLabel: Record<CategoryId, string>,
+): string {
   const total = entries.length;
   const withLsc = entries.filter((e) => e.data.videos.some((v) => v.signLanguage === 'lsc')).length;
   const withLse = entries.filter((e) => e.data.videos.some((v) => v.signLanguage === 'lse')).length;
+  const lastUpdated = lastUpdatedOf(entries);
 
   const out: string[] = [
     '# Vocabulari — totes les paraules i els seus vídeos',
@@ -70,7 +63,7 @@ function markdownDoc(entries: { id: string; data: SignData }[]): string {
     '> Document generat automàticament amb `npm run content:export`. **No l’editis a mà**: els',
     "> canvis es fan a `content/vocabulary.tsv` i s'apliquen amb `npm run content:import`.",
     '',
-    `Actualitzat: ${new Date().toISOString().slice(0, 10)} · ${total} conceptes · ` +
+    `Actualitzat: ${lastUpdated} · ${total} conceptes · ` +
       `${withLsc} amb LSC · ${withLse} amb LSE.`,
     '',
   ];
@@ -79,7 +72,7 @@ function markdownDoc(entries: { id: string; data: SignData }[]): string {
     const inCategory = entries.filter((e) => e.data.category === category);
     if (inCategory.length === 0) continue;
 
-    out.push(`## ${CATEGORY_LABEL[category]}`, '');
+    out.push(`## ${categoryLabel[category]}`, '');
     out.push('| Paraula (ca / es / en) | LSC | LSE |', '|---|---|---|');
 
     for (const { data } of inCategory) {
@@ -107,11 +100,15 @@ function markdownDoc(entries: { id: string; data: SignData }[]): string {
 }
 
 async function main(): Promise<void> {
-  const entries = await readAll();
+  const [entries, categoryLabel] = await Promise.all([readAll(), readCategoryLabels()]);
 
   const rows: VocabularyRow[] = entries.map(({ id, data }) => entryToRow(id, data));
   await writeFile(path.join(ROOT, 'content/vocabulary.tsv'), serializeTsv(rows), 'utf8');
-  await writeFile(path.join(ROOT, 'docs/vocabulari.md'), markdownDoc(entries), 'utf8');
+  await writeFile(
+    path.join(ROOT, 'docs/vocabulari.md'),
+    markdownDoc(entries, categoryLabel),
+    'utf8',
+  );
 
   console.log(`Exported ${rows.length} concepts → content/vocabulary.tsv and docs/vocabulari.md`);
 }

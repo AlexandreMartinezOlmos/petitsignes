@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   TsvError,
   applyRow,
+  categoryLabelsFromJson,
   dilseTermFromUrl,
   entryToRow,
+  lastUpdatedOf,
   parseTsv,
   serializeTsv,
   type SignData,
@@ -218,5 +220,54 @@ describe('tsv round-trip', () => {
     // one failure this project cannot have. Better to refuse the file.
     const stale = serializeTsv([row()]).replace('first_sign_order', 'first_sign_order\tdifficulty');
     expect(() => parseTsv(stale)).toThrow(TsvError);
+  });
+});
+
+describe('categoryLabelsFromJson', () => {
+  it('maps each id to its Catalan label', () => {
+    const json = JSON.stringify([
+      {
+        id: 'food',
+        labels: { ca: 'Menjar i beure', es: 'Comida y bebida', en: 'Food' },
+        icon: 'bowl',
+        order: 1,
+      },
+      {
+        id: 'animals',
+        labels: { ca: 'Animals', es: 'Animales', en: 'Animals' },
+        icon: 'paw',
+        order: 2,
+      },
+    ]);
+    expect(categoryLabelsFromJson(json)).toEqual({ food: 'Menjar i beure', animals: 'Animals' });
+  });
+});
+
+describe('lastUpdatedOf', () => {
+  const entryWith = (...updatedAts: string[]): { data: SignData } => ({
+    data: {
+      labels: { ca: 'gat', es: 'gato', en: 'cat' },
+      category: 'animals',
+      isFirstSign: false,
+      videos: updatedAts.map((updatedAt) => ({
+        signLanguage: 'lsc',
+        delivery: 'youtube-embed',
+        videoUrl: 'https://www.youtube.com/watch?v=kXZylIjwSJI',
+        source: 'Gencat-VocabulariLSC',
+        sourceUrl: 'x',
+        license: 'x',
+        updatedAt,
+      })),
+    },
+  });
+
+  it('picks the most recent date across every video of every entry', () => {
+    expect(lastUpdatedOf([entryWith('2026-07-24'), entryWith('2026-08-03', '2026-01-01')])).toBe(
+      '2026-08-03',
+    );
+  });
+
+  it('is undefined when nothing has a video', () => {
+    expect(lastUpdatedOf([entryWith()])).toBeUndefined();
   });
 });
