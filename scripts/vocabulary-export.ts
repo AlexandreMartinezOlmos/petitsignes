@@ -12,13 +12,13 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CATEGORY_IDS, type CategoryId } from '../src/lib/types.ts';
+import { youtubeId } from '../src/lib/youtube.ts';
 import {
   entryToRow,
   serializeTsv,
   youtubeWatchUrl,
   dilseSearchUrl,
   dilseTermFromUrl,
-  youTubeIdFromUrl,
   type SignData,
   type VocabularyRow,
 } from './lib/vocabulary.ts';
@@ -92,7 +92,7 @@ function markdownDoc(entries: { id: string; data: SignData }[]): string {
           ? '—'
           : lsc
               .map((v, i) => {
-                const id = youTubeIdFromUrl(v.videoUrl) ?? '';
+                const id = youtubeId(v.videoUrl) ?? '';
                 return link(youtubeWatchUrl(id), lsc.length > 1 ? `▶ ${i + 1}` : '▶ vídeo');
               })
               .join(' ');
