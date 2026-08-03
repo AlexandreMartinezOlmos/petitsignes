@@ -58,9 +58,13 @@ export const PLAY_EVENT = 'sign:play';
  * 404 offers one too, and it needs the button to work without paying for the
  * whole grid controller. Everything the dialog needs travels on the button's
  * own dataset, so nothing here has to know where the card came from.
+ *
+ * Does not count a play itself: this fires on every click, before anything
+ * has been validated. `SignVideoDialog` is what knows whether the request
+ * actually turned into a playable video, so it is what counts — see its
+ * `onPlayRequest`.
  */
 export function dispatchPlayRequest(button: HTMLElement, signId: string): void {
-  countEvent(ANALYTICS_EVENTS.playLsc);
   button.dispatchEvent(
     new CustomEvent<PlayRequestDetail>(PLAY_EVENT, {
       bubbles: true,

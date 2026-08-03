@@ -13,6 +13,7 @@
 import { isUrlSlug } from '../../src/lib/slug.ts';
 import {
   CATEGORY_IDS,
+  type Category,
   type CategoryId,
   type LocalizedText,
   type SignVideo,
@@ -283,4 +284,36 @@ export function parseTsv(text: string): VocabularyRow[] {
       lseDilseTerm: lse.trim(),
     };
   });
+}
+
+// --- docs/vocabulari.md helpers --------------------------------------------
+
+/**
+ * The Catalan label of each category, read from the collection's own JSON
+ * text rather than kept as a fourth hand-written copy (the collection
+ * itself, `CATEGORY_SLUGS` and `src/lib/categories.ts`'s own comment already
+ * count three). Renaming a category label used to mean the generated
+ * catalogue would keep showing the old one with nothing to catch it.
+ */
+export function categoryLabelsFromJson(text: string): Record<CategoryId, string> {
+  const categories = JSON.parse(text) as Category[];
+  return Object.fromEntries(categories.map((c) => [c.id, c.labels.ca])) as Record<
+    CategoryId,
+    string
+  >;
+}
+
+/**
+ * The most recent `updatedAt` across every video of every entry, the same way
+ * `CreditsView.astro` derives its own "last updated" line — not `new Date()`,
+ * which rewrote the generated doc's date on every run whether or not
+ * anything else had changed, and made the file useless as a "is the
+ * generated doc still current" check in CI. Undefined only if there are no
+ * videos at all, which the schema does not otherwise forbid.
+ */
+export function lastUpdatedOf(entries: { data: SignData }[]): string | undefined {
+  return entries
+    .flatMap((e) => e.data.videos.map((v) => v.updatedAt))
+    .sort()
+    .at(-1);
 }
