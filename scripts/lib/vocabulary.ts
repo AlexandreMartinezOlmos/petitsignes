@@ -10,6 +10,7 @@
  * The two thin scripts (`vocabulary-export.ts`, `vocabulary-import.ts`) do the IO.
  */
 
+import { isUrlSlug } from '../../src/lib/slug.ts';
 import {
   CATEGORY_IDS,
   type CategoryId,
@@ -212,23 +213,66 @@ export function parseTsv(text: string): VocabularyRow[] {
   }
 
   const seen = new Set<string>();
+  // One set per language: the gap I1 went through. `parseTsv` already rejected
+  // a duplicate id; it never checked whether two different ids said the same
+  // word.
+  const seenLabels: Record<'ca' | 'es' | 'en', Set<string>> = {
+    ca: new Set(),
+    es: new Set(),
+    en: new Set(),
+  };
+  const seenOrders = new Set<number>();
+
   return lines.slice(1).map((line) => {
     const cells = line.split('\t');
     const [id = '', category = '', order = '', ca = '', es = '', en = '', lsc = '', lse = ''] =
       cells.map((c) => c ?? '');
+    const trimmedId = id.trim();
 
-    if (!id.trim()) throw new TsvError('A row has no id');
-    if (seen.has(id)) throw new TsvError(`Duplicate id "${id}"`);
-    seen.add(id);
-    if (!isCategoryId(category)) throw new TsvError(`Row "${id}": unknown category "${category}"`);
+    if (!trimmedId) throw new TsvError('A row has no id');
+    if (seen.has(trimmedId)) throw new TsvError(`Duplicate id "${trimmedId}"`);
+    seen.add(trimmedId);
+    // Not just tidiness: the id becomes a URL segment and the localStorage key
+    // for favourites (§4.1). A row that slips past this is a file nobody can
+    // link to and a schema error the Zod build catches too late to say why.
+    if (!isUrlSlug(trimmedId)) {
+      throw new TsvError(`Row "${trimmedId}": id is not a valid URL slug`);
+    }
+    if (!isCategoryId(category)) {
+      throw new TsvError(`Row "${trimmedId}": unknown category "${category}"`);
+    }
     if (!ca.trim() || !es.trim() || !en.trim()) {
-      throw new TsvError(`Row "${id}": every label (ca, es, en) is required`);
+      throw new TsvError(`Row "${trimmedId}": every label (ca, es, en) is required`);
+    }
+
+    for (const [language, value] of [
+      ['ca', ca],
+      ['es', es],
+      ['en', en],
+    ] as const) {
+      const label = value.trim();
+      if (seenLabels[language].has(label)) {
+        throw new TsvError(
+          `Row "${trimmedId}": "${label}" (${language}) is already used by another id`,
+        );
+      }
+      seenLabels[language].add(label);
+    }
+
+    const firstSignOrder = parseIntOrNull(order, 'first_sign_order', trimmedId);
+    if (firstSignOrder !== null) {
+      if (seenOrders.has(firstSignOrder)) {
+        throw new TsvError(
+          `Row "${trimmedId}": first_sign_order ${firstSignOrder} is already used`,
+        );
+      }
+      seenOrders.add(firstSignOrder);
     }
 
     return {
-      id: id.trim(),
+      id: trimmedId,
       category,
-      firstSignOrder: parseIntOrNull(order, 'first_sign_order', id),
+      firstSignOrder,
       ca: ca.trim(),
       es: es.trim(),
       en: en.trim(),

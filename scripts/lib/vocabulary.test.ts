@@ -157,6 +157,9 @@ describe('tsv round-trip', () => {
         id: 'leche',
         category: 'food',
         firstSignOrder: 1,
+        ca: 'llet',
+        es: 'leche',
+        en: 'milk',
         lscYouTube: ['a1b2c3d4e5f', 'z9y8x7w6v5u'],
       }),
     ];
@@ -177,6 +180,29 @@ describe('tsv round-trip', () => {
 
   it('rejects a duplicate id', () => {
     expect(() => parseTsv(serializeTsv([row(), row()]))).toThrow(/Duplicate/);
+  });
+
+  it('rejects an id that could not survive being a URL', () => {
+    // Same rule `isSignSlug` holds every id in the collection to (signs.test.ts)
+    // — checked here too, so a bad id is refused at the manifest, not just
+    // caught after the file already exists.
+    const tsv = serializeTsv([row({ id: 'Gato Grande' })]);
+    expect(() => parseTsv(tsv)).toThrow(/id is not a valid URL slug/);
+  });
+
+  it('rejects two ids that share a label in any language', () => {
+    // The gap I1 went through: two different ids, the same word. `parseTsv`
+    // already rejected a duplicate id; this closes the other half.
+    const tsv = serializeTsv([row(), row({ id: 'gato2' })]);
+    expect(() => parseTsv(tsv)).toThrow(/"gat" \(ca\) is already used/);
+  });
+
+  it('rejects two rows claiming the same first_sign_order', () => {
+    const tsv = serializeTsv([
+      row({ id: 'gato', firstSignOrder: 1 }),
+      row({ id: 'perro', ca: 'gos', es: 'perro', en: 'dog', firstSignOrder: 1 }),
+    ]);
+    expect(() => parseTsv(tsv)).toThrow(/first_sign_order 1 is already used/);
   });
 
   it('rejects a missing label', () => {
