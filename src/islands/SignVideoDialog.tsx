@@ -53,10 +53,22 @@ export default function SignVideoDialog({ language }: Props) {
   useEffect(() => {
     function onPlayRequest(event: Event): void {
       const detail = (event as CustomEvent<PlayRequestDetail>).detail;
-      if (!detail?.videoUrl || youtubeId(detail.videoUrl) === null) return;
+      if (!detail) return;
       setSpeed(1);
       setLoadFailed(false);
       setRequest(detail);
+
+      // Counted here, once the request is actually known to be playable —
+      // not by the button click that dispatched it. A stored url this app
+      // cannot read an id from is a content bug, not a network one, but it
+      // ends on the same visible fallback as the player failing to load, so
+      // it is counted the same way rather than adding a second event for the
+      // same outcome.
+      if (detail.videoUrl && youtubeId(detail.videoUrl) !== null) {
+        countEvent(ANALYTICS_EVENTS.playLsc);
+      } else {
+        countEvent(ANALYTICS_EVENTS.playerUnavailable);
+      }
     }
 
     document.addEventListener(PLAY_EVENT, onPlayRequest);
@@ -190,7 +202,7 @@ export default function SignVideoDialog({ language }: Props) {
         if (event.target === dialogRef.current) close();
       }}
     >
-      {request && videoId && (
+      {request && (
         <div className="flex flex-col">
           <div className="flex items-center gap-2 px-4 py-3">
             <h2 className="min-w-0 flex-1 truncate text-lg font-bold">{request.label}</h2>
@@ -215,11 +227,14 @@ export default function SignVideoDialog({ language }: Props) {
             </button>
           </div>
 
-          {loadFailed ? (
-            /* The player could not load. Rather than a blank box, offer the
-               source's own page — the same escape hatch an LSE sign uses. */
+          {videoId === null || loadFailed ? (
+            /* Nothing to embed — either the stored url is not a YouTube video
+               this app can read an id from (a content bug), or the IFrame API
+               itself failed to load (a network or extension one). Either way,
+               rather than a blank box, offer the source's own page — the same
+               escape hatch an LSE sign uses. */
             <div className="player-dialog__stage player-dialog__fallback" role="alert">
-              <p>{t('player.unavailable')}</p>
+              <p>{t(videoId === null ? 'player.brokenVideo' : 'player.unavailable')}</p>
               <a
                 className="player-dialog__fallback-link"
                 href={request.videoUrl}

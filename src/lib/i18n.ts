@@ -124,6 +124,8 @@ const MESSAGES = {
     'player.source': 'Font d’aquest signe',
     'player.unavailable':
       'No hem pogut carregar el reproductor. Pot ser una extensió del navegador o la connexió: el signe també es pot veure al lloc original.',
+    'player.brokenVideo':
+      'Aquest vídeo no es pot reproduir aquí. Encara el pots veure a la font original.',
 
     'progress.title': 'Les teves dades',
     'progress.intro':
@@ -260,6 +262,8 @@ const MESSAGES = {
     'player.source': 'Fuente de este signo',
     'player.unavailable':
       'No hemos podido cargar el reproductor. Puede ser una extensión del navegador o la conexión: el signo también se puede ver en el sitio original.',
+    'player.brokenVideo':
+      'Este vídeo no se puede reproducir aquí. Aún puedes verlo en la fuente original.',
 
     'progress.title': 'Tus datos',
     'progress.intro':
@@ -397,6 +401,8 @@ const MESSAGES = {
     'player.source': 'Source of this sign',
     'player.unavailable':
       'The player could not be loaded. It may be a browser extension or the connection: the sign can also be watched at its original site.',
+    'player.brokenVideo':
+      'This video can’t be played here. You can still watch it at the original source.',
 
     'progress.title': 'Your data',
     'progress.intro':

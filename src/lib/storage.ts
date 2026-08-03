@@ -283,10 +283,6 @@ export class LocalStorageProgressStore implements ProgressStore {
     for (const listener of this.#listeners) listener(snapshot);
   }
 
-  async getSnapshot(): Promise<ProgressSnapshot> {
-    return this.#memory;
-  }
-
   async getFavorites(): Promise<string[]> {
     return [...this.#memory.favorites];
   }
