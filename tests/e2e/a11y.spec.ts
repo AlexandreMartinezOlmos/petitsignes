@@ -22,7 +22,7 @@ const PAGES = [
   { name: 'not found (es)', path: '/es/404.html' },
   // One template, 390 pages. `leche` is the one that exercises every branch of
   // it: an embedded LSC video in Catalan, an external LSE link in Spanish, and
-  // a declared variant in the source block.
+  // a declared source term in the citation block.
   { name: 'sign (ca)', path: '/signe/leche/' },
   { name: 'sign (es)', path: '/es/signe/leche/' },
   // One template, 30 pages. Food is the largest category, so it is the one whose

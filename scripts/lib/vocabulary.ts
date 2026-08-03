@@ -109,9 +109,9 @@ function lscVideo(id: string, existing: SignVideo | undefined, today: string): S
     source: 'Gencat-VocabulariLSC',
     sourceUrl: LSC_SOURCE_URL,
     license: LSC_LICENSE,
-    // Preserve the date and the variant label when the id is unchanged.
+    // Preserve the date and the source dictionary's lemma when the id is unchanged.
     updatedAt: existing?.updatedAt ?? today,
-    ...(existing?.variant !== undefined ? { variant: existing.variant } : {}),
+    ...(existing?.sourceTerm !== undefined ? { sourceTerm: existing.sourceTerm } : {}),
   };
 }
 
@@ -133,8 +133,8 @@ function lseVideo(term: string, existing: SignVideo | undefined, today: string):
 
 /**
  * Merges a manifest row into an existing entry (or creates one). Videos are
- * rebuilt from the row's ids/term, but variant labels and the recorded date
- * survive whenever the id/term is unchanged.
+ * rebuilt from the row's ids/term, but the source dictionary's lemma and the
+ * recorded date survive whenever the id/term is unchanged.
  */
 export function applyRow(row: VocabularyRow, existing: SignData | null, today: string): SignData {
   const previousLsc = new Map(
