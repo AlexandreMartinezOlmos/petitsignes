@@ -1,9 +1,11 @@
 /**
  * Interface translations.
  *
- * The routing side of i18n (`/ca`, `/es`, `/en`) is Phase 2, but every string
- * already goes through this module so that adding the routes later is a change
- * to pages only — not to every component.
+ * Routing exists today for `ca` and `es` (see `routing.ts`): the language lives
+ * in the URL, not client state, so server- and client-rendered markup match.
+ * `en` translations exist and are validated the same way — every string goes
+ * through this module — but no route serves them yet; adding one is a change
+ * to pages only, not to every component.
  *
  * This is the TEXT axis. It is unrelated to the sign language of the videos.
  */
