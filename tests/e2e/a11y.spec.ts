@@ -288,9 +288,9 @@ test('both card toggles answer a press with more than a hue', async ({ page }) =
 });
 
 /**
- * WCAG 2.4.1 (Bypass Blocks). The grid holds 638 of the page's 654 focus
+ * WCAG 2.4.1 (Bypass Blocks). The grid holds 776 of the page's 796 focus
  * stops, so the footer — and on a phone the only route to the other pages —
- * sat 650 Tab presses behind it. The bypass link is the escape hatch; this
+ * sat 792 Tab presses behind it. The bypass link is the escape hatch; this
  * pins both halves of it, because a skip link that does not move focus is the
  * classic way for one to rot unnoticed.
  */
@@ -828,7 +828,7 @@ test('an anchor lands below the sticky header', async ({ page }) => {
 /**
  * G1. At 2560px the grid stopped at 1120px and four columns: 56% of the screen
  * was margin. A maximum width is right for prose, which has a measure to
- * protect; a grid of 229 cards has none, and every extra pixel was going into
+ * protect; a grid of 194 cards has none, and every extra pixel was going into
  * wider cards instead of more of them.
  */
 test('a very wide screen gets more catalogue, not more margin', async ({ page }) => {

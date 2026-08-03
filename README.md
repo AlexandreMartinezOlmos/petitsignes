@@ -186,10 +186,10 @@ npm run content:import   # vuelca la hoja editada al contenido (src/content/sign
 npm run build             # la palabra nueva o corregida ya está en la web
 ```
 
-El `import` conserva lo que la hoja no gestiona directamente —las variantes, los consejos de uso
-y la fecha de origen— mientras el enlace no cambie; si cambias un enlace, ese vídeo pasa a llevar
-la fecha de hoy, porque es una fuente nueva. Un concepto que se borra de la hoja no se elimina
-solo: el script avisa y hay que borrarlo
+El `import` conserva lo que la hoja no gestiona directamente —el término del diccionario de
+origen y la fecha de origen— mientras el enlace no cambie; si cambias un enlace, ese vídeo pasa a
+llevar la fecha de hoy, porque es una fuente nueva. Un concepto que se borra de la hoja no se
+elimina solo: el script avisa y hay que borrarlo
 a mano si es intencionado. La lógica de esta conversión tiene sus propios tests unitarios en
 [`scripts/lib/vocabulary.test.ts`](scripts/lib/vocabulary.test.ts).
 

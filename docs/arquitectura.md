@@ -6,7 +6,7 @@ Decisiones estructurales y por qué. Para construir interfaz que encaje, ver
 
 ## El problema de fondo
 
-El catálogo tiene ~229 conceptos y crecerá. Un enfoque SPA clásico enviaría los 229 al
+El catálogo tiene 194 conceptos y crecerá. Un enfoque SPA clásico enviaría los 194 al
 navegador como JSON y los renderizaría en cliente: eso pone el coste de arranque en función
 del tamaño del catálogo, justo lo contrario de lo que necesita un móvil de gama media con
 conexión 4G — donde el objetivo es Lighthouse ≥ 95 en las cuatro categorías.
@@ -20,7 +20,7 @@ con el número de signos**.
 Build (Astro)                          Navegador
 ─────────────                          ─────────
 content/signs/*.json ──┐
-                       ├──> HTML estático con las 229 tarjetas
+                       ├──> HTML estático con las 194 tarjetas
 content/categories.json┘         │
                                  │  data-sign-id, data-category,
                                  │  data-label-ca/es/en, data-first-sign
@@ -194,7 +194,7 @@ y distinto según la pantalla; era lo que hacía converger tonos separados sobre
 una pantalla P3 sí puede mostrar se añade aparte, con `@media (color-gamut: p3)`, a igual
 luminosidad y tono.
 
-**El CSS repetido vive en CSS.** La tarjeta se repite 229 veces, así que las cadenas largas de
+**El CSS repetido vive en CSS.** La tarjeta se repite 194 veces, así que las cadenas largas de
 clases de utilidad se pagarían una vez por tarjeta en el DOM. Las partes repetidas
 (`.sign-card`, `.chip`, `.player-dialog`…) son clases de componente y el marcado solo lleva
 lo que varía. Lo mismo con los iconos: un sprite de `<symbol>` con referencias `<use>`, en vez
@@ -218,8 +218,8 @@ diseño.
   criterio 2.5.8.
 - `scroll-padding-top` en `html` mantiene el elemento enfocado fuera de la cabecera fija
   (criterio 2.4.11). Hay un test e2e que lo comprueba midiendo geometría real.
-- La rejilla concentra **638 de los 654 focos** de la página, así que hay un bloque de omisión
-  (criterio 2.4.1) justo antes de ella que salta al pie: 650 tabulaciones pasan a 16. El destino
+- La rejilla concentra **776 de los 796 focos** de la página, así que hay un bloque de omisión
+  (criterio 2.4.1) justo antes de ella que salta al pie: 792 tabulaciones pasan a 16. El destino
   lleva `tabindex="-1"` para recibir el foco de verdad, no solo el hash.
 - **Una regla que resuelve un problema de altura pregunta por la altura.** El plegado de la
   cabecera vivía tras `width < 40rem` y en un móvil girado (844×390) anunciaba

@@ -21,7 +21,7 @@ Para *por qué* la web está construida así (rejilla estática, islas, entrega 
    el tono dice a qué familia pertenece una tarjeta, nunca cuál es: eso lo dicen su icono y el
    encabezado de sección que tiene encima. El icono no es decoración, es la señal.
 4. **Mínimo JavaScript.** Si algo se puede hacer con HTML y CSS, se hace con HTML y CSS.
-5. **El diseño vive en `src/styles/global.css`.** Con 229 tarjetas, una cadena larga de clases
+5. **El diseño vive en `src/styles/global.css`.** Con 194 tarjetas, una cadena larga de clases
    de utilidad se paga en cada nodo del DOM: lo que se repite es una clase de componente.
 
 ---
@@ -147,7 +147,7 @@ oscuro y en P3, y que los dos bloques de tema oscuro siguen siendo idénticos.
 
 `--glass-tint` es la opacidad mínima de una superficie translúcida. **No es una preferencia
 estética**: sobre cristal, el contraste depende de lo que haya detrás en ese momento, y detrás
-hay 229 tarjetas con 15 tintes que además se desplazan. El desenfoque aporta el efecto; este
+hay 194 tarjetas con 15 tintes que además se desplazan. El desenfoque aporta el efecto; este
 número aporta la legibilidad. Bajarlo hace que el contraste dependa del scroll.
 
 ---
@@ -195,7 +195,7 @@ El cristal es para el **chrome**: superficies que flotan sobre el contenido. Ah�
 | Cabecera pegajosa | **Sí** | Flota sobre el contenido |
 | Barra de filtros | **Sí** | Es chrome |
 | Fondo del reproductor | **Sí**, y más intenso | No hay scroll detrás: se rasteriza una vez |
-| **Las 229 tarjetas** | **No** | Son el contenido; usan `--edge-light` |
+| **Las 194 tarjetas** | **No** | Son el contenido; usan `--edge-light` |
 | Fondo de texto largo | **Nunca** | El contraste no puede depender del scroll |
 
 Uso: la clase `.glass`. Es la única fuente del efecto, y por eso el contrato de accesibilidad se
@@ -225,7 +225,7 @@ cabecera o el `sticky` de sus hijos. **Trampa nº2:** un ancestro con `transform
 
 ### `.sign-card` — la tarjeta de signo
 
-La unidad del catálogo, repetida 229 veces. Tiene **dos formas**:
+La unidad del catálogo, repetida 194 veces. Tiene **dos formas**:
 
 - **Tarjeta** (≥ `sm` y pantalla alta): panel de color arriba con los toggles encima, palabra
   debajo, acción al pie. **266 px**, antes 370.
@@ -432,8 +432,8 @@ dónde estás no puede depender de distinguir dos grises (WCAG 1.4.1).
 
 ### `.bypass-link` — saltar el catálogo
 
-Bloque de omisión (WCAG 2.4.1), justo antes de la rejilla. De los 654 focos de la página, **638
-están dentro del catálogo**, así que todo lo que viene después quedaba a 650 tabulaciones. Ahora
+Bloque de omisión (WCAG 2.4.1), justo antes de la rejilla. De los 796 focos de la página, **776
+están dentro del catálogo**, así que todo lo que viene después quedaba a 792 tabulaciones. Ahora
 está a 16.
 
 Se oculta como `.sr-only` (recortado, no desplazado) porque vive **en el flujo**, entre el héroe y
@@ -483,7 +483,7 @@ Antes eran las mismas cuatro utilidades escritas cuatro veces.
 
 **Por encima de 90 rem el tope se abre.** A 2560 px la rejilla se quedaba en 1120 px con cuatro
 columnas y **el 56 % de la pantalla era margen**: correcto para prosa, que tiene una medida que
-proteger, y puro desperdicio para una rejilla de 229 fichas, que no tiene ninguna. El tope pasa a
+proteger, y puro desperdicio para una rejilla de 194 fichas, que no tiene ninguna. El tope pasa a
 `min(112rem, 88vw)` — el primero son unas seis columnas de tarjeta, que es lo ancha que puede
 ponerse una fila antes de que el ojo tenga que viajar para leerla; el segundo garantiza margen en
 cualquier pantalla, así que nunca llega de borde a borde.
