@@ -226,10 +226,12 @@ for (const { name, path } of PAGES) {
 }
 
 /**
- * WCAG 2.2 §2.5.8 asks 24px; this project's design system promises 44px for
- * every control (`--spacing-touch`), because the whole point is one-handed use
- * with a baby in the other arm. The footer links were 22px and were the only
- * controls breaking either number.
+ * WCAG 2.2 §2.5.8 asks 24px. The design system's own target is 44px
+ * (`--spacing-touch`) for primary controls, because the whole point is
+ * one-handed use with a baby in the other arm — but a few controls sit
+ * between 24 and 44px on purpose, each with its reasoning next to the CSS.
+ * This test holds the one floor every control actually promises: the footer
+ * links were 22px and were the only ones breaking even that.
  */
 test('every control meets the touch target floor', async ({ page }) => {
   await page.goto('/');

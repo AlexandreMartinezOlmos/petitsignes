@@ -171,8 +171,11 @@ pantallas anchas sin una media query.
 
 ## 5. Espacio, forma, elevación y movimiento
 
-- **Táctil:** `--spacing-touch` (44 px) es el mínimo de todo control. No se negocia para que algo
-  quepa; si no cabe, cambia el layout.
+- **Táctil:** `--spacing-touch` (44 px) es el objetivo para los controles principales. No se
+  negocia para que algo quepa; si no cabe, cambia el layout. El suelo real es el criterio 2.5.8
+  (24 px): unos pocos controles se quedan entre 24 y 44 px a propósito —un enlace de dos letras
+  en una tarjeta, o cinco entradas de un índice— y cada excepción lleva su razón escrita junto al
+  CSS, no aquí.
 - **Radios:** `--radius-card`, `--radius-control`, `--radius-chip`.
 - **Elevación:** `--elevation-1..3`, cada una con **dos capas** (una ambiental difusa y otra
   direccional cerrada). Una sola capa se lee como un borde caído; dos se leen como profundidad.
