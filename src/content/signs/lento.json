@@ -15,17 +15,7 @@
       "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
       "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
       "updatedAt": "2026-07-24",
-      "variant": "Lent / lenta (1)"
-    },
-    {
-      "signLanguage": "lsc",
-      "delivery": "youtube-embed",
-      "videoUrl": "https://www.youtube.com/watch?v=oyyK_gmqKT4",
-      "source": "Gencat-VocabulariLSC",
-      "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
-      "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
-      "updatedAt": "2026-07-24",
-      "variant": "Lent / lenta (2)"
+      "sourceTerm": "Lent / lenta (1)"
     },
     {
       "signLanguage": "lse",

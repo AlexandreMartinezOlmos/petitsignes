@@ -15,17 +15,7 @@
       "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
       "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
       "updatedAt": "2026-07-24",
-      "variant": "Aplaudir (oïdors)"
-    },
-    {
-      "signLanguage": "lsc",
-      "delivery": "youtube-embed",
-      "videoUrl": "https://www.youtube.com/watch?v=6SOhxQtlN8w",
-      "source": "Gencat-VocabulariLSC",
-      "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
-      "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
-      "updatedAt": "2026-07-24",
-      "variant": "Aplaudir (signants)"
+      "sourceTerm": "Aplaudir (oïdors)"
     },
     {
       "signLanguage": "lse",

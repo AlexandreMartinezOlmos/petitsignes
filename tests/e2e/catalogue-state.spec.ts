@@ -17,8 +17,12 @@ import { expect, test, type Page } from '@playwright/test';
  */
 
 const SEARCH = 'llet';
-/** Matches the 11 signs whose Catalan label contains "llet"; well under 194. */
-const EXPECTED_MATCHES = 11;
+/**
+ * Fuse's fuzzy threshold matches 12 signs against "llet", not only the ones
+ * whose label contains it literally (`galeta`, `aplaudir (llengua de signes)`)
+ * — well under 194 either way.
+ */
+const EXPECTED_MATCHES = 12;
 
 /**
  * The module coalesces history writes for 300ms, because Safari refuses more

@@ -36,7 +36,12 @@ const signVideo = z
     sourceUrl: z.url(),
     license: z.string().min(1),
     updatedAt: z.iso.date(),
-    variant: z.string().min(1).optional(),
+    // The lemma the source dictionary uses for this exact entry (e.g. Gencat's
+    // own "Llit" for our "cama"). Attribution metadata, not a UI label: it
+    // used to be called `variant` and rendered as one on every sign page, which
+    // told the reader a Catalan word was "a variant" of itself. Purely
+    // informational now — nothing reads it to make a decision.
+    sourceTerm: z.string().min(1).optional(),
   })
   .strict();
 
@@ -48,8 +53,7 @@ const signs = defineCollection({
       category: z.enum(CATEGORY_IDS),
       isFirstSign: z.boolean().default(false),
       firstSignOrder: z.number().int().positive().optional(),
-      // 0..n: a concept may have no video yet, or one per sign language, or
-      // several when a sign language documents territorial variants (§6.4).
+      // 0..n: a concept may have no video yet, or one per sign language.
       videos: z.array(signVideo).default([]),
     })
     .strict()
@@ -59,13 +63,19 @@ const signs = defineCollection({
     })
     .refine(
       (entry) => {
-        // Never two videos for the same sign language unless they are labelled
-        // as distinct variants — the UI would have no way to choose (§4.2).
-        const unlabelled = entry.videos.filter((video) => video.variant === undefined);
-        return new Set(unlabelled.map((video) => video.signLanguage)).size === unlabelled.length;
+        // Two videos for the same sign language used to be allowed when
+        // labelled as a "variant", on the premise that a future selector would
+        // let the reader choose. It never shipped: both `SignCard` and
+        // `SignView` always take the first video and ignore the rest, so the
+        // exception only ever produced unreachable data (16 videos across 14
+        // concepts, found by audit). A real second meaning, like the
+        // hearing/Deaf-community forms of "aplaudir", gets its own concept and
+        // its own page instead.
+        const languages = entry.videos.map((video) => video.signLanguage);
+        return new Set(languages).size === languages.length;
       },
       {
-        message: 'Duplicate videos for one sign language must declare a `variant`',
+        message: 'A sign cannot have two videos for the same sign language',
         path: ['videos'],
       },
     ),

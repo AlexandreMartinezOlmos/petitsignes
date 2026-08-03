@@ -1,8 +1,8 @@
-import { readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { RELATED_SIGNS_LIMIT, isSignSlug, relatedSigns, signPath, signPaths } from './signs.ts';
-import type { SignEntry } from './types.ts';
+import type { Language, SignEntry } from './types.ts';
 
 function sign(id: string, category: SignEntry['category'], labels: Partial<SignEntry['labels']>) {
   return {
@@ -74,6 +74,40 @@ describe('every sign in the catalogue', () => {
     // And an id is not free to change afterwards: `localStorage` saves
     // favourites under it, so a rename now also breaks every external link.
     expect(ids.filter((id) => !isSignSlug(id))).toEqual([]);
+  });
+
+  it('never shows the same word under two different ids', () => {
+    // `cuna` and `cama` once carried identical labels in every language and the
+    // same LSC video — two cards saying `llit`, two identical `<title>`s, one
+    // search returning the same word twice. Nothing checked for it: the Zod
+    // schema validates one entry at a time, and `parseTsv` only rejects a
+    // duplicate id, not a duplicate label. This reads every file's labels
+    // directly, the same way the id check above does, so a JSON added by hand
+    // is caught even if nobody runs the TSV round-trip.
+    const languages: Language[] = ['ca', 'es', 'en'];
+    const seenByLanguage: Record<Language, Map<string, string>> = {
+      ca: new Map(),
+      es: new Map(),
+      en: new Map(),
+    };
+    const collisions: string[] = [];
+
+    for (const id of ids) {
+      const data = JSON.parse(readFileSync(resolve(dir, `${id}.json`), 'utf8')) as {
+        labels: SignEntry['labels'];
+      };
+      for (const language of languages) {
+        const label = data.labels[language];
+        const previousId = seenByLanguage[language].get(label);
+        if (previousId !== undefined) {
+          collisions.push(`${language}:"${label}" in both "${previousId}" and "${id}"`);
+        } else {
+          seenByLanguage[language].set(label, id);
+        }
+      }
+    }
+
+    expect(collisions).toEqual([]);
   });
 });
 

@@ -66,7 +66,7 @@ describe('applyRow', () => {
     expect(data.videos).toEqual([]);
   });
 
-  it('keeps the variant label and the recorded date when the id is unchanged', () => {
+  it('keeps the source dictionary lemma and the recorded date when the id is unchanged', () => {
     const existing: SignData = {
       labels: { ca: 'gat', es: 'gato', en: 'cat' },
       category: 'animals',
@@ -80,13 +80,13 @@ describe('applyRow', () => {
           sourceUrl: 'x',
           license: 'x',
           updatedAt: '2020-01-01',
-          variant: 'Gat / gata',
+          sourceTerm: 'Gat / gata',
         },
       ],
     };
     const data = applyRow(row(), existing, TODAY);
     const lsc = data.videos.find((v) => v.signLanguage === 'lsc')!;
-    expect(lsc.variant).toBe('Gat / gata');
+    expect(lsc.sourceTerm).toBe('Gat / gata');
     expect(lsc.updatedAt).toBe('2020-01-01');
   });
 
