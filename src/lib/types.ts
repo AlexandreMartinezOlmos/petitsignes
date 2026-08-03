@@ -41,8 +41,8 @@ export function signLanguageOf(language: Language): SignLanguage {
 }
 
 /**
- * "First signs" is a curated path (§16.A), not a category: those entries also
- * belong to a thematic category and are grouped by the `isFirstSign` flag.
+ * "First signs" is a curated path, not a category: those entries also belong
+ * to a thematic category and are grouped separately by the `isFirstSign` flag.
  */
 export const CATEGORY_IDS = [
   'food',
@@ -63,7 +63,11 @@ export const CATEGORY_IDS = [
 ] as const;
 export type CategoryId = (typeof CATEGORY_IDS)[number];
 
-/** Every known video source. Adding one means adding its attribution too (§5.3). */
+/**
+ * Every known video source. Adding one means adding its attribution too: the
+ * prose in `CreditsView.astro` is hand-written per source, not generated from
+ * this list.
+ */
 export const SIGN_SOURCES = ['CNSE-DILSE', 'Gencat-VocabulariLSC'] as const;
 export type SignSource = (typeof SIGN_SOURCES)[number];
 
