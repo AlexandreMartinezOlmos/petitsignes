@@ -42,11 +42,11 @@ Columnas de `vocabulary.tsv`:
 | `category` | Una de las 15 categorías. |
 | `first_sign_order` | Número → entra en la ruta "Primeros signos"; vacío → no. |
 | `ca` / `es` / `en` | Las tres etiquetas (obligatorias). |
-| `lsc_youtube` | Id(s) de YouTube del Vocabulari bàsic. Varios separados por coma = variantes. Vacío = sin LSC. |
+| `lsc_youtube` | Id de YouTube del Vocabulari bàsic. La columna admite varios separados por coma por herencia del formato, pero el esquema rechaza en el build más de un vídeo LSC por signo (ver «Carga masiva» más abajo) — pon solo uno. Vacío = sin LSC. |
 | `lse_dilse_term` | Término de búsqueda de DILSE (`?buscar=…`). Vacío = sin LSE. |
 
-El `import` **conserva** lo que no está en la tabla: la etiqueta de `variant` y la fecha de origen
-sobreviven mientras el id/término no cambie. Cambiar un enlace hace que
+El `import` **conserva** lo que no está en la tabla: el `sourceTerm` (el lema del diccionario de
+origen) y la fecha de origen sobreviven mientras el id/término no cambie. Cambiar un enlace hace que
 ese vídeo pase a llevar la fecha de hoy, porque es una fuente nueva. Un concepto que ya no esté en
 la tabla **no se borra** automáticamente: el script lo avisa y lo borras a mano si es
 intencionado.
@@ -93,15 +93,18 @@ favoritos que la gente tenga guardados.
   "sourceUrl": "https://…",
   "license": "…",
   "updatedAt": "2026-07-23",
-  "variant": "opcional"
+  "sourceTerm": "opcional"
 }
 ```
 
 - `source` solo admite valores conocidos; añadir una fuente nueva implica añadir también su
   atribución en la página de créditos.
-- `variant` es para cuando una lengua documenta varias realizaciones del mismo concepto (en LSC,
-  por ejemplo, *No* tiene tres). Sin `variant`, el esquema no deja meter dos vídeos de la misma
-  lengua para un mismo signo.
+- `sourceTerm` es el lema que usa el diccionario de origen para esta entrada (p. ej. `Llit` para
+  nuestro `cama`). Es solo metadato de atribución, no un permiso para duplicar: el esquema nunca
+  deja meter dos vídeos de la misma lengua en un mismo signo, tenga o no `sourceTerm`. Si el
+  diccionario documenta más de una realización del mismo concepto se elige la principal (ver
+  «Carga masiva» más abajo); si documenta un significado distinto, es un concepto aparte con su
+  propia ficha.
 
 El build valida todo esto con Zod: si algo no cuadra, el build falla. Es intencionado.
 
@@ -174,7 +177,13 @@ Reglas que quedaron fijadas:
 2. Se separan las alternativas de género que el diccionario escribe con barra (`Gos / gossa`) y
    se ignora el sufijo numérico de los números (`Tres - 3`).
 3. Las **variantes numeradas** del diccionario (`Ós (1)`, `Ós (2)`) son realizaciones distintas
-   del mismo signo: se cargan **todas**, cada una con su `variant`.
+   del mismo signo, no significados distintos: se carga solo la primera, y su `sourceTerm` guarda
+   el lema tal cual lo escribe el diccionario. Cargarlas todas fue el error real de un lote
+   anterior — la interfaz nunca mostraba más que la primera, así que las demás quedaban en el
+   dato sin que nadie pudiera llegar a verlas (14 conceptos, 16 vídeos, hallazgo de auditoría del
+   02/08/2026). Si la distinción sí importa —oyente/persona sorda, dirección del verbo—, la
+   solución no es cargarlas todas: es dar a la que importa su propio concepto y su propia ficha,
+   como se hizo con `aplaudir-signants` y `escuchar-signants`.
 4. Los **cualificadores entre paréntesis** se resuelven a mano, no por regla: `Cap (part del cos)`
    sirve para «cabeza», `Cap (patró)` (jefe) no. `Taronja (fruita)` sí, `Taronja (color)` no.
 5. Ante cualquier duda, **no se carga**.

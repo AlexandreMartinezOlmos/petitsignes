@@ -5,10 +5,10 @@
  *   2. npm run content:import
  *   3. npm run build
  *
- * The merge preserves each video's verification status and variant label when
- * its id/term is unchanged (see scripts/lib/vocabulary.ts). Files for concepts
- * that are no longer in the manifest are left in place and reported, so a
- * deletion is always a deliberate manual step.
+ * The merge preserves each video's verification status and source dictionary
+ * lemma when its id/term is unchanged (see scripts/lib/vocabulary.ts). Files
+ * for concepts that are no longer in the manifest are left in place and
+ * reported, so a deletion is always a deliberate manual step.
  */
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';

@@ -96,8 +96,12 @@ export interface SignVideo {
   sourceUrl: string;
   license: string;
   updatedAt: string;
-  /** Territorial variant, when a sign language documents more than one form. */
-  variant?: string;
+  /**
+   * The lemma the source dictionary uses for this entry (e.g. Gencat's own
+   * "Llit" for our "cama"). Attribution metadata for citation, not something
+   * shown to the reader as if the sign varied by region.
+   */
+  sourceTerm?: string;
 }
 
 export interface SignEntry {
