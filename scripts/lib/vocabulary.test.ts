@@ -6,7 +6,6 @@ import {
   entryToRow,
   parseTsv,
   serializeTsv,
-  youTubeIdFromUrl,
   type SignData,
   type VocabularyRow,
 } from './vocabulary.ts';
@@ -28,11 +27,6 @@ function row(overrides: Partial<VocabularyRow> = {}): VocabularyRow {
 }
 
 describe('url helpers', () => {
-  it('reads a YouTube id back from a watch URL', () => {
-    expect(youTubeIdFromUrl('https://www.youtube.com/watch?v=kXZylIjwSJI')).toBe('kXZylIjwSJI');
-    expect(youTubeIdFromUrl('https://fundacioncnse-dilse.org/?buscar=gato')).toBeNull();
-  });
-
   it('reads a DILSE term back from a search URL', () => {
     expect(dilseTermFromUrl('https://fundacioncnse-dilse.org/?buscar=buenos%20d%C3%ADas')).toBe(
       'buenos días',
@@ -113,6 +107,45 @@ describe('applyRow', () => {
     // the day this link was recorded, not the day the old one was.
     expect(lse.videoUrl).toContain('buscar=gato');
     expect(lse.updatedAt).toBe(TODAY);
+  });
+});
+
+describe('entryToRow', () => {
+  const dataWith = (videoUrl: string): SignData => ({
+    labels: { ca: 'gat', es: 'gato', en: 'cat' },
+    category: 'animals',
+    isFirstSign: false,
+    videos: [
+      {
+        signLanguage: 'lsc',
+        delivery: 'youtube-embed',
+        videoUrl,
+        source: 'Gencat-VocabulariLSC',
+        sourceUrl: 'x',
+        license: 'x',
+        updatedAt: '2020-01-01',
+      },
+    ],
+  });
+
+  it('reads the id from every URL shape the player itself accepts, not only ?v=', () => {
+    // A narrower regex used to live here and only matched `?v=`. `youtu.be` and
+    // `youtube-nocookie.com` both play fine (src/lib/youtube.ts), so a JSON
+    // file edited by hand with either shape used to export to an empty cell
+    // and re-import as a deleted video — silently.
+    expect(entryToRow('gato', dataWith('https://youtu.be/kXZylIjwSJI')).lscYouTube).toEqual([
+      'kXZylIjwSJI',
+    ]);
+    expect(
+      entryToRow('gato', dataWith('https://www.youtube-nocookie.com/watch?v=kXZylIjwSJI'))
+        .lscYouTube,
+    ).toEqual(['kXZylIjwSJI']);
+  });
+
+  it('refuses to export a video whose url it cannot read an id from', () => {
+    expect(() => entryToRow('gato', dataWith('https://example.com/not-youtube'))).toThrow(
+      /gato.*not a recognised YouTube URL/,
+    );
   });
 });
 

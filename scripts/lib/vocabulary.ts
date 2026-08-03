@@ -16,6 +16,7 @@ import {
   type LocalizedText,
   type SignVideo,
 } from '../../src/lib/types.ts';
+import { youtubeId } from '../../src/lib/youtube.ts';
 
 /** The stored shape of one sign file (its `id` comes from the filename). */
 export interface SignData {
@@ -67,12 +68,6 @@ export function dilseSearchUrl(term: string): string {
   return `https://fundacioncnse-dilse.org/?buscar=${encodeURIComponent(term)}`;
 }
 
-/** Reads the YouTube id back out of a stored watch URL (null if it is not one). */
-export function youTubeIdFromUrl(url: string): string | null {
-  const match = url.match(/[?&]v=([\w-]{6,})/);
-  return match?.[1] ?? null;
-}
-
 /** Reads the DILSE search term back out of a stored search URL. */
 export function dilseTermFromUrl(url: string): string {
   try {
@@ -94,7 +89,19 @@ export function entryToRow(id: string, data: SignData): VocabularyRow {
     ca: data.labels.ca,
     es: data.labels.es,
     en: data.labels.en,
-    lscYouTube: lsc.map((v) => youTubeIdFromUrl(v.videoUrl) ?? '').filter(Boolean),
+    lscYouTube: lsc.map((v) => {
+      const videoId = youtubeId(v.videoUrl);
+      if (videoId === null) {
+        // A narrower regex used to live here and only recognised `?v=` — the
+        // one shape every id in the content happens to use today. `youtu.be`
+        // and `youtube-nocookie.com`, both of which the player itself accepts
+        // (see `src/lib/youtube.ts`), would export to an empty cell and
+        // re-import as a deleted video, silently. Failing loudly here is
+        // cheaper than a round trip that loses one.
+        throw new Error(`"${id}": LSC video url is not a recognised YouTube URL: ${v.videoUrl}`);
+      }
+      return videoId;
+    }),
     lseDilseTerm: lse ? dilseTermFromUrl(lse.videoUrl) : '',
   };
 }
@@ -140,7 +147,7 @@ export function applyRow(row: VocabularyRow, existing: SignData | null, today: s
   const previousLsc = new Map(
     (existing?.videos ?? [])
       .filter((v) => v.signLanguage === 'lsc')
-      .map((v) => [youTubeIdFromUrl(v.videoUrl) ?? '', v]),
+      .map((v) => [youtubeId(v.videoUrl) ?? '', v]),
   );
   const previousLse = existing?.videos.find((v) => v.signLanguage === 'lse');
 
