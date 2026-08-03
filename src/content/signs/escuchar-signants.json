@@ -1,30 +1,30 @@
 {
   "labels": {
-    "ca": "pedra",
-    "es": "piedra",
-    "en": "stone"
+    "ca": "escoltar (llengua de signes)",
+    "es": "escuchar (lengua de signos)",
+    "en": "listen (sign language)"
   },
-  "category": "nature",
+  "category": "actions",
   "isFirstSign": false,
   "videos": [
     {
       "signLanguage": "lsc",
       "delivery": "youtube-embed",
-      "videoUrl": "https://www.youtube.com/watch?v=8MeRL4ab_vU",
+      "videoUrl": "https://www.youtube.com/watch?v=V8HV6eDO6F0",
       "source": "Gencat-VocabulariLSC",
       "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
       "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
       "updatedAt": "2026-07-24",
-      "sourceTerm": "Pedra (1)"
+      "sourceTerm": "Escoltar (signants)"
     },
     {
       "signLanguage": "lse",
       "delivery": "external-link",
-      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=piedra",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=escuchar",
       "source": "CNSE-DILSE",
-      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=piedra",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=escuchar",
       "license": "DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.",
-      "updatedAt": "2026-07-24"
+      "updatedAt": "2026-08-03"
     }
   ]
 }
