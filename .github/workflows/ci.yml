@@ -1,9 +1,10 @@
 name: CI
 
-# Every branch of the Gitflow tree is verified, not just `main`. Work is merged
-# locally with `--no-ff` rather than through pull requests, so a trigger limited
-# to `main` would leave `develop` and the feature branches unchecked until the
-# code was already in production.
+# Every branch of the Gitflow tree is verified, not just `main`. Merges happen
+# through pull requests (feature → develop, develop → main), and a PR's checks
+# need its own branch's run to attach to — a trigger limited to `main` would
+# leave `develop` and the feature branches unchecked until the code was
+# already in production.
 on:
   push:
     branches: [main, develop, 'feature/**', 'release/**', 'hotfix/**']
