@@ -21,8 +21,16 @@ const { language } = Astro.props;
  * machine-readable form the `<time>` element exists for, and day-first for the
  * reader, which is how a date is written in both languages this page is
  * published in.
+ *
+ * Set by hand, not derived. `CreditsView.astro` derives its date from the
+ * content itself — the latest video citation — because that is a fact about
+ * the data. This one means "a human checked the site against WCAG on this
+ * date", which no field in the content can stand in for: deriving it from,
+ * say, the latest commit would make every unrelated change quietly claim a
+ * fresh accessibility review. Bump it by hand whenever a change actually
+ * touches conformance, this one included.
  */
-const REVIEWED = '2026-07-24';
+const REVIEWED = '2026-08-03';
 const [reviewedYear, reviewedMonth, reviewedDay] = REVIEWED.split('-');
 const REVIEWED_LABEL = `${reviewedDay}/${reviewedMonth}/${reviewedYear}`;
 
