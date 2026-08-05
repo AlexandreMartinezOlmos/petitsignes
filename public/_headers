@@ -1,0 +1,41 @@
+# Response headers for Cloudflare Pages. Copied verbatim to the root of the
+# build output, like everything else in `public/`.
+#
+# Kept here rather than in the Cloudflare dashboard on purpose: a header is part
+# of what the site promises, and a promise that lives in a checkbox nobody
+# remembers ticking cannot be reviewed, diffed or explained.
+
+/*
+  # Once a browser has seen this, it refuses to reach the site over plain HTTP
+  # at all — it rewrites the request itself instead of following the 301.
+  #
+  # The gap this closes is small and real: someone typing "petitsignes.cat"
+  # without a scheme makes exactly one cleartext request before Cloudflare
+  # redirects them. `includeSubDomains` covers `www`, which is the only
+  # subdomain there is and already answers over HTTPS.
+  #
+  # No `preload`. That would enrol the domain in a list baked into browser
+  # binaries, where removal takes months — a commitment worth making once the
+  # domain has been stable for a while, not on the day it goes public.
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # Text and data mining rights are reserved (W3C TDM Reservation Protocol).
+  #
+  # Article 4 of Directive (EU) 2019/790 grants a statutory exception for mining
+  # unless the rightsholder has reserved it "in an appropriate manner, such as
+  # machine-readable means" — so saying nothing here says yes. This is that
+  # reservation, in the format written for that article.
+  #
+  # It is not a contradiction of the AGPL. The licence already grants anyone the
+  # right to use this work, on its terms: attribution and share-alike. The
+  # reservation only removes the statutory shortcut around those terms.
+  #
+  # It covers what the project holds — the texts, the translations, the way the
+  # vocabulary is organised. Not the signed videos, which belong to the
+  # Generalitat and the CNSE, are not served from this origin, and carry their
+  # own conditions (§2.4).
+  #
+  # Sent as a header *and* declared in `.well-known/tdmrep.json` because the
+  # protocol defines both and agents are free to read either one.
+  tdm-reservation: 1
+  tdm-policy: https://petitsignes.cat/credits/

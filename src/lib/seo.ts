@@ -93,6 +93,21 @@ export function buildSitemap(
 }
 
 /**
+ * A pointer, not a policy. The text-and-data-mining reservation itself is a
+ * `tdm-reservation` header and `/.well-known/tdmrep.json` (see `public/`); this
+ * line only means a person reading `robots.txt` — where everyone looks first —
+ * finds out that it exists.
+ *
+ * It is a comment because it has to be. Cloudflare's managed `robots.txt` used
+ * to state the same reservation as a `Content-Signal:` directive, and copying
+ * that into the build cost three points of Lighthouse's SEO score on every one
+ * of the twelve audited pages: the directive is not part of the robots.txt
+ * grammar, so the validator reads it as a syntax error and marks the whole file
+ * invalid. Machine-readable reservations belong in a format built for them.
+ */
+const TDM_POINTER = '# Text and data mining rights reserved: /.well-known/tdmrep.json';
+
+/**
  * `robots.txt`, and the guard that keeps branch previews out of the index.
  *
  * Every branch is deployed to its own `*.pages.dev` origin with the same build.
@@ -111,7 +126,12 @@ export function buildRobots(origin: string = SITE_ORIGIN): string {
     ].join('\n');
   }
 
-  return ['User-agent: *', 'Allow: /', '', `Sitemap: ${absolute('/sitemap.xml', origin)}`, ''].join(
-    '\n',
-  );
+  return [
+    'User-agent: *',
+    'Allow: /',
+    '',
+    TDM_POINTER,
+    `Sitemap: ${absolute('/sitemap.xml', origin)}`,
+    '',
+  ].join('\n');
 }

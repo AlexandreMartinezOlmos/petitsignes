@@ -110,6 +110,49 @@ describe('robots.txt', () => {
     expect(robots).not.toContain('Allow: /');
     expect(robots).not.toContain('Sitemap:');
   });
+
+  /**
+   * The guard this file was missing, and it cost a red build to find out.
+   *
+   * A `Content-Signal:` line was added here to state the mining reservation, on
+   * the reasonable-looking grounds that Cloudflare's managed robots.txt states
+   * it the same way. It is not part of the robots.txt grammar: Lighthouse's
+   * validator reported "Unknown directive", marked the whole file invalid, and
+   * took the SEO score from 1.00 to 0.92 on all twelve audited pages — three
+   * points below the budget, so the build failed for a file no test looked at.
+   *
+   * Anything genuinely non-standard belongs in a format built for it. The
+   * reservation now lives in `.well-known/tdmrep.json` and a `tdm-reservation`
+   * header, and this keeps the next well-meant directive out.
+   */
+  it('uses only directives a robots.txt parser understands', () => {
+    const known = ['user-agent', 'allow', 'disallow', 'sitemap', 'crawl-delay', 'host'];
+
+    for (const origin of [SITE_ORIGIN, PREVIEW]) {
+      const directives = buildRobots(origin)
+        .split('\n')
+        .filter((line) => line.trim() !== '' && !line.trimStart().startsWith('#'))
+        .map((line) => line.split(':')[0]?.trim().toLowerCase());
+
+      for (const directive of directives) {
+        expect(known, `"${directive}" in robots.txt for ${origin}`).toContain(directive);
+      }
+    }
+  });
+
+  /**
+   * `robots.txt` is where someone looks first to find out what they may do with
+   * a site, so it says where the answer is. A comment, deliberately: it informs
+   * a reader without claiming to be the machine-readable reservation, which is
+   * served as a header and a well-known file instead.
+   */
+  it('points readers at the mining reservation without pretending to be one', () => {
+    const robots = buildRobots();
+    const pointer = robots.split('\n').find((line) => line.includes('/.well-known/tdmrep.json'));
+
+    expect(pointer).toBeDefined();
+    expect(pointer?.trimStart().startsWith('#')).toBe(true);
+  });
 });
 
 /**
