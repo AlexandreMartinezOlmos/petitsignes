@@ -5,6 +5,7 @@ import '../styles/global.css';
 // live inside `latin`. Imported as a URL so the preload below points at the
 // same hashed asset the stylesheet requests, instead of a second copy.
 import nunitoSansLatin from '@fontsource-variable/nunito-sans/files/nunito-sans-latin-wght-normal.woff2?url';
+import BrandMark from '../components/BrandMark.astro';
 import IconSprite from '../components/IconSprite.astro';
 import { createTranslator } from '../lib/i18n.ts';
 import { signLanguageOf } from '../lib/types.ts';
@@ -179,9 +180,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
       <div class="app-header__row shell flex items-center gap-3 py-3">
         <a href={homeHref} class="brand-mark shrink-0 text-base sm:text-lg">
           <span class="brand-mark__dot" aria-hidden="true">
-            <svg class="icon-sm" aria-hidden="true" focusable="false">
-              <use href="#i-wave"></use>
-            </svg>
+            <BrandMark class="icon-sm" />
           </span>
           {t('site.title')}
         </a>
