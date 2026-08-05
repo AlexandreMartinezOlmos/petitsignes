@@ -1,0 +1,42 @@
+---
+/**
+ * The logo, for the header.
+ *
+ * Inline rather than a `<use>` into the icon sprite, on purpose: the sprite is
+ * content iconography — the fifteen category glyphs and the interface's own
+ * icons — and the mark that identifies the site should not be one entry among
+ * them. It reached here as `<use href="#i-wave">`, which meant the wordmark in
+ * the header and a card tagged **Cortesia** in the grid carried the same glyph.
+ *
+ * Colour comes from `currentColor` so the mark inherits whatever the badge
+ * around it sets, in either theme.
+ */
+import {
+  BRAND_MARK_PATHS,
+  BRAND_MARK_STROKE,
+  BRAND_MARK_TRANSFORM,
+  BRAND_MARK_VIEWBOX,
+} from '../lib/brand.ts';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg
+  class={className}
+  viewBox={BRAND_MARK_VIEWBOX}
+  fill="none"
+  stroke="currentColor"
+  stroke-width={BRAND_MARK_STROKE}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  <g transform={BRAND_MARK_TRANSFORM}>
+    {BRAND_MARK_PATHS.map((d) => <path d={d} />)}
+  </g>
+</svg>
