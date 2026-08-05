@@ -8,12 +8,12 @@
  * path — so this runs by hand and its output is committed, the same bargain the
  * vocabulary scripts make.
  *
- * Nothing here is drawn twice. The hand comes from the `wave` entry of the icon
- * sprite and the colours from the stylesheet's own tokens, both read off disk,
- * so a brand change lands in the PNGs by re-running this rather than by
- * remembering to edit a second copy. Chromium resolves the OKLCH itself, which
- * means these files carry the same colour the site does rather than a hex
- * approximation of it.
+ * Nothing here is drawn twice. The hand is imported from `src/lib/brand.ts` —
+ * the same module the header and the generated `favicon.svg` render — and the
+ * colours are read from the stylesheet's own tokens, so a brand change lands in
+ * the PNGs by re-running this rather than by remembering to edit a second copy.
+ * Chromium resolves the OKLCH itself, which means these files carry the same
+ * colour the site does rather than a hex approximation of it.
  *
  * These are marks, not gestures: an open hand is the project's logo and says
  * nothing about how any sign is performed (§2.1).
@@ -22,6 +22,13 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import {
+  BRAND_MARK_PATHS,
+  BRAND_MARK_SCALE,
+  BRAND_MARK_STROKE,
+  BRAND_MARK_TRANSFORM,
+  BRAND_MARK_VIEWBOX,
+} from '../src/lib/brand.ts';
 
 const ROOT = path.resolve(fileURLToPath(import.meta.url), '../..');
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -34,12 +41,10 @@ function extract(source: string, pattern: RegExp, what: string): string {
 }
 
 async function readBrand() {
-  const sprite = await readFile(path.join(ROOT, 'src/components/IconSprite.astro'), 'utf8');
   const css = await readFile(path.join(ROOT, 'src/styles/global.css'), 'utf8');
   const light = css.slice(css.indexOf('--- Light theme'));
 
   return {
-    wavePath: extract(sprite, /wave:\s*'([^']+)'/, 'the `wave` icon path'),
     brand: extract(light, /--brand:\s*(oklch\([^)]+\))/, '--brand'),
     brandInk: extract(light, /--brand-ink:\s*(oklch\([^)]+\))/, '--brand-ink'),
     surface: extract(light, /--surface:\s*(oklch\([^)]+\))/, '--surface'),
@@ -50,11 +55,15 @@ async function readBrand() {
 
 type Brand = Awaited<ReturnType<typeof readBrand>>;
 
-/** The hand, sized to a box, on whatever background the caller wants. */
-function mark(b: Brand, size: number, stroke: number): string {
-  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none"
-    stroke="#fff" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
-    <path d="${b.wavePath}"/></svg>`;
+/**
+ * The hand, sized to a box. Takes no `stroke` argument any more: one weight for
+ * every rendition is what makes the favicon, the home-screen icon and the social
+ * card the same picture rather than three near misses.
+ */
+function mark(size: number): string {
+  return `<svg viewBox="${BRAND_MARK_VIEWBOX}" width="${size}" height="${size}" fill="none"
+    stroke="#fff" stroke-width="${BRAND_MARK_STROKE}" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="${BRAND_MARK_TRANSFORM}">${BRAND_MARK_PATHS.map((d) => `<path d="${d}"/>`).join('')}</g></svg>`;
 }
 
 /**
@@ -64,7 +73,7 @@ function mark(b: Brand, size: number, stroke: number): string {
 function iconHtml(b: Brand, size: number): string {
   return `<div style="width:${size}px;height:${size}px;background:${b.brand};
     display:flex;align-items:center;justify-content:center">
-    ${mark(b, size * 0.58, 1.6)}</div>`;
+    ${mark(size * BRAND_MARK_SCALE)}</div>`;
 }
 
 /**
@@ -79,7 +88,7 @@ function ogHtml(b: Brand, title: string, tagline: string): string {
     padding:0 96px;box-sizing:border-box">
     <div style="width:${badge}px;height:${badge}px;border-radius:52px;background:${b.brand};
       display:flex;align-items:center;justify-content:center">
-      ${mark(b, badge * 0.58, 1.6)}
+      ${mark(badge * BRAND_MARK_SCALE)}
     </div>
     <div style="font-size:82px;font-weight:800;color:${b.brandInk};letter-spacing:-0.02em">
       ${title}

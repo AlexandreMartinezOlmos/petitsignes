@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import categories from '../content/categories.json' with { type: 'json' };
+import { BRAND_HEX } from '../pages/favicon.svg.ts';
+import { brandMarkSvg } from './brand.ts';
 import {
   contrastRatio,
   contrastRatioAs,
@@ -268,7 +270,9 @@ describe('the hex copies of the brand colour', () => {
   const manifest = JSON.parse(
     readFileSync(resolve(process.cwd(), 'public/site.webmanifest'), 'utf8'),
   ) as { theme_color: string; background_color: string };
-  const favicon = readFileSync(resolve(process.cwd(), 'public/favicon.svg'), 'utf8');
+  // The favicon is generated now (`src/pages/favicon.svg.ts`), so this reads the
+  // hex it is built from rather than a file that only exists after a build.
+  const favicon = brandMarkSvg({ size: 32, background: BRAND_HEX });
 
   it('matches the tokens the stylesheet actually ships', () => {
     const brand = toHex(color(lightBlock.body, '--brand'));
