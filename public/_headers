@@ -39,3 +39,20 @@
   # protocol defines both and agents are free to read either one.
   tdm-reservation: 1
   tdm-policy: https://petitsignes.cat/credits/
+
+  # Hardware and sensor features the site never asks for. Deliberately narrow:
+  # it leaves autoplay, fullscreen, encrypted-media, gyroscope and the rest
+  # unlisted rather than restricted to `self`, because the YouTube player
+  # (embedded from `youtube-nocookie.com` — see `src/lib/youtube.ts`) needs
+  # those delegated to it, and a Permissions-Policy that omits a feature does
+  # not touch its default allowlist.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), midi=(), display-capture=()
+
+  # Nothing on the site is meant to sit inside someone else's frame, and the
+  # progress data lives behind buttons, not a login — a framed page that fools
+  # a click into resetting it is the whole risk `frame-ancestors` closes.
+  # `X-Frame-Options` rides along for the handful of browsers that still read
+  # it instead of the CSP directive. Neither depends on the inline analytics
+  # script, so — unlike a full CSP — this is safe to ship today (§17.4).
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'

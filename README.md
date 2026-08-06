@@ -248,6 +248,11 @@ contrario, siendo un proyecto con un solo mantenedor, no protegería de nada.
 
 El flujo es Gitflow: `feature/*` → `develop` → pull request → `main`.
 
+## Contacto
+
+¿Dudas, sugerencias, o un signo que no parece correcto? Escribe a
+[petitsignes@petitsignes.cat](mailto:petitsignes@petitsignes.cat).
+
 ## Contribuir
 
 Se aceptan correcciones de signos **aportando siempre la fuente oficial** — no hace falta saber

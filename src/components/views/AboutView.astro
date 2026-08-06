@@ -50,6 +50,9 @@ const copy = {
       'Es publica amb la llicència AGPL-3.0, que garanteix que això no es pugui tancar mai: qui en faci una versió modificada i la publiqui, n’ha de compartir el codi amb les mateixes condicions. Els vídeos són a part —són de les seves fonts— i el nom i el logotip queden reservats.',
     openLicenceCta: 'Consulta les llicències',
     openCta: 'Veure el codi font a GitHub',
+    contactTitle: 'Contacte',
+    contactBody:
+      'Tens un dubte, un suggeriment o has trobat un signe que no sembla correcte? Escriu-nos, llegim tots els missatges.',
   },
   es: {
     title: 'El proyecto',
@@ -79,8 +82,16 @@ const copy = {
       'Se publica con la licencia AGPL-3.0, que garantiza que esto no se pueda cerrar nunca: quien haga una versión modificada y la publique tiene que compartir su código en las mismas condiciones. Los vídeos van aparte —son de sus fuentes— y el nombre y el logotipo quedan reservados.',
     openLicenceCta: 'Consulta las licencias',
     openCta: 'Ver el código fuente en GitHub',
+    contactTitle: 'Contacto',
+    contactBody:
+      '¿Tienes una duda, una sugerencia o has encontrado un signo que no parece correcto? Escríbenos, leemos todos los mensajes.',
   },
 } as const;
+
+/** Kept next to the copy it appears in, not in `site.ts`: this is the one
+ * place on the site a visitor is invited to write to, and `security.txt`
+ * (`public/.well-known/security.txt`) points at the same address. */
+const CONTACT_EMAIL = 'petitsignes@petitsignes.cat';
 
 const c = copy[language];
 
@@ -91,6 +102,7 @@ const sections: PageSection[] = [
   { id: 'data', title: t('progress.title') },
   { id: 'privacy', title: c.privacyTitle },
   { id: 'open', title: c.openTitle },
+  { id: 'contact', title: c.contactTitle },
 ];
 ---
 
@@ -142,5 +154,10 @@ const sections: PageSection[] = [
     <p>
       <a href={REPO_URL} target="_blank" rel="noreferrer noopener">{c.openCta}</a>
     </p>
+  </Fragment>
+
+  <Fragment slot="contact">
+    <p>{c.contactBody}</p>
+    <p><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
   </Fragment>
 </PageShell>
