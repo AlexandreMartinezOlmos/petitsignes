@@ -53,6 +53,57 @@ describe('public/_headers', () => {
   it('reserves text and data mining rights', () => {
     expect(DIRECTIVES).toContain('tdm-reservation: 1');
   });
+
+  /**
+   * Deliberately narrow: it must deny the hardware the site never touches
+   * without also restricting the features the YouTube player delegates to
+   * itself (autoplay, fullscreen, encrypted-media…). A blanket policy here
+   * would silently break video playback rather than fail a test — see the
+   * comment above this directive in `_headers`.
+   */
+  it('denies hardware and sensor access the site never asks for', () => {
+    const policy = DIRECTIVES.find((line) => line.startsWith('Permissions-Policy:'));
+    expect(policy).toBeDefined();
+    for (const feature of ['camera', 'microphone', 'geolocation', 'payment', 'usb']) {
+      expect(policy, feature).toContain(`${feature}=()`);
+    }
+  });
+
+  it('refuses to be framed by another site', () => {
+    expect(DIRECTIVES).toContain('X-Frame-Options: DENY');
+    expect(DIRECTIVES).toContain("Content-Security-Policy: frame-ancestors 'none'");
+  });
+});
+
+describe('public/.well-known/security.txt', () => {
+  const SECURITY_TXT = readFileSync(
+    resolve(process.cwd(), 'public/.well-known/security.txt'),
+    'utf8',
+  );
+
+  it('names at least one way to report a problem', () => {
+    expect(SECURITY_TXT).toMatch(/^Contact: /m);
+  });
+
+  /**
+   * RFC 9116 requires `Expires` and treats a stale one as reason to distrust
+   * the whole file — a security contact nobody remembers to renew is worse
+   * than none, because a report might get sent to it anyway.
+   */
+  it('has not expired, and expires within about a year of being set', () => {
+    const expires = SECURITY_TXT.match(/^Expires: (.+)$/m)?.[1];
+    expect(expires).toBeDefined();
+
+    const date = new Date(expires!);
+    expect(date.getTime()).toBeGreaterThan(Date.now());
+
+    const daysAway = (date.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    expect(daysAway).toBeLessThan(400);
+  });
+
+  it('points at itself with the canonical HTTPS URL', () => {
+    expect(SECURITY_TXT).toContain('Canonical: https://petitsignes.cat/.well-known/security.txt');
+  });
 });
 
 /**
