@@ -1,11 +1,12 @@
 // @ts-check
-import { readdir, rename, rm } from 'node:fs/promises';
+import { readFile, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { SITE_ORIGIN, assertOrigin } from './src/lib/site.ts';
+import { buildCsp, collectInlineHashes, injectCsp } from './src/lib/csp.ts';
 
 /**
  * Puts each locale's 404 where a static host will look for it.
@@ -43,6 +44,62 @@ function localised404() {
   };
 }
 
+/**
+ * Writes the Content Security Policy into `_headers`, hashed from the real output.
+ *
+ * It has to run after the build because the hashes are of files that do not
+ * exist until then — Astro's hydration runtime, the critical CSS it inlines per
+ * page, and this project's own two inline scripts. Hand-maintaining them would
+ * mean a stale hash breaking the site on any unrelated change to markup.
+ *
+ * The policy is one header for the whole site rather than per page: `_headers`
+ * matches by path, and a union of every page's hashes is both simpler to reason
+ * about and smaller than repeating the shared runtime for 428 routes.
+ *
+ * The reasoning about *what* the policy allows lives in `src/lib/csp.ts`, which
+ * is unit-tested. This hook is only the plumbing: walk, collect, write.
+ */
+function contentSecurityPolicy() {
+  return {
+    name: 'content-security-policy',
+    hooks: {
+      /** @type {(options: { dir: URL, logger: { info: (msg: string) => void } }) => Promise<void>} */
+      'astro:build:done': async ({ dir, logger }) => {
+        const root = fileURLToPath(dir);
+
+        /** @type {(from: string) => Promise<string[]>} */
+        const htmlFiles = async (from) => {
+          /** @type {string[]} */
+          const found = [];
+          for (const item of await readdir(from, { withFileTypes: true })) {
+            const full = path.join(from, item.name);
+            if (item.isDirectory()) found.push(...(await htmlFiles(full)));
+            else if (item.name.endsWith('.html')) found.push(full);
+          }
+          return found;
+        };
+
+        const scripts = new Set();
+        const styles = new Set();
+        const pages = await htmlFiles(root);
+        for (const file of pages) {
+          const found = collectInlineHashes(await readFile(file, 'utf8'));
+          for (const hash of found.scripts) scripts.add(hash);
+          for (const hash of found.styles) styles.add(hash);
+        }
+
+        const csp = buildCsp({ scripts: [...scripts], styles: [...styles] });
+        const headersFile = path.join(root, '_headers');
+        await writeFile(headersFile, injectCsp(await readFile(headersFile, 'utf8'), csp));
+
+        logger.info(
+          `CSP over ${pages.length} pages: ${scripts.size} script and ${styles.size} style hashes`,
+        );
+      },
+    },
+  };
+}
+
 // The canonical origin (canonical links, hreflang, Open Graph, sitemap). It is
 // defined in src/lib/site.ts so that changing domain is a reviewed commit
 // rather than a hosting-dashboard setting nobody can see.
@@ -75,7 +132,12 @@ export default defineConfig({
       redirectToDefaultLocale: false,
     },
   },
-  integrations: [react(), localised404()],
+  // The CSP hook goes last on purpose. Both it and `localised404` run on
+  // `astro:build:done`, in array order, and hashing has to happen after
+  // anything that could still change the HTML. Today `localised404` only
+  // renames a file, so either order would hash the same bytes — this is
+  // insurance against the next hook, which might not be so harmless.
+  integrations: [react(), localised404(), contentSecurityPolicy()],
   vite: {
     plugins: [tailwindcss()],
     esbuild: {

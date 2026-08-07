@@ -35,7 +35,7 @@ const MESSAGES = {
     'nav.onThisPage': 'En aquesta pàgina',
 
     'hero.title': "Comunica't amb el teu nadó",
-    'hero.titleAccent': 'molt abans de la primera paraula',
+    'hero.titleAccent': 'molt abans de la seva primera paraula',
     'hero.lead': 'Signes reals de la llengua de signes catalana per al dia a dia amb el teu nadó.',
 
     'search.label': 'Cerca un signe',
@@ -173,7 +173,7 @@ const MESSAGES = {
     'nav.onThisPage': 'En esta página',
 
     'hero.title': 'Comunícate con tu bebé',
-    'hero.titleAccent': 'mucho antes de la primera palabra',
+    'hero.titleAccent': 'mucho antes de su primera palabra',
     'hero.lead': 'Signos reales de la lengua de signos española para el día a día con tu bebé.',
 
     'search.label': 'Buscar un signo',
