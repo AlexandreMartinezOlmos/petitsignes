@@ -70,8 +70,9 @@ roto, aunque funcione en tu máquina.
   nuevo.
 - **JavaScript enviado al cliente.** Si una función se puede hacer con HTML y CSS, se hace con
   HTML y CSS. Las dependencias nuevas hay que justificarlas.
-- **Móvil.** Objetivos táctiles de 44 px como mínimo, texto de 16 px o más, todo alcanzable con
-  el pulgar.
+- **Móvil.** Objetivos táctiles de 44 px en los controles principales y nunca por debajo de
+  24 px (WCAG 2.5.8); una excepción entre 24 y 44 lleva su razón escrita junto al CSS. Cuerpo de
+  texto de 16 px, tamaños en `rem`, y todo alcanzable con el pulgar.
 - **TypeScript.** `strict`, sin `any` sin justificar.
 - Comentarios y nombres **en inglés**; el contenido de usuario en ca/es/en.
 - **Comentarios que se explican solos.** Un comentario da su razón en el propio sitio o enlaza a
