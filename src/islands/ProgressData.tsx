@@ -1,12 +1,36 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { ANALYTICS_EVENTS, countEvent } from '../lib/analytics.ts';
-import { createTranslator, type MessageKey, type Translator } from '../lib/i18n.ts';
+import type { MessageKey } from '../lib/i18n.ts';
 import { downloadJson, progressFileName } from '../lib/progress-file.ts';
 import { getProgressStore } from '../lib/stores.ts';
-import type { Language } from '../lib/types.ts';
+import { translatorFrom, type Messages, type Translate } from '../lib/translate.ts';
+
+/** The interface strings this island shows; the page passes them in its language. */
+export const PROGRESS_DATA_MESSAGES = [
+  'progress.intro',
+  'progress.favoritesCount',
+  'progress.favoritesCountOne',
+  'progress.learnedCount',
+  'progress.learnedCountOne',
+  'progress.export',
+  'progress.exportHint',
+  'progress.import',
+  'progress.importHint',
+  'progress.importedAdded',
+  'progress.importedNothing',
+  'progress.importedSkipped',
+  'progress.importedSkippedOne',
+  'progress.importError',
+  'progress.reset',
+  'progress.resetHint',
+  'progress.resetConfirm',
+  'progress.resetDone',
+] as const satisfies readonly MessageKey[];
+
+type ProgressMessage = (typeof PROGRESS_DATA_MESSAGES)[number];
 
 interface Props {
-  language: Language;
+  messages: Messages<ProgressMessage>;
   /**
    * Every sign id in the catalogue, from the page that renders this island.
    *
@@ -31,12 +55,17 @@ type Feedback = { kind: 'status' | 'error'; message: string } | null;
  * Spanish both need a different noun form for one, so a single template would
  * read "1 preferits".
  */
-function count(t: Translator, value: number, one: MessageKey, many: MessageKey): string {
+function count(
+  t: Translate<ProgressMessage>,
+  value: number,
+  one: ProgressMessage,
+  many: ProgressMessage,
+): string {
   return value === 1 ? t(one) : t(many, { count: value });
 }
 
 /** "2 preferits · 1 signe après" — the one phrasing used everywhere here. */
-function summarise(t: Translator, counts: Counts): string {
+function summarise(t: Translate<ProgressMessage>, counts: Counts): string {
   return [
     count(t, counts.favorites, 'progress.favoritesCountOne', 'progress.favoritesCount'),
     count(t, counts.learned, 'progress.learnedCountOne', 'progress.learnedCount'),
@@ -55,8 +84,8 @@ function summarise(t: Translator, counts: Counts): string {
  * Hydrated with `client:visible`: it costs nothing on the catalogue, which is
  * the page whose JavaScript budget actually matters.
  */
-export default function ProgressData({ language, signIds }: Props) {
-  const t = createTranslator(language);
+export default function ProgressData({ messages, signIds }: Props) {
+  const t = translatorFrom(messages);
 
   const knownIds = useMemo(() => new Set(signIds), [signIds]);
 

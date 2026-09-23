@@ -201,3 +201,67 @@ test.describe('the site under its own CSP', () => {
     expect(CSP.match(/sha256-/g)?.length ?? 0).toBeGreaterThan(0);
   });
 });
+
+/**
+ * The counter, run the way production runs it.
+ *
+ * The start-up script only loads the counter on the canonical host, so a test
+ * on localhost never exercises it. Here the browser is sent to
+ * `https://petitsignes.cat/` and every request to it is answered from this
+ * build, under the policy the build wrote: the real start-up script, the
+ * copy of the counter this site serves, and the real CSP, together. Nothing
+ * reaches the live site or GoatCounter — the hit is caught on its way out.
+ */
+test('the counter loads from this site and reports one hit, carrying only the screen width', async ({
+  page,
+  baseURL,
+}) => {
+  const hits: URL[] = [];
+  const blocked: string[] = [];
+  const external: string[] = [];
+
+  await page.route('**/*', async (route) => {
+    const url = new URL(route.request().url());
+
+    if (url.hostname === 'petitsignes.cat') {
+      const response = await route.fetch({ url: new URL(url.pathname + url.search, baseURL).href });
+      const type = response.headers()['content-type'] ?? '';
+      if (!type.includes('text/html')) return route.fulfill({ response });
+      return route.fulfill({
+        response,
+        headers: { ...response.headers(), 'content-security-policy': CSP },
+      });
+    }
+    if (url.href.startsWith('https://petitsignes.goatcounter.com/count')) {
+      hits.push(url);
+      return route.fulfill({ status: 204 });
+    }
+    external.push(url.href);
+    return route.abort();
+  });
+  await page.addInitScript(() => {
+    addEventListener('securitypolicyviolation', (event) => {
+      console.error(`csp: ${event.violatedDirective} blocked ${event.blockedURI}`);
+    });
+  });
+  page.on('console', (message) => {
+    if (message.text().startsWith('csp:')) blocked.push(message.text());
+  });
+
+  await page.goto('https://petitsignes.cat/');
+  await expect.poll(() => hits.length).toBe(1);
+
+  // Served from this origin, by the name the build gave it: no CDN involved.
+  const counter = page.locator('script[data-goatcounter]');
+  await expect(counter).toHaveAttribute('src', /^\/_astro\/count\.[\w-]+\.js$/);
+
+  const [hit] = hits;
+  expect(hit!.searchParams.get('p')).toBe('/');
+  // The width alone. GoatCounter's versioned copies send "width,height,ratio".
+  expect(hit!.searchParams.get('s')).toMatch(/^\d+$/);
+  // Nothing the visitor typed: the catalogue never puts a query in the URL.
+  expect(hit!.searchParams.get('q') ?? '').toBe('');
+
+  expect(blocked).toEqual([]);
+  expect(external).toEqual([]);
+});

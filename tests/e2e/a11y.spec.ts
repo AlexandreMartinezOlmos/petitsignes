@@ -890,6 +890,25 @@ test('a very wide screen gets more catalogue, not more margin', async ({ page })
 });
 
 /**
+ * The statement's feedback route is what EN 301 549 asks a statement to give,
+ * and a route that needs a GitHub account is not one everybody has. The
+ * address comes first; the issue tracker is the alternative.
+ */
+for (const path of ['/accessibilitat/', '/es/accessibilitat/']) {
+  test(`the accessibility statement can be answered without a GitHub account (${path})`, async ({
+    page,
+  }) => {
+    await page.goto(path);
+
+    const links = page.locator('section[aria-labelledby="feedback"] a');
+    const hrefs = await links.evaluateAll((all) => all.map((a) => a.getAttribute('href') ?? ''));
+
+    expect(hrefs[0]).toBe('mailto:petitsignes@petitsignes.cat');
+    expect(hrefs.some((href) => href.endsWith('/issues'))).toBe(true);
+  });
+}
+
+/**
  * The finding measured 624px of text in a 1152px `main` — 46% of the page
  * empty down one side. The measure was never the problem, so the column keeps
  * its width and the space beside it got a job.

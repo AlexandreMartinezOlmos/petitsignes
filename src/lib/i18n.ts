@@ -10,6 +10,7 @@
  * This is the TEXT axis. It is unrelated to the sign language of the videos.
  */
 
+import { translatorFrom, type Messages, type Translate } from './translate.ts';
 import { DEFAULT_LANGUAGE, LANGUAGES, type Language } from './types.ts';
 
 const MESSAGES = {
@@ -138,6 +139,7 @@ const MESSAGES = {
     'sign.report': 'Hi has vist un error?',
     'sign.reportHint':
       'Obre una incidència a GitHub amb les dades d’aquest signe ja emplenades. Cal un compte de GitHub.',
+    'sign.reportByEmail': 'Sense compte, escriu a',
     'sign.issueTitle': 'Signe «{label}» ({signLanguage})',
     'sign.issueBody':
       'Explica aquí què hi has vist: un gest que no correspon, un enllaç trencat, una etiqueta mal traduïda…\n\n\n---\n\n- **Signe:** {label} (`{signId}`)\n- **Llengua de signes:** {signLanguage}\n- **Pàgina:** {pageUrl}\n',
@@ -293,6 +295,7 @@ const MESSAGES = {
     'sign.report': '¿Has visto un error?',
     'sign.reportHint':
       'Abre una incidencia en GitHub con los datos de este signo ya rellenados. Hace falta una cuenta de GitHub.',
+    'sign.reportByEmail': 'Sin cuenta, escribe a',
     'sign.issueTitle': 'Signo «{label}» ({signLanguage})',
     'sign.issueBody':
       'Explica aquí qué has visto: un gesto que no corresponde, un enlace roto, una etiqueta mal traducida…\n\n\n---\n\n- **Signo:** {label} (`{signId}`)\n- **Lengua de signos:** {signLanguage}\n- **Página:** {pageUrl}\n',
@@ -449,6 +452,7 @@ const MESSAGES = {
     'sign.report': 'Spotted a mistake?',
     'sign.reportHint':
       'Opens an issue on GitHub with this sign’s details filled in. A GitHub account is needed.',
+    'sign.reportByEmail': 'No account? Write to',
     'sign.issueTitle': 'Sign “{label}” ({signLanguage})',
     'sign.issueBody':
       'Describe what you found: a gesture that does not match, a broken link, a mistranslated label…\n\n\n---\n\n- **Sign:** {label} (`{signId}`)\n- **Sign language:** {signLanguage}\n- **Page:** {pageUrl}\n',
@@ -492,19 +496,27 @@ const MESSAGES = {
 
 export type MessageKey = keyof (typeof MESSAGES)['ca'];
 
-export type Translator = (key: MessageKey, values?: Record<string, string | number>) => string;
-
-/** Replaces `{name}` placeholders. Missing values are left untouched. */
-function interpolate(template: string, values?: Record<string, string | number>): string {
-  if (!values) return template;
-  return template.replace(/\{(\w+)\}/g, (match, name: string) =>
-    name in values ? String(values[name]) : match,
-  );
-}
+export type Translator = Translate<MessageKey>;
 
 export function createTranslator(language: Language = DEFAULT_LANGUAGE): Translator {
-  const dictionary = MESSAGES[language];
-  return (key, values) => interpolate(dictionary[key], values);
+  return translatorFrom<MessageKey>(MESSAGES[language]);
+}
+
+/**
+ * The strings an island asked for, in one language, ready to pass as a prop.
+ *
+ * Islands never import this module: that would ship every dictionary to the
+ * browser. The page picks their strings here, at build time, and the island
+ * reads them with `translatorFrom` (see `translate.ts`).
+ */
+export function pickMessages<Key extends MessageKey>(
+  language: Language,
+  keys: readonly Key[],
+): Messages<Key> {
+  const dictionary: Record<MessageKey, string> = MESSAGES[language];
+  const picked = {} as Record<Key, string>;
+  for (const key of keys) picked[key] = dictionary[key];
+  return picked;
 }
 
 /**

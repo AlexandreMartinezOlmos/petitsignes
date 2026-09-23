@@ -22,11 +22,13 @@ import { createHash } from 'node:crypto';
  * Kept as data rather than a template string so `csp.test.ts` can assert that
  * nothing was added without a reason, and so a reader can see the whole
  * third-party surface of the project in one place: it is four hosts.
+ *
+ * GoatCounter's script is not one of them: the site serves its own reviewed
+ * copy (`src/vendor/goatcounter/`), so it falls under `'self'` and only the
+ * endpoint it reports to is a third party.
  */
 export const CSP_ORIGINS = {
-  /** GoatCounter's counter script. */
-  analyticsScript: 'https://gc.zgo.at',
-  /** Where that script reports a hit: anonymous and aggregate, never user input. */
+  /** Where the counter reports a hit: anonymous and aggregate, never user input. */
   analyticsEndpoint: 'https://petitsignes.goatcounter.com',
   /** The IFrame Player API, injected only when a visitor opens a video. */
   youtubeApi: 'https://www.youtube.com',
@@ -92,9 +94,10 @@ export function buildCsp(hashes: { scripts: string[]; styles: string[] }): strin
   return [
     `default-src 'none'`,
     // The hashes cover Astro's hydration runtime and this project's two inline
-    // scripts (analytics start-up and the catalogue's scroll restore). The two
-    // origins are fetched by those scripts at runtime, not present in markup.
-    `script-src 'self' ${sorted(hashes.scripts)} ${CSP_ORIGINS.analyticsScript} ${CSP_ORIGINS.youtubeApi} ${CSP_ORIGINS.youtubeAssets}`,
+    // scripts (analytics start-up and the catalogue's scroll restore). The
+    // counter those start is served from this origin; the two YouTube origins
+    // are fetched by the player at runtime, only once a video is opened.
+    `script-src 'self' ${sorted(hashes.scripts)} ${CSP_ORIGINS.youtubeApi} ${CSP_ORIGINS.youtubeAssets}`,
     // Hashed too, so there is no `'unsafe-inline'` anywhere in this policy.
     // Astro inlines a page's critical CSS, so these change whenever the design
     // does — which is exactly why they are computed per build and not pinned.

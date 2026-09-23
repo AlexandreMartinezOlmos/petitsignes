@@ -9,7 +9,9 @@ Es la contribución más valiosa. Si ves un signo mal, una acepción equivocada 
 incompleta:
 
 1. Abre una incidencia o un PR **aportando la fuente oficial** (enlace a la ficha del
-   diccionario, no una captura o un recuerdo).
+   diccionario, no una captura o un recuerdo). Si no tienes cuenta de GitHub, escribe a
+   [petitsignes@petitsignes.cat](mailto:petitsignes@petitsignes.cat); cada ficha tiene un
+   enlace que ya pone en el asunto de qué signo se trata.
 2. Localiza el fichero en `src/content/signs/<slug>.json` — un fichero por concepto.
 
 No hace falta que sepas programar: cada signo es un JSON de diez líneas. Reglas que no se
@@ -28,6 +30,11 @@ negocian al tocarlo:
 
 Si eres una persona sorda o intérprete y ves algo que chirría, dínoslo aunque no tengas la
 referencia a mano. Preferimos quitar un signo dudoso a dejarlo.
+
+## Problemas de seguridad
+
+No abras una incidencia: son públicas desde el primer momento. Cómo avisar en privado está en
+[`SECURITY.md`](SECURITY.md).
 
 ## Cambios de código
 

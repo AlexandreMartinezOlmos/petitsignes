@@ -45,16 +45,38 @@ encabezados de sección se ocultan igual, cuando el filtro deja su grupo sin tar
 Consecuencia: la página funciona sin JavaScript para leer y navegar; sin él se pierden búsqueda,
 filtros y progreso, pero el contenido está —agrupado y con sus encabezados— y es indexable.
 
-### 2. Dos islas de React, no una aplicación
+### 2. Tres islas de React, no una aplicación
 
 - `CatalogueToolbar` — búsqueda, chips de categoría y filtros de estado.
-- `SignVideoDialog` — el reproductor, montado una sola vez y despertado por un evento.
+- `SignVideoDialog` — el reproductor, montado una sola vez por página.
+- `ProgressData` — exportar, importar y reiniciar el progreso, en la página del proyecto.
+
+El reproductor se hidrata con `client:idle` para no competir con el primer pintado, pero el botón
+«Veure el signe» funciona desde que la página carga: lo cablea el script de la página. Entre una
+cosa y otra hay una ventana en la que el reproductor todavía no existe. Un toque en esa ventana no
+se pierde: [`../src/lib/play-request.ts`](../src/lib/play-request.ts) guarda la última petición y
+se la entrega al reproductor en cuanto se suscribe. Antes era un evento del DOM, que no tiene
+memoria, y en un móvil lento el botón parecía muerto.
 
 El selector de idioma **no** es una isla: son enlaces (ver punto 3).
 
 Los botones de favorito y aprendido de las tarjetas **no** son componentes de React: son
 botones HTML y un único listener delegado en la rejilla. Hidratar 458 botones costaría más que
-todo lo demás junto.
+todo lo demás junto. Ese cableado vive en [`../src/lib/sign-cards.ts`](../src/lib/sign-cards.ts),
+aparte de `catalogue-grid.ts`: el controlador de la rejilla importa el buscador, y una ficha, una
+categoría o la 404 no tienen buscador que alimentar. Mientras estuvo junto a la rejilla, cada ficha
+descargaba Fuse.js (unos 9 kB comprimidos) para cablear dos botones y un «Veure el signe».
+
+**Las islas no importan `i18n.ts`.** Ese módulo lleva todos los textos de la interfaz en los tres
+idiomas, y una isla que lo importa se los lleva al navegador: una página en catalán descargaba la
+interfaz en castellano y en inglés, unos 6 kB comprimidos que nunca iba a ejecutar. Ahora cada isla
+declara las claves que usa (`SIGN_VIDEO_DIALOG_MESSAGES`, por ejemplo), la página elige esas cadenas
+en su idioma durante el build con `pickMessages` y se las pasa como prop, y la isla las lee con
+`translatorFrom` ([`../src/lib/translate.ts`](../src/lib/translate.ts)). El tipo del traductor sale
+de la lista, así que usar una clave sin declararla no compila. El estado vacío del catálogo, que es
+un script de página y no una isla, recibe las suyas en `data-messages`.
+`tests/e2e/payload.spec.ts` lee el JavaScript que llega al navegador y falla si aparece texto de
+otro idioma, o el buscador en una página que no lo tiene.
 
 ### 3. El idioma vive en la URL, y arrastra la lengua de signos
 
@@ -294,7 +316,17 @@ de cada `<script>` y `<style>` en línea y sustituye con la política completa l
 - Parte de `default-src 'none'`: cada tipo de recurso necesita su propia directiva. Un tipo que
   nadie haya previsto se rechaza en vez de heredar permiso.
 - Sin `'unsafe-inline'` ni `'unsafe-eval'`. Solo se contactan los orígenes de `CSP_ORIGINS`
-  (GoatCounter y los del reproductor de YouTube, que solo se cargan al abrir un vídeo).
+  (el punto al que GoatCounter recibe las visitas y los del reproductor de YouTube, que solo se
+  cargan al abrir un vídeo).
+- **El contador de GoatCounter se sirve desde este sitio.** `count.js` está copiado sin tocar en
+  `src/vendor/goatcounter/` y el build lo publica en `/_astro/` con el hash en el nombre. Cargarlo
+  de su CDN dejaba que cambiara sin revisión; fijar con SRI una de sus versiones numeradas (v4, v5)
+  habría enviado más que hoy, porque esas mandan también el alto de la pantalla y la densidad de
+  píxeles. La copia es fija, es la que menos envía y saca un origen de la política. GoatCounter
+  documenta esta forma de usarlo y garantiza que el endpoint `/count` sigue siendo compatible.
+  `src/lib/analytics.test.ts` fija el hash de la copia y lo que envía de la pantalla, y
+  `tests/e2e/csp.spec.ts` la ejecuta como en producción, bajo la política real, y comprueba la
+  visita que sale.
 - `manifest-src 'self'` existe porque el navegador solo pide el manifest al instalar el sitio, no
   al cargar la página: sin ella la instalación fallaba y ningún test de carga lo veía.
 - `tests/e2e/csp.spec.ts` sirve cada página con la política que ha escrito el build y comprueba

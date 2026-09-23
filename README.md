@@ -57,6 +57,9 @@ tu dispositivo**.
 La única medición es un recuento **anónimo y agregado** con
 [GoatCounter](https://www.goatcounter.com/): páginas vistas y cuántas veces se usa cada función.
 No usa cookies ni sigue a nadie entre visitas, por eso el sitio no necesita aviso de cookies.
+El script del contador no se descarga de GoatCounter: el sitio sirve una copia sin modificar
+([`src/vendor/goatcounter/`](src/vendor/goatcounter/)), la versión que solo envía el ancho de la
+pantalla, y un test impide que cambie sin que se revise.
 
 Además de GoatCounter, una visita puede llegar a otros tres servicios, y la página del proyecto
 los nombra a todos: **YouTube** (Google), solo al abrir un vídeo en LSC —el reproductor se carga
@@ -264,7 +267,10 @@ dependencias también: Dependabot las abre cada semana contra `develop`, agrupad
 ## Contacto
 
 ¿Dudas, sugerencias, o un signo que no parece correcto? Escribe a
-[petitsignes@petitsignes.cat](mailto:petitsignes@petitsignes.cat).
+[petitsignes@petitsignes.cat](mailto:petitsignes@petitsignes.cat). No hace falta cuenta de GitHub.
+
+Un problema de seguridad se avisa en privado, nunca en una incidencia: ver
+[`SECURITY.md`](SECURITY.md).
 
 ## Contribuir
 

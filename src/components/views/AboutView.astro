@@ -1,10 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import PageShell, { type PageSection } from '../PageShell.astro';
-import ProgressData from '../../islands/ProgressData.tsx';
-import { createTranslator } from '../../lib/i18n.ts';
+import ProgressData, { PROGRESS_DATA_MESSAGES } from '../../islands/ProgressData.tsx';
+import { createTranslator, pickMessages } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
-import { REPO_URL } from '../../lib/site.ts';
+import { CONTACT_EMAIL, REPO_URL } from '../../lib/site.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -49,7 +49,7 @@ const copy = {
     privacyBody:
       'Per saber si el projecte serveix d’alguna cosa comptem visites de manera anònima i agregada amb GoatCounter: quines pàgines es visiten i quantes vegades es fa servir cada funció. Sense galetes, sense identificadors al teu navegador i sense seguir ningú entre visites — per això no cal cap avís de galetes. No es desa mai el que cerques ni cap dada personal, i el teu progrés no surt del teu dispositiu.',
     privacyVisit:
-      'Cada visita comptada porta la pàgina, el web des d’on arribes, la mida de la pantalla i el navegador, i GoatCounter en dedueix el país a partir de l’adreça IP. Ni l’adreça IP ni les dades del navegador es desen: només en queden els recomptes agregats.',
+      'Cada visita comptada porta la pàgina, el web des d’on arribes, l’amplada de la pantalla i el navegador, i GoatCounter en dedueix el país a partir de l’adreça IP. Ni l’adreça IP ni les dades del navegador es desen: només en queden els recomptes agregats.',
     privacyEventsCta: 'Consulta la llista completa del que es compta',
     thirdPartiesIntro: 'A banda de GoatCounter, la teva connexió arriba a aquests serveis:',
     thirdParties: [
@@ -94,7 +94,7 @@ const copy = {
     privacyBody:
       'Para saber si el proyecto sirve de algo contamos visitas de forma anónima y agregada con GoatCounter: qué páginas se visitan y cuántas veces se usa cada función. Sin cookies, sin identificadores en tu navegador y sin seguir a nadie entre visitas — por eso no hace falta ningún aviso de cookies. Nunca se guarda lo que buscas ni ningún dato personal, y tu progreso no sale de tu dispositivo.',
     privacyVisit:
-      'Cada visita contada lleva la página, la web desde la que llegas, el tamaño de la pantalla y el navegador, y GoatCounter deduce el país a partir de la dirección IP. Ni la dirección IP ni los datos del navegador se guardan: solo quedan los recuentos agregados.',
+      'Cada visita contada lleva la página, la web desde la que llegas, el ancho de la pantalla y el navegador, y GoatCounter deduce el país a partir de la dirección IP. Ni la dirección IP ni los datos del navegador se guardan: solo quedan los recuentos agregados.',
     privacyEventsCta: 'Consulta la lista completa de lo que se cuenta',
     thirdPartiesIntro: 'Además de GoatCounter, tu conexión llega a estos servicios:',
     thirdParties: [
@@ -116,11 +116,6 @@ const copy = {
       '¿Tienes una duda, una sugerencia o has encontrado un signo que no parece correcto? Escríbenos, leemos todos los mensajes.',
   },
 } as const;
-
-/** Kept next to the copy it appears in, not in `site.ts`: this is the one
- * place on the site a visitor is invited to write to, and `security.txt`
- * (`public/.well-known/security.txt`) points at the same address. */
-const CONTACT_EMAIL = 'petitsignes@petitsignes.cat';
 
 const c = copy[language];
 
@@ -165,7 +160,12 @@ const sections: PageSection[] = [
        Its own section now, so it appears in the contents list — with no
        accounts, this is the only way anyone keeps their progress. */
   }
-  <ProgressData slot="data" language={language} signIds={signIds} client:visible />
+  <ProgressData
+    slot="data"
+    messages={pickMessages(language, PROGRESS_DATA_MESSAGES)}
+    signIds={signIds}
+    client:visible
+  />
 
   {
     /* Every party a visit can reach is named here, not only the one this

@@ -2,8 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SignCard from '../SignCard.astro';
-import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
-import { createTranslator } from '../../lib/i18n.ts';
+import SignVideoDialog, { SIGN_VIDEO_DIALOG_MESSAGES } from '../../islands/SignVideoDialog.tsx';
+import { createTranslator, pickMessages } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { type Category, type SignEntry } from '../../lib/types.ts';
 
@@ -74,11 +74,11 @@ const category = categoryEntry.data as Category;
     <a class="not-found__route" href={localeHref('/', language)}>{t('notFound.back')}</a>
   </section>
 
-  <SignVideoDialog language={language} client:idle />
+  <SignVideoDialog messages={pickMessages(language, SIGN_VIDEO_DIALOG_MESSAGES)} client:idle />
 </BaseLayout>
 
 <script>
-  import { mountSignCards } from '../../lib/catalogue-grid.ts';
+  import { mountSignCards } from '../../lib/sign-cards.ts';
 
   /**
    * The same wiring the catalogue gives its cards, minus the grid: the two

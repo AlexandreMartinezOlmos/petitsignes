@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { createTranslator } from '../lib/i18n.ts';
+import type { MessageKey } from '../lib/i18n.ts';
 import { isSearchable } from '../lib/search.ts';
 import {
   $category,
@@ -13,22 +13,46 @@ import {
   hydrateFromStorage,
   STATUS_FILTERS,
 } from '../lib/stores.ts';
-import type { CategoryId, Language } from '../lib/types.ts';
+import { translatorFrom, type Messages } from '../lib/translate.ts';
+import type { CategoryId } from '../lib/types.ts';
 
 interface CategoryOption {
   id: CategoryId;
   label: string;
 }
 
+/** The interface strings this island shows; the page passes them in its language. */
+export const CATALOGUE_TOOLBAR_MESSAGES = [
+  'search.label',
+  'search.placeholder',
+  'search.clear',
+  'search.resultCount',
+  'search.resultCountOne',
+  'search.scopeAll',
+  'search.scopeSearch',
+  'filter.searchScope',
+  'filter.categories',
+  'filter.showCategories',
+  'filter.showCategoriesLabel',
+  'filter.hideCategories',
+  'filter.firstSigns',
+  'filter.status',
+  'filter.all',
+  'filter.favorites',
+  'filter.learned',
+  'filter.pending',
+  'filter.clear',
+] as const satisfies readonly MessageKey[];
+
 interface Props {
   categories: CategoryOption[];
-  language: Language;
+  messages: Messages<(typeof CATALOGUE_TOOLBAR_MESSAGES)[number]>;
   /** Total rendered at build time, shown until the grid controller reports. */
   initialCount: number;
 }
 
-export default function CatalogueToolbar({ categories, language, initialCount }: Props) {
-  const t = createTranslator(language);
+export default function CatalogueToolbar({ categories, messages, initialCount }: Props) {
+  const t = translatorFrom(messages);
 
   const query = useStore($query);
   const category = useStore($category);

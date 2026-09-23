@@ -1,3 +1,6 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ANALYTICS_EVENTS, countEvent } from './analytics.ts';
 import { ANALYTICS_ENDPOINT, SITE_ORIGIN, analyticsHost } from './site.ts';
@@ -89,5 +92,38 @@ describe('analyticsHost', () => {
 
   it('sends to the project endpoint over https', () => {
     expect(ANALYTICS_ENDPOINT).toMatch(/^https:\/\/[a-z-]+\.goatcounter\.com\/count$/);
+  });
+});
+
+/**
+ * The site serves its own copy of GoatCounter's `count.js`
+ * (`src/vendor/goatcounter/`) instead of loading it from their CDN, so what a
+ * visitor runs is what was reviewed here. These tests are what keep "reviewed"
+ * true when someone updates it.
+ */
+describe('the counter the site serves', () => {
+  const counter = readFileSync(resolve(process.cwd(), 'src/vendor/goatcounter/count.js'));
+
+  /**
+   * GoatCounter's file exactly as published: `https://gc.zgo.at/count.js`,
+   * identical to `public/count.js` at arp242/goatcounter@478f026. Updating it
+   * means downloading it again, reading the diff, and changing this hash in
+   * the same commit — never editing the file by hand.
+   */
+  it('is the copy that was reviewed, unmodified', () => {
+    const digest = createHash('sha384').update(counter).digest('base64');
+    expect(digest).toBe('2UjvVpptg4JlEVgJI2PdscrjOjPcil/4F1ZvIMJ81CShQnEDSlPI+l4PfogvTLYi');
+  });
+
+  /**
+   * The project page says a counted visit carries the width of the screen.
+   * GoatCounter's versioned files (v4, v5) send its height and pixel density
+   * as well, which is why this copy was chosen over pinning one of them with
+   * SRI; an update that brought those back would make that sentence false.
+   */
+  it('sends the width of the screen and nothing else about it', () => {
+    const source = counter.toString('utf8');
+    expect(source).toMatch(/\bs:\s*window\.screen\.width,/);
+    expect(source).not.toMatch(/screen\.height|devicePixelRatio/);
   });
 });

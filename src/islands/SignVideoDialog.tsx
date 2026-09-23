@@ -1,17 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ANALYTICS_EVENTS, countEvent } from '../lib/analytics.ts';
-import { createTranslator } from '../lib/i18n.ts';
-import { PLAY_EVENT, type PlayRequestDetail } from '../lib/catalogue-grid.ts';
+import type { MessageKey } from '../lib/i18n.ts';
+import { onPlayRequest, type PlayRequest } from '../lib/play-request.ts';
 import {
   YOUTUBE_NOCOOKIE_HOST,
   loadYouTubeIframeApi,
   youtubeId,
   type YouTubePlayer,
 } from '../lib/youtube.ts';
-import type { Language } from '../lib/types.ts';
+import { translatorFrom, type Messages } from '../lib/translate.ts';
+
+/** The interface strings this island shows; the page passes them in its language. */
+export const SIGN_VIDEO_DIALOG_MESSAGES = [
+  'card.watchSign',
+  'card.watchAtSource',
+  'player.close',
+  'player.speed',
+  'player.speedSlow',
+  'player.speedNormal',
+  'player.source',
+  'player.unavailable',
+  'player.brokenVideo',
+] as const satisfies readonly MessageKey[];
 
 interface Props {
-  language: Language;
+  messages: Messages<(typeof SIGN_VIDEO_DIALOG_MESSAGES)[number]>;
 }
 
 const SPEEDS = [0.5, 1] as const;
@@ -33,13 +46,13 @@ type Speed = (typeof SPEEDS)[number];
  * button comes before the frame in the markup — Shift+Tab from the video lands
  * on it. `tests/e2e/player-dialog.spec.ts` holds all of this.
  */
-export default function SignVideoDialog({ language }: Props) {
-  const t = createTranslator(language);
+export default function SignVideoDialog({ messages }: Props) {
+  const t = translatorFrom(messages);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
-  const [request, setRequest] = useState<PlayRequestDetail | null>(null);
+  const [request, setRequest] = useState<PlayRequest | null>(null);
   const [speed, setSpeed] = useState<Speed>(1);
   // Two ways the embed can fail after a valid request, and both degrade to the
   // affordance the other sign language already uses: a link to the source.
@@ -58,30 +71,30 @@ export default function SignVideoDialog({ language }: Props) {
   // which does not fire reliably while focus sits inside the YouTube iframe.
   const close = useCallback(() => setRequest(null), []);
 
-  useEffect(() => {
-    function onPlayRequest(event: Event): void {
-      const detail = (event as CustomEvent<PlayRequestDetail>).detail;
-      if (!detail) return;
-      setSpeed(1);
-      setFailure(null);
-      setRequest(detail);
+  // Subscribing also delivers a tap made before this island hydrated: the
+  // button works from first paint, and `play-request.ts` holds its request
+  // until the player is here to serve it.
+  useEffect(
+    () =>
+      onPlayRequest((detail) => {
+        setSpeed(1);
+        setFailure(null);
+        setRequest(detail);
 
-      // Counted here, once the request is actually known to be playable —
-      // not by the button click that dispatched it. A stored url this app
-      // cannot read an id from is a content bug, not a network one, but it
-      // ends on the same visible fallback as the player failing to load, so
-      // it is counted the same way rather than adding a second event for the
-      // same outcome.
-      if (detail.videoUrl && youtubeId(detail.videoUrl) !== null) {
-        countEvent(ANALYTICS_EVENTS.playLsc);
-      } else {
-        countEvent(ANALYTICS_EVENTS.playerUnavailable);
-      }
-    }
-
-    document.addEventListener(PLAY_EVENT, onPlayRequest);
-    return () => document.removeEventListener(PLAY_EVENT, onPlayRequest);
-  }, []);
+        // Counted here, once the request is actually known to be playable —
+        // not by the button click that made it. A stored url this app cannot
+        // read an id from is a content bug, not a network one, but it ends on
+        // the same visible fallback as the player failing to load, so it is
+        // counted the same way rather than adding a second event for the same
+        // outcome.
+        if (detail.videoUrl && youtubeId(detail.videoUrl) !== null) {
+          countEvent(ANALYTICS_EVENTS.playLsc);
+        } else {
+          countEvent(ANALYTICS_EVENTS.playerUnavailable);
+        }
+      }),
+    [],
+  );
 
   // Keep the native <dialog> in sync with the request state.
   useEffect(() => {
