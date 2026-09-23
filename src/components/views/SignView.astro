@@ -3,16 +3,18 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../Breadcrumb.astro';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
-import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
+import { categoryInSentence, createTranslator, type MessageKey } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import type { Crumb } from '../../lib/seo.ts';
 import { categoryPath } from '../../lib/categories.ts';
 import { relatedSigns, signPath } from '../../lib/signs.ts';
 import { newIssueUrl } from '../../lib/site.ts';
 import {
+  LANGUAGES,
   LANGUAGE_TO_SIGN_LANGUAGE,
   SOURCE_LANGUAGE,
   type Category,
+  type Language,
   type SignEntry,
 } from '../../lib/types.ts';
 
@@ -50,6 +52,15 @@ const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
 const namedSignLanguage = isLsc ? t('signLanguage.lscNamed') : t('signLanguage.lseNamed');
 
 const label = sign.labels[language];
+
+// Every other interface language, in a fixed order, so the line reads the same
+// way on every page of a locale.
+const otherLanguages = LANGUAGES.filter((other) => other !== language);
+const LANGUAGE_NAME_KEY = {
+  ca: 'languageName.ca',
+  es: 'languageName.es',
+  en: 'languageName.en',
+} as const satisfies Record<Language, MessageKey>;
 
 // "llet en llengua de signes catalana" is the question, so it is also the
 // title. The `h1` stays the bare word: on the page, the sign language is
@@ -208,6 +219,25 @@ const reportUrl = newIssueUrl(
 
         <h1 class="sign-detail__title">{label}</h1>
         <p class="sign-detail__subtitle">{t('sign.subtitle', { signLanguage: fullName })}</p>
+        {
+          /*
+          The word as it is written in the other languages. Words only: this
+          says nothing about the other sign language, whose gesture never
+          reaches this page. Each word is marked with its language, so a screen
+          reader says "leche" in Spanish rather than in Catalan.
+        */
+        }
+        <p class="sign-detail__elsewhere">
+          {t('sign.otherLanguages')}:{' '}
+          {
+            otherLanguages.map((other, index) => (
+              <Fragment>
+                {index > 0 && ' · '}
+                {t(LANGUAGE_NAME_KEY[other])} «<span lang={other}>{sign.labels[other]}</span>»
+              </Fragment>
+            ))
+          }
+        </p>
       </div>
 
       {
@@ -422,6 +452,7 @@ const reportUrl = newIssueUrl(
           <h2 class="sign-related__title" id="sign-related-title">
             {t('sign.relatedTitle', { ofCategory })}
           </h2>
+          <p class="sign-related__intro">{category.intro[language]}</p>
           <ul class="sign-related__list">
             {related.map((other) => (
               <li>
@@ -566,6 +597,14 @@ const reportUrl = newIssueUrl(
     color: var(--color-ink-muted);
   }
 
+  /* A footnote to the word, not a second subtitle: smaller and quieter, and
+     under the line that names the sign language so it cannot be read as one. */
+  .sign-detail__elsewhere {
+    margin-block-start: 0.25rem;
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+  }
+
   .sign-detail__actions {
     grid-area: actions;
     display: flex;
@@ -625,6 +664,12 @@ const reportUrl = newIssueUrl(
     font-weight: var(--font-weight-display);
     color: var(--color-ink);
     margin-block-end: 0.75rem;
+  }
+
+  .sign-related__intro {
+    max-inline-size: 60ch;
+    margin-block-end: 1rem;
+    color: var(--color-ink-muted);
   }
 
   /* A definition list because that is what this is: four labelled facts about
