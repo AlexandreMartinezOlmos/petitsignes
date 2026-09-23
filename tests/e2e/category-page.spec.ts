@@ -188,3 +188,16 @@ test.describe('a category page on a phone', () => {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 });
+
+/**
+ * A category page was a count and a grid: nothing on it said what the words
+ * were for, and nothing told one category page from another but the words
+ * themselves. The intro says when these words come up, in the page's language.
+ */
+test('opens with when these words come up, in its own language', async ({ page }) => {
+  await page.goto(CA);
+  await expect(page.locator('.category-hero__intro')).toContainText('«llet»');
+
+  await page.goto(ES);
+  await expect(page.locator('.category-hero__intro')).toContainText('«leche»');
+});

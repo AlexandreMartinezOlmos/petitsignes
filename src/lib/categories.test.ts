@@ -1,3 +1,5 @@
+import { readFileSync, readdirSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   CATEGORY_PATH_PREFIX,
@@ -7,7 +9,7 @@ import {
   categoryPaths,
 } from './categories.ts';
 import { isUrlSlug } from './slug.ts';
-import { CATEGORY_IDS } from './types.ts';
+import { CATEGORY_IDS, LANGUAGES, type Category, type SignEntry } from './types.ts';
 
 describe('category slugs', () => {
   /**
@@ -96,5 +98,44 @@ describe('reading a slug back', () => {
     expect(categoryIdFromSlug('menjar')).toBeNull();
     expect(categoryIdFromSlug('')).toBeNull();
     expect(categoryIdFromSlug('MENJAR-I-BEURE')).toBeNull();
+  });
+});
+
+/**
+ * Each category's intro names a few of its words, and a word it names has to
+ * be a word the category actually holds, in that language, spelled the way the
+ * card spells it. The intros are hand-written prose next to data that changes:
+ * retire a sign, rename a label, and the paragraph would go on promising a word
+ * the page no longer has. Read from the files on disk, like the sign checks.
+ */
+describe('category intros', () => {
+  const read = (path: string) => readFileSync(resolve(process.cwd(), path), 'utf8');
+  const categories = JSON.parse(read('src/content/categories.json')) as Category[];
+  const dir = resolve(process.cwd(), 'src/content/signs');
+  const signs = readdirSync(dir)
+    .filter((name) => name.endsWith('.json'))
+    .map((name) => JSON.parse(read(`src/content/signs/${name}`)) as Omit<SignEntry, 'id'>);
+
+  // «…» in Catalan and Spanish, “…” in English: the quotes each language uses.
+  const quoted = (text: string) =>
+    [...text.matchAll(/«([^»]+)»|“([^”]+)”/g)].map((match) => match[1] ?? match[2]!);
+
+  it('only names words the category holds, in the language it is written in', () => {
+    const missing: string[] = [];
+
+    for (const category of categories) {
+      for (const language of LANGUAGES) {
+        const labels = new Set(
+          signs.filter((s) => s.category === category.id).map((s) => s.labels[language]),
+        );
+        const words = quoted(category.intro[language]);
+        expect(words.length, `${category.id} (${language})`).toBeGreaterThan(0);
+        for (const word of words) {
+          if (!labels.has(word)) missing.push(`${category.id} (${language}): «${word}»`);
+        }
+      }
+    }
+
+    expect(missing).toEqual([]);
   });
 });

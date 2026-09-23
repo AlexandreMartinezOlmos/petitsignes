@@ -2,48 +2,88 @@
   {
     "id": "food",
     "labels": { "ca": "Menjar i beure", "es": "Comida y bebida", "en": "Food and drink" },
+    "intro": {
+      "ca": "Les paraules de cada àpat i de cada biberó: «llet», «aigua», «pa», «fruita»… i «acabat», per dir que ja n’hi ha prou. Surten a taula diverses vegades al dia.",
+      "es": "Las palabras de cada comida y de cada biberón: «leche», «agua», «pan», «fruta»… y «acabado», para decir que ya es suficiente. Salen en la mesa varias veces al día.",
+      "en": "The words of every meal and every bottle: “milk”, “water”, “bread”, “fruit”… and “all done”, for when that is enough. They come up at the table several times a day."
+    },
     "icon": "bowl",
     "order": 1
   },
   {
     "id": "routines",
     "labels": { "ca": "Rutines i cura", "es": "Rutinas y cuidado", "en": "Routines and care" },
+    "intro": {
+      "ca": "El que es repeteix cada dia: «dormir», canviar el «bolquer», rentar-se les «mans», el «xumet». Moments que tornen cada dia, gairebé a la mateixa hora.",
+      "es": "Lo que se repite cada día: «dormir», cambiar el «pañal», lavarse las «manos», el «chupete». Momentos que vuelven cada día, casi a la misma hora.",
+      "en": "What happens every day: “sleep”, changing the “nappy”, washing “hands”, the “dummy”. Moments that come back every day, at about the same time."
+    },
     "icon": "moon",
     "order": 2
   },
   {
     "id": "family",
     "labels": { "ca": "Persones i família", "es": "Personas y familia", "en": "People and family" },
+    "intro": {
+      "ca": "Les persones del dia a dia del nadó: «mama», «papa», l’«avi» i l’«àvia», un «germà»… i també «jo» i «tu», per parlar de qui fa cada cosa.",
+      "es": "Las personas del día a día del bebé: «mamá», «papá», el «abuelo» y la «abuela», un «hermano»… y también «yo» y «tú», para hablar de quién hace cada cosa.",
+      "en": "The people in a baby’s everyday life: “mummy”, “daddy”, “grandpa” and “grandma”, a “brother”… and also “me” and “you”, to talk about who does what."
+    },
     "icon": "family",
     "order": 3
   },
   {
     "id": "emotions",
     "labels": { "ca": "Emocions", "es": "Emociones", "en": "Emotions" },
+    "intro": {
+      "ca": "Per posar nom al que sent: «content», «trist», «por», «plorar»… i a les coses que es fan per estimar, com «abraçar» o «fer un petó».",
+      "es": "Para poner nombre a lo que siente: «contento», «triste», «miedo», «llorar»… y a lo que se hace por cariño, como «abrazar» o «dar un beso».",
+      "en": "To put a name to what they feel: “happy”, “sad”, “fear”, “cry”… and to what we do out of love, like “hug” or “give a kiss”."
+    },
     "icon": "heart",
     "order": 4
   },
   {
     "id": "animals",
     "labels": { "ca": "Animals", "es": "Animales", "en": "Animals" },
+    "intro": {
+      "ca": "Els animals dels contes, del parc i de la granja: el «gos», el «gat», l’«ocell», la «vaca»… Surten als llibres i a les cançons tant com al carrer.",
+      "es": "Los animales de los cuentos, del parque y de la granja: el «perro», el «gato», el «pájaro», la «vaca»… Salen en los libros y las canciones tanto como en la calle.",
+      "en": "The animals of stories, the park and the farm: the “dog”, the “cat”, the “bird”, the “cow”… They turn up in books and songs as much as in the street."
+    },
     "icon": "paw",
     "order": 5
   },
   {
     "id": "objects",
     "labels": { "ca": "Objectes i joguines", "es": "Objetos y juguetes", "en": "Objects and toys" },
+    "intro": {
+      "ca": "Les coses que té a l’abast: la «pilota», el «llibre», el «cotxe», el «llit»… Objectes que es poden assenyalar mentre se’n diu el nom.",
+      "es": "Las cosas que tiene a mano: la «pelota», el «libro», el «coche», la «cama»… Objetos que se pueden señalar mientras se dice su nombre.",
+      "en": "The things within reach: the “ball”, the “book”, the “car”, the “bed”… Objects you can point to while you say their name."
+    },
     "icon": "ball",
     "order": 6
   },
   {
     "id": "actions",
     "labels": { "ca": "Accions", "es": "Acciones", "en": "Actions" },
+    "intro": {
+      "ca": "El que fa i el que vol fer: «jugar», «saltar», «caminar», «donar»… Verbs per a les estones de joc i per a quan vol demanar alguna cosa.",
+      "es": "Lo que hace y lo que quiere hacer: «jugar», «saltar», «caminar», «dar»… Verbos para los ratos de juego y para cuando quiere pedir algo.",
+      "en": "What they do and what they want to do: “play”, “jump”, “walk”, “give”… Verbs for playtime and for when they want to ask for something."
+    },
     "icon": "run",
     "order": 7
   },
   {
     "id": "qualities",
     "labels": { "ca": "Qualitats", "es": "Cualidades", "en": "Qualities" },
+    "intro": {
+      "ca": "Paraules per descriure el que veu: «gran» i «petit», «net» i «brut», «ple» i «buit». Moltes van en parella.",
+      "es": "Palabras para describir lo que ve: «grande» y «pequeño», «limpio» y «sucio», «lleno» y «vacío». Muchas van en pareja.",
+      "en": "Words to describe what they see: “big” and “small”, “clean” and “dirty”, “full” and “empty”. Many of them come in pairs."
+    },
     "icon": "scale",
     "order": 8
   },
@@ -54,42 +94,77 @@
       "es": "Naturaleza y exterior",
       "en": "Nature and outdoors"
     },
+    "intro": {
+      "ca": "El que es veu en sortir de casa: el «sol», la «lluna», la «pluja», el «parc»… Paraules per als passejos i per mirar per la finestra.",
+      "es": "Lo que se ve al salir de casa: el «sol», la «luna», la «lluvia», el «parque»… Palabras para los paseos y para mirar por la ventana.",
+      "en": "What you see when you step outside: the “sun”, the “moon”, the “rain”, the “park”… Words for walks and for looking out of the window."
+    },
     "icon": "leaf",
     "order": 9
   },
   {
     "id": "courtesy",
     "labels": { "ca": "Cortesia", "es": "Cortesía", "en": "Courtesy" },
+    "intro": {
+      "ca": "Les fórmules de cada trobada: «hola», «adéu», «gràcies», «si us plau»… Poques paraules que surten moltes vegades al dia.",
+      "es": "Las fórmulas de cada encuentro: «hola», «adiós», «gracias», «por favor»… Pocas palabras que salen muchas veces al día.",
+      "en": "The words of every meeting: “hello”, “bye”, “thank you”, “please”… A handful of words that come up many times a day."
+    },
     "icon": "wave",
     "order": 10
   },
   {
     "id": "body",
     "labels": { "ca": "Cos", "es": "Cuerpo", "en": "Body" },
+    "intro": {
+      "ca": "Les parts del cos que es toquen i s’assenyalen: la «panxa», el «nas», els «ulls», els «peus»… Surten al bany, en vestir-se i en els jocs amb cançons.",
+      "es": "Las partes del cuerpo que se tocan y se señalan: la «barriga», la «nariz», los «ojos», los «pies»… Salen en el baño, al vestirse y en los juegos con canciones.",
+      "en": "The parts of the body you touch and point to: the “tummy”, the “nose”, the “eyes”, the “feet”… They come up at bath time, getting dressed and in singing games."
+    },
     "icon": "body",
     "order": 11
   },
   {
     "id": "clothing",
     "labels": { "ca": "Roba", "es": "Ropa", "en": "Clothing" },
+    "intro": {
+      "ca": "El que es posa i es treu cada dia: les «sabates», el «pijama», l’«abric», els «mitjons»… Paraules per al moment de vestir-se i de sortir.",
+      "es": "Lo que se pone y se quita cada día: los «zapatos», el «pijama», el «abrigo», los «calcetines»… Palabras para el momento de vestirse y de salir.",
+      "en": "What goes on and comes off every day: “shoes”, “pyjamas”, “coat”, “socks”… Words for getting dressed and going out."
+    },
     "icon": "shirt",
     "order": 12
   },
   {
     "id": "colors",
     "labels": { "ca": "Colors", "es": "Colores", "en": "Colours" },
+    "intro": {
+      "ca": "Els colors de les joguines, la roba i els contes: «vermell», «blau», «groc», «verd»… Es poden anar dient a mesura que apareixen.",
+      "es": "Los colores de los juguetes, la ropa y los cuentos: «rojo», «azul», «amarillo», «verde»… Se pueden ir diciendo a medida que aparecen.",
+      "en": "The colours of toys, clothes and stories: “red”, “blue”, “yellow”, “green”… They can be named as they appear."
+    },
     "icon": "palette",
     "order": 13
   },
   {
     "id": "numbers",
     "labels": { "ca": "Números", "es": "Números", "en": "Numbers" },
+    "intro": {
+      "ca": "Els primers números, de l’«un» al «cinc»: per comptar dits, esglaons o galetes.",
+      "es": "Los primeros números, del «uno» al «cinco»: para contar dedos, escalones o galletas.",
+      "en": "The first numbers, from “one” to “five”: for counting fingers, steps or biscuits."
+    },
     "icon": "hash",
     "order": 14
   },
   {
     "id": "time",
     "labels": { "ca": "Temps i conceptes", "es": "Tiempo y conceptos", "en": "Time and concepts" },
+    "intro": {
+      "ca": "Paraules per ordenar el dia i respondre: «ara», «després», «demà», «una altra vegada»… i «sí» i «no», que serveixen per a gairebé tot.",
+      "es": "Palabras para ordenar el día y responder: «ahora», «después», «mañana», «otra vez»… y «sí» y «no», que sirven para casi todo.",
+      "en": "Words to order the day and to answer: “now”, “later”, “tomorrow”, “again”… and “yes” and “no”, which work for almost everything."
+    },
     "icon": "clock",
     "order": 15
   }
