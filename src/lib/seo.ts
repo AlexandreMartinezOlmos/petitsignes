@@ -31,9 +31,11 @@ export const OG_IMAGE = '/og.png';
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 
-/** Home-screen icons. Apple ignores the manifest, hence the separate 180. */
+/**
+ * Home-screen icon for iOS, which ignores the manifest, hence the separate 180.
+ * The manifest itself is per locale: see `manifest.ts`.
+ */
 export const APPLE_TOUCH_ICON = '/apple-touch-icon.png';
-export const WEB_MANIFEST = '/site.webmanifest';
 
 /**
  * Roughly where a search result stops showing a title. Google measures in

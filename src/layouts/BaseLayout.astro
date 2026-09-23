@@ -8,6 +8,7 @@ import nunitoSansLatin from '@fontsource-variable/nunito-sans/files/nunito-sans-
 import BrandMark from '../components/BrandMark.astro';
 import IconSprite from '../components/IconSprite.astro';
 import { createTranslator } from '../lib/i18n.ts';
+import { manifestPath } from '../lib/manifest.ts';
 import { signLanguageOf } from '../lib/types.ts';
 import {
   DEFAULT_LOCALE,
@@ -22,7 +23,6 @@ import {
   OG_IMAGE,
   OG_IMAGE_HEIGHT,
   OG_IMAGE_WIDTH,
-  WEB_MANIFEST,
   breadcrumbJsonLd,
   documentTitle,
   serializeJsonLd,
@@ -118,7 +118,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
     */
     }
     <link rel="apple-touch-icon" href={APPLE_TOUCH_ICON} />
-    <link rel="manifest" href={WEB_MANIFEST} />
+    <link rel="manifest" href={manifestPath(language)} />
     {!noindex && <link rel="canonical" href={canonical} />}
     {/* Tell search engines about the other language versions of this page. */}
     {
