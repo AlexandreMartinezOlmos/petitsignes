@@ -297,7 +297,7 @@ Tres materiales distintos, tres condiciones distintas. [`NOTICE`](NOTICE) es el 
   [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md), porque MIT y la Open Font License piden
   que acompañen a cada copia y el minificador los borra del bundle.
 
-El sitio sirve JavaScript minificado, que es una forma objeto del programa, así que el §13 de
-la AGPL aplica: **el enlace «Código fuente» del pie de cada página es la oferta de código
+El sitio sirve JavaScript minificado, que es una forma objeto del programa, así que se aplica la
+sección 13 de la AGPL: **el enlace «Código fuente» del pie de cada página es la oferta de código
 correspondiente** que exige la licencia. Es una obligación, no un adorno — no lo quites en un
 derivado.

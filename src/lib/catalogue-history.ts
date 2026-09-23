@@ -20,8 +20,8 @@
  * `allow_local`, `allow_frame`, `path`, `title`, `referrer` and `event`, and `q`
  * is not among them. Its `get_path()` then appends `location.search` a second
  * time. So a query string publishes whatever a parent typed into the search box,
- * which is exactly what §2.2 promises never happens — and no configuration
- * prevents it. Patching around it would mean overriding a third-party script's
+ * which is exactly what the privacy promise says never happens — and no
+ * configuration prevents it. Patching around it would mean overriding a third-party script's
  * internals and betting a privacy promise on them not changing.
  *
  * The fragment (`#q=llet`) would be immune, since it never leaves the browser.

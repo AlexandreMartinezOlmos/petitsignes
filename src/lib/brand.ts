@@ -14,8 +14,8 @@
  * exactly as it was for the category that needs it.
  *
  * It is a mark, not a gesture. An open hand is the project's logo and says
- * nothing about how any sign is performed — §2.1 forbids inventing one, and a
- * logo that read as a citation form would be doing precisely that.
+ * nothing about how any sign is performed — the project never invents one,
+ * and a logo that read as a citation form would be doing precisely that.
  */
 
 /**

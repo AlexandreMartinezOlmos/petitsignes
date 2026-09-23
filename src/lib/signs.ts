@@ -6,9 +6,10 @@
  * because no page claims to be about milk. These helpers give each concept its
  * own URL and decide what surrounds it there.
  *
- * The path is built from the sign's `id`, which is also the key `localStorage`
- * saves favourites under (§4.1 of `CLAUDE.md`). That was already a reason not to
- * rename one; now it is two, because a rename breaks external links as well.
+ * The path is built from the sign's `id`, which is also the key saved progress
+ * is stored under (see `ProgressStore` in `storage.ts`). That was already a
+ * reason not to rename one; now it is two, because a rename breaks external
+ * links as well.
  */
 
 import { isUrlSlug } from './slug.ts';

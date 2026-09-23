@@ -26,7 +26,7 @@ import { createHash } from 'node:crypto';
 export const CSP_ORIGINS = {
   /** GoatCounter's counter script. */
   analyticsScript: 'https://gc.zgo.at',
-  /** Where that script reports a hit. Anonymous and aggregate (CLAUDE.md §2.2). */
+  /** Where that script reports a hit: anonymous and aggregate, never user input. */
   analyticsEndpoint: 'https://petitsignes.goatcounter.com',
   /** The IFrame Player API, injected only when a visitor opens a video. */
   youtubeApi: 'https://www.youtube.com',
@@ -104,7 +104,7 @@ export function buildCsp(hashes: { scripts: string[]; styles: string[] }): strin
     `connect-src 'self' ${CSP_ORIGINS.analyticsEndpoint}`,
     // The only third party allowed to render inside this site.
     `frame-src ${CSP_ORIGINS.youtubeFrame}`,
-    // And this site is not allowed to render inside anyone else's (§17.2).
+    // And this site is not allowed to render inside anyone else's.
     `frame-ancestors 'none'`,
     // Nothing here submits a form, so nowhere is a valid target for one.
     `form-action 'none'`,

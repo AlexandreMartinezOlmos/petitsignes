@@ -9,7 +9,7 @@ import { expect, test } from '@playwright/test';
  * the link somebody can send.
  *
  * The invariants they inherit are the strict ones: only the page's own sign
- * language reaches the DOM (§4.4), and nothing describes the gesture (§2.1).
+ * language reaches the DOM, and nothing describes the gesture.
  */
 
 const CA = '/signe/leche/';
@@ -56,7 +56,8 @@ test.describe('finding a sign page', () => {
 
 test.describe('what a sign page says', () => {
   /**
-   * The invariant that makes §2.1 structural rather than a good intention: the
+   * The invariant that makes "no invented sign" structural rather than a good
+   * intention: the
    * other sign language's gesture must not be in the document at all, one
    * `display` away from being shown under the wrong word.
    */
@@ -280,7 +281,7 @@ test.describe('a sign page is not a dead card', () => {
   });
 
   /**
-   * §4.3: the card never plays on its own, and browsing must not contact
+   * The card never plays on its own, and browsing must not contact
    * YouTube. A page dedicated to one sign is exactly where that rule would be
    * quietly dropped, so it is checked here too — matched on hostname, because a
    * naive `/youtube/` also catches our own module served by the dev server.
@@ -312,7 +313,7 @@ test.describe('a sign page is not a dead card', () => {
 
 test.describe('H5: the citation repositions, never disappears', () => {
   /**
-   * §2.4's attribution is required, not decorative — unlike the text pages'
+   * The source's attribution is required, not decorative — unlike the text pages'
    * contents list, which this two-column shape is modelled on and which is
    * safe to hide below `lg` because it only repeats the article. Copying
    * `.page-aside` verbatim would have copied its `display: none` default
@@ -365,7 +366,7 @@ test.describe('.sign-page--no-source: the layout when a sign has no video', () =
   /**
    * No sign in the catalogue lacks a video today — all 194 have both LSC and
    * LSE — so this state has never run against real content, only been
-   * checked by hand in a browser (docs/pendientes.md, H5). Rather than wait
+   * checked by hand in a browser. Rather than wait
    * for data that may never arrive, this simulates exactly what
    * SignView.astro renders when `video` is falsy: the same class the
    * component would add, the same `<aside>` it would omit (both driven by

@@ -107,8 +107,8 @@ petición con `q: location.search`, leído directamente de la barra de direccion
 visita; las opciones que respeta son `no_onload`, `no_events`, `allow_local`, `allow_frame`, `path`,
 `title`, `referrer` y `event`, y `q` no está entre ellas. Su `get_path()` añade `location.search` una
 segunda vez. Es decir: un `?q=` publicaría lo que una madre escribe en el buscador, que es
-exactamente lo que §2.2 promete que no pasa nunca, y ninguna configuración lo evita. Hay un test e2e
-que comprueba que la URL no gana nunca ni query string ni fragmento.
+exactamente lo que la privacidad del proyecto promete que no pasa nunca, y ninguna configuración
+lo evita. Hay un test e2e que comprueba que la URL no gana nunca ni query string ni fragmento.
 
 El fragmento (`#q=…`) sería inmune, porque no sale del navegador, pero esta página ya gasta su
 fragmento en `#main` y `#footer-nav` —el enlace de salto y el de bypass—, así que guardar estado ahí
@@ -341,14 +341,14 @@ Tres piezas que ningún visitante ve y que, precisamente por eso, fallan en sile
 del propio sprite de iconos y los colores de los tokens de `global.css`, y renderiza los PNG con
 Chromium. Nada se dibuja dos veces: un cambio de marca llega a las imágenes reejecutando el
 script, no acordándose de editar una segunda copia. Es un **script de contenido**, no un paso del
-build (§2.3): el resultado se commitea.
+build, que no depende de binarios del sistema: el resultado se commitea.
 
 Al montarlo apareció una divergencia real: el favicon usaba `#b4552e` mientras `--brand` resuelve
 a `#bc461e`. Los dos consumidores que no pueden leer OKLCH —el favicon y `site.webmanifest`— ahora
 llevan un test que compara su hex contra el token (`color.test.ts`), porque una marca que se
 desincroniza no rompe nada y por eso nadie lo nota.
 
-> La mano es **marca**, no gesto. §2.1 prohíbe representar cómo se ejecuta un signo; un logo de
+> La mano es **marca**, no gesto. El proyecto nunca representa cómo se ejecuta un signo; un logo de
 > una mano abierta no dice nada sobre LSC ni LSE.
 
 **`robots.txt` y `sitemap.xml` se emiten desde `src/pages/`, no desde `public/`.** La razón es que
@@ -373,9 +373,9 @@ lenguas.
 **Hay una 404 por idioma**, en `/404.html` y `/es/404.html`. Cloudflare Pages responde a una ruta
 inexistente con el `404.html` **más cercano subiendo por el árbol de directorios**, así que
 `/es/lo-que-sea` encuentra la castellana. Eso evita tener que adivinar el idioma desde la ruta —
-adivinar habría significado llevar las dos lenguas de signos al mismo documento, justo lo que §4.4
-impide para que el gesto equivocado no quede a un `display` de mostrarse. Cada 404 envía la suya y
-ya está.
+adivinar habría significado llevar las dos lenguas de signos al mismo documento, justo lo que
+impide la regla de una sola lengua de signos por página, para que el gesto equivocado no quede a
+un `display` de mostrarse. Cada 404 envía la suya y ya está.
 
 Hace falta un empujón en el build: con `format: 'directory'` una página anidada se emite en
 `es/404/index.html`, una dirección que nadie pide, así que la 404 castellana existiría sin llegar
