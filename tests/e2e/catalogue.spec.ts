@@ -76,6 +76,33 @@ test.describe('catalogue', () => {
     ).toHaveAttribute('aria-pressed', 'true');
   });
 
+  // Opening signs in new tabs is an ordinary way to browse. Each tab used to
+  // keep its own copy of the progress and save it whole, so the last one to
+  // save quietly erased whatever the others had added.
+  test('two open tabs keep each other’s progress, and show it live', async ({ page, context }) => {
+    const other = await context.newPage();
+    await other.goto('/');
+    await waitForHydration(other);
+
+    await other.locator('.sign-card[data-sign-id="leche"] [data-action="favorite"]').click();
+
+    // No reload: the star appears here as soon as the other tab saves it.
+    await expect(
+      page.locator('.sign-card[data-sign-id="leche"] [data-action="favorite"]'),
+    ).toHaveAttribute('aria-pressed', 'true');
+
+    await page.locator('.sign-card[data-sign-id="agua"] [data-action="learned"]').click();
+
+    await other.reload();
+    await waitForHydration(other);
+    await expect(
+      other.locator('.sign-card[data-sign-id="leche"] [data-action="favorite"]'),
+    ).toHaveAttribute('aria-pressed', 'true');
+    await expect(
+      other.locator('.sign-card[data-sign-id="agua"] [data-action="learned"]'),
+    ).toHaveAttribute('aria-pressed', 'true');
+  });
+
   test('the favourites filter shows only favourites', async ({ page }) => {
     await page
       .locator('.sign-card[data-sign-id="leche"]')

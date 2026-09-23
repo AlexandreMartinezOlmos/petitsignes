@@ -61,14 +61,22 @@ export function getProgressStore(): ProgressStore {
 
 /** Test seam: lets a test inject its own implementation. */
 export function setProgressStore(store: ProgressStore | null): void {
+  stopMirroring?.();
+  stopMirroring = null;
   progressStore = store;
   hydration = null;
 }
 
 let hydration: Promise<void> | null = null;
+let stopMirroring: (() => void) | null = null;
 
 /**
- * Loads persisted favourites and learned signs into the stores.
+ * Loads persisted favourites and learned signs into the stores, and keeps them
+ * in step from then on.
+ *
+ * It subscribes rather than reading once, because the store also reports changes
+ * made in another tab: a star pressed there lights up here without a reload, and
+ * nobody presses a button on a card whose state is out of date.
  *
  * The promise is memoised rather than guarded by a boolean, so that every caller
  * awaits the same work. With a flag, the second caller returned an
@@ -77,13 +85,13 @@ let hydration: Promise<void> | null = null;
  * grid filtered by favourites.
  */
 export function hydrateFromStorage(): Promise<void> {
-  hydration ??= (async () => {
-    const store = getProgressStore();
-    const [favorites, learned] = await Promise.all([store.getFavorites(), store.getLearned()]);
-
-    $favorites.set(favorites);
-    $learned.set(learned);
-  })();
+  hydration ??= new Promise((resolve) => {
+    stopMirroring = getProgressStore().subscribe((snapshot) => {
+      $favorites.set(snapshot.favorites);
+      $learned.set(snapshot.learned);
+      resolve();
+    });
+  });
 
   return hydration;
 }
@@ -101,16 +109,18 @@ export async function rememberLanguage(language: Language): Promise<void> {
   });
 }
 
+// Neither toggle writes to the atoms: the subscription set up by
+// `hydrateFromStorage` does, for this tab's changes and every other tab's alike.
+// Awaiting it first guarantees that subscription exists.
+
 export async function toggleFavorite(id: string): Promise<void> {
-  const store = getProgressStore();
-  await store.toggleFavorite(id);
-  $favorites.set(await store.getFavorites());
+  await hydrateFromStorage();
+  await getProgressStore().toggleFavorite(id);
 }
 
 export async function toggleLearned(id: string): Promise<void> {
-  const store = getProgressStore();
-  await store.toggleLearned(id);
-  $learned.set(await store.getLearned());
+  await hydrateFromStorage();
+  await getProgressStore().toggleLearned(id);
 }
 
 export function clearFilters(): void {

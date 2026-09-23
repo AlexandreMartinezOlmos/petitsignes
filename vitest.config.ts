@@ -55,12 +55,16 @@ export default defineConfig({
        * Raised again when the page titles and structured data moved into
        * `seo.ts` as pure functions with their own tests: 76.67 / 69.82 /
        * 86.36 / 77.73 measured, each floor the whole number under it.
+       *
+       * And again when the progress store learned to follow other tabs and to
+       * leave unreadable data alone, with the tests for both: 77.75 / 71.60 /
+       * 87.03 / 78.77.
        */
       thresholds: {
-        statements: 76,
-        branches: 69,
-        functions: 86,
-        lines: 77,
+        statements: 77,
+        branches: 71,
+        functions: 87,
+        lines: 78,
       },
     },
   },
