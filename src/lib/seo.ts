@@ -235,20 +235,29 @@ export function buildSitemap(
 const TDM_POINTER = '# Text and data mining rights reserved: /.well-known/tdmrep.json';
 
 /**
- * `robots.txt`, and the guard that keeps branch previews out of the index.
+ * `robots.txt`, and the half of the preview guard that lets it work.
  *
  * Every branch is deployed to its own `*.pages.dev` origin with the same build.
  * Those deployments are for looking at, not for reading in search results — and
  * an indexed preview competes with production for the same content. Comparing
  * against `SITE_ORIGIN` rather than a build flag means the rule cannot be
- * forgotten: anything that is not the canonical domain refuses crawlers.
+ * forgotten: anything that is not the canonical domain is treated as a preview.
+ *
+ * A preview is kept out of the index by `noindex` on every response (see
+ * `markPreviewHeaders`), and this file has to let crawlers in to read it. It
+ * used to say `Disallow: /`, which is the one thing that defeats a `noindex`:
+ * a crawler that may not fetch a page never sees the header, and a search
+ * engine can still list the bare address when someone links to it. So a
+ * preview invites crawling and names no sitemap — there is nothing on it to
+ * be found, only something to be told.
  */
 export function buildRobots(origin: string = SITE_ORIGIN): string {
   if (origin !== SITE_ORIGIN) {
     return [
       '# Preview deployment — not the canonical site.',
+      '# Every response says `X-Robots-Tag: noindex`; crawling is allowed so it can be read.',
       'User-agent: *',
-      'Disallow: /',
+      'Allow: /',
       '',
     ].join('\n');
   }
@@ -259,6 +268,31 @@ export function buildRobots(origin: string = SITE_ORIGIN): string {
     '',
     TDM_POINTER,
     `Sitemap: ${absolute('/sitemap.xml', origin)}`,
+    '',
+  ].join('\n');
+}
+
+/** What every response of a preview deployment carries. */
+export const PREVIEW_NOINDEX = 'X-Robots-Tag: noindex';
+
+/**
+ * The other half of the preview guard: `_headers` as a preview must ship it.
+ *
+ * Cloudflare already sends this header on `*.pages.dev` previews, but as a
+ * platform default that nothing in this repository states or checks. The
+ * promise is made in the build instead, where it can be reviewed and tested. Production gets the file back unchanged, byte
+ * for byte: a `noindex` that reached the canonical domain would take the whole
+ * site out of search, silently, on the next crawl.
+ */
+export function markPreviewHeaders(headers: string, origin: string): string {
+  if (origin === SITE_ORIGIN) return headers;
+
+  return [
+    headers.trimEnd(),
+    '',
+    `# Added by the build: this is a preview (${origin}), not the canonical site.`,
+    '/*',
+    `  ${PREVIEW_NOINDEX}`,
     '',
   ].join('\n');
 }

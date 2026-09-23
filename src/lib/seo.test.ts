@@ -1,13 +1,15 @@
-import { readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  PREVIEW_NOINDEX,
   SITE_PATHS,
   TITLE_MAX_LENGTH,
   breadcrumbJsonLd,
   buildRobots,
   buildSitemap,
   documentTitle,
+  markPreviewHeaders,
   serializeJsonLd,
   websiteJsonLd,
 } from './seo.ts';
@@ -122,12 +124,18 @@ describe('robots.txt', () => {
    * Every branch deploys the same build to its own pages.dev origin. Those are
    * for looking at, not for reading in search results — an indexed preview
    * competes with production for identical content.
+   *
+   * This asserted `Disallow: /` until that turned out to be the one setting
+   * that defeats the guard: a crawler that may not fetch a page never reads
+   * its `noindex`, and the bare address can still be listed when someone links
+   * to it. A preview now lets crawlers in to be told, and advertises nothing.
    */
-  it('shuts crawlers out of anything that is not the canonical domain', () => {
+  it('lets crawlers into a preview so they can read that it is not to be indexed', () => {
     const robots = buildRobots(PREVIEW);
-    expect(robots).toContain('Disallow: /');
-    expect(robots).not.toContain('Allow: /');
+    expect(robots).toContain('Allow: /');
+    expect(robots).not.toContain('Disallow: /');
     expect(robots).not.toContain('Sitemap:');
+    expect(markPreviewHeaders('', PREVIEW)).toContain(PREVIEW_NOINDEX);
   });
 
   /**
@@ -185,9 +193,32 @@ describe('the origin a deployment describes itself with', () => {
   it.each([
     ['a branch preview', PREVIEW, true],
     ['production', SITE_ORIGIN, false],
-  ])('%s', (_name, origin, blocked) => {
-    expect(buildRobots(origin).includes('Disallow: /')).toBe(blocked);
+  ])('%s', (_name, origin, preview) => {
+    expect(markPreviewHeaders('/*\n  X: y\n', origin).includes(PREVIEW_NOINDEX)).toBe(preview);
+    expect(buildRobots(origin).includes('Sitemap:')).toBe(!preview);
     expect(buildSitemap(origin)).toContain(`<loc>${origin}/</loc>`);
+  });
+});
+
+describe('markPreviewHeaders', () => {
+  const HEADERS = readFileSync(resolve(process.cwd(), 'public/_headers'), 'utf8');
+
+  /**
+   * The failure this exists to make impossible costs the whole site: one
+   * `noindex` on the canonical domain and every page leaves search on the next
+   * crawl, with nothing on screen to say so. Byte for byte, not "contains no
+   * noindex", so nothing else can creep into production through here either.
+   */
+  it('gives production its headers back exactly as they were', () => {
+    expect(markPreviewHeaders(HEADERS, SITE_ORIGIN)).toBe(HEADERS);
+  });
+
+  it('adds noindex for every path of a preview, and keeps everything else', () => {
+    const marked = markPreviewHeaders(HEADERS, PREVIEW);
+
+    expect(marked.startsWith(HEADERS.trimEnd())).toBe(true);
+    expect(marked).toMatch(new RegExp(`^/\\*\\n  ${PREVIEW_NOINDEX}$`, 'm'));
+    expect(marked).toContain(PREVIEW);
   });
 });
 

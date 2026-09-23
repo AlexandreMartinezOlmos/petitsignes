@@ -7,6 +7,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { SITE_ORIGIN, assertOrigin } from './src/lib/site.ts';
 import { buildCsp, collectInlineHashes, injectCsp } from './src/lib/csp.ts';
+import { markPreviewHeaders } from './src/lib/seo.ts';
 
 /**
  * Puts each locale's 404 where a static host will look for it.
@@ -100,6 +101,33 @@ function contentSecurityPolicy() {
   };
 }
 
+/**
+ * Marks a preview build's `_headers` with `noindex` for every path.
+ *
+ * `robots.txt` lets crawlers into a preview precisely so that they can read
+ * this; the rule and its reasoning are in `markPreviewHeaders`. Runs after the
+ * CSP hook, which rewrites the same file, and leaves production's untouched.
+ *
+ * @param {string} origin
+ */
+function previewNoindex(origin) {
+  return {
+    name: 'preview-noindex',
+    hooks: {
+      /** @type {(options: { dir: URL, logger: { info: (msg: string) => void } }) => Promise<void>} */
+      'astro:build:done': async ({ dir, logger }) => {
+        const headersFile = path.join(fileURLToPath(dir), '_headers');
+        const before = await readFile(headersFile, 'utf8');
+        const after = markPreviewHeaders(before, origin);
+        if (after === before) return;
+
+        await writeFile(headersFile, after);
+        logger.info(`preview build for ${origin}: every response says noindex`);
+      },
+    },
+  };
+}
+
 // The canonical origin (canonical links, hreflang, Open Graph, sitemap). It is
 // defined in src/lib/site.ts so that changing domain is a reviewed commit
 // rather than a hosting-dashboard setting nobody can see.
@@ -137,7 +165,12 @@ export default defineConfig({
   // anything that could still change the HTML. Today `localised404` only
   // renames a file, so either order would hash the same bytes — this is
   // insurance against the next hook, which might not be so harmless.
-  integrations: [react(), localised404(), contentSecurityPolicy()],
+  integrations: [
+    react(),
+    localised404(),
+    contentSecurityPolicy(),
+    previewNoindex(new URL(site).origin),
+  ],
   vite: {
     plugins: [tailwindcss()],
     esbuild: {

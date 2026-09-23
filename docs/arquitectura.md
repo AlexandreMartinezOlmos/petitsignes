@@ -353,10 +353,18 @@ desincroniza no rompe nada y por eso nadie lo nota.
 
 **`robots.txt` y `sitemap.xml` se emiten desde `src/pages/`, no desde `public/`.** La razón es que
 la respuesta depende del origen: cada rama se despliega a su propio `*.pages.dev` con el mismo
-build, y una previsualización indexada compite con producción por el mismo contenido. `buildRobots`
-compara contra `SITE_ORIGIN` y cierra la puerta a cualquier origen que no sea el canónico — una
-regla que no se puede olvidar, a diferencia de un flag de build. Un fichero estático no podría
-distinguirlos.
+build, y una previsualización indexada compite con producción por el mismo contenido. El build
+compara contra `SITE_ORIGIN` y trata como previsualización cualquier origen que no sea el canónico
+— una regla que no se puede olvidar, a diferencia de un flag de build. Un fichero estático no
+podría distinguirlos.
+
+La guarda tiene dos mitades. `markPreviewHeaders` añade `X-Robots-Tag: noindex` a todas las rutas
+del `_headers` de una previsualización (y devuelve el de producción idéntico, byte a byte), y
+`buildRobots` **deja rastrear** la previsualización y no anuncia sitemap. Durante un tiempo el
+`robots.txt` de las previsualizaciones decía `Disallow: /`, que es justo lo que anula un
+`noindex`: un rastreador que no puede pedir la página nunca ve la cabecera, y un buscador puede
+listar la dirección desnuda si alguien la enlaza. Cloudflare ya manda esa cabecera en `pages.dev`,
+pero como ajuste de la plataforma que nada en el repositorio declara ni comprueba.
 
 Para que esa comparación signifique algo, la build de una previsualización tiene que **decir su
 propio origen**. `SITE_URL` lo fuerza a mano, y si no está, `astro.config.mjs` lee las dos
