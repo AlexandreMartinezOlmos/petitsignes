@@ -65,12 +65,17 @@ export default defineConfig({
        * And when each video's source started being checked against its URLs in
        * `sources.ts`, and the toolchain against what it declares: 78.69 /
        * 72.69 / 87.64 / 79.72.
+       *
+       * And when the hand-off from a play button to the player moved into
+       * `play-request.ts`, which keeps a tap made before the player hydrates,
+       * with tests for every way a request is kept, delivered or dropped:
+       * 79.36 / 78.57 / 88.43 / 80.41.
        */
       thresholds: {
-        statements: 78,
-        branches: 72,
-        functions: 87,
-        lines: 79,
+        statements: 79,
+        branches: 78,
+        functions: 88,
+        lines: 80,
       },
     },
   },
