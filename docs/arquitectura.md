@@ -62,7 +62,21 @@ El selector de idioma **no** es una isla: son enlaces (ver punto 3).
 
 Los botones de favorito y aprendido de las tarjetas **no** son componentes de React: son
 botones HTML y un único listener delegado en la rejilla. Hidratar 458 botones costaría más que
-todo lo demás junto.
+todo lo demás junto. Ese cableado vive en [`../src/lib/sign-cards.ts`](../src/lib/sign-cards.ts),
+aparte de `catalogue-grid.ts`: el controlador de la rejilla importa el buscador, y una ficha, una
+categoría o la 404 no tienen buscador que alimentar. Mientras estuvo junto a la rejilla, cada ficha
+descargaba Fuse.js (unos 9 kB comprimidos) para cablear dos botones y un «Veure el signe».
+
+**Las islas no importan `i18n.ts`.** Ese módulo lleva todos los textos de la interfaz en los tres
+idiomas, y una isla que lo importa se los lleva al navegador: una página en catalán descargaba la
+interfaz en castellano y en inglés, unos 6 kB comprimidos que nunca iba a ejecutar. Ahora cada isla
+declara las claves que usa (`SIGN_VIDEO_DIALOG_MESSAGES`, por ejemplo), la página elige esas cadenas
+en su idioma durante el build con `pickMessages` y se las pasa como prop, y la isla las lee con
+`translatorFrom` ([`../src/lib/translate.ts`](../src/lib/translate.ts)). El tipo del traductor sale
+de la lista, así que usar una clave sin declararla no compila. El estado vacío del catálogo, que es
+un script de página y no una isla, recibe las suyas en `data-messages`.
+`tests/e2e/payload.spec.ts` lee el JavaScript que llega al navegador y falla si aparece texto de
+otro idioma, o el buscador en una página que no lo tiene.
 
 ### 3. El idioma vive en la URL, y arrastra la lengua de signos
 

@@ -4,6 +4,7 @@ import {
   categoryInSentence,
   createTranslator,
   isLanguage,
+  pickMessages,
   type MessageKey,
 } from './i18n.ts';
 import type { StatusFilter } from './stores.ts';
@@ -27,6 +28,22 @@ describe('createTranslator', () => {
 
   it('leaves a placeholder untouched when no value is given', () => {
     expect(createTranslator('es')('search.resultCount')).toBe('{count} signos');
+  });
+});
+
+describe('pickMessages', () => {
+  it('hands an island exactly the strings it asked for, in one language', () => {
+    expect(pickMessages('es', ['player.close', 'nav.credits'])).toEqual({
+      'player.close': MESSAGES.es['player.close'],
+      'nav.credits': 'Fuentes y créditos',
+    });
+  });
+
+  it('carries nothing from the other languages', () => {
+    const picked = JSON.stringify(pickMessages('ca', ['player.close', 'nav.credits']));
+
+    expect(picked).not.toContain(MESSAGES.es['player.close']);
+    expect(picked).not.toContain(MESSAGES.en['nav.credits']);
   });
 });
 

@@ -98,12 +98,9 @@ describe('readPlayRequest', () => {
   it('carries everything the dialog shows from the button that asked', () => {
     const dataset = {
       label: 'llet',
-      signLanguage: 'lsc',
       videoUrl: 'https://www.youtube.com/watch?v=abc',
-      posterUrl: '',
       source: 'Vocabulari bàsic',
       sourceUrl: 'https://example.org/llet',
-      license: 'Generalitat de Catalunya',
     };
 
     expect(channel.readPlayRequest({ dataset }, 'leche')).toEqual({ signId: 'leche', ...dataset });
@@ -113,12 +110,9 @@ describe('readPlayRequest', () => {
     expect(channel.readPlayRequest({ dataset: {} }, 'leche')).toEqual({
       signId: 'leche',
       label: 'leche',
-      signLanguage: '',
       videoUrl: '',
-      posterUrl: '',
       source: '',
       sourceUrl: '',
-      license: '',
     });
   });
 });

@@ -2,8 +2,13 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../Breadcrumb.astro';
-import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
-import { categoryInSentence, createTranslator, type MessageKey } from '../../lib/i18n.ts';
+import SignVideoDialog, { SIGN_VIDEO_DIALOG_MESSAGES } from '../../islands/SignVideoDialog.tsx';
+import {
+  categoryInSentence,
+  createTranslator,
+  pickMessages,
+  type MessageKey,
+} from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import type { Crumb } from '../../lib/seo.ts';
 import { categoryPath } from '../../lib/categories.ts';
@@ -266,13 +271,10 @@ const reportUrl = newIssueUrl(
               class="sign-card__cta sign-detail__cta"
               data-action="play"
               data-sign-id={sign.id}
-              data-sign-language={signLanguage}
               data-label={label}
               data-video-url={video.videoUrl}
-              data-poster-url={video.posterUrl}
               data-source={video.source}
               data-source-url={video.sourceUrl}
-              data-license={video.license}
             >
               <svg class="icon-sm" aria-hidden="true" focusable="false">
                 <use href="#i-play" />
@@ -481,11 +483,11 @@ const reportUrl = newIssueUrl(
     }
   </div>
 
-  <SignVideoDialog language={language} client:idle />
+  <SignVideoDialog messages={pickMessages(language, SIGN_VIDEO_DIALOG_MESSAGES)} client:idle />
 </BaseLayout>
 
 <script>
-  import { mountSignCards } from '../../lib/catalogue-grid.ts';
+  import { mountSignCards } from '../../lib/sign-cards.ts';
 
   /**
    * The same wiring a card gets in the grid: the two toggles persist to storage

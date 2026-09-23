@@ -10,6 +10,7 @@
  * This is the TEXT axis. It is unrelated to the sign language of the videos.
  */
 
+import { translatorFrom, type Messages, type Translate } from './translate.ts';
 import { DEFAULT_LANGUAGE, LANGUAGES, type Language } from './types.ts';
 
 const MESSAGES = {
@@ -492,19 +493,27 @@ const MESSAGES = {
 
 export type MessageKey = keyof (typeof MESSAGES)['ca'];
 
-export type Translator = (key: MessageKey, values?: Record<string, string | number>) => string;
-
-/** Replaces `{name}` placeholders. Missing values are left untouched. */
-function interpolate(template: string, values?: Record<string, string | number>): string {
-  if (!values) return template;
-  return template.replace(/\{(\w+)\}/g, (match, name: string) =>
-    name in values ? String(values[name]) : match,
-  );
-}
+export type Translator = Translate<MessageKey>;
 
 export function createTranslator(language: Language = DEFAULT_LANGUAGE): Translator {
-  const dictionary = MESSAGES[language];
-  return (key, values) => interpolate(dictionary[key], values);
+  return translatorFrom<MessageKey>(MESSAGES[language]);
+}
+
+/**
+ * The strings an island asked for, in one language, ready to pass as a prop.
+ *
+ * Islands never import this module: that would ship every dictionary to the
+ * browser. The page picks their strings here, at build time, and the island
+ * reads them with `translatorFrom` (see `translate.ts`).
+ */
+export function pickMessages<Key extends MessageKey>(
+  language: Language,
+  keys: readonly Key[],
+): Messages<Key> {
+  const dictionary: Record<MessageKey, string> = MESSAGES[language];
+  const picked = {} as Record<Key, string>;
+  for (const key of keys) picked[key] = dictionary[key];
+  return picked;
 }
 
 /**

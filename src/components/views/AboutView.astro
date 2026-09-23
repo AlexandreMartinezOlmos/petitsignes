@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import PageShell, { type PageSection } from '../PageShell.astro';
-import ProgressData from '../../islands/ProgressData.tsx';
-import { createTranslator } from '../../lib/i18n.ts';
+import ProgressData, { PROGRESS_DATA_MESSAGES } from '../../islands/ProgressData.tsx';
+import { createTranslator, pickMessages } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { REPO_URL } from '../../lib/site.ts';
 
@@ -165,7 +165,12 @@ const sections: PageSection[] = [
        Its own section now, so it appears in the contents list — with no
        accounts, this is the only way anyone keeps their progress. */
   }
-  <ProgressData slot="data" language={language} signIds={signIds} client:visible />
+  <ProgressData
+    slot="data"
+    messages={pickMessages(language, PROGRESS_DATA_MESSAGES)}
+    signIds={signIds}
+    client:visible
+  />
 
   {
     /* Every party a visit can reach is named here, not only the one this

@@ -2,10 +2,11 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SignCard from '../SignCard.astro';
-import CatalogueToolbar from '../../islands/CatalogueToolbar.tsx';
-import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
+import CatalogueToolbar, { CATALOGUE_TOOLBAR_MESSAGES } from '../../islands/CatalogueToolbar.tsx';
+import SignVideoDialog, { SIGN_VIDEO_DIALOG_MESSAGES } from '../../islands/SignVideoDialog.tsx';
 import { categoryPath } from '../../lib/categories.ts';
-import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
+import { EMPTY_STATE_MESSAGES } from '../../lib/empty-state.ts';
+import { categoryInSentence, createTranslator, pickMessages } from '../../lib/i18n.ts';
 import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { CATALOGUE_RESTORING_ATTR, CATALOGUE_STATE_KEY } from '../../lib/catalogue-history.ts';
@@ -106,6 +107,9 @@ function sectionLink(category: Category): SectionLink {
       };
 }
 
+// Why the grid is empty, in this page's language only (see `empty-state.ts`).
+const emptyMessages = JSON.stringify(pickMessages(language, EMPTY_STATE_MESSAGES));
+
 const gridItems: GridItem[] = [];
 let openSection: string | null = null;
 
@@ -137,7 +141,7 @@ for (const sign of signs) {
   <CatalogueToolbar
     slot="toolbar"
     categories={toolbarCategories}
-    language={language}
+    messages={pickMessages(language, CATALOGUE_TOOLBAR_MESSAGES)}
     initialCount={signs.length}
     client:load
   />
@@ -252,9 +256,9 @@ for (const sign of signs) {
     }
   </div>
 
-  <div id="no-results" class="empty-state" role="status"></div>
+  <div id="no-results" class="empty-state" role="status" data-messages={emptyMessages}></div>
 
-  <SignVideoDialog language={language} client:idle />
+  <SignVideoDialog messages={pickMessages(language, SIGN_VIDEO_DIALOG_MESSAGES)} client:idle />
 </BaseLayout>
 
 <script>
@@ -267,9 +271,9 @@ for (const sign of signs) {
     hydrateFromStorage,
     rememberLanguage,
   } from '../../lib/stores.ts';
-  import { createTranslator, type MessageKey } from '../../lib/i18n.ts';
+  import { emptyStateFor, type EmptyStateMessage } from '../../lib/empty-state.ts';
   import { isRoutedLocale } from '../../lib/routing.ts';
-  import { isSearchable } from '../../lib/search.ts';
+  import { translatorFrom, type Messages } from '../../lib/translate.ts';
 
   const grid = document.getElementById('sign-grid');
   const emptyState = document.getElementById('no-results');
@@ -293,7 +297,10 @@ for (const sign of signs) {
     const lang = grid.dataset.lang ?? 'ca';
     if (isRoutedLocale(lang)) void rememberLanguage(lang);
 
-    const t = createTranslator(isRoutedLocale(lang) ? lang : 'ca');
+    // Picked at build time in this page's language (see `empty-state.ts`).
+    const t = translatorFrom(
+      JSON.parse(emptyState?.dataset.messages ?? '{}') as Messages<EmptyStateMessage>,
+    );
 
     // The empty state explains *why* the grid is empty: an empty "favourites"
     // filter reads differently from a search that found nothing. Interpolated
@@ -311,31 +318,7 @@ for (const sign of signs) {
       }
 
       const query = $query.get().trim();
-      const status = $statusFilter.get();
-
-      let emoji = '🤷';
-      let titleKey: MessageKey = 'empty.generic.title';
-      let hintKey: MessageKey = 'empty.generic.hint';
-
-      // Same gate as the filter (`isSearchable`, not `!== ''`), or a query too
-      // short to search would blame the empty grid on a search that never ran.
-      if (isSearchable(query)) {
-        emoji = '🔍';
-        titleKey = 'empty.search.title';
-        hintKey = 'empty.search.hint';
-      } else if (status === 'favorites') {
-        emoji = '💛';
-        titleKey = 'empty.favorites.title';
-        hintKey = 'empty.favorites.hint';
-      } else if (status === 'learned') {
-        emoji = '🌱';
-        titleKey = 'empty.learned.title';
-        hintKey = 'empty.learned.hint';
-      } else if (status === 'pending') {
-        emoji = '🎉';
-        titleKey = 'empty.pending.title';
-        hintKey = 'empty.pending.hint';
-      }
+      const { emoji, title, hint } = emptyStateFor(query, $statusFilter.get());
 
       const emojiEl = document.createElement('span');
       emojiEl.className = 'empty-state__emoji';
@@ -344,11 +327,11 @@ for (const sign of signs) {
 
       const titleEl = document.createElement('p');
       titleEl.className = 'empty-state__title';
-      titleEl.textContent = t(titleKey, { query });
+      titleEl.textContent = t(title, { query });
 
       const hintEl = document.createElement('p');
       hintEl.className = 'empty-state__hint';
-      hintEl.textContent = t(hintKey);
+      hintEl.textContent = t(hint);
 
       emptyState.replaceChildren(emojiEl, titleEl, hintEl);
     }
