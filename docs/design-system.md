@@ -644,7 +644,7 @@ Antes de dar por terminado un componente:
 - [ ] Se comporta con `prefers-reduced-motion` y con `prefers-reduced-transparency`.
 - [ ] Sin valores sueltos: todo sale de tokens.
 - [ ] Lo que se repite es una clase de componente, no una cadena de utilidades.
-- [ ] `npm run test:e2e` en verde (incluye axe sobre las 8 páginas y el tema oscuro).
+- [ ] `npm run test:e2e` en verde (incluye axe sobre cada tipo de página, en los dos temas).
 - [ ] Lighthouse ≥ 95 en las 4 categorías; vigila **CLS**.
 
 ```bash

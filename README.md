@@ -135,8 +135,10 @@ Al tratarse de un proyecto sobre lengua de signos, la accesibilidad no es un añ
 coherencia con el propósito. Hay una declaración de accesibilidad publicada en el propio sitio,
 en catalán y castellano.
 
-Cada cambio se comprueba con axe-core sobre **cada tipo de página, en los dos idiomas** —catálogo,
-categoría, ficha de signo, las tres páginas de texto y el 404— y en modo oscuro, más un test
+Cada cambio se comprueba con axe-core —reglas WCAG 2.0, 2.1 y 2.2 de nivel A y AA— sobre **cada
+tipo de página, en los dos idiomas y en los dos temas**: catálogo, categoría, ficha de signo, las
+tres páginas de texto y el 404. Una página de control con defectos puestos a propósito demuestra
+que la batería los detecta, para que un resultado vacío signifique algo. Hay además un test
 específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo falla, el CI falla.
 
 ## Arquitectura en una pantalla

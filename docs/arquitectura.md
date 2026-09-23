@@ -248,8 +248,11 @@ diseño.
 - El sitio publica una **declaración de accesibilidad** en `/accessibilitat/` y `/es/accessibilitat/`,
   como espera la directiva.
 
-Se comprueba con axe-core (etiquetas WCAG 2.0/2.1/2.2, niveles A y AA) sobre las ocho páginas y
-en tema oscuro, más Lighthouse con presupuestos que rompen el CI.
+Se comprueba con axe-core (etiquetas WCAG 2.0/2.1/2.2, niveles A y AA, más `heading-order`) sobre
+cada tipo de página en los dos idiomas y en los dos temas, más Lighthouse con presupuestos que
+rompen el CI. La configuración vive en `tests/e2e/axe.ts` y se construye con `options()`, no
+encadenando `withTags()` y `withRules()`: los dos escriben el mismo campo `runOnly` y el segundo
+anula al primero. Una página canario con un defecto de cada tipo comprueba que la batería los ve.
 
 ## Portabilidad
 
