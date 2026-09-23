@@ -105,6 +105,16 @@ describe('the policy grants only what this site needs', () => {
     expect(csp).toContain("frame-ancestors 'none'");
   });
 
+  /**
+   * `default-src 'none'` refuses every resource type without its own grant, and
+   * the manifest is one a page load never exercises: a browser fetches it only
+   * when someone installs the site. Without this line the "add to home screen"
+   * that `site.webmanifest` exists for was refused in production.
+   */
+  it('lets the browser read the web app manifest from this origin', () => {
+    expect(csp).toContain("manifest-src 'self'");
+  });
+
   /** Nothing on this site submits a form, and an injected `<base>` would
    * silently re-point every relative URL on the page. */
   it('closes the openings a static site has no use for', () => {

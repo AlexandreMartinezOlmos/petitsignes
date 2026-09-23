@@ -35,6 +35,14 @@ jobs:
 
       - run: npm ci
 
+      # Only what ships: `--omit=dev` leaves out the test and lint tooling, and
+      # `high` is the level at which an advisory stops being a note and becomes
+      # a reason not to deploy. A new advisory fails every branch until it is
+      # dealt with, which is the point: an alert nobody is made to read is an
+      # alert nobody acts on.
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
       - name: Lint
         run: npm run lint
 

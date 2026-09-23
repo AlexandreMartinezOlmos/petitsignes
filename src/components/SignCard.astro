@@ -45,7 +45,12 @@ const t = createTranslator(language);
 const label = sign.labels[language];
 
 /**
- * The default face of the card is always the static poster, never the video.
+ * The default face of the card is always static, never the video. With no
+ * poster (none of the sources allows one), it is the category's icon on the
+ * category's tint: decoration, hidden from assistive technology as a whole. The
+ * word names the sign and the grouping heading names the category, so a
+ * sentence here would add nothing but noise — and "no image yet" would promise
+ * an image that is not coming.
  *
  * Only the page's own sign language is rendered. The interface language is
  * fixed at build time and lives in the URL (`/` → LSC, `/es/` → LSE), so the
@@ -96,11 +101,10 @@ const href = localeHref(signPath(sign.id), language);
             decoding="async"
           />
         ) : (
-          <div class="sign-card__placeholder">
-            <svg class="icon-lg" aria-hidden="true" focusable="false">
+          <div class="sign-card__placeholder" aria-hidden="true">
+            <svg class="icon-lg" focusable="false">
               <use href={`#i-${category.icon}`} />
             </svg>
-            <span class="sr-only">{t('card.posterPending')}</span>
           </div>
         )
       }

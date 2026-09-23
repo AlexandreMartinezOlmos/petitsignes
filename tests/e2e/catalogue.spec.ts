@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { stubCalls, stubYouTubeApi } from './youtube-stub.ts';
 
 /**
  * Astro strips the `ssr` attribute from an island once it hydrates. Interacting
@@ -198,28 +199,38 @@ test.describe('video delivery', () => {
     // Browsing the catalogue must not contact YouTube at all.
     expect(youtubeRequests).toEqual([]);
 
+    // Asserted on the request rather than on the iframe left in the page:
+    // whether YouTube then agrees to play depends on the network — from CI it
+    // refuses, and the dialog rightly swaps the frame for the source link.
+    const embed = page.waitForRequest((request) =>
+      /^https:\/\/www\.youtube-nocookie\.com\/embed\//.test(request.url()),
+    );
     await playLscLeche(page);
-
-    const iframe = page.locator('dialog[open] iframe');
-    await expect(iframe).toHaveAttribute('src', /youtube-nocookie\.com/);
+    await embed;
   });
 
-  test('a finished sign does not close the player on its own', async ({ page }) => {
+  /**
+   * Regression: the dialog used to close itself when a clip ended. The player
+   * reports `ENDED` and the dialog must rewind and play again in place.
+   * Driven by the stand-in player, so the clip "ends" on cue instead of the
+   * test waiting out a real video that CI is not allowed to play anyway.
+   */
+  test('a finished sign loops in place instead of closing the player', async ({ page }) => {
+    await stubYouTubeApi(page, { end: true });
     await page.goto('/');
     await waitForHydration(page);
 
     await playLscLeche(page);
-    await expect(page.locator('dialog[open]')).toBeVisible();
 
-    // The clips are a few seconds long and loop; the dialog must still be open
-    // well past a single play-through (regression: it used to close itself).
-    await page.waitForTimeout(7000);
-
+    await expect
+      .poll(() => stubCalls(page))
+      .toEqual(expect.arrayContaining(['seekTo(0)', 'playVideo']));
     await expect(page.locator('dialog[open]')).toBeVisible();
     await expect(page.locator('dialog[open] iframe')).toBeVisible();
   });
 
   test('the close button tears the player down', async ({ page }) => {
+    await stubYouTubeApi(page);
     await page.goto('/');
     await waitForHydration(page);
 
@@ -230,6 +241,46 @@ test.describe('video delivery', () => {
 
     await expect(page.locator('dialog[open]')).toHaveCount(0);
     await expect(page.locator('dialog iframe')).toHaveCount(0);
+    expect(await stubCalls(page)).toContain('destroy');
+  });
+
+  /**
+   * The source can remove a video, make it private or switch embedding off at
+   * any time, and nothing in this repository would change. The player then
+   * loads fine and fires `onError` (100, 101 or 150) — and without handling
+   * it the visitor was left on YouTube's own error screen with no way on.
+   *
+   * The stand-in player makes the refusal deterministic: which of the real
+   * 194 videos is broken today is not something a test can know, and a suite
+   * that depends on one breaking is a suite that fails when it is fixed.
+   */
+  test('a video YouTube refuses to play falls back to the source', async ({ page }) => {
+    // 150: the owner does not allow this video to be embedded.
+    await stubYouTubeApi(page, { error: 150 });
+
+    await page.goto('/');
+    await waitForHydration(page);
+    await playLscLeche(page);
+
+    const dialog = page.locator('dialog[open]');
+    const alert = dialog.getByRole('alert');
+    await expect(alert).toContainText('no es pot reproduir');
+    await expect(alert.getByRole('link')).toHaveAttribute('href', /youtube\.com/);
+    // The refused player is torn down, not left behind the message.
+    await expect(dialog.locator('iframe')).toHaveCount(0);
+  });
+
+  /** The API itself never arriving — an extension or a filtered network. */
+  test('a player that cannot load falls back to the source', async ({ page }) => {
+    await page.route('https://www.youtube.com/iframe_api', (route) => route.abort());
+
+    await page.goto('/');
+    await waitForHydration(page);
+    await playLscLeche(page);
+
+    const alert = page.locator('dialog[open]').getByRole('alert');
+    await expect(alert).toContainText('No hem pogut carregar el reproductor');
+    await expect(alert.getByRole('link')).toHaveAttribute('href', /youtube\.com/);
   });
 
   test('an LSE sign links out to the dictionary instead of playing', async ({ page }) => {

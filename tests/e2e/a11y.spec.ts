@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+import { wcagScan } from './axe.ts';
 
 /**
  * Automated accessibility checks.
@@ -31,40 +31,73 @@ const PAGES = [
   { name: 'category (es)', path: '/es/categoria/menjar-i-beure/' },
 ];
 
-for (const { name, path } of PAGES) {
-  test(`${name} has no detectable accessibility violations`, async ({ page }) => {
-    await page.goto(path);
+/**
+ * The page as a visitor finally sees it: every island hydrated and committed.
+ *
+ * Islands add controls, and a `client:visible` one mounts only once it has been
+ * scrolled to, so the page is scrolled to the end and back first. Waiting also
+ * keeps a mid-scan hydration from destroying axe's context.
+ */
+async function settle(page: Page): Promise<void> {
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+  await page.evaluate(() => window.scrollTo(0, 0));
 
-    // Scan the hydrated DOM, not the snapshot before it: islands add controls,
-    // and a `client:visible` one mounts only once it has been scrolled to.
-    // Waiting also keeps a mid-scan hydration from destroying axe's context.
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
-    await page.evaluate(() => window.scrollTo(0, 0));
-
-    // Two frames after hydration: the `ssr` attribute drops when the island
-    // mounts, but React may still be committing. Scanning into that window is
-    // what made this sweep fail intermittently on the pages that have islands.
-    await page.evaluate(
-      () =>
-        new Promise((resolve) => {
-          requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)));
-        }),
-    );
-
-    // `heading-order` is not in any WCAG tag — axe files it under
-    // `best-practice` — so this sweep was blind to a skipped heading level until
-    // Lighthouse reported one: the category page went `h1` straight to the
-    // cards' `h3`. Naming the rule rather than pulling in the whole
-    // `best-practice` set keeps the sweep about defects and not about style.
-    const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-      .withRules(['heading-order'])
-      .analyze();
-
-    expect(results.violations).toEqual([]);
-  });
+  // Two frames after hydration: the `ssr` attribute drops when the island
+  // mounts, but React may still be committing. Scanning into that window is
+  // what made this sweep fail intermittently on the pages that have islands.
+  await page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)));
+      }),
+  );
 }
+
+/**
+ * Every page, in both themes. The dark palette is a second set of colours with
+ * its own contrast to lose, and the statement promises AA in either — so it is
+ * swept as fully as the light one, not spot-checked on the home page.
+ */
+for (const colorScheme of ['light', 'dark'] as const) {
+  for (const { name, path } of PAGES) {
+    test(`${name} has no detectable accessibility violations (${colorScheme})`, async ({
+      page,
+    }) => {
+      await page.emulateMedia({ colorScheme });
+      await page.goto(path);
+
+      // The palette under test must actually be in force, or this proves nothing.
+      await expect(page.locator('html')).toHaveCSS('color-scheme', colorScheme);
+
+      await settle(page);
+      const results = await wcagScan(page).analyze();
+
+      expect(results.violations).toEqual([]);
+    });
+  }
+}
+
+/**
+ * The sweep above passes on an empty result, so an empty result has to mean
+ * something. This page carries one defect per kind of rule the sweep claims to
+ * run — a level-A rule, an AA rule, and the extra `heading-order` — and each
+ * must come back. It is what caught the sweep checking a single rule while
+ * every page reported clean.
+ */
+test('the sweep reports the defects it claims to look for', async ({ page }) => {
+  await page.setContent(`<!doctype html>
+    <html lang="ca"><head><title>Canary</title></head><body><main>
+      <h1>Canary</h1>
+      <h4>A heading that skips two levels</h4>
+      <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">
+      <p style="color:#aaa;background:#fff">Grey on white, well under 4.5:1</p>
+    </main></body></html>`);
+
+  const found = (await wcagScan(page).analyze()).violations.map((v) => v.id);
+
+  expect(found).toEqual(expect.arrayContaining(['image-alt', 'color-contrast', 'heading-order']));
+});
 
 /**
  * axe cannot catch this: every group had an accessible name, they were just
@@ -82,18 +115,6 @@ test('each control group has its own accessible name', async ({ page }) => {
   expect(names.length).toBeGreaterThan(1);
   expect(names).not.toContain('');
   expect(new Set(names).size, `duplicate group names: ${names.join(', ')}`).toBe(names.length);
-});
-
-test('colour contrast holds in dark mode', async ({ page }) => {
-  await page.emulateMedia({ colorScheme: 'dark' });
-  await page.goto('/');
-
-  // The dark palette must actually be in force, or this proves nothing.
-  await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark');
-
-  const results = await new AxeBuilder({ page }).withTags(['wcag2aa']).analyze();
-
-  expect(results.violations).toEqual([]);
 });
 
 /**

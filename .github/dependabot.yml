@@ -1,0 +1,46 @@
+# Dependency updates, opened as pull requests against `develop`.
+#
+# Without this file GitHub still raises *security* alerts, and opens a pull
+# request for each of them — but always against the default branch, skipping
+# `develop` and the feature-branch CI. The routine updates configured here go
+# through the same Gitflow as any other change, so a fix usually reaches
+# `develop` before an advisory is ever raised for it.
+#
+# A security pull request that still arrives against `main` is not merged there:
+# its change is reproduced on a `feature/` branch and travels the normal route.
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      prefix-development: chore
+      include: scope
+    # One pull request per week for everything that does not change a major
+    # version, split by whether a visitor ever downloads it. A major is a
+    # migration and gets its own pull request to be read on its own.
+    groups:
+      production:
+        dependency-type: production
+        update-types: [minor, patch]
+      development:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ['*']
