@@ -109,6 +109,29 @@ describe('every sign in the catalogue', () => {
 
     expect(collisions).toEqual([]);
   });
+
+  it('quotes each source in its own words, and never speaks for the project', () => {
+    // `license` is shown as a quotation, marked with the source's language
+    // (`SOURCE_LANGUAGE`), because it is not translated. The DILSE licence once
+    // carried the project's own sentence — "el projecte només hi enllaça…" — in
+    // Catalan, so every Spanish page read it in a language the page was not
+    // in. The project's words live in the interface translations; this keeps
+    // them from drifting back into the data.
+    const projectVoice =
+      /\b(projecte|proyecto|project|enllacem|enlazamos|allotgem|alojamos|només hi enllaça)\b/i;
+    const offending: string[] = [];
+
+    for (const id of ids) {
+      const data = JSON.parse(readFileSync(resolve(dir, `${id}.json`), 'utf8')) as {
+        videos: SignEntry['videos'];
+      };
+      for (const video of data.videos) {
+        if (projectVoice.test(video.license)) offending.push(`${id} (${video.signLanguage})`);
+      }
+    }
+
+    expect(offending).toEqual([]);
+  });
 });
 
 describe('relatedSigns', () => {

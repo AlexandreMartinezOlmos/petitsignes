@@ -7,7 +7,12 @@ import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { categoryPath } from '../../lib/categories.ts';
 import { relatedSigns, signPath } from '../../lib/signs.ts';
 import { newIssueUrl } from '../../lib/site.ts';
-import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
+import {
+  LANGUAGE_TO_SIGN_LANGUAGE,
+  SOURCE_LANGUAGE,
+  type Category,
+  type SignEntry,
+} from '../../lib/types.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -349,7 +354,19 @@ const reportUrl = newIssueUrl(
               <time datetime={video.updatedAt}>{updatedAt}</time>
             </dd>
           </dl>
-          <p class="sign-source__license">{video.license}</p>
+          {/*
+            The source's attribution is quoted in the source's language and
+            marked as such, so it stays correct on a page in any other — the
+            English interface, once routed, shows DILSE's. What the project
+            does with the video is ours to say, so it is translated like the
+            rest of the page. It used to be Catalan on all 194 Spanish pages.
+          */}
+          <p class="sign-source__license" lang={SOURCE_LANGUAGE[video.source]}>
+            {video.license}
+          </p>
+          {video.delivery === 'external-link' && (
+            <p class="sign-source__license">{t('sign.sourceLinkOnly')}</p>
+          )}
         </aside>
       )
     }
