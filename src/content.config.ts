@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'zod';
+import { provenanceProblems } from './lib/sources.ts';
 import {
   CATEGORY_IDS,
   SIGN_LANGUAGES,
@@ -43,7 +44,14 @@ const signVideo = z
     // informational now — nothing reads it to make a decision.
     sourceTerm: z.string().min(1).optional(),
   })
-  .strict();
+  .strict()
+  // Each URL being a URL is not enough: it has to be an address the declared
+  // source publishes at, in the sign language it publishes (see `sources.ts`).
+  .superRefine((video, context) => {
+    for (const message of provenanceProblems(video)) {
+      context.addIssue({ code: 'custom', message });
+    }
+  });
 
 const signs = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/signs' }),

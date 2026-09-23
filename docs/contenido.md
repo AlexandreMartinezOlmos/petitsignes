@@ -104,6 +104,11 @@ favoritos que la gente tenga guardados.
 
 - `source` solo admite valores conocidos; añadir una fuente nueva implica añadir también su
   atribución en la página de créditos.
+- Cada fuente fija el resto: `Gencat-VocabulariLSC` es LSC, `youtube-embed`, un vídeo de YouTube y
+  un `sourceUrl` en `llengua.gencat.cat`; `CNSE-DILSE` es LSE, `external-link` y las dos URL en
+  `fundacioncnse-dilse.org`. Un enlace de DILSE archivado bajo la Generalitat, o un vídeo marcado
+  con la lengua de signos que no es, rompe el build. Las reglas están en
+  [`../src/lib/sources.ts`](../src/lib/sources.ts).
 - `sourceTerm` es el lema que usa el diccionario de origen para esta entrada (p. ej. `Llit` para
   nuestro `cama`). Es solo metadato de atribución, no un permiso para duplicar: el esquema nunca
   deja meter dos vídeos de la misma lengua en un mismo signo, tenga o no `sourceTerm`. Si el

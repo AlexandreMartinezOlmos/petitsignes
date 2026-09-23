@@ -59,12 +59,15 @@ export default defineConfig({
        * And again when the progress store learned to follow other tabs and to
        * leave unreadable data alone, with the tests for both: 77.75 / 71.60 /
        * 87.03 / 78.77.
+       *
+       * And when each video's source started being checked against its URLs in
+       * `sources.ts`: 78.28 / 72.48 / 87.34 / 79.33.
        */
       thresholds: {
-        statements: 77,
-        branches: 71,
+        statements: 78,
+        branches: 72,
         functions: 87,
-        lines: 78,
+        lines: 79,
       },
     },
   },
