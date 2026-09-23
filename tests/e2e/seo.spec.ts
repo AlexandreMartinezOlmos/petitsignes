@@ -1,7 +1,12 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
 import { expect, test } from '@playwright/test';
+import { createTranslator } from '../../src/lib/i18n.ts';
 import { TITLE_MAX_LENGTH } from '../../src/lib/seo.ts';
+import { LANGUAGE_TO_SIGN_LANGUAGE, type SignEntry } from '../../src/lib/types.ts';
+
+/** A sign as its JSON file holds it: the entry without the id, which is the filename. */
+type SignData = Omit<SignEntry, 'id'>;
 
 /**
  * What every page tells a search engine, read from the build that ships.
@@ -25,6 +30,7 @@ interface BuiltPage {
   locale: 'ca' | 'es';
   kind: Kind;
   title: string;
+  description: string;
   noindex: boolean;
 }
 
@@ -64,6 +70,7 @@ const PAGES: BuiltPage[] = htmlFiles(DIST).map((file) => {
     locale: path.startsWith('/es/') ? 'es' : 'ca',
     kind: kindOf(path),
     title: decode(html.match(/<title>([^<]*)<\/title>/)?.[1] ?? ''),
+    description: decode(html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? ''),
     noindex: /<meta name="robots" content="noindex/.test(html),
   };
 });
@@ -165,5 +172,84 @@ test.describe('titles', () => {
     ).map((p) => `${p.path}: "${p.title}" (${[...p.title].length})`);
 
     expect(tooLong).toEqual([]);
+  });
+});
+
+test.describe('descriptions', () => {
+  /**
+   * The window a search result shows the description in. Past about 160
+   * characters it is cut mid-sentence — the project page ran to 350 and the
+   * credits to 207, because both reused their opening paragraph. Under about
+   * 70 it is too thin to say what the page holds: the home page's 61 was the
+   * tagline and nothing else.
+   */
+  const MIN = 70;
+  const MAX = 160;
+
+  test('every indexable page has a description that fits the result it is shown in', () => {
+    const outside = INDEXABLE.map((p) => ({ ...p, length: [...p.description].length }))
+      .filter(({ length }) => length < MIN || length > MAX)
+      .map(({ path, length }) => `${path}: ${length}`);
+
+    expect(outside).toEqual([]);
+  });
+
+  test('no two indexable pages share a description', () => {
+    const seen = new Map<string, string>();
+    const collisions: string[] = [];
+
+    for (const { path, description } of INDEXABLE) {
+      const first = seen.get(description);
+      if (first) collisions.push(`${path} and ${first}`);
+      else seen.set(description, path);
+    }
+
+    expect(collisions).toEqual([]);
+  });
+
+  /**
+   * The promise a result makes has to match what the page delivers. A Catalan
+   * sign page embeds its video; a Spanish one links out to it at DILSE. All 194
+   * Spanish descriptions said "con el vídeo de la fuente oficial" anyway.
+   *
+   * Read from the content rather than assumed per locale, so the day a sign
+   * language gains an embed — or loses one — the expectation follows the data.
+   */
+  test('a sign page only promises a video it actually plays', () => {
+    const signs = PAGES.filter((p) => p.kind === 'sign');
+    expect(signs.length).toBeGreaterThan(380);
+
+    for (const { path, locale, description } of signs) {
+      const id = path.split('/').filter(Boolean).at(-1)!;
+      const sign = JSON.parse(
+        readFileSync(resolve(process.cwd(), 'src/content/signs', `${id}.json`), 'utf8'),
+      ) as SignData;
+      const signLanguage = LANGUAGE_TO_SIGN_LANGUAGE[locale];
+      const video = sign.videos.find((v) => v.signLanguage === signLanguage);
+
+      const t = createTranslator(locale);
+      const values = {
+        label: sign.labels[locale],
+        signLanguage: t(signLanguage === 'lsc' ? 'signLanguage.lscFull' : 'signLanguage.lseFull'),
+      };
+      const promisesPlayback = description === t('sign.meta', values);
+
+      expect(promisesPlayback, path).toBe(video?.delivery === 'youtube-embed');
+    }
+  });
+
+  test('the Spanish sign page says the video is one link away', () => {
+    expect(page('/es/signe/leche/').description).toBe(
+      'Cómo se signa «leche» en Lengua de Signos Española, con el enlace a su vídeo en la fuente oficial.',
+    );
+  });
+
+  test('the home page says how many signs it holds, in its own sign language', () => {
+    expect(page('/').description).toMatch(
+      /^\d+ signes reals de la llengua de signes catalana \(LSC\) /,
+    );
+    expect(page('/es/').description).toMatch(
+      /^\d+ signos reales de la lengua de signos española \(LSE\) /,
+    );
   });
 });

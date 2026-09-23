@@ -76,10 +76,16 @@ const catalogueHref = localeHref('/', language);
  * page can actually deliver. When a sign language has no video for this concept
  * the page still exists and is still worth reaching — but promising a video it
  * does not have would be the same false claim the card is forbidden to make.
+ *
+ * The same goes for how the video arrives. An embedded one plays on this page;
+ * a linked one is a step away, at the source. The description used to promise
+ * "the video" on all 194 Spanish pages, which carry only the link.
  */
-const description = video
-  ? t('sign.meta', { label, signLanguage: fullName })
-  : t('sign.metaNoVideo', { label, signLanguage: fullName });
+const description = !video
+  ? t('sign.metaNoVideo', { label, signLanguage: fullName })
+  : video.delivery === 'youtube-embed'
+    ? t('sign.meta', { label, signLanguage: fullName })
+    : t('sign.metaExternal', { label, signLanguage: fullName });
 
 /**
  * The date the source last updated this entry. Showing it is not a nicety: the

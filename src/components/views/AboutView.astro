@@ -24,6 +24,11 @@ const signIds = (await getCollection('signs')).map((entry) => entry.id).sort();
 const copy = {
   ca: {
     title: 'El projecte',
+    // The sentence a search result shows. The intro is the page's opening
+    // paragraph, written to be read in full; at 200–350 characters it was cut
+    // off mid-sentence in every result.
+    description:
+      'Projecte lliure i gratuït per aprendre signes de la LSC i la LSE amb el teu nadó. Signes reals de fonts oficials, sense comptes ni publicitat.',
     intro:
       'Abans de dir la primera paraula, un nadó ja es pot comunicar amb les mans: demanar «llet», dir «s’ha acabat» o «una altra vegada» amb un gest senzill redueix la frustració molt abans de parlar. Petits Signes recull signes reals de la llengua de signes catalana (LSC) i espanyola (LSE) perquè les famílies oients els puguin fer servir amb el seu nadó.',
     whoTitle: 'Per a qui és',
@@ -67,6 +72,8 @@ const copy = {
   },
   es: {
     title: 'El proyecto',
+    description:
+      'Proyecto libre y gratuito para aprender signos de la LSC y la LSE con tu bebé. Signos reales de fuentes oficiales, sin cuentas ni publicidad.',
     intro:
       'Antes de decir su primera palabra, un bebé ya puede comunicarse con las manos: pedir «leche», decir «se acabó» u «otra vez» con un gesto sencillo reduce la frustración mucho antes de hablar. Petits Signes reúne signos reales de la lengua de signos catalana (LSC) y española (LSE) para que las familias oyentes puedan usarlos con su bebé.',
     whoTitle: 'Para quién es',
@@ -137,6 +144,7 @@ const sections: PageSection[] = [
   path="/el-projecte/"
   title={c.title}
   lead={c.intro}
+  description={c.description}
   sections={sections}
 >
   <p slot="who">{c.whoBody}</p>

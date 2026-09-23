@@ -35,6 +35,8 @@ const MESSAGES = {
     'nav.onThisPage': 'En aquesta pàgina',
 
     'home.title': 'Signes per a nadons en {signLanguage}',
+    'home.meta':
+      '{count} signes reals de la {signLanguage} per comunicar-te amb el teu nadó abans que parli. De fonts oficials, gratuït i sense registre.',
     'hero.title': "Comunica't amb el teu nadó",
     'hero.titleAccent': 'molt abans de la seva primera paraula',
     'hero.lead': 'Signes reals de la llengua de signes catalana per al dia a dia amb el teu nadó.',
@@ -95,6 +97,8 @@ const MESSAGES = {
     'sign.subtitle': 'en {signLanguage}',
     'sign.meta':
       'Com es signa «{label}» en {signLanguage}, amb el vídeo de la font oficial i l’enllaç a la fitxa original.',
+    'sign.metaExternal':
+      'Com es signa «{label}» en {signLanguage}, amb l’enllaç al seu vídeo a la font oficial.',
     'sign.metaNoVideo':
       '«{label}» al catàleg de Petits Signes. Encara no en tenim el vídeo en {signLanguage}.',
     'sign.sourceTitle': 'D’on surt aquest signe',
@@ -179,6 +183,8 @@ const MESSAGES = {
     'nav.onThisPage': 'En esta página',
 
     'home.title': 'Signos para bebés en {signLanguage}',
+    'home.meta':
+      '{count} signos reales de la {signLanguage} para comunicarte con tu bebé antes de que hable. De fuentes oficiales, gratis y sin registro.',
     'hero.title': 'Comunícate con tu bebé',
     'hero.titleAccent': 'mucho antes de su primera palabra',
     'hero.lead': 'Signos reales de la lengua de signos española para el día a día con tu bebé.',
@@ -237,6 +243,8 @@ const MESSAGES = {
     'sign.subtitle': 'en {signLanguage}',
     'sign.meta':
       'Cómo se signa «{label}» en {signLanguage}, con el vídeo de la fuente oficial y el enlace a la ficha original.',
+    'sign.metaExternal':
+      'Cómo se signa «{label}» en {signLanguage}, con el enlace a su vídeo en la fuente oficial.',
     'sign.metaNoVideo':
       '«{label}» en el catálogo de Petits Signes. Todavía no tenemos su vídeo en {signLanguage}.',
     'sign.sourceTitle': 'De dónde sale este signo',
@@ -322,6 +330,8 @@ const MESSAGES = {
     'nav.onThisPage': 'On this page',
 
     'home.title': 'Baby signs in {signLanguage}',
+    'home.meta':
+      '{count} real signs in {signLanguage} to communicate with your baby before they can speak. From official sources, free and with no account.',
     'hero.title': 'Connect with your baby',
     'hero.titleAccent': 'long before their first word',
     'hero.lead': 'Real signs for everyday moments with your baby.',
@@ -380,6 +390,8 @@ const MESSAGES = {
     'sign.subtitle': 'in {signLanguage}',
     'sign.meta':
       'How to sign “{label}” in {signLanguage}, with the video from the official source and a link to the original entry.',
+    'sign.metaExternal':
+      'How to sign “{label}” in {signLanguage}, with a link to its video at the official source.',
     'sign.metaNoVideo':
       '“{label}” in the Petits Signes catalogue. We do not have its {signLanguage} video yet.',
     'sign.sourceTitle': 'Where this sign comes from',
