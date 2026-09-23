@@ -85,7 +85,7 @@ describe('message catalogue', () => {
    * WCAG 2.2 §2.5.3 (Label in Name) again, for the sign page's two toggles.
    *
    * The card's toggles stay icon-only — no room in a 44px square — but the
-   * sign page has space, so H3 gave them a visible caption. The caption is a
+   * sign page has space, so there they carry a visible caption. The caption is a
    * fixed noun ("Preferit") while the announced name still changes with state
    * ("Afegeix a preferits" / "Treu de preferits"), so there is no single pair
    * to pin a `startsWith` on; instead the caption has to survive inside *both*

@@ -193,7 +193,8 @@ describe('tsv round-trip', () => {
   });
 
   it('rejects two ids that share a label in any language', () => {
-    // The gap I1 went through: two different ids, the same word. `parseTsv`
+    // A gap that once let a word through twice: two different ids, the same
+    // word. `parseTsv`
     // already rejected a duplicate id; this closes the other half.
     const tsv = serializeTsv([row(), row({ id: 'gato2' })]);
     expect(() => parseTsv(tsv)).toThrow(/"gat" \(ca\) is already used/);

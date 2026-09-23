@@ -199,8 +199,8 @@ for (const path of ['/', '/el-projecte/', '/credits/', '/accessibilitat/']) {
  * Swept rather than asserted case by case: the next control to grow an
  * `aria-label` is caught without anyone remembering to add a test.
  *
- * Looped across every page in `PAGES`, not only `/`: H3 gave the sign page's
- * two toggles a visible caption (`aria-hidden`, sitting beside the icon) that
+ * Looped across every page in `PAGES`, not only `/`: the sign page's two
+ * toggles carry a visible caption (`aria-hidden`, sitting beside the icon) that
  * the state-changing `aria-label` has to keep containing. `textContent` reads
  * straight through `aria-hidden` — it is a DOM property, not an accessibility
  * one — so this check exercises the real rendered markup exactly the way the
@@ -430,7 +430,7 @@ test('the phone navigation folds while scrolling and returns', async ({ page }) 
 });
 
 /**
- * B2. A phone held sideways is 844×390. The header was 227px of that and the
+ * A phone held sideways is 844×390. The header was 227px of that and the
  * grid began below the fold, so the catalogue opened on nothing at all — and
  * the fold that should have rescued it announced `data-condensed="true"` and
  * changed no pixel, because its rules were behind `width < 40rem` and 844px is
@@ -644,7 +644,7 @@ test('the sticky header never covers the focused element', async ({ page }) => {
 });
 
 /**
- * C1. The card said the same thing three times: the section heading, the chip
+ * The card said the same thing three times: the section heading, the chip
  * under the word, and the media block showing the category's icon. 217 of the
  * 229 chips repeated their heading word for word — the headings arrived after
  * the chip did, and that is what left it with nothing to say.
@@ -677,7 +677,7 @@ test('the category chip only appears where it adds something', async ({ page }) 
 });
 
 /**
- * C2. The word is what somebody came to read, and it was the third loudest
+ * The word is what somebody came to read, and it was the third loudest
  * thing on its own card: the chip matched it pixel for pixel at 115px, and the
  * call to action was 234px of solid brand repeated identically on 180 cards.
  */
@@ -850,7 +850,7 @@ test('an anchor lands below the sticky header', async ({ page }) => {
 });
 
 /**
- * G1. At 2560px the grid stopped at 1120px and four columns: 56% of the screen
+ * At 2560px the grid stopped at 1120px and four columns: 56% of the screen
  * was margin. A maximum width is right for prose, which has a measure to
  * protect; a grid of 194 cards has none, and every extra pixel was going into
  * wider cards instead of more of them.
@@ -921,7 +921,7 @@ test('the text pages stop wasting half the width', async ({ page }) => {
 });
 
 /**
- * P1. The link had no preview image, which is the whole of a WhatsApp share:
+ * The link had no preview image, which is the whole of a WhatsApp share:
  * a project meant to travel between parents was arriving as a line of grey
  * text. These tags are the only part of the site that is never rendered for
  * the person who published it, so nothing but a test tells you they are wrong.
@@ -962,7 +962,7 @@ test('every page offers a social card that a share sheet can actually fetch', as
 });
 
 /**
- * P4. "Add to home screen" left a generic icon on the one device this site is
+ * "Add to home screen" left a generic icon on the one device this site is
  * designed for. iOS ignores the manifest entirely, which is why the PNG is
  * linked directly as well as listed there.
  */
@@ -990,7 +990,7 @@ test('the site can be installed to a home screen without looking generic', async
 });
 
 /**
- * P3. `/sitemap.xml` used to answer with the homepage's HTML and a 200, which
+ * `/sitemap.xml` used to answer with the homepage's HTML and a 200, which
  * is worse than a 404: anything asking for it got told everything was fine and
  * handed the wrong document.
  */
@@ -1018,7 +1018,7 @@ test('the sitemap lists both languages of every page and points at itself from r
 });
 
 /**
- * P2. Any wrong address served the homepage with a 200: a mistyped link looked
+ * Any wrong address served the homepage with a 200: a mistyped link looked
  * like it had worked, and search engines were free to index endless duplicates
  * of the catalogue.
  *
@@ -1070,7 +1070,7 @@ test.describe('a wrong address', () => {
   /**
    * The toggles shipped inert on the first attempt: the card was rendered but
    * nothing wired it, so pressing favourite did nothing at all. That is the
-   * same broken promise C3 took out of the missing-video note, and it is why
+   * same broken promise once taken out of the missing-video note, and it is why
    * `mountSignCards` exists separately from the grid controller.
    */
   test('offers a card whose controls actually work', async ({ page }) => {
