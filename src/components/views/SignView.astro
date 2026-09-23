@@ -13,7 +13,7 @@ import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import type { Crumb } from '../../lib/seo.ts';
 import { categoryPath } from '../../lib/categories.ts';
 import { relatedSigns, signPath } from '../../lib/signs.ts';
-import { newIssueUrl } from '../../lib/site.ts';
+import { CONTACT_EMAIL, mailtoUrl, newIssueUrl } from '../../lib/site.ts';
 import {
   LANGUAGES,
   LANGUAGE_TO_SIGN_LANGUAGE,
@@ -141,10 +141,14 @@ const updatedAt = video
  * a branch preview says so instead of pointing the maintainer at production.
  */
 const pageUrl = new URL(localeHref(signPath(sign.id), language), Astro.site).href;
+const reportTitle = t('sign.issueTitle', { label, signLanguage: shortName });
 const reportUrl = newIssueUrl(
-  t('sign.issueTitle', { label, signLanguage: shortName }),
+  reportTitle,
   t('sign.issueBody', { label, signId: sign.id, signLanguage: shortName, pageUrl }),
 );
+// The same report without the account: an email whose subject already says
+// which sign, in which sign language, it is about.
+const reportMailto = mailtoUrl(reportTitle);
 ---
 
 <BaseLayout
@@ -437,7 +441,11 @@ const reportUrl = newIssueUrl(
           <use href="#i-external"></use>
         </svg>
       </a>
-      <span class="sign-report__hint">{t('sign.reportHint')}</span>
+      <span class="sign-report__hint">
+        {t('sign.reportHint')}
+        {t('sign.reportByEmail')}
+        <a href={reportMailto}>{CONTACT_EMAIL}</a>.
+      </span>
     </p>
 
     {
@@ -774,12 +782,22 @@ const reportUrl = newIssueUrl(
 
   /* The honest half. This link goes somewhere that asks for an account, and a
      parent who taps it and lands on a login wall has been sent to a dead end —
-     so it says so before the tap, not after. */
+     so it says so before the tap, not after, and offers the address that
+     needs no account at all. */
   .sign-report__hint {
     max-inline-size: 52ch;
     font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--color-ink-muted);
+  }
+
+  /* Same treatment as a link in running prose: the underline, not the colour,
+     is what tells it apart from the muted sentence around it. */
+  .sign-report__hint a {
+    color: var(--color-brand-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere;
   }
 
   /* Media stands up again once there is room: 4:3 rather than square, and

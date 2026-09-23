@@ -33,8 +33,9 @@ del proyecto.
 Quien mantiene el proyecto puede editar o eliminar contribuciones que incumplan estas normas, y
 bloquear de forma temporal o permanente a quien lo haga de forma reiterada.
 
-Para reportar un problema, abre una incidencia privada o escribe a quien mantiene el
-repositorio. Los avisos se tratan con discreción.
+Para reportar un problema, escribe a
+[petitsignes@petitsignes.cat](mailto:petitsignes@petitsignes.cat). No lo hagas en una incidencia:
+las incidencias son públicas. Los avisos se tratan con discreción.
 
 ## Atribución
 

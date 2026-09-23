@@ -7,6 +7,33 @@ export const REPO_URL = 'https://github.com/AlexandreMartinezOlmos/petitsignes';
 export const REPO_ISSUES_URL = `${REPO_URL}/issues`;
 
 /**
+ * The private route for a security problem: a GitHub advisory, which only the
+ * maintainer sees until it is fixed. An issue would publish the problem the
+ * moment it was reported. `SECURITY.md` and `security.txt` both point here.
+ */
+export const REPO_SECURITY_ADVISORY_URL = `${REPO_URL}/security/advisories/new`;
+
+/**
+ * The project's one address, for everything that should not need a GitHub
+ * account: a wrong sign, an accessibility barrier, a conduct report, a
+ * security problem. Every file and page that offers a way to write names this
+ * one, and `site.test.ts` checks they still agree.
+ */
+export const CONTACT_EMAIL = 'petitsignes@petitsignes.cat';
+
+/**
+ * A link that opens the visitor's mail app with the subject already written,
+ * so a report says which sign it is about without the visitor having to.
+ *
+ * `encodeURIComponent` rather than `URLSearchParams`: mail apps read a `+` in a
+ * `mailto:` literally (RFC 6068 asks for `%20`), so "Signe «llet»" would
+ * arrive as "Signe+«llet»".
+ */
+export function mailtoUrl(subject: string, address: string = CONTACT_EMAIL): string {
+  return `mailto:${address}?subject=${encodeURIComponent(subject)}`;
+}
+
+/**
  * The licence documents, linked from the credits page.
  *
  * `blob/HEAD` rather than `blob/main`: GitHub resolves it to whatever the
