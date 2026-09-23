@@ -122,6 +122,24 @@ describe('THIRD-PARTY-NOTICES.md', () => {
     expect(THIRD_PARTY).toContain('The Nunito Sans Project Authors');
   });
 
+  /**
+   * Dependabot moves these every week, and nothing else notices the file
+   * falling behind: a notice for a version the site stopped shipping
+   * attributes code nobody downloads and leaves the code they do download
+   * unnamed. Every version named here is the one `package-lock.json` installs.
+   */
+  it('names the versions the lockfile installs', () => {
+    const lock = JSON.parse(read('package-lock.json')) as {
+      packages: Record<string, { version?: string }>;
+    };
+    const named = [...THIRD_PARTY.matchAll(/`((?:@[\w-]+\/)?[\w.-]+)` (\d+\.\d+\.\d+)/g)];
+
+    expect(named.length).toBeGreaterThanOrEqual(6);
+    for (const [, name, version] of named) {
+      expect(lock.packages[`node_modules/${name}`]?.version, name).toBe(version);
+    }
+  });
+
   // MIT asks for its permission notice verbatim, so a link to it is not enough.
   it('reproduces the MIT text the notices require', () => {
     expect(THIRD_PARTY).toContain('THE SOFTWARE IS PROVIDED "AS IS"');
