@@ -33,6 +33,11 @@ const LSE_URL = 'https://fundacioncnse-dilse.org/';
 // Attribution prose is legal text, so it is translated rather than machine-fed.
 const copy = {
   ca: {
+    // The sentence a search result shows. The intro is the page's opening
+    // paragraph, written to be read in full; at 200–350 characters it was cut
+    // off mid-sentence in every result.
+    description:
+      'D’on surt cada signe i amb quina llicència: el Vocabulari bàsic de la LSC de la Generalitat de Catalunya i el diccionari DILSE de la Fundación CNSE.',
     intro:
       "Els vídeos d'aquest lloc no són obra del projecte. Provenen de diccionaris i recursos oficials, i cada fitxa n'indica la font. Aquest projecte només els recull i els organitza pensant en famílies amb nadons.",
     lscTitle: 'Llengua de Signes Catalana (LSC)',
@@ -66,6 +71,8 @@ const copy = {
     reportCta: 'Obre una incidència a GitHub',
   },
   es: {
+    description:
+      'De dónde sale cada signo y con qué licencia: el Vocabulari bàsic de la LSC de la Generalitat de Catalunya y el diccionario DILSE de la Fundación CNSE.',
     intro:
       'Los vídeos de este sitio no son obra del proyecto. Proceden de diccionarios y recursos oficiales, y cada ficha indica su fuente. Este proyecto solo los recopila y los organiza pensando en familias con bebés.',
     lscTitle: 'Lengua de Signos Catalana (LSC)',
@@ -115,6 +122,7 @@ const sections: PageSection[] = [
   path="/credits/"
   title={t('nav.credits')}
   lead={c.intro}
+  description={c.description}
   sections={sections}
 >
   <Fragment slot="lsc">

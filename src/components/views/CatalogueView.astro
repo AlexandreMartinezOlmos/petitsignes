@@ -18,10 +18,9 @@ const t = createTranslator(language);
 
 // The search this page answers is "signes per a nadons", and it is asked about
 // one sign language at a time, so the title names the one this build teaches.
+const signLanguage = LANGUAGE_TO_SIGN_LANGUAGE[language];
 const namedSignLanguage =
-  LANGUAGE_TO_SIGN_LANGUAGE[language] === 'lsc'
-    ? t('signLanguage.lscNamed')
-    : t('signLanguage.lseNamed');
+  signLanguage === 'lsc' ? t('signLanguage.lscNamed') : t('signLanguage.lseNamed');
 
 const categoryEntries = await getCollection('categories');
 const categories: Category[] = categoryEntries
@@ -45,6 +44,13 @@ const signs: SignEntry[] = signEntries
     if (categoryDelta !== 0) return categoryDelta;
     return a.labels[language].localeCompare(b.labels[language], language);
   });
+
+// Counted, and only the concepts this sign language actually has a video for:
+// the description is the sentence a search result shows, and a number there is
+// a promise about what the page holds.
+const withVideo = signs.filter((sign) =>
+  sign.videos.some((video) => video.signLanguage === signLanguage),
+).length;
 
 const toolbarCategories = categories.map((category) => ({
   id: category.id,
@@ -96,6 +102,7 @@ for (const sign of signs) {
   language={language}
   path="/"
   title={t('home.title', { signLanguage: namedSignLanguage })}
+  description={t('home.meta', { count: withVideo, signLanguage: namedSignLanguage })}
 >
   <CatalogueToolbar
     slot="toolbar"
