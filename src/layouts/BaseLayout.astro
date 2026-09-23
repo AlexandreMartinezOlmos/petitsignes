@@ -23,6 +23,7 @@ import {
   OG_IMAGE_HEIGHT,
   OG_IMAGE_WIDTH,
   WEB_MANIFEST,
+  documentTitle,
 } from '../lib/seo.ts';
 
 interface Props {
@@ -30,6 +31,10 @@ interface Props {
   language: RoutedLocale;
   /** Locale-independent path of this page, always `/…/` (e.g. `/`, `/credits/`). */
   path: string;
+  /**
+   * What this page is about, in the words someone would search for. The site's
+   * name is appended when there is room for it (see `documentTitle`).
+   */
   title?: string;
   description?: string;
   /**
@@ -47,7 +52,7 @@ const t = createTranslator(language);
 // Nothing on the client changes it, so there is no hydration mismatch.
 const signLanguage = signLanguageOf(language);
 
-const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
+const pageTitle = documentTitle(title, t('site.title'));
 const pageDescription = description ?? t('site.tagline');
 
 const homeHref = localeHref('/', language);

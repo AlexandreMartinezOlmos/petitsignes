@@ -40,8 +40,14 @@ const video = sign.videos.find((item) => item.signLanguage === signLanguage);
 const isLsc = signLanguage === 'lsc';
 const fullName = isLsc ? t('signLanguage.lscFull') : t('signLanguage.lseFull');
 const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
+const namedSignLanguage = isLsc ? t('signLanguage.lscNamed') : t('signLanguage.lseNamed');
 
 const label = sign.labels[language];
+
+// "llet en llengua de signes catalana" is the question, so it is also the
+// title. The `h1` stays the bare word: on the page, the sign language is
+// already said by the line under it.
+const title = t('sign.title', { label, signLanguage: namedSignLanguage });
 
 const categoryEntries = await getCollection('categories');
 const categoryEntry = categoryEntries.find((item) => item.data.id === sign.category);
@@ -106,7 +112,7 @@ const reportUrl = newIssueUrl(
 );
 ---
 
-<BaseLayout language={language} path={signPath(sign.id)} title={label} description={description}>
+<BaseLayout language={language} path={signPath(sign.id)} title={title} description={description}>
   {
     /*
     Three steps now, not two. The category in the middle is the route that
