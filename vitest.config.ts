@@ -54,13 +54,15 @@ export default defineConfig({
        *
        * Raised again when the page titles and structured data moved into
        * `seo.ts` as pure functions with their own tests: 76.67 / 69.82 /
-       * 86.36 / 77.73 measured, each floor the whole number under it.
+       * 86.36 / 77.73 measured, each floor the whole number under it. And
+       * again once the per-locale manifest, the preview headers and the
+       * category intros arrived with theirs: 77.19 / 70.08 / 86.7 / 78.24.
        */
       thresholds: {
-        statements: 76,
-        branches: 69,
+        statements: 77,
+        branches: 70,
         functions: 86,
-        lines: 77,
+        lines: 78,
       },
     },
   },
