@@ -98,7 +98,18 @@ export interface ProgressStore {
    * does: reset, then import.
    */
   import(json: string, options?: ImportOptions): Promise<ImportResult>;
+  /**
+   * Erases the progress. The one write allowed to replace stored data this
+   * version cannot read: it is what the visitor asked for, and it is their way
+   * out when that data is damaged beyond reading.
+   */
   reset(): Promise<void>;
+  /**
+   * Calls the listener straight away with the current snapshot, then after every
+   * change — including changes made somewhere else, such as another tab of the
+   * same site. A page left open must not go on showing, and then saving, a
+   * version of the progress that is no longer true.
+   */
   subscribe(listener: (snapshot: ProgressSnapshot) => void): () => void;
 }
 
@@ -252,36 +263,106 @@ function getAvailableStorage(): Storage | null {
   }
 }
 
+/**
+ * What is under `STORAGE_KEY`, as this version of the code sees it.
+ *
+ * `unreadable` is kept apart from `empty` on purpose. Treating a block that
+ * cannot be parsed as "no progress yet" is how it used to be lost: the store
+ * started from nothing, and the first star the visitor pressed wrote that
+ * nothing over everything they had.
+ */
+type StoredProgress =
+  { kind: 'empty' } | { kind: 'readable'; snapshot: ProgressSnapshot } | { kind: 'unreadable' };
+
+function readStored(storage: Storage): StoredProgress {
+  try {
+    const raw = storage.getItem(STORAGE_KEY);
+    if (!raw) return { kind: 'empty' };
+    return { kind: 'readable', snapshot: parseSnapshot(JSON.parse(raw)) };
+  } catch {
+    return { kind: 'unreadable' };
+  }
+}
+
 export class LocalStorageProgressStore implements ProgressStore {
-  readonly #storage: Storage | null;
+  /** `null` once there is nowhere to save: the store then works in memory. */
+  #storage: Storage | null;
   readonly #listeners = new Set<(snapshot: ProgressSnapshot) => void>();
-  #memory: ProgressSnapshot;
+  #memory: ProgressSnapshot = createEmptySnapshot();
+  /**
+   * Set while the stored block is one this version cannot read. There are two
+   * ways to get there, and neither is a reason to write over it:
+   *
+   * - **It comes from a newer version.** A tab left open across a deploy runs
+   *   the old code against data the new code wrote. The data is fine; this tab
+   *   is what is out of date, and a reload fixes it.
+   * - **It is damaged.** Nothing here can repair it, but discarding it is the
+   *   visitor's decision to take with `reset()`, not a side effect of pressing a
+   *   star.
+   *
+   * Meanwhile the tab keeps working in memory, as it does when storage is
+   * unavailable altogether.
+   */
+  #unreadable = false;
 
   constructor(storage: Storage | null = getAvailableStorage()) {
     this.#storage = storage;
-    this.#memory = this.#read();
-  }
+    this.#refresh();
 
-  #read(): ProgressSnapshot {
-    if (!this.#storage) return createEmptySnapshot();
-    try {
-      const raw = this.#storage.getItem(STORAGE_KEY);
-      if (!raw) return createEmptySnapshot();
-      return parseSnapshot(JSON.parse(raw));
-    } catch {
-      // Corrupted or foreign data: start clean rather than block the app.
-      return createEmptySnapshot();
+    // Another tab's writes reach this one as `storage` events on its window.
+    // There is one store per page, so the listener lives as long as the page
+    // does and is never removed.
+    if (storage !== null && typeof window !== 'undefined') {
+      window.addEventListener('storage', (event) => {
+        if (event.storageArea !== this.#storage) return;
+        // `key` is null when the whole area was cleared.
+        if (event.key !== null && event.key !== STORAGE_KEY) return;
+        this.#refresh();
+        this.#notify();
+      });
     }
   }
 
-  #write(snapshot: ProgressSnapshot): void {
+  /** Brings memory in line with what is stored, which another tab may have changed. */
+  #refresh(): void {
+    if (!this.#storage) return;
+
+    const stored = readStored(this.#storage);
+    this.#unreadable = stored.kind === 'unreadable';
+    if (stored.kind === 'readable') this.#memory = stored.snapshot;
+    if (stored.kind === 'empty') this.#memory = createEmptySnapshot();
+  }
+
+  /**
+   * Applies a change to what is stored now, not to what this tab last saw.
+   *
+   * Each tab used to hold its own copy and save it whole, so two open tabs took
+   * turns erasing each other: the second to save wrote back its stale copy, and
+   * whatever the first had just added was gone. Re-reading first makes every
+   * change land on top of the others.
+   */
+  #update(change: (current: ProgressSnapshot) => ProgressSnapshot): void {
+    this.#refresh();
+    this.#commit(change(this.#memory));
+  }
+
+  #commit(snapshot: ProgressSnapshot): void {
     this.#memory = snapshot;
-    try {
-      this.#storage?.setItem(STORAGE_KEY, JSON.stringify(snapshot));
-    } catch {
-      // Quota exceeded or storage disabled: keep the in-memory value.
+    if (this.#storage && !this.#unreadable) {
+      try {
+        this.#storage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+      } catch {
+        // Quota exceeded, or storage withdrawn mid-visit. From here on the tab
+        // works in memory: re-reading storage before the next change would
+        // otherwise throw away the one it could not save.
+        this.#storage = null;
+      }
     }
-    for (const listener of this.#listeners) listener(snapshot);
+    this.#notify();
+  }
+
+  #notify(): void {
+    for (const listener of this.#listeners) listener(this.#memory);
   }
 
   async getFavorites(): Promise<string[]> {
@@ -289,7 +370,7 @@ export class LocalStorageProgressStore implements ProgressStore {
   }
 
   async toggleFavorite(id: string): Promise<void> {
-    this.#write({ ...this.#memory, favorites: toggle(this.#memory.favorites, id) });
+    this.#update((current) => ({ ...current, favorites: toggle(current.favorites, id) }));
   }
 
   async getLearned(): Promise<string[]> {
@@ -297,7 +378,7 @@ export class LocalStorageProgressStore implements ProgressStore {
   }
 
   async toggleLearned(id: string): Promise<void> {
-    this.#write({ ...this.#memory, learned: toggle(this.#memory.learned, id) });
+    this.#update((current) => ({ ...current, learned: toggle(current.learned, id) }));
   }
 
   async getPreferences(): Promise<Preferences> {
@@ -305,13 +386,16 @@ export class LocalStorageProgressStore implements ProgressStore {
   }
 
   async setPreferences(preferences: Partial<Preferences>): Promise<void> {
-    this.#write({
-      ...this.#memory,
-      preferences: { ...this.#memory.preferences, ...preferences },
-    });
+    this.#update((current) => ({
+      ...current,
+      preferences: { ...current.preferences, ...preferences },
+    }));
   }
 
   async export(): Promise<string> {
+    // The file has to hold what is saved, including what another tab added a
+    // moment ago, not this tab's last view of it.
+    this.#refresh();
     return JSON.stringify(this.#memory, null, 2);
   }
 
@@ -323,17 +407,18 @@ export class LocalStorageProgressStore implements ProgressStore {
       throw new InvalidProgressFileError('not valid JSON');
     }
 
-    const { snapshot, result } = mergeSnapshots(
-      this.#memory,
-      parseSnapshot(parsed),
-      options.knownIds,
-    );
-    this.#write(snapshot);
+    const incoming = parseSnapshot(parsed);
+    this.#refresh();
+    const { snapshot, result } = mergeSnapshots(this.#memory, incoming, options.knownIds);
+    this.#commit(snapshot);
     return result;
   }
 
   async reset(): Promise<void> {
-    this.#write(createEmptySnapshot());
+    // The one write allowed over a block this version cannot read (see
+    // `#unreadable`): erasing it is exactly what was asked for.
+    this.#unreadable = false;
+    this.#commit(createEmptySnapshot());
   }
 
   subscribe(listener: (snapshot: ProgressSnapshot) => void): () => void {

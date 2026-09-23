@@ -153,6 +153,19 @@ El formato persistido lleva `schemaVersion` desde el día uno, y `parseSnapshot`
 no confiable (un fichero que importa el usuario) descartando lo que no reconoce en vez de
 confiar en ello.
 
+Dos reglas protegen lo guardado de la propia app:
+
+- **Cada cambio se aplica sobre lo que hay guardado, no sobre la copia de la pestaña.** Dos
+  pestañas abiertas comparten `localStorage` pero no memoria. Cuando cada una guardaba su copia
+  entera, la última en guardar borraba lo que la otra acababa de añadir. Ahora el store relee
+  antes de escribir y escucha el evento `storage`, así que un favorito marcado en una pestaña
+  aparece en la otra sin recargar. `subscribe` avisa también de esos cambios; es parte del
+  contrato de la interfaz, no un detalle de esta implementación.
+- **Un bloque que no se puede leer no se sobrescribe.** Puede ser de una versión más nueva (una
+  pestaña que se quedó abierta durante un despliegue) o estar dañado. En los dos casos la
+  pestaña sigue funcionando en memoria, como cuando no hay `localStorage`, y el bloque se queda
+  como estaba. Solo «Reinicia el progrés» lo reemplaza, porque borrarlo es justo lo que se pidió.
+
 ### 6. Los dos ejes de idioma: separados en el dato, acoplados en la UI
 
 - `Language` (`ca` | `es` | `en`) — el idioma del **texto**.

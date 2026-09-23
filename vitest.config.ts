@@ -57,12 +57,16 @@ export default defineConfig({
        * 86.36 / 77.73 measured, each floor the whole number under it. And
        * again once the per-locale manifest, the preview headers and the
        * category intros arrived with theirs: 77.19 / 70.08 / 86.7 / 78.24.
+       *
+       * And when the progress store learned to follow other tabs and to leave
+       * unreadable data alone, with the tests for both: 78.19 / 71.82 / 87.34 /
+       * 79.2.
        */
       thresholds: {
-        statements: 77,
-        branches: 70,
-        functions: 86,
-        lines: 78,
+        statements: 78,
+        branches: 71,
+        functions: 87,
+        lines: 79,
       },
     },
   },

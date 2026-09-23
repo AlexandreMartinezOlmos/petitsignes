@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   $category,
   $favorites,
@@ -102,14 +102,37 @@ describe('hydrating from storage', () => {
     expect($favorites.get()).toEqual(['leche']);
   });
 
-  it('does not read twice', async () => {
+  it('subscribes once, however many callers ask', async () => {
+    const store = freshStore();
+    const subscribe = vi.spyOn(store, 'subscribe');
+
+    await Promise.all([hydrateFromStorage(), hydrateFromStorage()]);
+    await hydrateFromStorage();
+
+    expect(subscribe).toHaveBeenCalledTimes(1);
+  });
+
+  // This used to assert the opposite: hydration was a one-off read, and a change
+  // made behind the stores' back stayed invisible. Another tab's star is exactly
+  // such a change, and a card left showing the old state invites a press that
+  // undoes it.
+  it('follows every change the store reports after the first read', async () => {
     const store = freshStore();
     await hydrateFromStorage();
 
-    // A change made behind the stores' back is not picked up by a second call:
-    // hydration is a one-off, and the toggles below are what keep things in step.
     await store.toggleFavorite('leche');
+    await store.toggleLearned('agua');
+
+    expect($favorites.get()).toEqual(['leche']);
+    expect($learned.get()).toEqual(['agua']);
+  });
+
+  it('stops following a store once another replaces it', async () => {
+    const previous = freshStore();
     await hydrateFromStorage();
+    freshStore();
+
+    await previous.toggleFavorite('leche');
 
     expect($favorites.get()).toEqual([]);
   });

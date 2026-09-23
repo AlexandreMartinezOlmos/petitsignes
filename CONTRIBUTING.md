@@ -50,6 +50,10 @@ Antes de abrir el PR:
 npm run lint && npm run typecheck && npm test && npm run test:e2e
 ```
 
+En local, los e2e reutilizan un servidor que ya esté escuchando en el puerto 4321. Si tienes otra
+copia del repositorio sirviendo ahí (otro worktree, por ejemplo), los tests correrían contra
+aquel build: usa otro puerto con `E2E_PORT=4322 npm run test:e2e`.
+
 El CI ejecuta lo mismo en Ubuntu, más una auditoría de las dependencias que se publican
 (`npm audit --omit=dev --audit-level=high`) y los presupuestos de Lighthouse. Si falla ahí, está
 roto, aunque funcione en tu máquina.
