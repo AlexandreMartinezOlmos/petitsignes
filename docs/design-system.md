@@ -378,8 +378,16 @@ escritorio 446 → 437 px.
 
 ### `.grid-section` — encabezado de grupo
 
-Un `<h2>` que ocupa toda la fila de la rejilla y nombra el grupo que viene: primero la ruta
-curada, después cada categoría. El orden ya existía en el dato; esto solo lo hace visible.
+Una fila que ocupa todo el ancho de la rejilla, con un `<h2>` (`.grid-section__title`) que nombra
+el grupo que viene: primero la ruta curada, después cada categoría. El orden ya existía en el
+dato; esto solo lo hace visible.
+
+Cada categoría lleva además `.grid-section__all`, el enlace a su página (`/categoria/…/`), con
+44 px de objetivo y el color y subrayado de la miga de pan. Se ve corto («Veure els 27 →»)
+porque el título de al lado ya nombra la categoría; el resto del nombre («signes d'animals») va
+en `sr-only`, así que el nombre accesible es la frase entera y empieza por lo que se ve
+(WCAG 2.5.3). El número es el de la página de destino, primeros signos incluidos. La ruta
+curada no tiene página y no lleva enlace. Si la fila no cabe, el enlace baja bajo el título.
 
 Los encabezados **se quedan cuando hay un filtro activo** y el controlador oculta los que se
 quedan sin tarjetas. Así una búsqueda devuelve resultados agrupados por su categoría en vez de

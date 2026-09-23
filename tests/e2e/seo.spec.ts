@@ -32,6 +32,8 @@ interface BuiltPage {
   title: string;
   description: string;
   noindex: boolean;
+  /** Every same-site link on the page, as written in `href`. */
+  links: string[];
 }
 
 /** Astro escapes these five in text and attributes; nothing else appears. */
@@ -72,6 +74,7 @@ const PAGES: BuiltPage[] = htmlFiles(DIST).map((file) => {
     title: decode(html.match(/<title>([^<]*)<\/title>/)?.[1] ?? ''),
     description: decode(html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? ''),
     noindex: /<meta name="robots" content="noindex/.test(html),
+    links: [...html.matchAll(/<a\b[^>]*\shref="(\/[^"]*)"/g)].map((match) => match[1]!),
   };
 });
 
@@ -251,5 +254,29 @@ test.describe('descriptions', () => {
     expect(page('/es/').description).toMatch(
       /^\d+ signos reales de la lengua de signos española \(LSE\) /,
     );
+  });
+});
+
+test.describe('internal links', () => {
+  /**
+   * The home is where a crawler starts and where most visitors arrive, and it
+   * linked to no category page at all: fifteen pages per locale reachable only
+   * through a sign's breadcrumb. Read from what was built, so a category added
+   * tomorrow is expected here without anyone listing it.
+   */
+  test('the home links to every category page of its own locale', () => {
+    for (const home of ['/', '/es/']) {
+      const categories = PAGES.filter(
+        (p) =>
+          p.kind === 'category' && p.path.startsWith(home) && (home !== '/' || p.locale === 'ca'),
+      ).map((p) => p.path);
+      expect(categories.length, home).toBeGreaterThanOrEqual(15);
+
+      const linked = new Set(page(home).links);
+      expect(
+        categories.filter((path) => !linked.has(path)),
+        home,
+      ).toEqual([]);
+    }
   });
 });

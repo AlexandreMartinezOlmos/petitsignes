@@ -658,8 +658,11 @@ test('the category chip only appears where it adds something', async ({ page }) 
     let duplicates = 0;
     let informative = 0;
     for (const el of document.getElementById('sign-grid')!.children) {
-      if (el.classList.contains('grid-section')) heading = el.textContent!.trim();
-      else if (el.classList.contains('sign-card')) {
+      // The heading's own text: the section also holds the link to the
+      // category page, whose words would make every comparison a mismatch.
+      if (el.classList.contains('grid-section')) {
+        heading = el.querySelector('h2')!.textContent!.trim();
+      } else if (el.classList.contains('sign-card')) {
         const chip = el.querySelector('.sign-card__chip')?.textContent?.trim();
         if (!chip) continue;
         if (chip === heading) duplicates += 1;

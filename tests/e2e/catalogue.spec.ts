@@ -499,7 +499,7 @@ test.describe('grid sections', () => {
 
     // The curated route plus one per category.
     await expect(sections(page)).toHaveCount(16);
-    await expect(sections(page).first()).toHaveText('Primers signes');
+    await expect(sections(page).first().getByRole('heading')).toHaveText('Primers signes');
   });
 
   test('a search keeps its results grouped by where they came from', async ({ page }) => {
@@ -509,7 +509,7 @@ test.describe('grid sections', () => {
 
     // Not a flat run of matches, and not a wall of empty headings either.
     await expect(sections(page)).toHaveCount(1);
-    await expect(sections(page)).toHaveText('Animals');
+    await expect(sections(page).getByRole('heading')).toHaveText('Animals');
   });
 
   test('headings do not survive a filter that empties them', async ({ page }) => {
@@ -533,5 +533,44 @@ test.describe('grid sections', () => {
     expect(levels[1]).toBe('H2');
     expect(levels).toContain('H3');
     expect(levels).not.toContain('H4');
+  });
+
+  /**
+   * The home reached no category page at all — fifteen pages a reader could
+   * only find through a sign's breadcrumb. The link says where it goes in
+   * full to a screen reader and a crawler, and starts with the words on
+   * screen, so voice control can say what it sees (WCAG 2.5.3).
+   */
+  test('each category heading leads to its category page', async ({ page }) => {
+    await page.goto('/');
+
+    const links = page.locator('.grid-section__all');
+    await expect(links).toHaveCount(15);
+
+    const animals = page.locator('[data-section="animals"] .grid-section__all');
+    await expect(animals).toHaveAttribute('href', '/categoria/animals/');
+    await expect(animals).toHaveAccessibleName(/^Veure els \d+ signes d’animals$/);
+    expect((await animals.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+
+    // The curated route is not a category and has no page to lead to.
+    await expect(page.locator('[data-section="first-signs"] a')).toHaveCount(0);
+  });
+
+  /**
+   * A number next to a link is a promise about the page behind it. It counts
+   * what the category page shows — first signs included, though on the home
+   * they sit under their own heading — so it is checked against that page.
+   */
+  test('the count on the link is the count on the page it leads to', async ({ page }) => {
+    await page.goto('/es/');
+
+    const link = page.locator('[data-section="animals"] .grid-section__all');
+    await expect(link).toHaveAttribute('href', '/es/categoria/animals/');
+    const name = await link.evaluate((el) => el.textContent ?? '');
+    const promised = Number(name.match(/\d+/)?.[0]);
+
+    await link.click();
+    await expect(page).toHaveURL(/\/es\/categoria\/animals\/$/);
+    await expect(page.locator('.sign-card')).toHaveCount(promised);
   });
 });
