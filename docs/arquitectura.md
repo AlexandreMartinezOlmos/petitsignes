@@ -227,8 +227,9 @@ diseño.
   usarlos. La derivación en OKLCH es lo que hace ese cumplimiento predecible al añadir categorías,
   y `src/lib/color.test.ts` lo comprueba en CI leyendo la hoja de estilos publicada: gama,
   separación entre familias y contraste del chip en claro, oscuro y P3.
-- `--spacing-touch` (44 px) es el tamaño mínimo de todo control, por encima de los 24 px del
-  criterio 2.5.8.
+- `--spacing-touch` (44 px) es el objetivo de los controles principales. El suelo son los 24 px
+  del criterio 2.5.8, y los pocos controles que se quedan entre 24 y 44 px llevan su razón
+  escrita junto al CSS.
 - `scroll-padding-top` en `html` mantiene el elemento enfocado fuera de la cabecera fija
   (criterio 2.4.11). Hay un test e2e que lo comprueba midiendo geometría real.
 - La rejilla concentra **776 de los 796 focos** de la página, así que hay un bloque de omisión

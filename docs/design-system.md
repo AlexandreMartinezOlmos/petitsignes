@@ -16,7 +16,8 @@ Para *por qué* la web está construida así (rejilla estática, islas, entrega 
    que exige la EN 301 549 referenciada por la Directiva (UE) 2019/882. Un componente que no lo
    cumple no está terminado. En un proyecto sobre lengua de signos esto además es coherencia.
 2. **Móvil primero de verdad.** El uso real es un bebé en brazos y el móvil en la otra mano.
-   Objetivo táctil mínimo 44 px, texto nunca por debajo de 16 px.
+   Objetivo táctil de 44 px en los controles principales (suelo de 24 px, ver §5) y cuerpo de
+   texto de 16 px, en unidades relativas que siguen la letra elegida en el navegador (ver §4).
 3. **El color nunca es la única señal.** Seis familias de tono cubren quince categorías, así que
    el tono dice a qué familia pertenece una tarjeta, nunca cuál es: eso lo dicen su icono y el
    encabezado de sección que tiene encima. El icono no es decoración, es la señal.
@@ -164,8 +165,18 @@ número aporta la legibilidad. Bajarlo hace que el contraste dependa del scroll.
 | `--text-word` | **La palabra del catálogo.** Tiene su propio paso porque es lo que la gente busca |
 | `--font-weight-normal` … `--font-weight-display` | 400 a 900 |
 
-El cuerpo nunca baja de 16 px. Los tamaños grandes usan `clamp()` para ganar presencia en
-pantallas anchas sin una media query.
+El cuerpo de texto es de 16 px (`--text-base`). No todo el texto lo es, y conviene saberlo en vez
+de suponerlo. Medido en todas las páginas:
+
+| Tamaño | Dónde |
+|---|---|
+| 16 px o más | Cuerpo de texto, títulos y la palabra de cada tarjeta |
+| 14–15 px (`--text-sm`) | Navegación (cabecera, pie, migas, índice de página), chips de filtro, metadatos (fecha, fuente, licencia) y notas de ayuda |
+| 11–12 px (`--text-xs`) | Rótulos cortos que acompañan a otro texto: la categoría en la tarjeta, el pie de los toggles de la ficha, el título del índice y la sigla `LSC`/`LSE` bajo cada idioma |
+
+Todo va en `rem`, así que cualquier tamaño escala con la letra que la persona haya elegido en el
+navegador (WCAG 1.4.4). Los tamaños grandes usan `clamp()` para ganar presencia en pantallas
+anchas sin una media query.
 
 ---
 
@@ -550,7 +561,7 @@ conserva su ancho y el hueco de al lado recibe un trabajo.
 
 | Clase | Qué hace |
 |---|---|
-| `.breadcrumb` | La vuelta al catálogo, con los 44 px que cumple todo control del sitio. La página actual se **afirma** con `aria-current`, no se enlaza, y la barra separadora es `aria-hidden`: una barra leída en voz alta entre dos nombres de página es ruido |
+| `.breadcrumb` | La vuelta al catálogo, con los 44 px de objetivo de los controles principales. La página actual se **afirma** con `aria-current`, no se enlaza, y la barra separadora es `aria-hidden`: una barra leída en voz alta entre dos nombres de página es ruido |
 | `.page-hero` | La misma tipografía, peso e interlineado que el titular del catálogo, un paso por debajo. Estos títulos son cortos; el paso de display sería gritar |
 | `.page-layout` | Una columna centrada hasta `lg`, donde el índice ocupa el espacio que ya estaba vacío |
 | `.page-toc` | Índice pegajoso. **Solo desde `lg`**: más estrecho no hay columna sobrante, y una lista de enlaces sobre el artículo sería una cosa más que pasar en el móvil |
@@ -634,7 +645,9 @@ completo. Un toggle muerto sería la misma promesa rota que C3 quitó de la nota
 Antes de dar por terminado un componente:
 
 - [ ] Navegable con teclado, con foco visible y en orden lógico.
-- [ ] Controles ≥ 44 px. Hay un e2e que barre la página entera y falla por debajo de 24.
+- [ ] Controles principales a 44 px; ninguno por debajo de 24, y cada excepción entre 24 y 44
+      con su razón escrita junto al CSS. Hay un e2e que barre la página entera y falla por
+      debajo de 24.
 - [ ] **A 320 px no aparece scroll horizontal** (WCAG 1.4.10). Cubierto por e2e en las 4 páginas.
 - [ ] Si el control lleva `aria-label` **y** texto visible, el nombre contiene el texto visible
       (WCAG 2.5.3). Hay un e2e que barre todos los controles.
