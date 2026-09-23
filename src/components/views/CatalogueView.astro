@@ -4,9 +4,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SignCard from '../SignCard.astro';
 import CatalogueToolbar from '../../islands/CatalogueToolbar.tsx';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
-import { createTranslator } from '../../lib/i18n.ts';
-import { type Category, type SignEntry } from '../../lib/types.ts';
-import type { RoutedLocale } from '../../lib/routing.ts';
+import { categoryPath } from '../../lib/categories.ts';
+import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
+import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
+import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import { CATALOGUE_RESTORING_ATTR, CATALOGUE_STATE_KEY } from '../../lib/catalogue-history.ts';
 
 interface Props {
@@ -15,6 +16,12 @@ interface Props {
 
 const { language } = Astro.props;
 const t = createTranslator(language);
+
+// The search this page answers is "signes per a nadons", and it is asked about
+// one sign language at a time, so the title names the one this build teaches.
+const signLanguage = LANGUAGE_TO_SIGN_LANGUAGE[language];
+const namedSignLanguage =
+  signLanguage === 'lsc' ? t('signLanguage.lscNamed') : t('signLanguage.lseNamed');
 
 const categoryEntries = await getCollection('categories');
 const categories: Category[] = categoryEntries
@@ -39,6 +46,13 @@ const signs: SignEntry[] = signEntries
     return a.labels[language].localeCompare(b.labels[language], language);
   });
 
+// Counted, and only the concepts this sign language actually has a video for:
+// the description is the sentence a search result shows, and a number there is
+// a promise about what the page holds.
+const withVideo = signs.filter((sign) =>
+  sign.videos.some((video) => video.signLanguage === signLanguage),
+).length;
+
 const toolbarCategories = categories.map((category) => ({
   id: category.id,
   label: category.labels[language],
@@ -57,12 +71,40 @@ const toolbarCategories = categories.map((category) => ({
  * ones left empty. That keeps search results grouped by category rather than
  * arriving as one flat run, and keeps the heading levels unbroken — a section
  * that vanished would leave the card headings under nothing.
+ *
+ * Each category heading also links to its own page. The home was the one
+ * page that reached no category at all: fifteen pages a crawler could only
+ * find by way of a sign, and a reader only by knowing they existed. The
+ * count is what the category page holds, which includes its first signs —
+ * so it can be larger than the run under the heading, and says so honestly.
+ * The curated route has no page of its own, so it gets no link.
  */
+type SectionLink = { href: string; visible: string; rest: string | null };
+
 type GridItem =
-  | { kind: 'section'; id: string; label: string }
+  | { kind: 'section'; id: string; label: string; link: SectionLink | null }
   | { kind: 'sign'; sign: SignEntry; category: Category };
 
 const FIRST_SIGNS_SECTION = 'first-signs';
+
+const countByCategory = new Map<string, number>();
+for (const sign of signs) {
+  countByCategory.set(sign.category, (countByCategory.get(sign.category) ?? 0) + 1);
+}
+
+function sectionLink(category: Category): SectionLink {
+  const count = countByCategory.get(category.id) ?? 0;
+  const ofCategory = categoryInSentence(language, category.labels[language]);
+  const href = localeHref(categoryPath(category.id), language);
+
+  return count === 1
+    ? { href, visible: t('catalogue.sectionAllOne', { ofCategory }), rest: null }
+    : {
+        href,
+        visible: t('catalogue.sectionAll', { count }),
+        rest: t('catalogue.sectionAllRest', { ofCategory }),
+      };
+}
 
 const gridItems: GridItem[] = [];
 let openSection: string | null = null;
@@ -78,6 +120,7 @@ for (const sign of signs) {
       kind: 'section',
       id: section,
       label: sign.isFirstSign ? t('filter.firstSigns') : category.labels[language],
+      link: sign.isFirstSign ? null : sectionLink(category),
     });
   }
 
@@ -85,7 +128,12 @@ for (const sign of signs) {
 }
 ---
 
-<BaseLayout language={language} path="/">
+<BaseLayout
+  language={language}
+  path="/"
+  title={t('home.title', { signLanguage: namedSignLanguage })}
+  description={t('home.meta', { count: withVideo, signLanguage: namedSignLanguage })}
+>
   <CatalogueToolbar
     slot="toolbar"
     categories={toolbarCategories}
@@ -182,9 +230,16 @@ for (const sign of signs) {
     {
       gridItems.map((item) =>
         item.kind === 'section' ? (
-          <h2 class="grid-section" data-section={item.id}>
-            {item.label}
-          </h2>
+          <div class="grid-section" data-section={item.id}>
+            <h2 class="grid-section__title">{item.label}</h2>
+            {item.link && (
+              <a class="grid-section__all" href={item.link.href}>
+                {item.link.visible}
+                {item.link.rest && <span class="sr-only"> {item.link.rest}</span>}
+                <span aria-hidden="true">→</span>
+              </a>
+            )}
+          </div>
         ) : (
           <SignCard
             sign={item.sign}

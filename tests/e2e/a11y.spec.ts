@@ -658,8 +658,11 @@ test('the category chip only appears where it adds something', async ({ page }) 
     let duplicates = 0;
     let informative = 0;
     for (const el of document.getElementById('sign-grid')!.children) {
-      if (el.classList.contains('grid-section')) heading = el.textContent!.trim();
-      else if (el.classList.contains('sign-card')) {
+      // The heading's own text: the section also holds the link to the
+      // category page, whose words would make every comparison a mismatch.
+      if (el.classList.contains('grid-section')) {
+        heading = el.querySelector('h2')!.textContent!.trim();
+      } else if (el.classList.contains('sign-card')) {
         const chip = el.querySelector('.sign-card__chip')?.textContent?.trim();
         if (!chip) continue;
         if (chip === heading) duplicates += 1;
@@ -953,12 +956,14 @@ test('every page offers a social card that a share sheet can actually fetch', as
     expect(card.height, path).toBe('630');
     expect(card.alt, path).toBeTruthy();
     expect(card.twitter, path).toBe('summary_large_image');
-  }
 
-  // The file has to exist as well as be declared: a 404 here is a blank card.
-  const response = await page.request.get('/og.png');
-  expect(response.status()).toBe(200);
-  expect(response.headers()['content-type']).toContain('image/png');
+    // The file has to exist as well as be declared: a 404 here is a blank
+    // card. Fetched by the path each page declares, because each locale
+    // declares its own.
+    const response = await page.request.get(new URL(card.image!).pathname);
+    expect(response.status(), path).toBe(200);
+    expect(response.headers()['content-type'], path).toContain('image/png');
+  }
 });
 
 /**
@@ -967,26 +972,34 @@ test('every page offers a social card that a share sheet can actually fetch', as
  * linked directly as well as listed there.
  */
 test('the site can be installed to a home screen without looking generic', async ({ page }) => {
-  await page.goto('/');
-
-  const icons = await page.evaluate(() => ({
-    apple: document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href') ?? null,
-    manifest: document.querySelector('link[rel="manifest"]')?.getAttribute('href') ?? null,
-  }));
-  expect(icons.apple).toBe('/apple-touch-icon.png');
-  expect(icons.manifest).toBe('/site.webmanifest');
-
   for (const asset of ['/apple-touch-icon.png', '/icon-192.png', '/icon-512.png']) {
     expect((await page.request.get(asset)).status(), asset).toBe(200);
   }
 
-  const manifest = await (await page.request.get('/site.webmanifest')).json();
-  expect(manifest.name).toBeTruthy();
-  expect(manifest.start_url).toBe('/');
-  // Both sizes, or Android substitutes a blurred upscale on the splash screen.
-  expect(manifest.icons.map((icon: { sizes: string }) => icon.sizes)).toEqual(
-    expect.arrayContaining(['192x192', '512x512']),
-  );
+  // Each locale links its own manifest, and each one opens on its own
+  // catalogue: installed from `/es/`, the app used to open on the LSC one.
+  for (const [path, manifestHref, lang] of [
+    ['/', '/site.webmanifest', 'ca'],
+    ['/es/signe/leche/', '/es/site.webmanifest', 'es'],
+  ] as const) {
+    await page.goto(path);
+
+    const icons = await page.evaluate(() => ({
+      apple: document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href') ?? null,
+      manifest: document.querySelector('link[rel="manifest"]')?.getAttribute('href') ?? null,
+    }));
+    expect(icons.apple, path).toBe('/apple-touch-icon.png');
+    expect(icons.manifest, path).toBe(manifestHref);
+
+    const manifest = await (await page.request.get(manifestHref)).json();
+    expect(manifest.name, path).toBeTruthy();
+    expect(manifest.lang, path).toBe(lang);
+    expect(manifest.start_url, path).toBe(lang === 'ca' ? '/' : '/es/');
+    // Both sizes, or Android substitutes a blurred upscale on the splash screen.
+    expect(manifest.icons.map((icon: { sizes: string }) => icon.sizes)).toEqual(
+      expect.arrayContaining(['192x192', '512x512']),
+    );
+  }
 });
 
 /**

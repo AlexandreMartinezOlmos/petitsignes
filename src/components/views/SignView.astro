@@ -1,13 +1,22 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../Breadcrumb.astro';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
-import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
+import { categoryInSentence, createTranslator, type MessageKey } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
+import type { Crumb } from '../../lib/seo.ts';
 import { categoryPath } from '../../lib/categories.ts';
 import { relatedSigns, signPath } from '../../lib/signs.ts';
 import { newIssueUrl } from '../../lib/site.ts';
-import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
+import {
+  LANGUAGES,
+  LANGUAGE_TO_SIGN_LANGUAGE,
+  SOURCE_LANGUAGE,
+  type Category,
+  type Language,
+  type SignEntry,
+} from '../../lib/types.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -40,8 +49,23 @@ const video = sign.videos.find((item) => item.signLanguage === signLanguage);
 const isLsc = signLanguage === 'lsc';
 const fullName = isLsc ? t('signLanguage.lscFull') : t('signLanguage.lseFull');
 const shortName = isLsc ? t('signLanguage.lsc') : t('signLanguage.lse');
+const namedSignLanguage = isLsc ? t('signLanguage.lscNamed') : t('signLanguage.lseNamed');
 
 const label = sign.labels[language];
+
+// Every other interface language, in a fixed order, so the line reads the same
+// way on every page of a locale.
+const otherLanguages = LANGUAGES.filter((other) => other !== language);
+const LANGUAGE_NAME_KEY = {
+  ca: 'languageName.ca',
+  es: 'languageName.es',
+  en: 'languageName.en',
+} as const satisfies Record<Language, MessageKey>;
+
+// "llet en llengua de signes catalana" is the question, so it is also the
+// title. The `h1` stays the bare word: on the page, the sign language is
+// already said by the line under it.
+const title = t('sign.title', { label, signLanguage: namedSignLanguage });
 
 const categoryEntries = await getCollection('categories');
 const categoryEntry = categoryEntries.find((item) => item.data.id === sign.category);
@@ -65,15 +89,27 @@ const ofCategory = categoryInSentence(language, category.labels[language]);
 
 const catalogueHref = localeHref('/', language);
 
+const trail: Crumb[] = [
+  { name: t('nav.catalogue'), href: catalogueHref },
+  { name: category.labels[language], href: localeHref(categoryPath(category.id), language) },
+  { name: label, href: localeHref(signPath(sign.id), language) },
+];
+
 /**
  * The description is the sentence a search result shows, so it says what the
  * page can actually deliver. When a sign language has no video for this concept
  * the page still exists and is still worth reaching — but promising a video it
  * does not have would be the same false claim the card is forbidden to make.
+ *
+ * The same goes for how the video arrives. An embedded one plays on this page;
+ * a linked one is a step away, at the source. The description used to promise
+ * "the video" on all 194 Spanish pages, which carry only the link.
  */
-const description = video
-  ? t('sign.meta', { label, signLanguage: fullName })
-  : t('sign.metaNoVideo', { label, signLanguage: fullName });
+const description = !video
+  ? t('sign.metaNoVideo', { label, signLanguage: fullName })
+  : video.delivery === 'youtube-embed'
+    ? t('sign.meta', { label, signLanguage: fullName })
+    : t('sign.metaExternal', { label, signLanguage: fullName });
 
 /**
  * The date the source last updated this entry. Showing it is not a nicety: the
@@ -106,7 +142,13 @@ const reportUrl = newIssueUrl(
 );
 ---
 
-<BaseLayout language={language} path={signPath(sign.id)} title={label} description={description}>
+<BaseLayout
+  language={language}
+  path={signPath(sign.id)}
+  title={title}
+  description={description}
+  breadcrumb={trail}
+>
   {
     /*
     Three steps now, not two. The category in the middle is the route that
@@ -117,15 +159,7 @@ const reportUrl = newIssueUrl(
     columns are dividing up.
   */
   }
-  <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
-    <a class="breadcrumb__link" href={catalogueHref}>{t('nav.catalogue')}</a>
-    <span class="breadcrumb__sep" aria-hidden="true">/</span>
-    <a class="breadcrumb__link" href={localeHref(categoryPath(category.id), language)}>
-      {category.labels[language]}
-    </a>
-    <span class="breadcrumb__sep" aria-hidden="true">/</span>
-    <span class="breadcrumb__current" aria-current="page">{label}</span>
-  </nav>
+  <Breadcrumb language={language} trail={trail} />
 
   {
     /*
@@ -185,6 +219,25 @@ const reportUrl = newIssueUrl(
 
         <h1 class="sign-detail__title">{label}</h1>
         <p class="sign-detail__subtitle">{t('sign.subtitle', { signLanguage: fullName })}</p>
+        {
+          /*
+          The word as it is written in the other languages. Words only: this
+          says nothing about the other sign language, whose gesture never
+          reaches this page. Each word is marked with its language, so a screen
+          reader says "leche" in Spanish rather than in Catalan.
+        */
+        }
+        <p class="sign-detail__elsewhere">
+          {t('sign.otherLanguages')}:{' '}
+          {
+            otherLanguages.map((other, index) => (
+              <Fragment>
+                {index > 0 && ' · '}
+                {t(LANGUAGE_NAME_KEY[other])} «<span lang={other}>{sign.labels[other]}</span>»
+              </Fragment>
+            ))
+          }
+        </p>
       </div>
 
       {
@@ -343,7 +396,19 @@ const reportUrl = newIssueUrl(
               <time datetime={video.updatedAt}>{updatedAt}</time>
             </dd>
           </dl>
-          <p class="sign-source__license">{video.license}</p>
+          {/*
+            The source's attribution is quoted in the source's language and
+            marked as such, so it stays correct on a page in any other — the
+            English interface, once routed, shows DILSE's. What the project
+            does with the video is ours to say, so it is translated like the
+            rest of the page. It used to be Catalan on all 194 Spanish pages.
+          */}
+          <p class="sign-source__license" lang={SOURCE_LANGUAGE[video.source]}>
+            {video.license}
+          </p>
+          {video.delivery === 'external-link' && (
+            <p class="sign-source__license">{t('sign.sourceLinkOnly')}</p>
+          )}
         </aside>
       )
     }
@@ -387,6 +452,7 @@ const reportUrl = newIssueUrl(
           <h2 class="sign-related__title" id="sign-related-title">
             {t('sign.relatedTitle', { ofCategory })}
           </h2>
+          <p class="sign-related__intro">{category.intro[language]}</p>
           <ul class="sign-related__list">
             {related.map((other) => (
               <li>
@@ -531,6 +597,14 @@ const reportUrl = newIssueUrl(
     color: var(--color-ink-muted);
   }
 
+  /* A footnote to the word, not a second subtitle: smaller and quieter, and
+     under the line that names the sign language so it cannot be read as one. */
+  .sign-detail__elsewhere {
+    margin-block-start: 0.25rem;
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+  }
+
   .sign-detail__actions {
     grid-area: actions;
     display: flex;
@@ -590,6 +664,12 @@ const reportUrl = newIssueUrl(
     font-weight: var(--font-weight-display);
     color: var(--color-ink);
     margin-block-end: 0.75rem;
+  }
+
+  .sign-related__intro {
+    max-inline-size: 60ch;
+    margin-block-end: 1rem;
+    color: var(--color-ink-muted);
   }
 
   /* A definition list because that is what this is: four labelled facts about

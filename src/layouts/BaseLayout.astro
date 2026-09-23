@@ -8,6 +8,7 @@ import nunitoSansLatin from '@fontsource-variable/nunito-sans/files/nunito-sans-
 import BrandMark from '../components/BrandMark.astro';
 import IconSprite from '../components/IconSprite.astro';
 import { createTranslator } from '../lib/i18n.ts';
+import { manifestPath } from '../lib/manifest.ts';
 import { signLanguageOf } from '../lib/types.ts';
 import {
   DEFAULT_LOCALE,
@@ -19,10 +20,16 @@ import {
 import { ANALYTICS_ENDPOINT, ANALYTICS_SCRIPT, REPO_URL, analyticsHost } from '../lib/site.ts';
 import {
   APPLE_TOUCH_ICON,
-  OG_IMAGE,
+  OG_IMAGES,
   OG_IMAGE_HEIGHT,
   OG_IMAGE_WIDTH,
-  WEB_MANIFEST,
+  OG_LOCALES,
+  breadcrumbJsonLd,
+  documentTitle,
+  serializeJsonLd,
+  websiteJsonLd,
+  type Crumb,
+  type JsonLd,
 } from '../lib/seo.ts';
 
 interface Props {
@@ -30,6 +37,10 @@ interface Props {
   language: RoutedLocale;
   /** Locale-independent path of this page, always `/…/` (e.g. `/`, `/credits/`). */
   path: string;
+  /**
+   * What this page is about, in the words someone would search for. The site's
+   * name is appended when there is room for it (see `documentTitle`).
+   */
   title?: string;
   description?: string;
   /**
@@ -38,16 +49,21 @@ interface Props {
    * claim thousands of addresses are the same page.
    */
   noindex?: boolean;
+  /**
+   * The trail the page's visible breadcrumb shows, so the same list reaches
+   * search engines as a `BreadcrumbList`. Pass the array `<Breadcrumb>` renders.
+   */
+  breadcrumb?: readonly Crumb[];
 }
 
-const { language, path, title, description, noindex = false } = Astro.props;
+const { language, path, title, description, noindex = false, breadcrumb } = Astro.props;
 const t = createTranslator(language);
 
 // The sign language is derived here, at build time, and baked into the markup.
 // Nothing on the client changes it, so there is no hydration mismatch.
 const signLanguage = signLanguageOf(language);
 
-const pageTitle = title ? `${title} · ${t('site.title')}` : t('site.title');
+const pageTitle = documentTitle(title, t('site.title'));
 const pageDescription = description ?? t('site.tagline');
 
 const homeHref = localeHref('/', language);
@@ -55,6 +71,18 @@ const aboutHref = localeHref('/el-projecte/', language);
 const creditsHref = localeHref('/credits/', language);
 const accessibilityHref = localeHref('/accessibilitat/', language);
 const canonical = new URL(localeHref(path, language), Astro.site);
+
+// Keyed on `noindex` for the same reason the canonical link is: the 404 also
+// renders at `/`, and a page kept out of the index has nothing to declare.
+// Built against `Astro.site`, like the canonical, so a preview describes
+// itself rather than production.
+const origin = String(Astro.site);
+const structuredData: JsonLd[] = noindex
+  ? []
+  : [
+      ...(path === '/' ? [websiteJsonLd(t('site.title'), homeHref, language, origin)] : []),
+      ...(breadcrumb ? [breadcrumbJsonLd(breadcrumb, origin)] : []),
+    ];
 
 /** `aria-current="page"` on the header link for the page being viewed. */
 const isCurrent = (target: string): 'page' | undefined => (path === target ? 'page' : undefined);
@@ -91,7 +119,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
     */
     }
     <link rel="apple-touch-icon" href={APPLE_TOUCH_ICON} />
-    <link rel="manifest" href={WEB_MANIFEST} />
+    <link rel="manifest" href={manifestPath(language)} />
     {!noindex && <link rel="canonical" href={canonical} />}
     {/* Tell search engines about the other language versions of this page. */}
     {
@@ -117,7 +145,14 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content={language} />
+    <meta property="og:locale" content={OG_LOCALES[language]} />
+    {
+      /* The same page in the other language, as `hreflang` says it for crawlers. */
+      !noindex &&
+        ROUTED_LOCALES.filter((locale) => locale !== language).map((locale) => (
+          <meta property="og:locale:alternate" content={OG_LOCALES[locale]} />
+        ))
+    }
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={t('site.title')} />
     {
@@ -128,11 +163,22 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
       the preview.
     */
     }
-    <meta property="og:image" content={new URL(OG_IMAGE, Astro.site)} />
+    <meta property="og:image" content={new URL(OG_IMAGES[language], Astro.site)} />
     <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
     <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
     <meta property="og:image:alt" content={pageDescription} />
     <meta name="twitter:card" content="summary_large_image" />
+    {
+      /*
+      Data, not code: the browser never runs these, which is why the CSP build
+      step leaves them unhashed (see `collectInlineHashes`).
+    */
+    }
+    {
+      structuredData.map((data) => (
+        <script is:inline type="application/ld+json" set:html={serializeJsonLd(data)} />
+      ))
+    }
 
     {
       /*

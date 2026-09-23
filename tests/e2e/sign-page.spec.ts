@@ -311,6 +311,38 @@ test.describe('a sign page is not a dead card', () => {
   });
 });
 
+/**
+ * WCAG 3.1.2, language of parts. The citation quotes the source, and a quote
+ * keeps the language it was written in — so it says which one, and a screen
+ * reader switches voice instead of reading Catalan with Spanish phonetics.
+ * What the project adds in its own words is translated, not quoted: it was
+ * Catalan on every Spanish page.
+ */
+test.describe('the citation speaks the page’s language, and marks what it quotes', () => {
+  test('the Spanish page quotes DILSE in Spanish and explains the link in Spanish', async ({
+    page,
+  }) => {
+    await page.goto(ES);
+    const source = page.locator('.sign-source');
+
+    await expect(source.locator('.sign-source__license[lang="es"]')).toContainText('DILSE');
+    await expect(source).toContainText('Enlazamos a la ficha original');
+    await expect(source).not.toContainText(/enllaç|projecte|allotja/i);
+  });
+
+  test('the Catalan page quotes the Vocabulari in Catalan', async ({ page }) => {
+    await page.goto(CA);
+    const source = page.locator('.sign-source');
+
+    await expect(source.locator('.sign-source__license[lang="ca"]')).toContainText(
+      'Vocabulari bàsic de la LSC',
+    );
+    // An embedded video is not "only linked": the sentence is for DILSE's
+    // delivery, not for every source.
+    await expect(source).not.toContainText('Enllacem a la fitxa original');
+  });
+});
+
 test.describe('the citation repositions, never disappears', () => {
   /**
    * The source's attribution is required, not decorative — unlike the text pages'
@@ -445,5 +477,38 @@ test.describe('a sign page on a phone', () => {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow).toBeLessThanOrEqual(0);
+  });
+});
+
+/**
+ * The word in the other languages, as text. On a site whose one structural
+ * promise is that the other sign language never reaches the page, this line
+ * has to stay words: no link, no video, nothing that could stand in for a
+ * gesture. And each word is marked with its language, or a screen reader
+ * reads "leche" with Catalan phonetics (WCAG 3.1.2).
+ */
+test.describe('the word in the other languages', () => {
+  test('names it in each other language, marked as that language', async ({ page }) => {
+    await page.goto(CA);
+    const line = page.locator('.sign-detail__elsewhere');
+
+    await expect(line).toContainText('castellà «leche»');
+    await expect(line).toContainText('anglès «milk»');
+    await expect(line.locator('[lang="es"]')).toHaveText('leche');
+    await expect(line.locator('[lang="en"]')).toHaveText('milk');
+    await expect(line.locator('a, button, iframe, video')).toHaveCount(0);
+  });
+
+  test('leaves out the language the page is already in', async ({ page }) => {
+    await page.goto(ES);
+    const line = page.locator('.sign-detail__elsewhere');
+
+    await expect(line).toContainText('catalán «llet»');
+    await expect(line.locator('[lang="es"]')).toHaveCount(0);
+  });
+
+  test('introduces the related signs with what their category is for', async ({ page }) => {
+    await page.goto(CA);
+    await expect(page.locator('.sign-related__intro')).toContainText('«aigua»');
   });
 });

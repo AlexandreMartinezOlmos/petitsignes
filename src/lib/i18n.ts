@@ -34,6 +34,9 @@ const MESSAGES = {
     'nav.breadcrumb': 'On ets',
     'nav.onThisPage': 'En aquesta pàgina',
 
+    'home.title': 'Signes per a nadons en {signLanguage}',
+    'home.meta':
+      '{count} signes reals de la {signLanguage} per comunicar-te amb el teu nadó abans que parli. De fonts oficials, gratuït i sense registre.',
     'hero.title': "Comunica't amb el teu nadó",
     'hero.titleAccent': 'molt abans de la seva primera paraula',
     'hero.lead': 'Signes reals de la llengua de signes catalana per al dia a dia amb el teu nadó.',
@@ -70,6 +73,14 @@ const MESSAGES = {
     'filter.hideCategories': 'Amaga les categories',
     'filter.searchScope': 'La cerca mira tot el catàleg, no la categoria triada.',
 
+    // The link beside each group heading on the home. The visible part is
+    // short because the heading beside it already names the category; the
+    // rest is read by screen readers and crawlers, so the full name is the
+    // whole sentence and still begins with what is on screen (WCAG 2.5.3).
+    'catalogue.sectionAll': 'Veure els {count}',
+    'catalogue.sectionAllRest': 'signes {ofCategory}',
+    'catalogue.sectionAllOne': 'Veure el signe {ofCategory}',
+
     'card.watchSign': 'Veure el signe',
     'card.addFavorite': 'Afegeix a preferits',
     'card.removeFavorite': 'Treu de preferits',
@@ -85,21 +96,36 @@ const MESSAGES = {
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Llengua de Signes Catalana',
     'signLanguage.lseFull': 'Llengua de Signes Espanyola',
+    // As it is written in running text and searched for: lowercase, like the
+    // name of any language, with the acronym people also type. For titles.
+    'signLanguage.lscNamed': 'llengua de signes catalana (LSC)',
+    'signLanguage.lseNamed': 'llengua de signes espanyola (LSE)',
 
+    'sign.title': '«{label}» en {signLanguage}',
     'sign.subtitle': 'en {signLanguage}',
     'sign.meta':
       'Com es signa «{label}» en {signLanguage}, amb el vídeo de la font oficial i l’enllaç a la fitxa original.',
+    'sign.metaExternal':
+      'Com es signa «{label}» en {signLanguage}, amb l’enllaç al seu vídeo a la font oficial.',
     'sign.metaNoVideo':
       '«{label}» al catàleg de Petits Signes. Encara no en tenim el vídeo en {signLanguage}.',
+    // "Idiomes", not "llengües": on a site about sign languages the other
+    // reading is "in other sign languages", and what follows is written words.
+    'sign.otherLanguages': 'En altres idiomes',
+    'languageName.ca': 'català',
+    'languageName.es': 'castellà',
+    'languageName.en': 'anglès',
     'sign.sourceTitle': 'D’on surt aquest signe',
     'sign.sourceName': 'Font',
     'sign.sourceEntry': 'Fitxa original',
     'sign.sourceUpdated': 'Data de la font',
+    'sign.sourceLinkOnly': 'Enllacem a la fitxa original; no allotgem ni transformem el vídeo.',
     'sign.sourceTerm': 'Terme al diccionari',
     'sign.category': 'Categoria',
     'sign.relatedTitle': 'Altres signes {ofCategory}',
     'sign.relatedAll': 'Veure els {count} signes {ofCategory}',
     'category.title': 'Signes {ofCategory}',
+    'category.documentTitle': 'Signes {ofCategory} en {signLanguage}',
     'category.lead':
       '{count} signes {ofCategory} per al dia a dia amb el teu nadó, cadascun amb el vídeo de la seva font oficial.',
     'category.leadOne':
@@ -171,6 +197,9 @@ const MESSAGES = {
     'nav.breadcrumb': 'Dónde estás',
     'nav.onThisPage': 'En esta página',
 
+    'home.title': 'Signos para bebés en {signLanguage}',
+    'home.meta':
+      '{count} signos reales de la {signLanguage} para comunicarte con tu bebé antes de que hable. De fuentes oficiales, gratis y sin registro.',
     'hero.title': 'Comunícate con tu bebé',
     'hero.titleAccent': 'mucho antes de su primera palabra',
     'hero.lead': 'Signos reales de la lengua de signos española para el día a día con tu bebé.',
@@ -207,6 +236,10 @@ const MESSAGES = {
     'filter.hideCategories': 'Ocultar las categorías',
     'filter.searchScope': 'La búsqueda mira todo el catálogo, no la categoría elegida.',
 
+    'catalogue.sectionAll': 'Ver los {count}',
+    'catalogue.sectionAllRest': 'signos de {ofCategory}',
+    'catalogue.sectionAllOne': 'Ver el signo de {ofCategory}',
+
     'card.watchSign': 'Ver el signo',
     'card.addFavorite': 'Añadir a favoritos',
     'card.removeFavorite': 'Quitar de favoritos',
@@ -222,21 +255,32 @@ const MESSAGES = {
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Lengua de Signos Catalana',
     'signLanguage.lseFull': 'Lengua de Signos Española',
+    'signLanguage.lscNamed': 'lengua de signos catalana (LSC)',
+    'signLanguage.lseNamed': 'lengua de signos española (LSE)',
 
+    'sign.title': '«{label}» en {signLanguage}',
     'sign.subtitle': 'en {signLanguage}',
     'sign.meta':
       'Cómo se signa «{label}» en {signLanguage}, con el vídeo de la fuente oficial y el enlace a la ficha original.',
+    'sign.metaExternal':
+      'Cómo se signa «{label}» en {signLanguage}, con el enlace a su vídeo en la fuente oficial.',
     'sign.metaNoVideo':
       '«{label}» en el catálogo de Petits Signes. Todavía no tenemos su vídeo en {signLanguage}.',
+    'sign.otherLanguages': 'En otros idiomas',
+    'languageName.ca': 'catalán',
+    'languageName.es': 'castellano',
+    'languageName.en': 'inglés',
     'sign.sourceTitle': 'De dónde sale este signo',
     'sign.sourceName': 'Fuente',
     'sign.sourceEntry': 'Ficha original',
     'sign.sourceUpdated': 'Fecha de la fuente',
+    'sign.sourceLinkOnly': 'Enlazamos a la ficha original; no alojamos ni transformamos el vídeo.',
     'sign.sourceTerm': 'Término en el diccionario',
     'sign.category': 'Categoría',
     'sign.relatedTitle': 'Otros signos de {ofCategory}',
     'sign.relatedAll': 'Ver los {count} signos de {ofCategory}',
     'category.title': 'Signos de {ofCategory}',
+    'category.documentTitle': 'Signos de {ofCategory} en {signLanguage}',
     'category.lead':
       '{count} signos de {ofCategory} para el día a día con tu bebé, cada uno con el vídeo de su fuente oficial.',
     'category.leadOne':
@@ -309,6 +353,9 @@ const MESSAGES = {
     'nav.breadcrumb': 'Breadcrumb',
     'nav.onThisPage': 'On this page',
 
+    'home.title': 'Baby signs in {signLanguage}',
+    'home.meta':
+      '{count} real signs in {signLanguage} to communicate with your baby before they can speak. From official sources, free and with no account.',
     'hero.title': 'Connect with your baby',
     'hero.titleAccent': 'long before their first word',
     'hero.lead': 'Real signs for everyday moments with your baby.',
@@ -345,6 +392,10 @@ const MESSAGES = {
     'filter.hideCategories': 'Hide categories',
     'filter.searchScope': 'Search looks at the whole catalogue, not the chosen category.',
 
+    'catalogue.sectionAll': 'See all {count}',
+    'catalogue.sectionAllRest': '{ofCategory} signs',
+    'catalogue.sectionAllOne': 'See the {ofCategory} sign',
+
     'card.watchSign': 'Watch the sign',
     'card.addFavorite': 'Add to favourites',
     'card.removeFavorite': 'Remove from favourites',
@@ -360,21 +411,32 @@ const MESSAGES = {
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Catalan Sign Language',
     'signLanguage.lseFull': 'Spanish Sign Language',
+    'signLanguage.lscNamed': 'Catalan Sign Language (LSC)',
+    'signLanguage.lseNamed': 'Spanish Sign Language (LSE)',
 
+    'sign.title': '“{label}” in {signLanguage}',
     'sign.subtitle': 'in {signLanguage}',
     'sign.meta':
       'How to sign “{label}” in {signLanguage}, with the video from the official source and a link to the original entry.',
+    'sign.metaExternal':
+      'How to sign “{label}” in {signLanguage}, with a link to its video at the official source.',
     'sign.metaNoVideo':
       '“{label}” in the Petits Signes catalogue. We do not have its {signLanguage} video yet.',
+    'sign.otherLanguages': 'In other languages',
+    'languageName.ca': 'Catalan',
+    'languageName.es': 'Spanish',
+    'languageName.en': 'English',
     'sign.sourceTitle': 'Where this sign comes from',
     'sign.sourceName': 'Source',
     'sign.sourceEntry': 'Original entry',
     'sign.sourceUpdated': 'Source date',
+    'sign.sourceLinkOnly': 'We link to the original entry; we neither host nor alter the video.',
     'sign.sourceTerm': 'Dictionary term',
     'sign.category': 'Category',
     'sign.relatedTitle': 'More signs from {ofCategory}',
     'sign.relatedAll': 'See all {count} {ofCategory} signs',
     'category.title': '{ofCategory} signs',
+    'category.documentTitle': '{ofCategory} signs in {signLanguage}',
     'category.lead':
       '{count} signs for {ofCategory}, for everyday moments with your baby, each with the video from its official source.',
     'category.leadOne':

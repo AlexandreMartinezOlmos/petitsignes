@@ -54,13 +54,20 @@ export const TSV_COLUMNS = [
   'lse_dilse_term',
 ] as const;
 
-/** Boilerplate that the maintainer never types; filled in per language on import. */
+/**
+ * Boilerplate that the maintainer never types; filled in per language on import.
+ *
+ * Each licence is the source's own attribution, in the source's own language
+ * (see `SOURCE_LANGUAGE`). What the project does with the video — "we only link
+ * to it" — is the project speaking, so it lives in the interface translations
+ * and reaches each page in that page's language.
+ */
 export const LSC_SOURCE_URL =
   'https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/';
 export const LSC_LICENSE =
   'Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.';
 export const LSE_LICENSE =
-  'DILSE, Fundación CNSE. Enllaç a la cerca de la fitxa original; el projecte només hi enllaça, no allotja ni transforma el vídeo.';
+  'DILSE — Diccionario normativo de la lengua de signos española (Fundación CNSE).';
 
 export function youtubeWatchUrl(id: string): string {
   return `https://www.youtube.com/watch?v=${id}`;

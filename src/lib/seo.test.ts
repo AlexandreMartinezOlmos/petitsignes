@@ -1,7 +1,18 @@
-import { readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { SITE_PATHS, buildRobots, buildSitemap } from './seo.ts';
+import {
+  PREVIEW_NOINDEX,
+  SITE_PATHS,
+  TITLE_MAX_LENGTH,
+  breadcrumbJsonLd,
+  buildRobots,
+  buildSitemap,
+  documentTitle,
+  markPreviewHeaders,
+  serializeJsonLd,
+  websiteJsonLd,
+} from './seo.ts';
 import { ROUTED_LOCALES, localeHref } from './routing.ts';
 import { SITE_ORIGIN } from './site.ts';
 
@@ -59,6 +70,16 @@ describe('sitemap', () => {
     expect(preview).not.toContain(SITE_ORIGIN);
   });
 
+  /**
+   * The data has no date that means "this page changed" — `updatedAt` is when
+   * a source was checked — and a `lastmod` that does not track real changes
+   * teaches search engines to ignore the field for the whole site. See the
+   * comment on `buildSitemap` before adding one.
+   */
+  it('claims no modification date it could not back up', () => {
+    expect(xml).not.toContain('<lastmod>');
+  });
+
   it('stays well-formed when a path carries XML-significant characters', () => {
     const xmlWithAmp = buildSitemap(SITE_ORIGIN, ['/a&b/']);
     expect(xmlWithAmp).toContain('&amp;');
@@ -103,12 +124,18 @@ describe('robots.txt', () => {
    * Every branch deploys the same build to its own pages.dev origin. Those are
    * for looking at, not for reading in search results — an indexed preview
    * competes with production for identical content.
+   *
+   * This asserted `Disallow: /` until that turned out to be the one setting
+   * that defeats the guard: a crawler that may not fetch a page never reads
+   * its `noindex`, and the bare address can still be listed when someone links
+   * to it. A preview now lets crawlers in to be told, and advertises nothing.
    */
-  it('shuts crawlers out of anything that is not the canonical domain', () => {
+  it('lets crawlers into a preview so they can read that it is not to be indexed', () => {
     const robots = buildRobots(PREVIEW);
-    expect(robots).toContain('Disallow: /');
-    expect(robots).not.toContain('Allow: /');
+    expect(robots).toContain('Allow: /');
+    expect(robots).not.toContain('Disallow: /');
     expect(robots).not.toContain('Sitemap:');
+    expect(markPreviewHeaders('', PREVIEW)).toContain(PREVIEW_NOINDEX);
   });
 
   /**
@@ -166,8 +193,127 @@ describe('the origin a deployment describes itself with', () => {
   it.each([
     ['a branch preview', PREVIEW, true],
     ['production', SITE_ORIGIN, false],
-  ])('%s', (_name, origin, blocked) => {
-    expect(buildRobots(origin).includes('Disallow: /')).toBe(blocked);
+  ])('%s', (_name, origin, preview) => {
+    expect(markPreviewHeaders('/*\n  X: y\n', origin).includes(PREVIEW_NOINDEX)).toBe(preview);
+    expect(buildRobots(origin).includes('Sitemap:')).toBe(!preview);
     expect(buildSitemap(origin)).toContain(`<loc>${origin}/</loc>`);
+  });
+});
+
+describe('markPreviewHeaders', () => {
+  const HEADERS = readFileSync(resolve(process.cwd(), 'public/_headers'), 'utf8');
+
+  /**
+   * The failure this exists to make impossible costs the whole site: one
+   * `noindex` on the canonical domain and every page leaves search on the next
+   * crawl, with nothing on screen to say so. Byte for byte, not "contains no
+   * noindex", so nothing else can creep into production through here either.
+   */
+  it('gives production its headers back exactly as they were', () => {
+    expect(markPreviewHeaders(HEADERS, SITE_ORIGIN)).toBe(HEADERS);
+  });
+
+  it('adds noindex for every path of a preview, and keeps everything else', () => {
+    const marked = markPreviewHeaders(HEADERS, PREVIEW);
+
+    expect(marked.startsWith(HEADERS.trimEnd())).toBe(true);
+    expect(marked).toMatch(new RegExp(`^/\\*\\n  ${PREVIEW_NOINDEX}$`, 'm'));
+    expect(marked).toContain(PREVIEW);
+  });
+});
+
+describe('documentTitle', () => {
+  const NAME = 'Petits Signes';
+  const SUFFIX = ` · ${NAME}`.length;
+
+  it('appends the site name when it fits', () => {
+    expect(documentTitle('«llet» en llengua de signes catalana (LSC)', NAME)).toBe(
+      '«llet» en llengua de signes catalana (LSC) · Petits Signes',
+    );
+  });
+
+  /**
+   * The name is the part worth losing. Kept on a long title it pushes the end
+   * of the sentence past the ellipsis — and on these pages the end is the name
+   * of the sign language, which is the half of the query that matters.
+   */
+  it('drops the site name rather than letting it push the title past the cut', () => {
+    const long = '«una altra vegada» en llengua de signes catalana (LSC)';
+    expect(documentTitle(long, NAME)).toBe(long);
+  });
+
+  it('keeps the name at exactly the limit and drops it one character past', () => {
+    const fits = 'x'.repeat(TITLE_MAX_LENGTH - SUFFIX);
+    expect(documentTitle(fits, NAME)).toHaveLength(TITLE_MAX_LENGTH);
+    expect(documentTitle(`${fits}x`, NAME)).toBe(`${fits}x`);
+  });
+
+  /**
+   * An astral character is two UTF-16 units and one character to a reader.
+   * Counting code points keeps the rule about what is seen rather than about
+   * how JavaScript happens to store it.
+   */
+  it('counts characters as a reader does, not UTF-16 units', () => {
+    const astral = '𝒶'.repeat(TITLE_MAX_LENGTH - SUFFIX);
+    expect(documentTitle(astral, NAME)).toBe(`${astral} · ${NAME}`);
+  });
+
+  it('falls back to the site name for a page that has no title of its own', () => {
+    expect(documentTitle(undefined, NAME)).toBe(NAME);
+  });
+});
+
+describe('structured data', () => {
+  it('describes each locale’s home as the site, at its own address and in its own language', () => {
+    expect(websiteJsonLd('Petits Signes', '/es/', 'es')).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Petits Signes',
+      url: `${SITE_ORIGIN}/es/`,
+      inLanguage: 'es',
+    });
+  });
+
+  /**
+   * Positions are 1-based and in reading order, and every item is an absolute
+   * URL: a search engine resolves nothing against the page it found this on.
+   */
+  it('turns a trail into a numbered list of absolute URLs, in order', () => {
+    const list = breadcrumbJsonLd([
+      { name: 'Catálogo', href: '/es/' },
+      { name: 'Animales', href: '/es/categoria/animals/' },
+    ]);
+
+    expect(list['@type']).toBe('BreadcrumbList');
+    expect(list.itemListElement).toEqual([
+      { '@type': 'ListItem', position: 1, name: 'Catálogo', item: `${SITE_ORIGIN}/es/` },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Animales',
+        item: `${SITE_ORIGIN}/es/categoria/animals/`,
+      },
+    ]);
+  });
+
+  it('describes a preview as the preview, like the canonical link does', () => {
+    expect(websiteJsonLd('x', '/', 'ca', PREVIEW).url).toBe(`${PREVIEW}/`);
+    expect(JSON.stringify(breadcrumbJsonLd([{ name: 'x', href: '/' }], PREVIEW))).not.toContain(
+      SITE_ORIGIN,
+    );
+  });
+
+  /**
+   * The HTML parser decides where a script ends, and it does not know JSON:
+   * a label containing `</script>` would close the block and spill the rest
+   * into the page as markup. Escaped, it is the same string to a JSON reader.
+   */
+  it('cannot be closed early by the text it carries', () => {
+    const data = { name: 'a</script><script>alert(1)</script>' };
+    const body = serializeJsonLd(data);
+
+    expect(body).not.toContain('</script');
+    expect(body).not.toContain('<');
+    expect(JSON.parse(body)).toEqual(data);
   });
 });

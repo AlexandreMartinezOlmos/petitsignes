@@ -75,6 +75,51 @@ describe('public/_headers', () => {
   });
 });
 
+/**
+ * The file as the rules it holds: each path pattern with the directives under
+ * it. The flat list above is enough for headers every path gets; caching is
+ * the one thing that must differ by path, so it is asserted per rule.
+ */
+const RULES = HEADERS.split(/\n(?=\/)/).map((block) => {
+  const [pattern = '', ...lines] = block.split('\n').map((line) => line.trim());
+  return {
+    pattern,
+    directives: lines.filter((line) => line !== '' && !line.startsWith('#')),
+  };
+});
+
+describe('caching', () => {
+  /**
+   * The build names every file under `/_astro/` after a hash of its contents,
+   * so a published name never changes meaning and can be kept for good. It was
+   * being revalidated every four hours. `tests/e2e/caching.spec.ts` checks the
+   * other half of the bargain: that the build really does hash every name.
+   */
+  it('keeps the hashed build assets for a year, without asking again', () => {
+    const rule = RULES.find((candidate) => candidate.pattern === '/_astro/*');
+    const cache = rule?.directives.find((line) => line.startsWith('Cache-Control:'));
+
+    expect(cache).toBeDefined();
+    expect(Number(cache?.match(/max-age=(\d+)/)?.[1])).toBeGreaterThanOrEqual(31536000);
+    expect(cache).toContain('immutable');
+  });
+
+  /**
+   * The mistake this guards against costs a year. A page, the manifest or a
+   * social card keeps its name across deploys, and `immutable` on any of them
+   * would leave visitors on a stale copy with no way to refresh it but clearing
+   * their browser.
+   */
+  it('marks nothing immutable outside the hashed assets', () => {
+    const elsewhere = RULES.filter(
+      (rule) =>
+        rule.pattern !== '/_astro/*' && rule.directives.some((line) => line.includes('immutable')),
+    ).map((rule) => rule.pattern);
+
+    expect(elsewhere).toEqual([]);
+  });
+});
+
 describe('public/.well-known/security.txt', () => {
   const SECURITY_TXT = readFileSync(
     resolve(process.cwd(), 'public/.well-known/security.txt'),
