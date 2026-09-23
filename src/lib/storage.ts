@@ -59,8 +59,9 @@ export interface ImportOptions {
    * dropped from the file instead of being stored.
    *
    * Optional, and passed in rather than looked up, because this module knows
-   * nothing about the catalogue and must not start to: the whole point of §4.1
-   * is that a future remote store is a new class here, not a rewrite of the app.
+   * nothing about the catalogue and must not start to: the whole point of
+   * `ProgressStore` is that a future remote store is a new class here, not a
+   * rewrite of the app.
    * The caller has the collection; the store is merely told what is real.
    */
   knownIds?: ReadonlySet<string>;

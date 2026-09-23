@@ -234,7 +234,7 @@ export function parseTsv(text: string): VocabularyRow[] {
     if (seen.has(trimmedId)) throw new TsvError(`Duplicate id "${trimmedId}"`);
     seen.add(trimmedId);
     // Not just tidiness: the id becomes a URL segment and the localStorage key
-    // for favourites (§4.1). A row that slips past this is a file nobody can
+    // for saved progress. A row that slips past this is a file nobody can
     // link to and a schema error the Zod build catches too late to say why.
     if (!isUrlSlug(trimmedId)) {
       throw new TsvError(`Row "${trimmedId}": id is not a valid URL slug`);

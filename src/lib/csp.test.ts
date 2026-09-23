@@ -91,7 +91,7 @@ describe('the policy grants only what this site needs', () => {
   });
 
   /**
-   * §4.3 and §2.2: the player is opt-in and the analytics are anonymous. The
+   * The player is opt-in and the analytics are anonymous. The
    * policy is where those promises stop depending on the code being careful —
    * a fifth origin cannot be contacted even if some future dependency tries.
    */

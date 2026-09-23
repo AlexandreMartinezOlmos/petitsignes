@@ -94,7 +94,7 @@ test.describe('the logo', () => {
   });
 
   /**
-   * §4.3-adjacent housekeeping: the header must not pull the logo out of the
+   * Housekeeping: the header must not pull the logo out of the
    * icon sprite again, because `wave` belongs to the Cortesia category and the
    * two were indistinguishable while they shared it.
    */

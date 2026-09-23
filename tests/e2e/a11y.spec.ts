@@ -563,7 +563,8 @@ test('the result count says what it counted', async ({ page }) => {
 /**
  * Every concept in the catalogue has a video today (see `contenido.md`), so
  * `.sign-card__novideo` no longer appears in any shipped card — but the rule
- * it exists for is not "we happen to have full coverage", it is §2.1: a
+ * it exists for is not "we happen to have full coverage", it is that no sign
+ * is ever invented: a
  * concept with no official source is never filled with a guess, so the next
  * one added without a video still needs this note, not a silent gap. The
  * class survives in `SignCard.astro` for that day. Since no real card can
@@ -1024,7 +1025,7 @@ test('the sitemap lists both languages of every page and points at itself from r
  * There is one page per locale rather than one for the site. Cloudflare Pages
  * serves the closest `404.html` up the directory tree, so `/es/…` finds the
  * Spanish one — which is also what lets each build ship a single sign language
- * (§4.4) instead of guessing a language from the path and rendering both.
+ * instead of guessing a language from the path and rendering both.
  */
 test.describe('a wrong address', () => {
   const CASES = [

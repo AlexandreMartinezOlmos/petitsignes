@@ -21,7 +21,7 @@ npm-debug.log*
 !.vscode/extensions.json
 .idea/
 
-# Claude Code local config and project instructions (not for the public repo)
+# Local tooling configuration and personal instructions (not for the public repo)
 .claude/
 CLAUDE.md
 

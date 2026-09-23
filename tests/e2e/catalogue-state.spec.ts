@@ -11,8 +11,8 @@ import { expect, test, type Page } from '@playwright/test';
  * The state rides in `history.state` rather than in the URL, and that is a
  * privacy decision, not a stylistic one: GoatCounter's script sends
  * `location.search` on every hit through a field no setting can switch off, so a
- * `?q=` would publish what a parent typed into the search box. §2.2 promises
- * that never happens. `the address bar never learns what someone searched for`
+ * `?q=` would publish what a parent typed into the search box. The privacy
+ * promise is that this never happens. `the address bar never learns what someone searched for`
  * below is what keeps it true.
  */
 
@@ -149,7 +149,7 @@ test.describe('coming back to the catalogue', () => {
 
 test.describe('what the filters must never touch', () => {
   /**
-   * The §2.2 guard, and the reason this feature is not a query string.
+   * The privacy guard, and the reason this feature is not a query string.
    *
    * GoatCounter's `count.js` builds `q: location.search` straight from the
    * location and sends it on every hit. `q` is not in the set of settings it

@@ -70,6 +70,11 @@ roto, aunque funcione en tu máquina.
   el pulgar.
 - **TypeScript.** `strict`, sin `any` sin justificar.
 - Comentarios y nombres **en inglés**; el contenido de usuario en ca/es/en.
+- **Comentarios que se explican solos.** Un comentario da su razón en el propio sitio o enlaza a
+  un documento que está en el repositorio. Nada de «ver mis notas» ni de una sección citada sin
+  decir de qué documento es: quien lee el código solo tiene el repositorio. Las únicas `§` válidas son las
+  de WCAG (`WCAG 2.2 §2.5.8`), las de la licencia (`AGPL §13`) y, dentro de un documento, las de
+  sus propias secciones numeradas. Lo comprueba `src/lib/references.test.ts`.
 
 ### Commits
 
@@ -83,6 +88,10 @@ docs: explain the poster decision
 ```
 
 El tipo `content` es para cambios en los datos de signos.
+
+Un trailer `Co-authored-by` acredita a una **persona** que responde del cambio. El hook rechaza
+los que apuntan a una dirección `noreply@` de una cuenta de servicio; la dirección privada que
+GitHub da a cada persona (`1234+nombre@users.noreply.github.com`) sí es válida.
 
 ## Qué no encaja aquí
 

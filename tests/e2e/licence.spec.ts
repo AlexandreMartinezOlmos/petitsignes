@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
  * The source link is a licence obligation, not a courtesy.
  *
  * The site is AGPL-3.0-or-later and ships minified JavaScript to the browser.
- * Minified JS is an object form of the program, so §13 applies: every user
+ * Minified JS is an object form of the program, so AGPL §13 applies: every user
  * interacting with it over a network must be offered the Corresponding Source.
  * The footer link is that offer, and the footer is on every page.
  *
@@ -70,7 +70,7 @@ test('the Spanish credits page says the same thing', async ({ page }) => {
  * covers the code, and it does not reach the videos. Somebody who forks this
  * and assumes otherwise would redistribute material from DILSE and the
  * Generalitat that this project has no right to license — the failure mode the
- * whole architecture is arranged to prevent (§2.1, §2.4).
+ * whole architecture is arranged to prevent.
  */
 test('the credits page keeps the videos outside the licence', async ({ page }) => {
   await page.goto('/credits/');

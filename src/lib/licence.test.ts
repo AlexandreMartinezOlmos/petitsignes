@@ -87,7 +87,7 @@ describe('NOTICE', () => {
     expect(NOTICE).toMatch(/Fundación CNSE/);
   });
 
-  // §13 is satisfied by the footer link on every page, so the obligation is
+  // AGPL §13 is satisfied by the footer link on every page, so the obligation is
   // recorded next to the licence rather than living only in a commit message.
   it('records why the footer source link is a licence obligation', () => {
     expect(NOTICE).toContain('Section 13');

@@ -1369,7 +1369,7 @@
 
 /* 16:9 rather than 3:2. The block was 177px of a 370px card and it is the one
    part of the card that will eventually say something the rest does not — the
-   pictogram of the word, never of the gesture (§2.1) — so it stays. It just
+   pictogram of the word, never of the gesture — so it stays. It just
    does not need half the card: 150px still gives a drawing room to read, and
    the ratio says what the block is a door to. Below that a square-ish drawing
    starts to be squeezed. */
@@ -1720,7 +1720,7 @@
 
 /* Not a control, and it must not look like one. The dashed outline plus the
    CTA's height, radius and centring gave it the exact silhouette of a disabled
-   button — 49 of 229 cards offering an action that cannot exist (§2.1).
+   button — 49 of 229 cards offering an action that cannot exist.
    The height stays: it is what keeps the cards in a row the same height. The
    outline, the radius and the centring go, and the icon says in one glance
    what the sentence says in five words. */
@@ -2201,9 +2201,9 @@
 
    Everything removed here is either chrome, a control that cannot be pressed
    on paper, or the empty media placeholder — which has no poster and never
-   will (§2.1), so on paper it is a blank rectangle costing a third of the
+   will, so on paper it is a blank rectangle costing a third of the
    page. The link to the source dictionary stays, and gains its URL: that link
-   is the attribution the licence asks for (§2.4), and it is the only part of
+   is the attribution the source's terms ask for, and it is the only part of
    a printed card that is still actionable.
 -------------------------------------------------------------------------- */
 @media print {

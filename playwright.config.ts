@@ -17,8 +17,8 @@ export default defineConfig({
   },
 
   projects: [
-    // Mobile first: the primary target is a phone held one-handed, per
-    // CLAUDE.md's mobile-first standard, so it runs before the desktop project.
+    // Mobile first: the primary target is a phone held one-handed, so it runs
+    // before the desktop project.
     { name: 'mobile-chrome', use: { ...devices['Pixel 7'] } },
     { name: 'desktop-chrome', use: { ...devices['Desktop Chrome'] } },
   ],

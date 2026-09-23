@@ -3,7 +3,7 @@
  *
  *   npm run brand:assets
  *
- * A content script, not a build step. §2.3 keeps the production build free of
+ * A content script, not a build step. The production build stays free of
  * system binaries, and rasterising on every build would put a browser in that
  * path — so this runs by hand and its output is committed, the same bargain the
  * vocabulary scripts make.
@@ -16,7 +16,7 @@
  * colour the site does rather than a hex approximation of it.
  *
  * These are marks, not gestures: an open hand is the project's logo and says
- * nothing about how any sign is performed (§2.1).
+ * nothing about how any sign is performed, which the project never depicts.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';

@@ -8,7 +8,7 @@ import type { SignEntry } from '../../lib/types.ts';
  *
  * The Spanish route is a second file rather than a locale param, for the same
  * reason the 404 is: each build then emits exactly one sign language, and the
- * other one cannot reach the markup by any route (§4.4).
+ * other one cannot reach the markup by any route.
  */
 export async function getStaticPaths() {
   const signs = await getCollection('signs');

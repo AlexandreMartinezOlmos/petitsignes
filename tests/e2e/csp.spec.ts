@@ -83,7 +83,7 @@ test.describe('the site under its own CSP', () => {
   }
 
   /**
-   * §4.3's opt-in player is the reason `frame-src` and the YouTube origins are
+   * The opt-in player is the reason `frame-src` and the YouTube origins are
    * in the policy at all. If the hashes are right but an origin is missing, the
    * catalogue looks perfect and only this fails.
    */

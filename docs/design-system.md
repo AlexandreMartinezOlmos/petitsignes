@@ -261,7 +261,7 @@ estaba cobrando el precio de una.
   los tintes más claros — un borde que nadie ve.
 - **El bloque de medio pasa de 3:2 a 16:9** (177 → 150 px). Se queda, y a ancho completo: es la
   única parte de la tarjeta que algún día dirá algo que no está escrito —el pictograma de la
-  palabra, nunca del gesto (§2.1)—. Simplemente no necesita media tarjeta. Por debajo de 16:9 un
+  palabra, nunca del gesto—. Simplemente no necesita media tarjeta. Por debajo de 16:9 un
   dibujo cuadrado empieza a ahogarse.
 - **El CTA baja a relleno suave** con tinta de marca. `color.test.ts` sostiene ese par a 4,5:1 en
   los dos temas: cuanto más callado es un par, más cerca queda del suelo.
@@ -399,7 +399,7 @@ enlace externo (solo enlaza a la fuente).
 
 **No es un control y no puede parecerlo.** Llevaba borde discontinuo, radio y 44 px centrados: la
 silueta exacta de un botón desactivado, en 49 de las 229 tarjetas, prometiendo una acción que no
-existe y que por §2.1 nunca existirá.
+existe y que nunca existirá: sin fuente oficial no hay signo.
 
 Ahora es una nota: icono `#i-video-off`, texto alineado al inicio, sin borde ni radio. **La altura
 se queda** —es lo que mantiene cuadradas las tarjetas de una misma fila—, pero la forma ya no es
@@ -556,7 +556,7 @@ producirla: el controlador oculta con `hidden` lo que no pasa el filtro, así qu
 pantalla es lo que sale**. Se filtra y se imprime.
 
 El bloque `@media print` quita el cromo, los controles que no se pueden pulsar en papel y el
-marcador de medio —que no tiene póster ni lo tendrá (§2.1), así que en papel es un rectángulo en
+marcador de medio —que no tiene póster ni lo tendrá, así que en papel es un rectángulo en
 blanco—, encoge el titular del héroe y pasa la rejilla a tres columnas con `break-inside: avoid`.
 
 **El enlace a la fuente se queda, y gana su URL.** Es la atribución que pide la licencia y lo

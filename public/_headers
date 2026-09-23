@@ -33,7 +33,7 @@
   # It covers what the project holds — the texts, the translations, the way the
   # vocabulary is organised. Not the signed videos, which belong to the
   # Generalitat and the CNSE, are not served from this origin, and carry their
-  # own conditions (§2.4).
+  # own conditions, credited on every sign and on the credits page.
   #
   # Sent as a header *and* declared in `.well-known/tdmrep.json` because the
   # protocol defines both and agents are free to read either one.
