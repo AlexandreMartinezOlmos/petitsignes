@@ -55,6 +55,20 @@ describe('hashing what the page actually contains', () => {
     ]);
   });
 
+  /**
+   * A data block is not a script to the browser: it never runs, so the policy
+   * has nothing to allow. Each page's structured data is different, and the
+   * policy is one header for all 428 pages — hashing these would add a hash
+   * per page to every response and grant exactly nothing.
+   */
+  it('leaves structured data out, since the browser never executes it', () => {
+    const page =
+      '<script type="application/ld+json">{"@type":"WebSite"}</script>' +
+      "<script type='application/json'>{}</script>" +
+      '<script>run()</script>';
+    expect(collectInlineHashes(page).scripts).toEqual([sourceHash('run()')]);
+  });
+
   it('finds every occurrence in a page, not just the first', () => {
     const found = collectInlineHashes('<script>a()</script><p>x</p><script>b()</script>');
     expect(found.scripts).toHaveLength(2);

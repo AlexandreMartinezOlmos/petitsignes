@@ -57,13 +57,19 @@ export function sourceHash(body: string): string {
  * file and are covered by an origin, not a hash. Matching them anyway would add
  * a hash of the empty string — harmless, but it would misreport how many inline
  * scripts the site really has, which is the number worth watching.
+ *
+ * JSON data blocks are excluded for the opposite reason: they are never
+ * executed, so `script-src` does not apply to them and a hash would grant
+ * nothing. It would cost plenty, though — structured data differs on every
+ * page, so hashing it put one hash per page into a header shared by all 428.
  */
 export function collectInlineHashes(html: string): { scripts: string[]; styles: string[] } {
   const scripts: string[] = [];
   const styles: string[] = [];
 
-  for (const match of html.matchAll(/<script(?![^>]*\ssrc=)[^>]*>([\s\S]*?)<\/script>/g)) {
-    scripts.push(sourceHash(match[1] ?? ''));
+  for (const match of html.matchAll(/<script(?![^>]*\ssrc=)([^>]*)>([\s\S]*?)<\/script>/g)) {
+    if (/\stype=["']?application\/(ld\+)?json\b/i.test(match[1] ?? '')) continue;
+    scripts.push(sourceHash(match[2] ?? ''));
   }
   for (const match of html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) {
     styles.push(sourceHash(match[1] ?? ''));
