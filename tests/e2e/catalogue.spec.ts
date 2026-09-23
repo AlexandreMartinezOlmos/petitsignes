@@ -296,11 +296,11 @@ test.describe('video delivery', () => {
   });
 
   /**
-   * I19: a stored url the app cannot read a YouTube id from used to count a
+   * A stored url the app cannot read a YouTube id from used to count a
    * play that never happened and leave the button doing nothing visible — no
    * dialog, no message, nothing a visitor or a screen reader could act on.
    * No real content hits this today (every url is validated at build and,
-   * since I15, at export too), so it is reproduced the same way
+   * since a later fix, at export too), so it is reproduced the same way
    * `.sign-page--no-source` is: injecting the exact state rather than a
    * simulation of it.
    */

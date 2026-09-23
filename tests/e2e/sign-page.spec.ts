@@ -235,7 +235,7 @@ test.describe('a sign page is not a dead card', () => {
   });
 
   /**
-   * H1: the media panel used to be `--color-surface-sunken` while the chip
+   * The media panel used to be `--color-surface-sunken` while the chip
    * two lines below it carried the category's tint — the panel and the chip
    * of the same entry read as two different components. Compared against the
    * card's own placeholder rather than a hardcoded colour, so this is really
@@ -311,7 +311,7 @@ test.describe('a sign page is not a dead card', () => {
   });
 });
 
-test.describe('H5: the citation repositions, never disappears', () => {
+test.describe('the citation repositions, never disappears', () => {
   /**
    * The source's attribution is required, not decorative — unlike the text pages'
    * contents list, which this two-column shape is modelled on and which is
@@ -400,8 +400,8 @@ test.describe('.sign-page--no-source: the layout when a sign has no video', () =
     expect(report.x).toBeLessThan(detail.x + detail.width);
     expect(report.y).toBeGreaterThan(detail.y);
 
-    // One `row-gap` (2rem = 32px), not two — the exact shape of bug H4 found
-    // in this same layout: an area left in the template with nothing to
+    // One `row-gap` (2rem = 32px), not two — the exact shape of a bug once
+    // found in this same layout: an area left in the template with nothing to
     // fill it doubles the gap around empty space instead of closing it.
     const gap = report.y - (detail.y + detail.height);
     expect(gap).toBeGreaterThan(24);

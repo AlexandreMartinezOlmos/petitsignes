@@ -168,7 +168,8 @@ function setToggleState(button: HTMLButtonElement, pressed: boolean): void {
  *
  * Split out from the catalogue because the grid is not the only page that shows
  * a card — the 404 offers one too, and a toggle that silently did nothing there
- * would be the same broken promise C3 removed from the missing-video note. What
+ * would be the same broken promise once removed from the missing-video note,
+ * which used to look like a disabled button. What
  * a single card needs is progress and playback; the filtering, the search index
  * and the section headings all belong to the grid and stay there.
  */

@@ -214,7 +214,8 @@ export function parseTsv(text: string): VocabularyRow[] {
   }
 
   const seen = new Set<string>();
-  // One set per language: the gap I1 went through. `parseTsv` already rejected
+  // One set per language, closing a gap a duplicated word once went through.
+  // `parseTsv` already rejected
   // a duplicate id; it never checked whether two different ids said the same
   // word.
   const seenLabels: Record<'ca' | 'es' | 'en', Set<string>> = {

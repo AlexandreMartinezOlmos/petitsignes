@@ -71,10 +71,15 @@ roto, aunque funcione en tu máquina.
 - **TypeScript.** `strict`, sin `any` sin justificar.
 - Comentarios y nombres **en inglés**; el contenido de usuario en ca/es/en.
 - **Comentarios que se explican solos.** Un comentario da su razón en el propio sitio o enlaza a
-  un documento que está en el repositorio. Nada de «ver mis notas» ni de una sección citada sin
-  decir de qué documento es: quien lee el código solo tiene el repositorio. Las únicas `§` válidas son las
-  de WCAG (`WCAG 2.2 §2.5.8`), las de la licencia (`AGPL §13`) y, dentro de un documento, las de
-  sus propias secciones numeradas. Lo comprueba `src/lib/references.test.ts`.
+  un documento que está en el repositorio: quien lee el código solo tiene el repositorio.
+  - Nada de «ver mis notas» ni de una sección citada sin decir de qué documento es. Las únicas
+    `§` válidas son las de WCAG (`WCAG 2.2 §2.5.8`), las de la licencia (`AGPL §13`) y, dentro de
+    un documento, las de sus propias secciones numeradas. Lo comprueba
+    `src/lib/references.test.ts`.
+  - Nada de etiquetas de una lista de tareas o de una auditoría (`H5:`, «el fallo que arregló
+    C3») en comentarios ni en títulos de tests: el identificador solo significa algo para quien
+    tiene esa lista. Describe el problema en sí («cualquier dirección equivocada devolvía la
+    portada con un 200»). Esto no lo comprueba ningún test; se mira en la revisión.
 
 ### Commits
 
