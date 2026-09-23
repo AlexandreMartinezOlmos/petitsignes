@@ -51,6 +51,11 @@ ese vídeo pase a llevar la fecha de hoy, porque es una fuente nueva. Un concept
 la tabla **no se borra** automáticamente: el script lo avisa y lo borras a mano si es
 intencionado.
 
+Si una ficha existente no se puede leer (un JSON roto, por ejemplo con marcas de un conflicto de
+merge), el `import` **se detiene antes de escribir nada** y dice qué fichero es. Antes la trataba
+como un concepto nuevo y la reconstruía solo con la fila de la tabla, y así perdía el `sourceTerm`
+y las fechas, que no están en la tabla.
+
 La lógica del round-trip está en [`../scripts/lib/vocabulary.ts`](../scripts/lib/vocabulary.ts) y
 tiene tests unitarios; el `build` sigue validando cada ficha con Zod, así que un error en la tabla
 rompe el build igual que un error en el JSON.
