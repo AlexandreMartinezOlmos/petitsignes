@@ -13,6 +13,7 @@
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readSignFile } from './lib/sign-file.ts';
 import { applyRow, parseTsv, type SignData } from './lib/vocabulary.ts';
 
 const ROOT = path.resolve(fileURLToPath(import.meta.url), '../..');
@@ -32,24 +33,21 @@ function serialize(data: SignData): string {
   return `${JSON.stringify(ordered, null, 2)}\n`;
 }
 
-async function readExisting(id: string): Promise<SignData | null> {
-  try {
-    return JSON.parse(await readFile(path.join(SIGNS_DIR, `${id}.json`), 'utf8')) as SignData;
-  } catch {
-    return null;
-  }
-}
-
 async function main(): Promise<void> {
   const rows = parseTsv(await readFile(MANIFEST, 'utf8'));
 
+  // Every file is read before any is written. A sign file that cannot be read
+  // stops the import (see `readSignFile`), and stopping halfway through the
+  // writes would leave the collection half imported.
+  const existing = await Promise.all(rows.map((row) => readSignFile(SIGNS_DIR, row.id)));
+
   let created = 0;
   let updated = 0;
-  for (const row of rows) {
-    const existing = await readExisting(row.id);
-    const next = applyRow(row, existing, TODAY);
+  for (const [index, row] of rows.entries()) {
+    const previous = existing[index] ?? null;
+    const next = applyRow(row, previous, TODAY);
     await writeFile(path.join(SIGNS_DIR, `${row.id}.json`), serialize(next), 'utf8');
-    if (existing) updated += 1;
+    if (previous) updated += 1;
     else created += 1;
   }
 

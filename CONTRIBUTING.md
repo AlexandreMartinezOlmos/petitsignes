@@ -50,6 +50,10 @@ Antes de abrir el PR:
 npm run lint && npm run typecheck && npm test && npm run test:e2e
 ```
 
+En local, los e2e reutilizan un servidor que ya esté escuchando en el puerto 4321. Si tienes otra
+copia del repositorio sirviendo ahí (otro worktree, por ejemplo), los tests correrían contra
+aquel build: usa otro puerto con `E2E_PORT=4322 npm run test:e2e`.
+
 El CI ejecuta lo mismo en Ubuntu, más una auditoría de las dependencias que se publican
 (`npm audit --omit=dev --audit-level=high`) y los presupuestos de Lighthouse. Si falla ahí, está
 roto, aunque funcione en tu máquina.
@@ -66,8 +70,9 @@ roto, aunque funcione en tu máquina.
   nuevo.
 - **JavaScript enviado al cliente.** Si una función se puede hacer con HTML y CSS, se hace con
   HTML y CSS. Las dependencias nuevas hay que justificarlas.
-- **Móvil.** Objetivos táctiles de 44 px como mínimo, texto de 16 px o más, todo alcanzable con
-  el pulgar.
+- **Móvil.** Objetivos táctiles de 44 px en los controles principales y nunca por debajo de
+  24 px (WCAG 2.5.8); una excepción entre 24 y 44 lleva su razón escrita junto al CSS. Cuerpo de
+  texto de 16 px, tamaños en `rem`, y todo alcanzable con el pulgar.
 - **TypeScript.** `strict`, sin `any` sin justificar.
 - Comentarios y nombres **en inglés**; el contenido de usuario en ca/es/en.
 - **Comentarios que se explican solos.** Un comentario da su razón en el propio sitio o enlaza a

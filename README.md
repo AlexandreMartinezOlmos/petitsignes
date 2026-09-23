@@ -40,8 +40,8 @@ Está pensado para dos públicos:
    atribuida. Si no hay fuente, la ficha se queda sin vídeo — nunca se rellena con una
    ilustración o una suposición, y nunca se sustituye el signo de una lengua por el de la otra.
 2. **Móvil primero.** El uso real es con el bebé en brazos y el móvil en la otra mano.
-3. **Un vistazo basta.** La cara de la tarjeta es una imagen estática; el vídeo es opcional y
-   nunca se reproduce solo.
+3. **Un vistazo basta.** La cara de la tarjeta es estática: la palabra y un marcador con el icono
+   de su categoría, nunca una imagen del gesto. El vídeo es opcional y nunca se reproduce solo.
 4. **Sin fricción.** Sin registro, sin muros de pago, sin cuentas. Y sin rastrear a nadie: la
    única medición es un recuento anónimo y agregado, detallado en
    [Privacidad](#privacidad-qué-se-mide-y-qué-no).

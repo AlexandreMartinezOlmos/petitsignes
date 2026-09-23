@@ -1,6 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 4321;
+// Overridable because `reuseExistingServer` is on locally: with a second
+// checkout of the repo (a git worktree) already previewing on 4321, this suite
+// would run against that checkout's build and pass or fail on code that is not
+// the code under test. `E2E_PORT=4322 npm run test:e2e` keeps the two apart.
+const PORT = Number(process.env.E2E_PORT ?? 4321);
 const baseURL = `http://localhost:${PORT}`;
 
 export default defineConfig({

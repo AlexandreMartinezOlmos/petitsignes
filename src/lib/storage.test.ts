@@ -332,3 +332,190 @@ describe('LocalStorageProgressStore', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
 });
+
+function storageEvent(key: string | null = STORAGE_KEY): StorageEvent {
+  return new StorageEvent('storage', { key, storageArea: localStorage });
+}
+
+/**
+ * Two tabs of the site share one `localStorage`, but each has its own store. In
+ * a browser a write in one reaches the other as a `storage` event; jsdom only
+ * delivers those to other windows, so the tests below dispatch them by hand.
+ */
+describe('LocalStorageProgressStore across tabs', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  // Each tab used to save its own copy whole, so the second tab to save wrote
+  // back a list without the first tab's star in it.
+  it('keeps a change made in another tab when this one saves', async () => {
+    const thisTab = new LocalStorageProgressStore();
+    const otherTab = new LocalStorageProgressStore();
+
+    await otherTab.toggleFavorite('leche');
+    await thisTab.toggleLearned('agua');
+
+    const reloaded = new LocalStorageProgressStore();
+    expect(await reloaded.getFavorites()).toEqual(['leche']);
+    expect(await reloaded.getLearned()).toEqual(['agua']);
+  });
+
+  it('toggles against what is stored, not against what this tab last saw', async () => {
+    const thisTab = new LocalStorageProgressStore();
+    const otherTab = new LocalStorageProgressStore();
+
+    await otherTab.toggleFavorite('leche');
+    // By the time anyone presses it here, the card already shows the star on:
+    // the press means "take it away", and that is what has to happen.
+    await thisTab.toggleFavorite('leche');
+
+    expect(await new LocalStorageProgressStore().getFavorites()).toEqual([]);
+  });
+
+  it('tells its subscribers when another tab changes the progress', async () => {
+    const thisTab = new LocalStorageProgressStore();
+    const otherTab = new LocalStorageProgressStore();
+    const listener = vi.fn();
+    thisTab.subscribe(listener);
+
+    await otherTab.toggleFavorite('leche');
+    window.dispatchEvent(storageEvent());
+
+    expect(listener).toHaveBeenLastCalledWith(expect.objectContaining({ favorites: ['leche'] }));
+    expect(await thisTab.getFavorites()).toEqual(['leche']);
+  });
+
+  it('empties when another tab clears the storage', async () => {
+    const thisTab = new LocalStorageProgressStore();
+    await thisTab.toggleFavorite('leche');
+
+    localStorage.clear();
+    window.dispatchEvent(storageEvent(null));
+
+    expect(await thisTab.getFavorites()).toEqual([]);
+  });
+
+  it('ignores storage events about other keys', () => {
+    const thisTab = new LocalStorageProgressStore();
+    const listener = vi.fn();
+    thisTab.subscribe(listener);
+
+    window.dispatchEvent(storageEvent('someone-else'));
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('exports what is stored, including another tab’s latest change', async () => {
+    const thisTab = new LocalStorageProgressStore();
+    await new LocalStorageProgressStore().toggleFavorite('leche');
+
+    expect(JSON.parse(await thisTab.export()).favorites).toEqual(['leche']);
+  });
+});
+
+/**
+ * A stored block this version cannot read is not the same as no progress. It
+ * used to be treated as such: the store started empty, and the first star the
+ * visitor pressed wrote that empty list over everything they had.
+ */
+describe('LocalStorageProgressStore with data it cannot read', () => {
+  // What a tab left open across a deploy would find, the day a new version of
+  // the site stores a shape this one does not know.
+  const fromNewerVersion = JSON.stringify({
+    schemaVersion: SCHEMA_VERSION + 1,
+    favorites: ['leche', 'agua'],
+    learned: ['pan'],
+  });
+
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('never writes over a block from a newer version', async () => {
+    localStorage.setItem(STORAGE_KEY, fromNewerVersion);
+    const store = new LocalStorageProgressStore();
+
+    await store.toggleFavorite('perro');
+    await store.toggleLearned('perro');
+    await store.setPreferences({ language: 'es' });
+    await store.import(JSON.stringify({ schemaVersion: 1, favorites: ['gato'] }));
+
+    expect(localStorage.getItem(STORAGE_KEY)).toBe(fromNewerVersion);
+  });
+
+  it('never writes over a block it cannot parse', async () => {
+    localStorage.setItem(STORAGE_KEY, '{{{not json');
+    const store = new LocalStorageProgressStore();
+
+    await store.toggleLearned('perro');
+
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('{{{not json');
+  });
+
+  it('keeps working in memory meanwhile', async () => {
+    localStorage.setItem(STORAGE_KEY, fromNewerVersion);
+    const store = new LocalStorageProgressStore();
+
+    await store.toggleFavorite('perro');
+
+    expect(await store.getFavorites()).toEqual(['perro']);
+  });
+
+  it('stops saving when another tab stores a block it cannot read', async () => {
+    const store = new LocalStorageProgressStore();
+    await store.toggleFavorite('leche');
+
+    localStorage.setItem(STORAGE_KEY, fromNewerVersion);
+    window.dispatchEvent(storageEvent());
+    await store.toggleFavorite('perro');
+
+    expect(localStorage.getItem(STORAGE_KEY)).toBe(fromNewerVersion);
+  });
+
+  it('saves again once the stored block is readable', async () => {
+    localStorage.setItem(STORAGE_KEY, fromNewerVersion);
+    const store = new LocalStorageProgressStore();
+
+    // Another tab, on this version, erased and started again.
+    await new LocalStorageProgressStore().reset();
+    await store.toggleFavorite('perro');
+
+    expect(await new LocalStorageProgressStore().getFavorites()).toEqual(['perro']);
+  });
+
+  // The visitor's way out when the data is damaged beyond reading. The project
+  // page asks before it runs.
+  it('lets a reset replace it, because erasing is what was asked for', async () => {
+    localStorage.setItem(STORAGE_KEY, '{{{not json');
+    const store = new LocalStorageProgressStore();
+
+    await store.reset();
+    await store.toggleFavorite('perro');
+
+    expect(await new LocalStorageProgressStore().getFavorites()).toEqual(['perro']);
+  });
+});
+
+describe('LocalStorageProgressStore when a write is refused', () => {
+  it('keeps the change it could not save instead of rereading over it', async () => {
+    let full = false;
+    const saved = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => saved.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        if (full) throw new DOMException('quota', 'QuotaExceededError');
+        saved.set(key, value);
+      },
+    } as unknown as Storage;
+    const store = new LocalStorageProgressStore(storage);
+    await store.toggleFavorite('leche');
+
+    full = true;
+    await store.toggleFavorite('agua');
+    await store.toggleLearned('pan');
+
+    expect(await store.getFavorites()).toEqual(['leche', 'agua']);
+    expect(await store.getLearned()).toEqual(['pan']);
+  });
+});
