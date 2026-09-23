@@ -68,6 +68,16 @@ describe('sitemap', () => {
     expect(preview).not.toContain(SITE_ORIGIN);
   });
 
+  /**
+   * The data has no date that means "this page changed" — `updatedAt` is when
+   * a source was checked — and a `lastmod` that does not track real changes
+   * teaches search engines to ignore the field for the whole site. See the
+   * comment on `buildSitemap` before adding one.
+   */
+  it('claims no modification date it could not back up', () => {
+    expect(xml).not.toContain('<lastmod>');
+  });
+
   it('stays well-formed when a path carries XML-significant characters', () => {
     const xmlWithAmp = buildSitemap(SITE_ORIGIN, ['/a&b/']);
     expect(xmlWithAmp).toContain('&amp;');

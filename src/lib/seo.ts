@@ -158,6 +158,15 @@ function absolute(path: string, origin: string): string {
  * publishes the same catalogue twice, and without them the two locales compete
  * as duplicates instead of being understood as one page in two languages. The
  * `x-default` points at Catalan, which is what `/` serves.
+ *
+ * No `<lastmod>`, on purpose. The only date the data holds is a video's
+ * `updatedAt`, and that is when its source entry was checked — a citation the
+ * Vocabulari's licence requires — not when the page last changed: a page's
+ * title, text or layout moves without it, and it stays put. Search engines
+ * treat `lastmod` as a hint only while it keeps proving accurate, and stop
+ * reading it for the whole site once it does not. Leaving it out costs
+ * nothing; a date that lies costs the date being believed later, when there
+ * is a real one to give.
  */
 export function buildSitemap(
   origin: string = SITE_ORIGIN,
