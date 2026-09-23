@@ -141,6 +141,31 @@ test.describe('what a sign page says', () => {
     expect(body).toContain('/es/signe/leche/');
   });
 
+  /**
+   * The GitHub route needs an account, and the people most able to spot a
+   * wrong sign — Deaf signers, interpreters, parents — mostly do not have one.
+   * The same report goes by email, with the subject saying which sign in which
+   * sign language, so it arrives identified either way.
+   */
+  for (const { path, subject } of [
+    { path: CA, subject: 'Signe «llet» (LSC)' },
+    { path: ES, subject: 'Signo «leche» (LSE)' },
+  ]) {
+    test(`offers the same report by email, with no account needed (${path})`, async ({ page }) => {
+      await page.goto(path);
+
+      const email = page.locator('.sign-report__hint a[href^="mailto:"]');
+      await expect(email).toHaveText('petitsignes@petitsignes.cat');
+
+      const href = (await email.getAttribute('href')) ?? '';
+      expect(href.startsWith('mailto:petitsignes@petitsignes.cat?subject=')).toBe(true);
+      expect(decodeURIComponent(href.split('subject=')[1] ?? '')).toBe(subject);
+
+      // Told apart from the muted sentence by its underline, not only its colour.
+      await expect(email).toHaveCSS('text-decoration-line', 'underline');
+    });
+  }
+
   test('offers a way onward rather than being a dead end', async ({ page }) => {
     await page.goto(CA);
 

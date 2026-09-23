@@ -149,9 +149,10 @@ o LSE puede avisarnos, y la ficha es la única pantalla donde el error se ve. Pr
 un aviso que identifica la entrada y la lengua es accionable; «el vídeo de leche está mal» obliga a
 buscar entre 194 ficheros.
 
-**Asumido a sabiendas:** hace falta una cuenta de GitHub, así que una madre que detecte un error
-probablemente no lo reportará. El enlace apunta a quien conoce la lengua, que es quien puede
-detectarlo. La pista bajo el enlace lo dice antes de pulsarlo, no después.
+El enlace de GitHub pide una cuenta, y la pista bajo el enlace lo dice antes de pulsarlo. Para
+quien no la tiene —muchas personas signantes, intérpretes y familias—, la misma pista ofrece el
+correo del proyecto con el asunto ya escrito («Signe «llet» (LSC)»), así que el aviso llega
+identificado igual. Lo compone `mailtoUrl`, también en `site.ts`.
 
 Si en el paso 2 o 3 no llegas a estar seguro, **no lo añadas**. Un concepto sin fuente confirmada
 se queda fuera del catálogo; no entra a medias.

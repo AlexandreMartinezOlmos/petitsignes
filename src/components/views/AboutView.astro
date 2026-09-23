@@ -4,7 +4,7 @@ import PageShell, { type PageSection } from '../PageShell.astro';
 import ProgressData from '../../islands/ProgressData.tsx';
 import { createTranslator } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
-import { REPO_URL } from '../../lib/site.ts';
+import { CONTACT_EMAIL, REPO_URL } from '../../lib/site.ts';
 
 interface Props {
   language: RoutedLocale;
@@ -116,11 +116,6 @@ const copy = {
       '¿Tienes una duda, una sugerencia o has encontrado un signo que no parece correcto? Escríbenos, leemos todos los mensajes.',
   },
 } as const;
-
-/** Kept next to the copy it appears in, not in `site.ts`: this is the one
- * place on the site a visitor is invited to write to, and `security.txt`
- * (`public/.well-known/security.txt`) points at the same address. */
-const CONTACT_EMAIL = 'petitsignes@petitsignes.cat';
 
 const c = copy[language];
 

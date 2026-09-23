@@ -138,6 +138,7 @@ const MESSAGES = {
     'sign.report': 'Hi has vist un error?',
     'sign.reportHint':
       'Obre una incidència a GitHub amb les dades d’aquest signe ja emplenades. Cal un compte de GitHub.',
+    'sign.reportByEmail': 'Sense compte, escriu a',
     'sign.issueTitle': 'Signe «{label}» ({signLanguage})',
     'sign.issueBody':
       'Explica aquí què hi has vist: un gest que no correspon, un enllaç trencat, una etiqueta mal traduïda…\n\n\n---\n\n- **Signe:** {label} (`{signId}`)\n- **Llengua de signes:** {signLanguage}\n- **Pàgina:** {pageUrl}\n',
@@ -293,6 +294,7 @@ const MESSAGES = {
     'sign.report': '¿Has visto un error?',
     'sign.reportHint':
       'Abre una incidencia en GitHub con los datos de este signo ya rellenados. Hace falta una cuenta de GitHub.',
+    'sign.reportByEmail': 'Sin cuenta, escribe a',
     'sign.issueTitle': 'Signo «{label}» ({signLanguage})',
     'sign.issueBody':
       'Explica aquí qué has visto: un gesto que no corresponde, un enlace roto, una etiqueta mal traducida…\n\n\n---\n\n- **Signo:** {label} (`{signId}`)\n- **Lengua de signos:** {signLanguage}\n- **Página:** {pageUrl}\n',
@@ -449,6 +451,7 @@ const MESSAGES = {
     'sign.report': 'Spotted a mistake?',
     'sign.reportHint':
       'Opens an issue on GitHub with this sign’s details filled in. A GitHub account is needed.',
+    'sign.reportByEmail': 'No account? Write to',
     'sign.issueTitle': 'Sign “{label}” ({signLanguage})',
     'sign.issueBody':
       'Describe what you found: a gesture that does not match, a broken link, a mistranslated label…\n\n\n---\n\n- **Sign:** {label} (`{signId}`)\n- **Sign language:** {signLanguage}\n- **Page:** {pageUrl}\n',
