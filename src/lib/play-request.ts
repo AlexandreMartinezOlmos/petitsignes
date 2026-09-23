@@ -19,16 +19,21 @@
  * page the same instance, which is what lets the two share `pending`.
  */
 
-/** What the dialog needs to open, read from the button that asked for it. */
+/**
+ * What the dialog needs to open, read from the button that asked for it.
+ *
+ * Only what the player shows. The button is rendered once per card, 194 times
+ * on the catalogue, so a field nobody reads is paid for in every one of them:
+ * the licence, the sign language and an always-empty poster used to travel
+ * here and were never read. The licence is shown, quoted, on the sign's own
+ * page; the dialog credits the source with a link to it.
+ */
 export interface PlayRequest {
   signId: string;
   label: string;
-  signLanguage: string;
   videoUrl: string;
-  posterUrl: string;
   source: string;
   sourceUrl: string;
-  license: string;
 }
 
 export type PlayRequestListener = (request: PlayRequest) => void;
@@ -46,12 +51,9 @@ export function readPlayRequest(button: Pick<HTMLElement, 'dataset'>, signId: st
   return {
     signId,
     label: dataset.label ?? signId,
-    signLanguage: dataset.signLanguage ?? '',
     videoUrl: dataset.videoUrl ?? '',
-    posterUrl: dataset.posterUrl ?? '',
     source: dataset.source ?? '',
     sourceUrl: dataset.sourceUrl ?? '',
-    license: dataset.license ?? '',
   };
 }
 
