@@ -9,8 +9,8 @@ import commitlintConfig from '../../commitlint.config.js';
  * has this repository.
  *
  * Comments and docs used to point at working notes that were never published —
- * a document named in a comment, or a bare "§4.1" that only resolved inside
- * one. To a contributor, or anyone auditing the code, those were dead ends: a
+ * a document named in a comment, or a bare section number that only resolved
+ * inside one. To a contributor, or anyone auditing the code, those were dead ends: a
  * reason cited and then withheld. Each was rewritten to carry its reason in
  * place, and this file keeps it that way.
  *
@@ -73,7 +73,7 @@ describe('what the repository cites, it contains', () => {
    * A section sign has to say whose section it is. Allowed: a WCAG success
    * criterion (`WCAG 2.2 §2.5.8`), a clause of the licence (`AGPL §13`), or —
    * inside a Markdown document — a numbered heading of that same document
-   * (`§7` in a file with a `## 7.` heading).
+   * (section 7 of a file that has a `## 7.` heading).
    */
   it('qualifies every section sign with the document it belongs to', () => {
     const unqualified: string[] = [];
