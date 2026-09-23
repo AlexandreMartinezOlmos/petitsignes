@@ -26,7 +26,12 @@ type Speed = (typeof SPEEDS)[number];
  * clip, so a finished sign loops in place and the dialog never closes or
  * navigates on its own.
  *
- * A native <dialog> supplies focus trapping and Escape-to-close for free.
+ * A native <dialog> supplies focus trapping, Escape-to-close and the return of
+ * focus to the button that opened it. One gap it cannot close: while focus is
+ * inside the YouTube frame, key presses belong to YouTube's document, on
+ * another origin, and Escape never reaches this one. That is why the close
+ * button comes before the frame in the markup — Shift+Tab from the video lands
+ * on it. `tests/e2e/player-dialog.spec.ts` holds all of this.
  */
 export default function SignVideoDialog({ language }: Props) {
   const t = createTranslator(language);
