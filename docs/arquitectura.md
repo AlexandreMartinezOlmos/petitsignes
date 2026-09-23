@@ -316,7 +316,17 @@ de cada `<script>` y `<style>` en línea y sustituye con la política completa l
 - Parte de `default-src 'none'`: cada tipo de recurso necesita su propia directiva. Un tipo que
   nadie haya previsto se rechaza en vez de heredar permiso.
 - Sin `'unsafe-inline'` ni `'unsafe-eval'`. Solo se contactan los orígenes de `CSP_ORIGINS`
-  (GoatCounter y los del reproductor de YouTube, que solo se cargan al abrir un vídeo).
+  (el punto al que GoatCounter recibe las visitas y los del reproductor de YouTube, que solo se
+  cargan al abrir un vídeo).
+- **El contador de GoatCounter se sirve desde este sitio.** `count.js` está copiado sin tocar en
+  `src/vendor/goatcounter/` y el build lo publica en `/_astro/` con el hash en el nombre. Cargarlo
+  de su CDN dejaba que cambiara sin revisión; fijar con SRI una de sus versiones numeradas (v4, v5)
+  habría enviado más que hoy, porque esas mandan también el alto de la pantalla y la densidad de
+  píxeles. La copia es fija, es la que menos envía y saca un origen de la política. GoatCounter
+  documenta esta forma de usarlo y garantiza que el endpoint `/count` sigue siendo compatible.
+  `src/lib/analytics.test.ts` fija el hash de la copia y lo que envía de la pantalla, y
+  `tests/e2e/csp.spec.ts` la ejecuta como en producción, bajo la política real, y comprueba la
+  visita que sale.
 - `manifest-src 'self'` existe porque el navegador solo pide el manifest al instalar el sitio, no
   al cargar la página: sin ella la instalación fallaba y ningún test de carga lo veía.
 - `tests/e2e/csp.spec.ts` sirve cada página con la política que ha escrito el build y comprueba

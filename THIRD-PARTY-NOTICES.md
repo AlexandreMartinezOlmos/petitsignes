@@ -18,13 +18,13 @@ the full resolved tree is in `package-lock.json`.
 
 ## MIT
 
-### React — `react` 19.2.8, `react-dom` 19.2.8, `scheduler` 0.27.0
+### React — `react` 19.3.0, `react-dom` 19.3.0, `scheduler` 0.28.0
 
 Copyright (c) Meta Platforms, Inc. and affiliates.
 
 <https://github.com/facebook/react>
 
-### Nano Stores — `nanostores` 1.4.1
+### Nano Stores — `nanostores` 1.5.3
 
 Copyright 2020 Andrey Sitnik <andrey@sitnik.es>
 
@@ -54,6 +54,34 @@ Copyright 2020 Andrey Sitnik <andrey@sitnik.ru>
 > COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
 > AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 > WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+## ISC
+
+### GoatCounter's counter — `count.js`
+
+Copyright © Martin Tournoij <martin@arp242.net>
+
+<https://github.com/arp242/goatcounter>
+
+The anonymous visit counter. The site serves its own copy, unmodified, from
+[`src/vendor/goatcounter/count.js`](src/vendor/goatcounter/count.js): the file
+carries its licence line itself, and the copyright holder is the one named in
+the GoatCounter repository's `LICENSE`. The rest of GoatCounter is under a
+different licence, but none of it reaches a browser from this site.
+
+> Permission to use, copy, modify, and/or distribute this software for any
+> purpose with or without fee is hereby granted, provided that the above
+> copyright notice and this permission notice appear in all copies.
+>
+> THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+> REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+> FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+> INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+> OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+> TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+> THIS SOFTWARE.
 
 ---
 

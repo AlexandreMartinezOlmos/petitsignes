@@ -86,7 +86,6 @@ export const SITE_ORIGIN = 'https://petitsignes.cat';
  * GoatCounter's script ignores local addresses unless told otherwise.
  */
 export const ANALYTICS_ENDPOINT = 'https://petitsignes.goatcounter.com/count';
-export const ANALYTICS_SCRIPT = 'https://gc.zgo.at/count.js';
 
 /**
  * The single host allowed to report analytics.

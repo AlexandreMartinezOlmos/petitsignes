@@ -17,7 +17,9 @@ import {
   localeHref,
   type RoutedLocale,
 } from '../lib/routing.ts';
-import { ANALYTICS_ENDPOINT, ANALYTICS_SCRIPT, REPO_URL, analyticsHost } from '../lib/site.ts';
+import { ANALYTICS_ENDPOINT, REPO_URL, analyticsHost } from '../lib/site.ts';
+// The counter is served from this site, not GoatCounter's CDN: see the comment on the script below.
+import counterScript from '../vendor/goatcounter/count.js?url';
 import {
   APPLE_TOUCH_ICON,
   OG_IMAGES,
@@ -192,11 +194,20 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
 
       `is:inline` keeps this out of the bundle: it must run as-is, before any
       island hydrates.
+
+      The counter itself is GoatCounter's `count.js`, copied into
+      `src/vendor/goatcounter/` byte for byte and served from this origin.
+      Loaded from their CDN it could change under the site without review;
+      pinned with SRI to one of their versioned files it would send more than
+      today (those send the screen's height and pixel density too). A copy
+      under review is both fixed and the leanest. GoatCounter documents this
+      and keeps the `/count` endpoint compatible with every copy.
+      `src/lib/analytics.test.ts` holds the copy to what the privacy text says.
     */
     }
     <script
       is:inline
-      define:vars={{ host: analyticsHost(), endpoint: ANALYTICS_ENDPOINT, src: ANALYTICS_SCRIPT }}
+      define:vars={{ host: analyticsHost(), endpoint: ANALYTICS_ENDPOINT, src: counterScript }}
     >
       if (location.hostname === host) {
         const script = document.createElement('script');
