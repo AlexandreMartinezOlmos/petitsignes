@@ -22,11 +22,12 @@ interface Props {
  * "how do you sign milk in LSC". This page is the answer to exactly that
  * question, and it is also the link you can send someone.
  *
- * Like every other page it ships only its own sign language (§4.4). The two
+ * Like every other page it ships only its own sign language. The two
  * locales are two builds of the same file, so an LSE gesture can no more reach
  * the Catalan page here than it can in the grid.
  *
- * There are no posters and there cannot be (§2.1), so the media block is the
+ * There are no posters and there cannot be — the sources do not allow one, and
+ * a drawing of the gesture would be inventing it — so the media block is the
  * same neutral category marker the card uses. Nothing on this page describes how
  * the gesture is made: it names the word, credits the source and gets out of the
  * way of the video.
@@ -68,7 +69,7 @@ const catalogueHref = localeHref('/', language);
  * The description is the sentence a search result shows, so it says what the
  * page can actually deliver. When a sign language has no video for this concept
  * the page still exists and is still worth reaching — but promising a video it
- * does not have would be the same false claim §2.1 forbids on the card.
+ * does not have would be the same false claim the card is forbidden to make.
  */
 const description = video
   ? t('sign.meta', { label, signLanguage: fullName })
@@ -86,14 +87,14 @@ const updatedAt = video
 /**
  * The route for someone who can tell us we got a sign wrong.
  *
- * §2.1 is the promise the project rests on, and the only people able to catch a
- * breach of it are the ones who know LSC or LSE. The project page invited them
+ * "No invented sign" is the promise the project rests on, and the only people
+ * able to catch a breach of it are the ones who know LSC or LSE. The project page invited them
  * to open an issue; this page — the one screen where the mistake is visible —
  * had no route at all.
  *
  * Prefilled from build-time data only: the concept's id, its label, the sign
  * language and this page's address. Nothing a visitor typed goes near it, so it
- * raises none of the questions §2.2 answers.
+ * raises no privacy question.
  *
  * The page URL is absolute and built from `Astro.site`, so a report opened from
  * a branch preview says so instead of pointing the maintainer at production.
@@ -133,8 +134,8 @@ const reportUrl = newIssueUrl(
     second grid column that only appears from `lg`. Not reused verbatim:
     `.page-aside` hides below `lg` because its content (a contents list)
     repeats what the article already says, and this page's citation does not
-    — it is the only place §2.4's attribution lives, so it cannot disappear on
-    a phone. `.sign-page` is one grid for both layouts instead: four named
+    — it is the only place the source's required attribution lives, so it
+    cannot disappear on a phone. `.sign-page` is one grid for both layouts instead: four named
     areas that stack in DOM order below `lg` and split into two columns above
     it, so the citation's *position* moves with the viewport but it is never
     removed, and related signs — the one way onward this page offers — never
@@ -157,7 +158,7 @@ const reportUrl = newIssueUrl(
         moved up to the article so this and the chip below read the same custom
         properties; a panel painted from a different rule than the chip beside
         it read as a different component wearing the category's colours by
-        coincidence. There is no poster and there cannot be one (§2.1), so this
+        coincidence. There is no poster and there cannot be one, so this
         stays the concept marker; the day a source grants a still image the
         card's own `posterUrl` branch is what gets mirrored here, not this
         placeholder. Decorative, like the card's: the heading and the chip
@@ -199,7 +200,7 @@ const reportUrl = newIssueUrl(
           video === undefined ? (
             /* A statement of fact, not a control — the same wording and the
                same reasoning as on the card: this sign language has no entry
-               we may show, and by §2.1 we will not invent one. */
+               we may show, and we will not invent one. */
             <p class="sign-card__novideo">
               <svg class="icon-sm" aria-hidden="true" focusable="false">
                 <use href="#i-video-off" />

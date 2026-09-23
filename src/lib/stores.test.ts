@@ -147,7 +147,7 @@ describe('toggling from the grid', () => {
 
 describe('remembering the language', () => {
   /**
-   * §4.2: the interface language decides the sign language. Storing the language
+   * The interface language decides the sign language. Storing the language
    * without deriving the sign language would leave an exported file claiming a
    * pairing the site never serves.
    */

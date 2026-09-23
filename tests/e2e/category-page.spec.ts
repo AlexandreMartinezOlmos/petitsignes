@@ -96,7 +96,8 @@ test.describe('what a category page holds', () => {
   });
 
   /**
-   * §4.4, the invariant that makes §2.1 structural: the other language's gesture
+   * One sign language per page, the invariant that makes "no invented sign"
+   * structural: the other language's gesture
    * must not be in the document at all, one `display` away from being shown.
    */
   test('ships only the sign language its URL promises', async ({ request }) => {
@@ -156,7 +157,7 @@ test.describe('a category page is not a dead list', () => {
     ).toHaveAttribute('aria-pressed', 'true');
   });
 
-  /** §4.3: a list of cards never contacts YouTube until a sign is asked for. */
+  /** A list of cards never contacts YouTube until a sign is asked for. */
   test('does not contact YouTube until a sign is asked for', async ({ page }) => {
     const hits: string[] = [];
     page.on('request', (request) => {

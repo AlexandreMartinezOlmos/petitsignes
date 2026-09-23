@@ -132,10 +132,10 @@ El build valida todo esto con Zod: si algo no cuadra, el build falla. Es intenci
 Cada ficha de signo lleva al pie un enlace **«¿Has visto un error?»** que abre una incidencia en
 GitHub con el concepto, su id, la lengua de signos y la URL de la página ya rellenados. Se compone
 en build (ver `newIssueUrl` en [`../src/lib/site.ts`](../src/lib/site.ts)) y no lleva nada escrito
-por quien visita, así que no toca §2.2.
+por quien visita, así que no toca la privacidad.
 
-Está ahí porque §2.1 —«ningún signo inventado»— solo se sostiene si quien sabe LSC o LSE puede
-avisarnos, y la ficha es la única pantalla donde el error se ve. Prellenarlo es la mitad del valor:
+Está ahí porque el primer principio —«ningún signo inventado»— solo se sostiene si quien sabe LSC
+o LSE puede avisarnos, y la ficha es la única pantalla donde el error se ve. Prellenarlo es la mitad del valor:
 un aviso que identifica la entrada y la lengua es accionable; «el vídeo de leche está mal» obliga a
 buscar entre 194 ficheros.
 

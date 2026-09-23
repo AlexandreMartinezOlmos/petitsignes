@@ -21,9 +21,9 @@ export const CATEGORY_PATH_PREFIX = '/categoria/';
  * Two decisions are baked in here, and both were argued before being written.
  *
  * **Catalan rather than the id.** The ids are English because they are code —
- * a TypeScript union, a `data-category` attribute, a Zod enum — and §5 of
- * `CLAUDE.md` asks that of identifiers. None of that says anything about what
- * belongs in an address. The site's own convention is a single slug shared by
+ * a TypeScript union, a `data-category` attribute, a Zod enum — and every
+ * identifier in this codebase is English. None of that says anything about
+ * what belongs in an address. The site's own convention is a single slug shared by
  * both locales (`/el-projecte/`, `/accessibilitat/`), and the language of that
  * slug has never been English.
  *
