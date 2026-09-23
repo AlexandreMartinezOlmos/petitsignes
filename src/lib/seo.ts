@@ -130,7 +130,7 @@ export function breadcrumbJsonLd(trail: readonly Crumb[], origin: string = SITE_
  *
  * `<` is escaped because the HTML parser, not JSON, decides where a script
  * ends: a label containing `</script>` would otherwise close the block and
- * spill the rest into the page. `<` is the same character to a JSON
+ * spill the rest into the page. `\u003c` is the same character to a JSON
  * parser, so the data is unchanged.
  */
 export function serializeJsonLd(data: JsonLd): string {
