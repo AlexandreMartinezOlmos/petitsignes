@@ -3,9 +3,9 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../Breadcrumb.astro';
 import SignCard from '../SignCard.astro';
-import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
+import SignVideoDialog, { SIGN_VIDEO_DIALOG_MESSAGES } from '../../islands/SignVideoDialog.tsx';
 import { categoryPath } from '../../lib/categories.ts';
-import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
+import { categoryInSentence, createTranslator, pickMessages } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import type { Crumb } from '../../lib/seo.ts';
 import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
@@ -148,7 +148,7 @@ const lead =
     </nav>
   </div>
 
-  <SignVideoDialog language={language} client:idle />
+  <SignVideoDialog messages={pickMessages(language, SIGN_VIDEO_DIALOG_MESSAGES)} client:idle />
 </BaseLayout>
 
 <script>

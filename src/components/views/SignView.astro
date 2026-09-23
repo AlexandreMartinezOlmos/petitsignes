@@ -2,8 +2,13 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../Breadcrumb.astro';
-import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
-import { categoryInSentence, createTranslator, type MessageKey } from '../../lib/i18n.ts';
+import SignVideoDialog, { SIGN_VIDEO_DIALOG_MESSAGES } from '../../islands/SignVideoDialog.tsx';
+import {
+  categoryInSentence,
+  createTranslator,
+  pickMessages,
+  type MessageKey,
+} from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
 import type { Crumb } from '../../lib/seo.ts';
 import { categoryPath } from '../../lib/categories.ts';
@@ -478,7 +483,7 @@ const reportUrl = newIssueUrl(
     }
   </div>
 
-  <SignVideoDialog language={language} client:idle />
+  <SignVideoDialog messages={pickMessages(language, SIGN_VIDEO_DIALOG_MESSAGES)} client:idle />
 </BaseLayout>
 
 <script>

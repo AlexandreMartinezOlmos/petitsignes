@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ANALYTICS_EVENTS, countEvent } from '../lib/analytics.ts';
-import { createTranslator } from '../lib/i18n.ts';
+import type { MessageKey } from '../lib/i18n.ts';
 import { onPlayRequest, type PlayRequest } from '../lib/play-request.ts';
 import {
   YOUTUBE_NOCOOKIE_HOST,
@@ -8,10 +8,23 @@ import {
   youtubeId,
   type YouTubePlayer,
 } from '../lib/youtube.ts';
-import type { Language } from '../lib/types.ts';
+import { translatorFrom, type Messages } from '../lib/translate.ts';
+
+/** The interface strings this island shows; the page passes them in its language. */
+export const SIGN_VIDEO_DIALOG_MESSAGES = [
+  'card.watchSign',
+  'card.watchAtSource',
+  'player.close',
+  'player.speed',
+  'player.speedSlow',
+  'player.speedNormal',
+  'player.source',
+  'player.unavailable',
+  'player.brokenVideo',
+] as const satisfies readonly MessageKey[];
 
 interface Props {
-  language: Language;
+  messages: Messages<(typeof SIGN_VIDEO_DIALOG_MESSAGES)[number]>;
 }
 
 const SPEEDS = [0.5, 1] as const;
@@ -33,8 +46,8 @@ type Speed = (typeof SPEEDS)[number];
  * button comes before the frame in the markup — Shift+Tab from the video lands
  * on it. `tests/e2e/player-dialog.spec.ts` holds all of this.
  */
-export default function SignVideoDialog({ language }: Props) {
-  const t = createTranslator(language);
+export default function SignVideoDialog({ messages }: Props) {
+  const t = translatorFrom(messages);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);

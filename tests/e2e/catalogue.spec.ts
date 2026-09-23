@@ -56,7 +56,19 @@ test.describe('catalogue', () => {
     await page.getByPlaceholder(/cerca un signe/i).fill('zzzzzz');
 
     await expect(page.locator('.sign-card:not([hidden])')).toHaveCount(0);
-    await expect(page.getByRole('status')).toContainText('zzzzzz');
+    // The whole sentence, not just the query: the text comes from strings the
+    // page carries for this one purpose, and an echo of the query alone would
+    // pass with them missing.
+    await expect(page.getByRole('status')).toContainText('Cap signe per «zzzzzz»');
+  });
+
+  test('an empty favourites filter says why it is empty, not that a search failed', async ({
+    page,
+  }) => {
+    await page.locator('.chip-quiet', { hasText: 'Preferits' }).click();
+
+    await expect(page.locator('.sign-card:not([hidden])')).toHaveCount(0);
+    await expect(page.getByRole('status')).toContainText('Encara no tens preferits');
   });
 
   // Narrowing the grid by category moved to the `category filters` group
@@ -109,7 +121,7 @@ test.describe('catalogue', () => {
       .getByRole('button', { name: /afegeix a preferits/i })
       .click();
 
-    await page.getByRole('button', { name: 'Preferits', exact: true }).click();
+    await page.locator('.chip-quiet', { hasText: 'Preferits' }).click();
 
     await expect(page.locator('.sign-card:not([hidden])')).toHaveCount(1);
   });
@@ -600,4 +612,15 @@ test.describe('grid sections', () => {
     await expect(page).toHaveURL(/\/es\/categoria\/animals\/$/);
     await expect(page.locator('.sign-card')).toHaveCount(promised);
   });
+});
+
+// Each catalogue builds its own empty state into the page; the Spanish one
+// must not fall back to Catalan, or to nothing.
+test('the Spanish catalogue explains an empty search in Spanish', async ({ page }) => {
+  await page.goto('/es/');
+  await waitForHydration(page);
+
+  await page.getByPlaceholder(/buscar un signo/i).fill('zzzzzz');
+
+  await expect(page.getByRole('status')).toContainText('Ningún signo para «zzzzzz»');
 });
