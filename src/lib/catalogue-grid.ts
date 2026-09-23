@@ -8,6 +8,7 @@
 
 import type Fuse from 'fuse.js';
 import { ANALYTICS_EVENTS, countEvent } from './analytics.ts';
+import { readPlayRequest, requestPlay } from './play-request.ts';
 import { createSearchIndex, isSearchable, searchSigns, type SearchableSign } from './search.ts';
 import {
   $category,
@@ -35,51 +36,6 @@ export interface FilterState {
   statusFilter: StatusFilter;
   favorites: readonly string[];
   learned: readonly string[];
-}
-
-/** Detail of the event that asks the player to open. */
-export interface PlayRequestDetail {
-  signId: string;
-  label: string;
-  signLanguage: string;
-  videoUrl: string;
-  posterUrl: string;
-  source: string;
-  sourceUrl: string;
-  license: string;
-}
-
-export const PLAY_EVENT = 'sign:play';
-
-/**
- * Turns a card's play button into the request the video dialog listens for.
- *
- * Exported because the catalogue is not the only page that shows a card: the
- * 404 offers one too, and it needs the button to work without paying for the
- * whole grid controller. Everything the dialog needs travels on the button's
- * own dataset, so nothing here has to know where the card came from.
- *
- * Does not count a play itself: this fires on every click, before anything
- * has been validated. `SignVideoDialog` is what knows whether the request
- * actually turned into a playable video, so it is what counts — see its
- * `onPlayRequest`.
- */
-export function dispatchPlayRequest(button: HTMLElement, signId: string): void {
-  button.dispatchEvent(
-    new CustomEvent<PlayRequestDetail>(PLAY_EVENT, {
-      bubbles: true,
-      detail: {
-        signId,
-        label: button.dataset.label ?? signId,
-        signLanguage: button.dataset.signLanguage ?? '',
-        videoUrl: button.dataset.videoUrl ?? '',
-        posterUrl: button.dataset.posterUrl ?? '',
-        source: button.dataset.source ?? '',
-        sourceUrl: button.dataset.sourceUrl ?? '',
-        license: button.dataset.license ?? '',
-      },
-    }),
-  );
 }
 
 export function readCardData(element: HTMLElement): CardData | null {
@@ -233,7 +189,7 @@ export function mountSignCards(root: HTMLElement): () => void {
         void toggleLearned(signId);
         break;
       case 'play':
-        dispatchPlayRequest(button, signId);
+        requestPlay(readPlayRequest(button, signId));
         break;
     }
   }

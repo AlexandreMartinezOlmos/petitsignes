@@ -45,10 +45,18 @@ encabezados de sección se ocultan igual, cuando el filtro deja su grupo sin tar
 Consecuencia: la página funciona sin JavaScript para leer y navegar; sin él se pierden búsqueda,
 filtros y progreso, pero el contenido está —agrupado y con sus encabezados— y es indexable.
 
-### 2. Dos islas de React, no una aplicación
+### 2. Tres islas de React, no una aplicación
 
 - `CatalogueToolbar` — búsqueda, chips de categoría y filtros de estado.
-- `SignVideoDialog` — el reproductor, montado una sola vez y despertado por un evento.
+- `SignVideoDialog` — el reproductor, montado una sola vez por página.
+- `ProgressData` — exportar, importar y reiniciar el progreso, en la página del proyecto.
+
+El reproductor se hidrata con `client:idle` para no competir con el primer pintado, pero el botón
+«Veure el signe» funciona desde que la página carga: lo cablea el script de la página. Entre una
+cosa y otra hay una ventana en la que el reproductor todavía no existe. Un toque en esa ventana no
+se pierde: [`../src/lib/play-request.ts`](../src/lib/play-request.ts) guarda la última petición y
+se la entrega al reproductor en cuanto se suscribe. Antes era un evento del DOM, que no tiene
+memoria, y en un móvil lento el botón parecía muerto.
 
 El selector de idioma **no** es una isla: son enlaces (ver punto 3).
 

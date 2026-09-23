@@ -123,6 +123,43 @@ for (const { name, path, trigger } of ENTRY_POINTS) {
 }
 
 /**
+ * The play button is wired by the page's own script, at load; the player is an
+ * island hydrated when the browser is idle. A tap between the two used to be
+ * sent to nobody and lost, and the button looked dead — on a slow phone, or
+ * for anyone quick enough on a page opened from a link straight to a sign.
+ *
+ * The island's module is held at the network until after the tap, so the tap
+ * provably lands before the player exists; released, the player must open on
+ * its own, with nothing tapped twice.
+ */
+for (const { name, path, trigger } of ENTRY_POINTS) {
+  test(`a tap before the player has loaded still opens it, from the ${name}`, async ({ page }) => {
+    await stubYouTubeApi(page);
+
+    let release: () => void = () => {};
+    const released = new Promise<void>((resolve) => (release = resolve));
+    await page.route('**/_astro/SignVideoDialog.*.js', async (route) => {
+      await released;
+      await route.continue();
+    });
+
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    await trigger(page).click();
+
+    // Still server-rendered: the tap reached a page with no player on it.
+    await expect(page.locator('astro-island[ssr][opts*="SignVideoDialog"]')).toHaveCount(1);
+    await expect(page.locator('dialog[open]')).toHaveCount(0);
+
+    release();
+
+    const dialog = page.locator('dialog[open]');
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toBeFocused();
+    await expect(dialog).toHaveAccessibleName(/llet/);
+  });
+}
+
+/**
  * The sweep in `a11y.spec.ts` scans each page as it loads, so it has never
  * seen the player: it only exists once asked for. Scanned here open, in both
  * palettes, playing and in the fallback a refused video falls back to.
