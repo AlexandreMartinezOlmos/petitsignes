@@ -232,6 +232,65 @@ test.describe('video delivery', () => {
     await expect(page.locator('dialog iframe')).toHaveCount(0);
   });
 
+  /**
+   * The source can remove a video, make it private or switch embedding off at
+   * any time, and nothing in this repository would change. The player then
+   * loads fine and fires `onError` (100, 101 or 150) — and without handling
+   * it the visitor was left on YouTube's own error screen with no way on.
+   *
+   * A stand-in for the IFrame API makes the refusal deterministic: which of
+   * the real 194 videos is broken today is not something a test can know, and
+   * a suite that depends on one breaking is a suite that fails when it is
+   * fixed.
+   */
+  test('a video YouTube refuses to play falls back to the source', async ({ page }) => {
+    await page.route('https://www.youtube.com/iframe_api', (route) =>
+      route.fulfill({
+        contentType: 'text/javascript',
+        body: `window.YT = {
+          PlayerState: { ENDED: 0, PLAYING: 1, PAUSED: 2 },
+          Player: function (element, options) {
+            const frame = document.createElement('iframe');
+            element.replaceWith(frame);
+            const player = {
+              setPlaybackRate() {}, seekTo() {}, playVideo() {}, stopVideo() {},
+              getIframe() { return frame; },
+              destroy() { frame.remove(); },
+            };
+            // 150: the owner does not allow this video to be embedded.
+            setTimeout(() => options.events.onError({ target: player, data: 150 }), 0);
+            return player;
+          },
+        };
+        window.onYouTubeIframeAPIReady();`,
+      }),
+    );
+
+    await page.goto('/');
+    await waitForHydration(page);
+    await playLscLeche(page);
+
+    const dialog = page.locator('dialog[open]');
+    const alert = dialog.getByRole('alert');
+    await expect(alert).toContainText('no es pot reproduir');
+    await expect(alert.getByRole('link')).toHaveAttribute('href', /youtube\.com/);
+    // The refused player is torn down, not left behind the message.
+    await expect(dialog.locator('iframe')).toHaveCount(0);
+  });
+
+  /** The API itself never arriving — an extension or a filtered network. */
+  test('a player that cannot load falls back to the source', async ({ page }) => {
+    await page.route('https://www.youtube.com/iframe_api', (route) => route.abort());
+
+    await page.goto('/');
+    await waitForHydration(page);
+    await playLscLeche(page);
+
+    const alert = page.locator('dialog[open]').getByRole('alert');
+    await expect(alert).toContainText('No hem pogut carregar el reproductor');
+    await expect(alert.getByRole('link')).toHaveAttribute('href', /youtube\.com/);
+  });
+
   test('an LSE sign links out to the dictionary instead of playing', async ({ page }) => {
     await page.goto('/es/');
     await waitForHydration(page);

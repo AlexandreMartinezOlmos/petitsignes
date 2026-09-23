@@ -26,7 +26,11 @@ export const ANALYTICS_EVENTS = {
   playLsc: 'video-lsc',
   /** An LSE sign was opened at the source dictionary instead. */
   openLse: 'enllac-lse',
-  /** The player could not load and fell back to the source link. */
+  /**
+   * The sign could not play here and the source link was offered instead: the
+   * player did not load, or YouTube refused the video (removed, private, or
+   * not embeddable).
+   */
   playerUnavailable: 'reproductor-no-disponible',
   /** A sign was added to favourites (removals are not counted). */
   addFavorite: 'preferit-afegit',

@@ -36,10 +36,13 @@ export default function SignVideoDialog({ language }: Props) {
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [request, setRequest] = useState<PlayRequestDetail | null>(null);
   const [speed, setSpeed] = useState<Speed>(1);
-  // The API can be blocked by an extension or a filtered network. Without this
-  // the dialog would sit blank forever, so a failure degrades to the same
+  // Two ways the embed can fail after a valid request, and both degrade to the
   // affordance the other sign language already uses: a link to the source.
-  const [loadFailed, setLoadFailed] = useState(false);
+  // `api` — the IFrame API never loaded (an extension, a filtered network).
+  // `video` — the player loaded but refused this video: the source removed it,
+  // made it private or switched embedding off. Without this second case the
+  // visitor was left looking at YouTube's own error screen with no way on.
+  const [failure, setFailure] = useState<'api' | 'video' | null>(null);
 
   // Read inside the player's `onReady` callback without making the player
   // effect depend on speed (kept in sync by the speed effect below).
@@ -55,7 +58,7 @@ export default function SignVideoDialog({ language }: Props) {
       const detail = (event as CustomEvent<PlayRequestDetail>).detail;
       if (!detail) return;
       setSpeed(1);
-      setLoadFailed(false);
+      setFailure(null);
       setRequest(detail);
 
       // Counted here, once the request is actually known to be playable —
@@ -160,6 +163,17 @@ export default function SignVideoDialog({ language }: Props) {
                 event.target.playVideo();
               }
             },
+            onError: () => {
+              if (cancelled) return;
+              // Counted with the load failures: the outcome a visitor sees is
+              // the same fallback, and a rising count means the same thing —
+              // the embedded delivery is failing people. A separate event would
+              // widen the analytics set for no decision it could change.
+              countEvent(ANALYTICS_EVENTS.playerUnavailable);
+              playerRef.current?.destroy();
+              playerRef.current = null;
+              setFailure('video');
+            },
           },
         });
       })
@@ -168,7 +182,7 @@ export default function SignVideoDialog({ language }: Props) {
         // Worth measuring: if this is common, the embedded delivery is failing
         // a real share of visitors and the fallback is carrying the feature.
         countEvent(ANALYTICS_EVENTS.playerUnavailable);
-        setLoadFailed(true);
+        setFailure('api');
       });
 
     return () => {
@@ -227,14 +241,15 @@ export default function SignVideoDialog({ language }: Props) {
             </button>
           </div>
 
-          {videoId === null || loadFailed ? (
-            /* Nothing to embed — either the stored url is not a YouTube video
-               this app can read an id from (a content bug), or the IFrame API
-               itself failed to load (a network or extension one). Either way,
-               rather than a blank box, offer the source's own page — the same
-               escape hatch an LSE sign uses. */
+          {videoId === null || failure !== null ? (
+            /* Nothing to embed — the stored url is not a YouTube video this app
+               can read an id from (a content bug), the IFrame API failed to
+               load (a network or extension one), or YouTube refused this video
+               (the source removed it or disabled embedding). Rather than a
+               blank box or YouTube's error screen, offer the source's own page
+               — the same escape hatch an LSE sign uses. */
             <div className="player-dialog__stage player-dialog__fallback" role="alert">
-              <p>{t(videoId === null ? 'player.brokenVideo' : 'player.unavailable')}</p>
+              <p>{t(failure === 'api' ? 'player.unavailable' : 'player.brokenVideo')}</p>
               <a
                 className="player-dialog__fallback-link"
                 href={request.videoUrl}

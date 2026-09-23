@@ -35,6 +35,13 @@ interface YouTubePlayerOptions {
   events?: {
     onReady?: (event: YouTubePlayerEvent) => void;
     onStateChange?: (event: YouTubePlayerEvent) => void;
+    /**
+     * The player loaded but this video cannot play in it: removed or made
+     * private at the source (100), embedding switched off by its owner (101,
+     * 150), or an id or format the player rejects (2, 5). `data` carries the
+     * code; every one of them ends the same way for a visitor.
+     */
+    onError?: (event: YouTubePlayerEvent) => void;
   };
 }
 

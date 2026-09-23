@@ -65,7 +65,7 @@ Estos son **todos** los eventos que se cuentan — la lista completa está en
 | --------------------------- | ------------------------------------------------------------ |
 | `video-lsc`                 | Se ha reproducido un signo en LSC                            |
 | `enllac-lse`                | Se ha abierto un signo LSE en el diccionario de origen       |
-| `reproductor-no-disponible` | El reproductor no pudo cargar y se ofreció el enlace externo |
+| `reproductor-no-disponible` | El vídeo no pudo reproducirse y se ofreció el enlace externo |
 | `preferit-afegit`           | Se ha añadido un signo a favoritos                           |
 | `apres-marcat`              | Se ha marcado un signo como aprendido                        |
 | `progres-exportat`          | Se ha exportado el progreso a un fichero                     |
