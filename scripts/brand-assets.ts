@@ -1,5 +1,5 @@
 /**
- * Renders the brand PNGs: the social card and the home-screen icons.
+ * Renders the brand PNGs: the social card of each locale and the home-screen icons.
  *
  *   npm run brand:assets
  *
@@ -29,6 +29,9 @@ import {
   BRAND_MARK_TRANSFORM,
   BRAND_MARK_VIEWBOX,
 } from '../src/lib/brand.ts';
+import { createTranslator } from '../src/lib/i18n.ts';
+import { ROUTED_LOCALES } from '../src/lib/routing.ts';
+import { OG_IMAGES, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../src/lib/seo.ts';
 
 const ROOT = path.resolve(fileURLToPath(import.meta.url), '../..');
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -79,6 +82,11 @@ function iconHtml(b: Brand, size: number): string {
 /**
  * The social card. Kept to the wordmark, the tagline and a lot of quiet space:
  * a WhatsApp preview is read at thumbnail size, so anything more becomes noise.
+ *
+ * The tagline is balanced rather than filled: filled, the Spanish one broke as
+ * "…con tu bebé antes / de que hable", three words stranded on a line of their
+ * own at the size the card is read at. Balancing alone then split the Catalan
+ * one at its hyphen, "comunicar- / te", so a hyphenated word is kept whole.
  */
 function ogHtml(b: Brand, title: string, tagline: string): string {
   const badge = 190;
@@ -93,8 +101,9 @@ function ogHtml(b: Brand, title: string, tagline: string): string {
     <div style="font-size:82px;font-weight:800;color:${b.brandInk};letter-spacing:-0.02em">
       ${title}
     </div>
-    <div style="font-size:37px;font-weight:600;color:${b.inkMuted};line-height:1.35;max-width:900px">
-      ${tagline}
+    <div style="font-size:37px;font-weight:600;color:${b.inkMuted};line-height:1.35;max-width:900px;
+      text-wrap:balance">
+      ${tagline.replace(/(\S+-\S+)/g, '<span style="white-space:nowrap">$1</span>')}
     </div>
     <div style="font-size:26px;font-weight:700;color:${b.ink};letter-spacing:0.14em">
       LSC &nbsp;·&nbsp; LSE
@@ -122,17 +131,24 @@ async function main(): Promise<void> {
   const brand = await readBrand();
   const font = await fontFace();
 
-  // The card speaks to whoever is pasting the link, so it uses the default
-  // locale's own words rather than a string invented for the image.
-  const i18n = await readFile(path.join(ROOT, 'src/lib/i18n.ts'), 'utf8');
-  const title = extract(i18n, /'site\.title':\s*'([^']+)'/, 'the site title');
-  const tagline = extract(i18n, /'site\.tagline':\s*'([^']+)'/, 'the site tagline');
+  // The card speaks to whoever is pasting the link, so each locale's card uses
+  // that locale's own words rather than a string invented for the image — read
+  // through the same translator the pages use, not scraped from the source.
+  const cards = ROUTED_LOCALES.map((locale) => {
+    const t = createTranslator(locale);
+    return {
+      file: OG_IMAGES[locale].replace(/^\//, ''),
+      html: ogHtml(brand, t('site.title'), t('site.tagline')),
+      width: OG_IMAGE_WIDTH,
+      height: OG_IMAGE_HEIGHT,
+    };
+  });
 
   await mkdir(PUBLIC_DIR, { recursive: true });
   const browser = await chromium.launch();
 
   const shots: { file: string; html: string; width: number; height: number }[] = [
-    { file: 'og.png', html: ogHtml(brand, title, tagline), width: 1200, height: 630 },
+    ...cards,
     { file: 'apple-touch-icon.png', html: iconHtml(brand, 180), width: 180, height: 180 },
     { file: 'icon-192.png', html: iconHtml(brand, 192), width: 192, height: 192 },
     { file: 'icon-512.png', html: iconHtml(brand, 512), width: 512, height: 512 },

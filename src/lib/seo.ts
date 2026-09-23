@@ -26,10 +26,24 @@ import { SITE_ORIGIN } from './site.ts';
  */
 export const SITE_PATHS = ['/', '/el-projecte/', '/credits/', '/accessibilitat/'] as const;
 
-/** The social card. 1200×630 is what every major platform crops from. */
-export const OG_IMAGE = '/og.png';
+/**
+ * The social card, one per locale: a link pasted into a Spanish conversation
+ * previews in Spanish. Rendered by `npm run brand:assets` from each locale's own
+ * strings. The Catalan card keeps the name it has always had, so previews that
+ * apps have already cached for shared links stay valid.
+ *
+ * 1200×630 is what every major platform crops from.
+ */
+export const OG_IMAGES: Record<RoutedLocale, string> = { ca: '/og.png', es: '/og-es.png' };
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
+
+/**
+ * Open Graph names a locale as language and territory, `ca_ES`, not the bare
+ * `ca` of `<html lang>` — and a value outside that form is ignored, which
+ * leaves the platform guessing the language of the card from its text.
+ */
+export const OG_LOCALES: Record<RoutedLocale, string> = { ca: 'ca_ES', es: 'es_ES' };
 
 /** Home-screen icons. Apple ignores the manifest, hence the separate 180. */
 export const APPLE_TOUCH_ICON = '/apple-touch-icon.png';
