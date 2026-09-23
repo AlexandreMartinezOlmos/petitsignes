@@ -87,14 +87,22 @@ test.describe('the site under its own CSP', () => {
    * in the policy at all. If the hashes are right but an origin is missing, the
    * catalogue looks perfect and only this fails.
    */
-  test('a sign still plays, which is what the YouTube origins are for', async ({ page }) => {
+  test('a sign still reaches the player, which is what the YouTube origins are for', async ({
+    page,
+  }) => {
     const policy = await underPolicy(page);
     await page.goto('/');
 
+    // A frame the policy refuses is never requested, so the request itself is
+    // the proof `frame-src` let it through. Asserted on the request rather than
+    // on the iframe: whether YouTube then agrees to play depends on the network
+    // (from CI it refuses, and the dialog swaps the frame for the source link).
+    const embed = page.waitForRequest((request) =>
+      /^https:\/\/www\.youtube-nocookie\.com\/embed\//.test(request.url()),
+    );
     await page.locator('.sign-card__cta').first().click();
+    await embed;
 
-    const frame = page.locator('dialog[open] iframe');
-    await expect(frame).toHaveAttribute('src', /youtube-nocookie\.com/);
     // The API only defines `YT` once its script has run — proof the origin was
     // allowed, not merely that an empty frame was inserted.
     await expect.poll(() => page.evaluate(() => typeof window.YT)).toBe('object');
