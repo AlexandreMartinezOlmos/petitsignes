@@ -72,6 +72,20 @@ export const SIGN_SOURCES = ['CNSE-DILSE', 'Gencat-VocabulariLSC'] as const;
 export type SignSource = (typeof SIGN_SOURCES)[number];
 
 /**
+ * The language each source names itself and states its conditions in.
+ *
+ * A video's `license` is the source's attribution, quoted rather than
+ * translated, so it keeps the source's language whichever page shows it. The
+ * page marks it with this (WCAG 3.1.2, language of parts) so a screen reader
+ * pronounces it in the right voice. Anything the project says in its own words
+ * about a source belongs in the interface translations, not in `license`.
+ */
+export const SOURCE_LANGUAGE: Record<SignSource, Language> = {
+  'CNSE-DILSE': 'es',
+  'Gencat-VocabulariLSC': 'ca',
+};
+
+/**
  * How a video may legally be shown. The sources do not allow re-hosting, so
  * nothing is ever served from our own domain.
  *
