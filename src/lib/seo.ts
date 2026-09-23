@@ -35,6 +35,36 @@ export const OG_IMAGE_HEIGHT = 630;
 export const APPLE_TOUCH_ICON = '/apple-touch-icon.png';
 export const WEB_MANIFEST = '/site.webmanifest';
 
+/**
+ * Roughly where a search result stops showing a title. Google measures in
+ * pixels, not characters, but 60 is the width a title of ordinary Latin text
+ * reliably survives — past it, the end is replaced by an ellipsis.
+ */
+export const TITLE_MAX_LENGTH = 60;
+
+const TITLE_SEPARATOR = ' · ';
+
+/**
+ * The `<title>` of a page: what it is about, and the site's name if there is
+ * room for it.
+ *
+ * The page's own words come first because they are what someone searched for —
+ * "llet en llengua de signes catalana", not "Petits Signes". The name is a
+ * suffix that is only worth its sixteen characters when it fits: appended to a
+ * title that is already long, all it does is push the end of the sentence past
+ * the ellipsis, and the part cut off would be the name of the sign language.
+ * Search results show the site's name on a line of their own anyway.
+ *
+ * Counted in code points rather than UTF-16 units, so «», accents and the
+ * middle dot each count once, the way a reader counts them.
+ */
+export function documentTitle(title: string | undefined, siteName: string): string {
+  if (title === undefined) return siteName;
+
+  const withName = `${title}${TITLE_SEPARATOR}${siteName}`;
+  return [...withName].length <= TITLE_MAX_LENGTH ? withName : title;
+}
+
 /** XML text nodes: five characters and the document is well-formed. */
 function escapeXml(value: string): string {
   return value

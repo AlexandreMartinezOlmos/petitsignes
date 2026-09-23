@@ -5,7 +5,7 @@ import SignCard from '../SignCard.astro';
 import CatalogueToolbar from '../../islands/CatalogueToolbar.tsx';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
 import { createTranslator } from '../../lib/i18n.ts';
-import { type Category, type SignEntry } from '../../lib/types.ts';
+import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
 import type { RoutedLocale } from '../../lib/routing.ts';
 import { CATALOGUE_RESTORING_ATTR, CATALOGUE_STATE_KEY } from '../../lib/catalogue-history.ts';
 
@@ -15,6 +15,13 @@ interface Props {
 
 const { language } = Astro.props;
 const t = createTranslator(language);
+
+// The search this page answers is "signes per a nadons", and it is asked about
+// one sign language at a time, so the title names the one this build teaches.
+const namedSignLanguage =
+  LANGUAGE_TO_SIGN_LANGUAGE[language] === 'lsc'
+    ? t('signLanguage.lscNamed')
+    : t('signLanguage.lseNamed');
 
 const categoryEntries = await getCollection('categories');
 const categories: Category[] = categoryEntries
@@ -85,7 +92,11 @@ for (const sign of signs) {
 }
 ---
 
-<BaseLayout language={language} path="/">
+<BaseLayout
+  language={language}
+  path="/"
+  title={t('home.title', { signLanguage: namedSignLanguage })}
+>
   <CatalogueToolbar
     slot="toolbar"
     categories={toolbarCategories}

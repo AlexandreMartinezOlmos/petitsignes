@@ -1,7 +1,7 @@
 import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { SITE_PATHS, buildRobots, buildSitemap } from './seo.ts';
+import { SITE_PATHS, TITLE_MAX_LENGTH, buildRobots, buildSitemap, documentTitle } from './seo.ts';
 import { ROUTED_LOCALES, localeHref } from './routing.ts';
 import { SITE_ORIGIN } from './site.ts';
 
@@ -169,5 +169,46 @@ describe('the origin a deployment describes itself with', () => {
   ])('%s', (_name, origin, blocked) => {
     expect(buildRobots(origin).includes('Disallow: /')).toBe(blocked);
     expect(buildSitemap(origin)).toContain(`<loc>${origin}/</loc>`);
+  });
+});
+
+describe('documentTitle', () => {
+  const NAME = 'Petits Signes';
+  const SUFFIX = ` · ${NAME}`.length;
+
+  it('appends the site name when it fits', () => {
+    expect(documentTitle('«llet» en llengua de signes catalana (LSC)', NAME)).toBe(
+      '«llet» en llengua de signes catalana (LSC) · Petits Signes',
+    );
+  });
+
+  /**
+   * The name is the part worth losing. Kept on a long title it pushes the end
+   * of the sentence past the ellipsis — and on these pages the end is the name
+   * of the sign language, which is the half of the query that matters.
+   */
+  it('drops the site name rather than letting it push the title past the cut', () => {
+    const long = '«una altra vegada» en llengua de signes catalana (LSC)';
+    expect(documentTitle(long, NAME)).toBe(long);
+  });
+
+  it('keeps the name at exactly the limit and drops it one character past', () => {
+    const fits = 'x'.repeat(TITLE_MAX_LENGTH - SUFFIX);
+    expect(documentTitle(fits, NAME)).toHaveLength(TITLE_MAX_LENGTH);
+    expect(documentTitle(`${fits}x`, NAME)).toBe(`${fits}x`);
+  });
+
+  /**
+   * An astral character is two UTF-16 units and one character to a reader.
+   * Counting code points keeps the rule about what is seen rather than about
+   * how JavaScript happens to store it.
+   */
+  it('counts characters as a reader does, not UTF-16 units', () => {
+    const astral = '𝒶'.repeat(TITLE_MAX_LENGTH - SUFFIX);
+    expect(documentTitle(astral, NAME)).toBe(`${astral} · ${NAME}`);
+  });
+
+  it('falls back to the site name for a page that has no title of its own', () => {
+    expect(documentTitle(undefined, NAME)).toBe(NAME);
   });
 });

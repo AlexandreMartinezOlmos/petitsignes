@@ -34,6 +34,7 @@ const MESSAGES = {
     'nav.breadcrumb': 'On ets',
     'nav.onThisPage': 'En aquesta pàgina',
 
+    'home.title': 'Signes per a nadons en {signLanguage}',
     'hero.title': "Comunica't amb el teu nadó",
     'hero.titleAccent': 'molt abans de la seva primera paraula',
     'hero.lead': 'Signes reals de la llengua de signes catalana per al dia a dia amb el teu nadó.',
@@ -85,7 +86,12 @@ const MESSAGES = {
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Llengua de Signes Catalana',
     'signLanguage.lseFull': 'Llengua de Signes Espanyola',
+    // As it is written in running text and searched for: lowercase, like the
+    // name of any language, with the acronym people also type. For titles.
+    'signLanguage.lscNamed': 'llengua de signes catalana (LSC)',
+    'signLanguage.lseNamed': 'llengua de signes espanyola (LSE)',
 
+    'sign.title': '«{label}» en {signLanguage}',
     'sign.subtitle': 'en {signLanguage}',
     'sign.meta':
       'Com es signa «{label}» en {signLanguage}, amb el vídeo de la font oficial i l’enllaç a la fitxa original.',
@@ -100,6 +106,7 @@ const MESSAGES = {
     'sign.relatedTitle': 'Altres signes {ofCategory}',
     'sign.relatedAll': 'Veure els {count} signes {ofCategory}',
     'category.title': 'Signes {ofCategory}',
+    'category.documentTitle': 'Signes {ofCategory} en {signLanguage}',
     'category.lead':
       '{count} signes {ofCategory} per al dia a dia amb el teu nadó, cadascun amb el vídeo de la seva font oficial.',
     'category.leadOne':
@@ -171,6 +178,7 @@ const MESSAGES = {
     'nav.breadcrumb': 'Dónde estás',
     'nav.onThisPage': 'En esta página',
 
+    'home.title': 'Signos para bebés en {signLanguage}',
     'hero.title': 'Comunícate con tu bebé',
     'hero.titleAccent': 'mucho antes de su primera palabra',
     'hero.lead': 'Signos reales de la lengua de signos española para el día a día con tu bebé.',
@@ -222,7 +230,10 @@ const MESSAGES = {
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Lengua de Signos Catalana',
     'signLanguage.lseFull': 'Lengua de Signos Española',
+    'signLanguage.lscNamed': 'lengua de signos catalana (LSC)',
+    'signLanguage.lseNamed': 'lengua de signos española (LSE)',
 
+    'sign.title': '«{label}» en {signLanguage}',
     'sign.subtitle': 'en {signLanguage}',
     'sign.meta':
       'Cómo se signa «{label}» en {signLanguage}, con el vídeo de la fuente oficial y el enlace a la ficha original.',
@@ -237,6 +248,7 @@ const MESSAGES = {
     'sign.relatedTitle': 'Otros signos de {ofCategory}',
     'sign.relatedAll': 'Ver los {count} signos de {ofCategory}',
     'category.title': 'Signos de {ofCategory}',
+    'category.documentTitle': 'Signos de {ofCategory} en {signLanguage}',
     'category.lead':
       '{count} signos de {ofCategory} para el día a día con tu bebé, cada uno con el vídeo de su fuente oficial.',
     'category.leadOne':
@@ -309,6 +321,7 @@ const MESSAGES = {
     'nav.breadcrumb': 'Breadcrumb',
     'nav.onThisPage': 'On this page',
 
+    'home.title': 'Baby signs in {signLanguage}',
     'hero.title': 'Connect with your baby',
     'hero.titleAccent': 'long before their first word',
     'hero.lead': 'Real signs for everyday moments with your baby.',
@@ -360,7 +373,10 @@ const MESSAGES = {
     'signLanguage.lse': 'LSE',
     'signLanguage.lscFull': 'Catalan Sign Language',
     'signLanguage.lseFull': 'Spanish Sign Language',
+    'signLanguage.lscNamed': 'Catalan Sign Language (LSC)',
+    'signLanguage.lseNamed': 'Spanish Sign Language (LSE)',
 
+    'sign.title': '“{label}” in {signLanguage}',
     'sign.subtitle': 'in {signLanguage}',
     'sign.meta':
       'How to sign “{label}” in {signLanguage}, with the video from the official source and a link to the original entry.',
@@ -375,6 +391,7 @@ const MESSAGES = {
     'sign.relatedTitle': 'More signs from {ofCategory}',
     'sign.relatedAll': 'See all {count} {ofCategory} signs',
     'category.title': '{ofCategory} signs',
+    'category.documentTitle': '{ofCategory} signs in {signLanguage}',
     'category.lead':
       '{count} signs for {ofCategory}, for everyday moments with your baby, each with the video from its official source.',
     'category.leadOne':

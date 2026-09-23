@@ -34,6 +34,8 @@ const t = createTranslator(language);
 
 const signLanguage = LANGUAGE_TO_SIGN_LANGUAGE[language];
 const fullName = signLanguage === 'lsc' ? t('signLanguage.lscFull') : t('signLanguage.lseFull');
+const namedSignLanguage =
+  signLanguage === 'lsc' ? t('signLanguage.lscNamed') : t('signLanguage.lseNamed');
 
 const label = category.labels[language];
 
@@ -72,7 +74,7 @@ const lead =
 <BaseLayout
   language={language}
   path={categoryPath(category.id)}
-  title={t('category.title', { ofCategory })}
+  title={t('category.documentTitle', { ofCategory, signLanguage: namedSignLanguage })}
   description={t('category.meta', { ofCategory, signLanguage: fullName })}
 >
   <div class="category-page">
