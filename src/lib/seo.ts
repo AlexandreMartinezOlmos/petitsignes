@@ -65,6 +65,78 @@ export function documentTitle(title: string | undefined, siteName: string): stri
   return [...withName].length <= TITLE_MAX_LENGTH ? withName : title;
 }
 
+/** One schema.org object, ready to be serialised into a page. */
+export type JsonLd = Readonly<Record<string, unknown>>;
+
+/** One step of a breadcrumb trail, as a reader sees it and as a crawler follows it. */
+export interface Crumb {
+  name: string;
+  /** Locale-resolved path, as the link on the page uses it (`/es/categoria/animals/`). */
+  href: string;
+}
+
+/**
+ * The site, as the home page of one locale describes it.
+ *
+ * This is what search results read the site's name from — the line above the
+ * title — and the reason the home page's `<title>` can spend all of its width
+ * on what the page is about. One per locale, each with its own address and
+ * language, because each home is the entry to a different sign language.
+ *
+ * Deliberately the only kind of page-level entity the site declares. No
+ * `VideoObject`: it would invite a search engine to show a frame of the
+ * gesture, which the sources do not allow anyone to extract. No `FAQPage`:
+ * there is no FAQ, and marking prose up as one to win space in results is the
+ * kind of claim this site does not make.
+ */
+export function websiteJsonLd(
+  name: string,
+  homeHref: string,
+  language: string,
+  origin: string = SITE_ORIGIN,
+): JsonLd {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name,
+    url: absolute(homeHref, origin),
+    inLanguage: language,
+  };
+}
+
+/**
+ * The breadcrumb a page already shows, in the form search results display it
+ * in place of the bare URL.
+ *
+ * Built from the same trail the visible breadcrumb is rendered from, so the
+ * two cannot disagree: structured data that describes something the page does
+ * not show is exactly what search engines penalise.
+ */
+export function breadcrumbJsonLd(trail: readonly Crumb[], origin: string = SITE_ORIGIN): JsonLd {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.name,
+      item: absolute(crumb.href, origin),
+    })),
+  };
+}
+
+/**
+ * The body of a `<script type="application/ld+json">`.
+ *
+ * `<` is escaped because the HTML parser, not JSON, decides where a script
+ * ends: a label containing `</script>` would otherwise close the block and
+ * spill the rest into the page. `<` is the same character to a JSON
+ * parser, so the data is unchanged.
+ */
+export function serializeJsonLd(data: JsonLd): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
+
 /** XML text nodes: five characters and the document is well-formed. */
 function escapeXml(value: string): string {
   return value

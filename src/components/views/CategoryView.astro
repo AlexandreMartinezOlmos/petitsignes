@@ -1,11 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../Breadcrumb.astro';
 import SignCard from '../SignCard.astro';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
 import { categoryPath } from '../../lib/categories.ts';
 import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
+import type { Crumb } from '../../lib/seo.ts';
 import { LANGUAGE_TO_SIGN_LANGUAGE, type Category, type SignEntry } from '../../lib/types.ts';
 
 interface Props {
@@ -62,6 +64,11 @@ const others: Category[] = categoryEntries
 
 const catalogueHref = localeHref('/', language);
 
+const trail: Crumb[] = [
+  { name: t('nav.catalogue'), href: catalogueHref },
+  { name: label, href: localeHref(categoryPath(category.id), language) },
+];
+
 // Counted from what is actually rendered, never from a number written by hand:
 // a lead claiming thirty signs above twenty-nine cards is the kind of small lie
 // nobody checks.
@@ -76,13 +83,10 @@ const lead =
   path={categoryPath(category.id)}
   title={t('category.documentTitle', { ofCategory, signLanguage: namedSignLanguage })}
   description={t('category.meta', { ofCategory, signLanguage: fullName })}
+  breadcrumb={trail}
 >
   <div class="category-page">
-    <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
-      <a class="breadcrumb__link" href={catalogueHref}>{t('nav.catalogue')}</a>
-      <span class="breadcrumb__sep" aria-hidden="true">/</span>
-      <span class="breadcrumb__current" aria-current="page">{label}</span>
-    </nav>
+    <Breadcrumb language={language} trail={trail} />
 
     <header class="category-hero">
       <p class="category-hero__chip">

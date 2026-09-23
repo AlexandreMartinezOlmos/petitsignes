@@ -1,9 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../Breadcrumb.astro';
 import SignVideoDialog from '../../islands/SignVideoDialog.tsx';
 import { categoryInSentence, createTranslator } from '../../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../../lib/routing.ts';
+import type { Crumb } from '../../lib/seo.ts';
 import { categoryPath } from '../../lib/categories.ts';
 import { relatedSigns, signPath } from '../../lib/signs.ts';
 import { newIssueUrl } from '../../lib/site.ts';
@@ -76,6 +78,12 @@ const ofCategory = categoryInSentence(language, category.labels[language]);
 
 const catalogueHref = localeHref('/', language);
 
+const trail: Crumb[] = [
+  { name: t('nav.catalogue'), href: catalogueHref },
+  { name: category.labels[language], href: localeHref(categoryPath(category.id), language) },
+  { name: label, href: localeHref(signPath(sign.id), language) },
+];
+
 /**
  * The description is the sentence a search result shows, so it says what the
  * page can actually deliver. When a sign language has no video for this concept
@@ -123,7 +131,13 @@ const reportUrl = newIssueUrl(
 );
 ---
 
-<BaseLayout language={language} path={signPath(sign.id)} title={title} description={description}>
+<BaseLayout
+  language={language}
+  path={signPath(sign.id)}
+  title={title}
+  description={description}
+  breadcrumb={trail}
+>
   {
     /*
     Three steps now, not two. The category in the middle is the route that
@@ -134,15 +148,7 @@ const reportUrl = newIssueUrl(
     columns are dividing up.
   */
   }
-  <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
-    <a class="breadcrumb__link" href={catalogueHref}>{t('nav.catalogue')}</a>
-    <span class="breadcrumb__sep" aria-hidden="true">/</span>
-    <a class="breadcrumb__link" href={localeHref(categoryPath(category.id), language)}>
-      {category.labels[language]}
-    </a>
-    <span class="breadcrumb__sep" aria-hidden="true">/</span>
-    <span class="breadcrumb__current" aria-current="page">{label}</span>
-  </nav>
+  <Breadcrumb language={language} trail={trail} />
 
   {
     /*

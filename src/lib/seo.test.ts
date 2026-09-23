@@ -1,7 +1,16 @@
 import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { SITE_PATHS, TITLE_MAX_LENGTH, buildRobots, buildSitemap, documentTitle } from './seo.ts';
+import {
+  SITE_PATHS,
+  TITLE_MAX_LENGTH,
+  breadcrumbJsonLd,
+  buildRobots,
+  buildSitemap,
+  documentTitle,
+  serializeJsonLd,
+  websiteJsonLd,
+} from './seo.ts';
 import { ROUTED_LOCALES, localeHref } from './routing.ts';
 import { SITE_ORIGIN } from './site.ts';
 
@@ -210,5 +219,60 @@ describe('documentTitle', () => {
 
   it('falls back to the site name for a page that has no title of its own', () => {
     expect(documentTitle(undefined, NAME)).toBe(NAME);
+  });
+});
+
+describe('structured data', () => {
+  it('describes each locale’s home as the site, at its own address and in its own language', () => {
+    expect(websiteJsonLd('Petits Signes', '/es/', 'es')).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Petits Signes',
+      url: `${SITE_ORIGIN}/es/`,
+      inLanguage: 'es',
+    });
+  });
+
+  /**
+   * Positions are 1-based and in reading order, and every item is an absolute
+   * URL: a search engine resolves nothing against the page it found this on.
+   */
+  it('turns a trail into a numbered list of absolute URLs, in order', () => {
+    const list = breadcrumbJsonLd([
+      { name: 'Catálogo', href: '/es/' },
+      { name: 'Animales', href: '/es/categoria/animals/' },
+    ]);
+
+    expect(list['@type']).toBe('BreadcrumbList');
+    expect(list.itemListElement).toEqual([
+      { '@type': 'ListItem', position: 1, name: 'Catálogo', item: `${SITE_ORIGIN}/es/` },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Animales',
+        item: `${SITE_ORIGIN}/es/categoria/animals/`,
+      },
+    ]);
+  });
+
+  it('describes a preview as the preview, like the canonical link does', () => {
+    expect(websiteJsonLd('x', '/', 'ca', PREVIEW).url).toBe(`${PREVIEW}/`);
+    expect(JSON.stringify(breadcrumbJsonLd([{ name: 'x', href: '/' }], PREVIEW))).not.toContain(
+      SITE_ORIGIN,
+    );
+  });
+
+  /**
+   * The HTML parser decides where a script ends, and it does not know JSON:
+   * a label containing `</script>` would close the block and spill the rest
+   * into the page as markup. Escaped, it is the same string to a JSON reader.
+   */
+  it('cannot be closed early by the text it carries', () => {
+    const data = { name: 'a</script><script>alert(1)</script>' };
+    const body = serializeJsonLd(data);
+
+    expect(body).not.toContain('</script');
+    expect(body).not.toContain('<');
+    expect(JSON.parse(body)).toEqual(data);
   });
 });

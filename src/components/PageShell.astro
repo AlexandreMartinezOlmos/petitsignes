@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from './Breadcrumb.astro';
 import { createTranslator } from '../lib/i18n.ts';
 import { localeHref, type RoutedLocale } from '../lib/routing.ts';
+import type { Crumb } from '../lib/seo.ts';
 
 /**
  * The shell the three text pages share.
@@ -38,22 +40,20 @@ interface Props {
 
 const { language, path, title, lead, description, sections } = Astro.props;
 const t = createTranslator(language);
-const homeHref = localeHref('/', language);
+const trail: Crumb[] = [
+  { name: t('nav.catalogue'), href: localeHref('/', language) },
+  { name: title, href: localeHref(path, language) },
+];
 ---
 
-<BaseLayout language={language} path={path} title={title} description={description ?? lead}>
-  {
-    /*
-    The way back. `aria-current="page"` on the last step rather than a link to
-    the page you are already on, and the separator is `aria-hidden` because a
-    slash read aloud between two page names is noise.
-  */
-  }
-  <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
-    <a class="breadcrumb__link" href={homeHref}>{t('nav.catalogue')}</a>
-    <span class="breadcrumb__sep" aria-hidden="true">/</span>
-    <span class="breadcrumb__current" aria-current="page">{title}</span>
-  </nav>
+<BaseLayout
+  language={language}
+  path={path}
+  title={title}
+  description={description ?? lead}
+  breadcrumb={trail}
+>
+  <Breadcrumb language={language} trail={trail} />
 
   <div class="page-layout">
     <article class="page-prose">

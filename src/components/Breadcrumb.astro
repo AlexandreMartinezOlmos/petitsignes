@@ -1,0 +1,51 @@
+---
+import { createTranslator } from '../lib/i18n.ts';
+import type { RoutedLocale } from '../lib/routing.ts';
+import type { Crumb } from '../lib/seo.ts';
+
+/**
+ * The way back, from the page you are on to the catalogue.
+ *
+ * Written out once, here, because the same trail is also handed to search
+ * engines as a `BreadcrumbList` (see `breadcrumbJsonLd`). Three pages used to
+ * carry their own copy of this markup; with a fourth reader of the same list,
+ * a copy that drifted would have told a crawler one path and a person another.
+ *
+ * The last step is the page itself: `aria-current="page"` rather than a link
+ * to where you already are. The separator is `aria-hidden` because a slash
+ * read aloud between two page names is noise.
+ */
+interface Props {
+  language: RoutedLocale;
+  /** From the catalogue to this page, inclusive. */
+  trail: readonly Crumb[];
+}
+
+const { language, trail } = Astro.props;
+const t = createTranslator(language);
+
+const ancestors = trail.slice(0, -1);
+const current = trail.at(-1);
+---
+
+<nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
+  {
+    ancestors.map((crumb) => (
+      <Fragment>
+        <a class="breadcrumb__link" href={crumb.href}>
+          {crumb.name}
+        </a>
+        <span class="breadcrumb__sep" aria-hidden="true">
+          /
+        </span>
+      </Fragment>
+    ))
+  }
+  {
+    current && (
+      <span class="breadcrumb__current" aria-current="page">
+        {current.name}
+      </span>
+    )
+  }
+</nav>
