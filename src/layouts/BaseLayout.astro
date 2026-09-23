@@ -19,9 +19,10 @@ import {
 import { ANALYTICS_ENDPOINT, ANALYTICS_SCRIPT, REPO_URL, analyticsHost } from '../lib/site.ts';
 import {
   APPLE_TOUCH_ICON,
-  OG_IMAGE,
+  OG_IMAGES,
   OG_IMAGE_HEIGHT,
   OG_IMAGE_WIDTH,
+  OG_LOCALES,
   WEB_MANIFEST,
   breadcrumbJsonLd,
   documentTitle,
@@ -144,7 +145,14 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content={language} />
+    <meta property="og:locale" content={OG_LOCALES[language]} />
+    {
+      /* The same page in the other language, as `hreflang` says it for crawlers. */
+      !noindex &&
+        ROUTED_LOCALES.filter((locale) => locale !== language).map((locale) => (
+          <meta property="og:locale:alternate" content={OG_LOCALES[locale]} />
+        ))
+    }
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={t('site.title')} />
     {
@@ -155,7 +163,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
       the preview.
     */
     }
-    <meta property="og:image" content={new URL(OG_IMAGE, Astro.site)} />
+    <meta property="og:image" content={new URL(OG_IMAGES[language], Astro.site)} />
     <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
     <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
     <meta property="og:image:alt" content={pageDescription} />

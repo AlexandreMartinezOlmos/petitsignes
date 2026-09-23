@@ -953,12 +953,14 @@ test('every page offers a social card that a share sheet can actually fetch', as
     expect(card.height, path).toBe('630');
     expect(card.alt, path).toBeTruthy();
     expect(card.twitter, path).toBe('summary_large_image');
-  }
 
-  // The file has to exist as well as be declared: a 404 here is a blank card.
-  const response = await page.request.get('/og.png');
-  expect(response.status()).toBe(200);
-  expect(response.headers()['content-type']).toContain('image/png');
+    // The file has to exist as well as be declared: a 404 here is a blank
+    // card. Fetched by the path each page declares, because each locale
+    // declares its own.
+    const response = await page.request.get(new URL(card.image!).pathname);
+    expect(response.status(), path).toBe(200);
+    expect(response.headers()['content-type'], path).toContain('image/png');
+  }
 });
 
 /**

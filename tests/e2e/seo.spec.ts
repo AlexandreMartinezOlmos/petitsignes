@@ -29,6 +29,7 @@ interface BuiltPage {
   path: string;
   locale: 'ca' | 'es';
   kind: Kind;
+  og: { locale: string | null; alternates: string[]; image: string | null };
   title: string;
   description: string;
   noindex: boolean;
@@ -69,6 +70,13 @@ const PAGES: BuiltPage[] = htmlFiles(DIST).map((file) => {
     path,
     locale: path.startsWith('/es/') ? 'es' : 'ca',
     kind: kindOf(path),
+    og: {
+      locale: html.match(/<meta property="og:locale" content="([^"]*)"/)?.[1] ?? null,
+      alternates: [...html.matchAll(/<meta property="og:locale:alternate" content="([^"]*)"/g)].map(
+        (match) => match[1]!,
+      ),
+      image: html.match(/<meta property="og:image" content="([^"]*)"/)?.[1] ?? null,
+    },
     title: decode(html.match(/<title>([^<]*)<\/title>/)?.[1] ?? ''),
     description: decode(html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? ''),
     noindex: /<meta name="robots" content="noindex/.test(html),
@@ -251,5 +259,47 @@ test.describe('descriptions', () => {
     expect(page('/es/').description).toMatch(
       /^\d+ signos reales de la lengua de signos española \(LSE\) /,
     );
+  });
+});
+
+test.describe('the social card', () => {
+  const OG = { ca: 'ca_ES', es: 'es_ES' } as const;
+  const OTHER = { ca: 'es_ES', es: 'ca_ES' } as const;
+
+  /**
+   * Open Graph wants language and territory. The pages said `ca` and `es`,
+   * which is the `<html lang>` form and not one a share sheet reads, so the
+   * card's language was left to be guessed from its text.
+   */
+  test('every page names its locale the way Open Graph reads it, and offers the other', () => {
+    for (const { path, locale, og, noindex } of PAGES) {
+      expect(og.locale, path).toBe(OG[locale]);
+      expect(og.alternates, path).toEqual(noindex ? [] : [OTHER[locale]]);
+    }
+  });
+
+  /**
+   * A link pasted into a Spanish conversation previewed a Catalan sentence.
+   * Each locale now declares its own card, and the file has to be the one
+   * declared, at the size declared: read off disk, from the PNG header itself,
+   * so a card regenerated at the wrong size fails here rather than in a chat.
+   */
+  test('each locale shares a card in its own language, at the size it declares', () => {
+    const declared = new Map<string, Set<string>>();
+    for (const { locale, og } of PAGES) {
+      const set = declared.get(locale) ?? new Set<string>();
+      set.add(new URL(og.image!).pathname);
+      declared.set(locale, set);
+    }
+
+    expect([...declared.get('ca')!]).toEqual(['/og.png']);
+    expect([...declared.get('es')!]).toEqual(['/og-es.png']);
+
+    for (const file of ['og.png', 'og-es.png']) {
+      const png = readFileSync(resolve(DIST, file));
+      // The IHDR chunk: width and height, big-endian, at bytes 16 and 20.
+      expect(png.subarray(1, 4).toString('latin1'), file).toBe('PNG');
+      expect([png.readUInt32BE(16), png.readUInt32BE(20)], file).toEqual([1200, 630]);
+    }
   });
 });
