@@ -474,6 +474,21 @@ y su término—, que cuesta 0 px de cabecera porque para quien ve la pantalla y
 `<dialog>` nativo con fondo de cristal reforzado. Cerrar es poner el estado a `null`, lo que
 desmonta el iframe: eso es lo que de verdad detiene la reproducción.
 
+Con teclado:
+
+- Al abrir, el foco va al propio diálogo, cuyo nombre accesible es el del signo. Así se anuncia
+  qué se ha abierto y no aparece ningún control marcado como si ya estuviera pulsado.
+- Tab no sale del diálogo mientras está abierto.
+- Escape o el botón de cerrar lo cierran, y el foco **vuelve al botón que lo abrió**.
+- **Excepción:** con el foco dentro del vídeo, Escape no hace nada. Las teclas van al documento de
+  YouTube, que es de otro origen, y esta página no las recibe. Por eso el botón de cerrar va antes
+  del iframe en el marcado: Mayús+Tab desde el vídeo cae en él. No es una trampa de teclado
+  (WCAG 2.1.2), pero es un límite que conviene conocer.
+
+`tests/e2e/player-dialog.spec.ts` comprueba todo lo anterior desde el catálogo y desde la ficha,
+y pasa axe con el reproductor abierto, en los dos temas, tanto reproduciendo como en el aviso de
+vídeo no disponible. El barrido general no lo cubría porque el diálogo solo existe cuando se abre.
+
 ---
 
 ### `.footer-link` — enlaces del pie
