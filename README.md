@@ -58,6 +58,14 @@ La única medición es un recuento **anónimo y agregado** con
 [GoatCounter](https://www.goatcounter.com/): páginas vistas y cuántas veces se usa cada función.
 No usa cookies ni sigue a nadie entre visitas, por eso el sitio no necesita aviso de cookies.
 
+Además de GoatCounter, una visita puede llegar a otros tres servicios, y la página del proyecto
+los nombra a todos: **YouTube** (Google), solo al abrir un vídeo en LSC —el reproductor se carga
+desde `youtube-nocookie.com` y desde ese momento rigen sus condiciones—; el **DILSE**, solo si se
+sigue el enlace de un signo en LSE; y **Cloudflare**, que aloja el sitio. Los orígenes externos que
+el navegador puede contactar forman una lista cerrada, la de la política de seguridad de contenido
+([`src/lib/csp.ts`](src/lib/csp.ts)), y un test comprueba que el texto de privacidad nombra cada
+uno.
+
 Estos son **todos** los eventos que se cuentan — la lista completa está en
 [`src/lib/analytics.ts`](src/lib/analytics.ts):
 
