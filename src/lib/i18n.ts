@@ -109,6 +109,12 @@ const MESSAGES = {
       'Com es signa «{label}» en {signLanguage}, amb l’enllaç al seu vídeo a la font oficial.',
     'sign.metaNoVideo':
       '«{label}» al catàleg de Petits Signes. Encara no en tenim el vídeo en {signLanguage}.',
+    // "Idiomes", not "llengües": on a site about sign languages the other
+    // reading is "in other sign languages", and what follows is written words.
+    'sign.otherLanguages': 'En altres idiomes',
+    'languageName.ca': 'català',
+    'languageName.es': 'castellà',
+    'languageName.en': 'anglès',
     'sign.sourceTitle': 'D’on surt aquest signe',
     'sign.sourceName': 'Font',
     'sign.sourceEntry': 'Fitxa original',
@@ -260,6 +266,10 @@ const MESSAGES = {
       'Cómo se signa «{label}» en {signLanguage}, con el enlace a su vídeo en la fuente oficial.',
     'sign.metaNoVideo':
       '«{label}» en el catálogo de Petits Signes. Todavía no tenemos su vídeo en {signLanguage}.',
+    'sign.otherLanguages': 'En otros idiomas',
+    'languageName.ca': 'catalán',
+    'languageName.es': 'castellano',
+    'languageName.en': 'inglés',
     'sign.sourceTitle': 'De dónde sale este signo',
     'sign.sourceName': 'Fuente',
     'sign.sourceEntry': 'Ficha original',
@@ -412,6 +422,10 @@ const MESSAGES = {
       'How to sign “{label}” in {signLanguage}, with a link to its video at the official source.',
     'sign.metaNoVideo':
       '“{label}” in the Petits Signes catalogue. We do not have its {signLanguage} video yet.',
+    'sign.otherLanguages': 'In other languages',
+    'languageName.ca': 'Catalan',
+    'languageName.es': 'Spanish',
+    'languageName.en': 'English',
     'sign.sourceTitle': 'Where this sign comes from',
     'sign.sourceName': 'Source',
     'sign.sourceEntry': 'Original entry',

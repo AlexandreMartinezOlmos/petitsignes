@@ -87,6 +87,7 @@ const categories = defineCollection({
     .object({
       id: z.enum(CATEGORY_IDS),
       labels: localizedText,
+      intro: localizedText,
       icon: z.string().min(1),
       order: z.number().int().nonnegative(),
     })

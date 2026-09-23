@@ -99,6 +99,7 @@ const lead =
       </p>
       <h1 class="category-hero__title">{t('category.title', { ofCategory })}</h1>
       <p class="category-hero__lead">{lead}</p>
+      <p class="category-hero__intro">{category.intro[language]}</p>
     </header>
 
     {
@@ -182,6 +183,16 @@ const lead =
   }
 
   .category-hero__lead {
+    margin-block-start: 0.5rem;
+    max-inline-size: 60ch;
+    font-size: var(--text-base);
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  /* The lead counts what is here; this says when those words come up. Same
+     measure and colour, a step smaller, so the two read as one opening. */
+  .category-hero__intro {
     margin-block-start: 0.5rem;
     max-inline-size: 60ch;
     font-size: var(--text-base);

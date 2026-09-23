@@ -134,6 +134,13 @@ export interface SignEntry {
 export interface Category {
   id: CategoryId;
   labels: LocalizedText;
+  /**
+   * When the words in this category come up in a day with a baby, naming a
+   * few of them. Shown on the category page and under a sign's related list.
+   * Never how any of them is signed: that is the video's job, and inventing
+   * it is the one thing this project must not do.
+   */
+  intro: LocalizedText;
   icon: string;
   order: number;
 }
