@@ -10,5 +10,9 @@ package-lock.json
 CLAUDE.md
 docs/**/*.md
 
+# Third-party code kept byte for byte as published, so it can be compared with
+# the original: formatting it would make every copy look modified.
+src/vendor/
+
 # Local tooling state, not part of the project.
 .claude/

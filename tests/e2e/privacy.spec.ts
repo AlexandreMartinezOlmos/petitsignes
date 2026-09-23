@@ -14,7 +14,6 @@ import { CSP_ORIGINS } from '../../src/lib/csp.ts';
  * third party to the policy means deciding how the privacy text names it.
  */
 const PROVIDERS: Record<string, string> = {
-  'gc.zgo.at': 'GoatCounter',
   'petitsignes.goatcounter.com': 'GoatCounter',
   'www.youtube.com': 'YouTube',
   's.ytimg.com': 'YouTube',

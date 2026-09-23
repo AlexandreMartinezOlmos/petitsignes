@@ -108,7 +108,7 @@ describe('THIRD-PARTY-NOTICES.md', () => {
    * attribution deleted.
    */
   it('names every dependency whose code reaches a browser', () => {
-    for (const dep of ['react', 'nanostores', 'fuse.js', 'nunito-sans']) {
+    for (const dep of ['react', 'nanostores', 'fuse.js', 'nunito-sans', 'goatcounter']) {
       expect(THIRD_PARTY.toLowerCase()).toContain(dep);
     }
   });
@@ -120,6 +120,7 @@ describe('THIRD-PARTY-NOTICES.md', () => {
     expect(THIRD_PARTY).toContain('Andrey Sitnik');
     expect(THIRD_PARTY).toContain('Kiro Risk');
     expect(THIRD_PARTY).toContain('The Nunito Sans Project Authors');
+    expect(THIRD_PARTY).toContain('Martin Tournoij');
   });
 
   /**

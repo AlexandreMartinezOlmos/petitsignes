@@ -15,6 +15,8 @@ export default defineConfig([
     'coverage/',
     'playwright-report/',
     'test-results/',
+    // Third-party code kept byte for byte as published (see .prettierignore).
+    'src/vendor/',
   ]),
 
   js.configs.recommended,
