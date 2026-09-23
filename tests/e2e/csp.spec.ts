@@ -103,6 +103,84 @@ test.describe('the site under its own CSP', () => {
   });
 
   /**
+   * A page load never fetches the manifest — a browser reads it only when
+   * someone installs the site — so the tests above passed while production
+   * refused it under `default-src 'none'`. The DevTools protocol asks Chromium
+   * for it the way an install would, under the same policy.
+   */
+  test('the web app manifest can be read, so the site can be installed', async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName !== 'chromium', 'the manifest is requested through CDP');
+
+    const policy = await underPolicy(page);
+    await page.goto('/');
+
+    const session = await page.context().newCDPSession(page);
+    const { data } = await session.send('Page.getAppManifest');
+
+    expect(data, 'the manifest came back empty').toContain('"start_url"');
+    expect(await policy.violations(), 'blocked while reading the manifest').toEqual([]);
+  });
+
+  /**
+   * The general form of the manifest bug: every `<link>` the browser may fetch
+   * needs a directive that admits it, and `default-src 'none'` answers "no" for
+   * any type nobody thought about. Checked against the markup rather than the
+   * network, because several of these — the manifest, the touch icon — are only
+   * fetched by a browser in circumstances a test does not create.
+   */
+  test('every resource a page links has a directive that admits it', async ({ page }) => {
+    const directives = new Map(
+      CSP.split(';').map((part) => {
+        const [name = '', ...sources] = part.trim().split(/\s+/);
+        return [name, sources] as const;
+      }),
+    );
+    const allows = (directive: string): string[] =>
+      directives.get(directive) ?? directives.get('default-src') ?? [];
+
+    // Which directive governs each fetched `rel`. `preload` depends on `as`.
+    const PRELOAD: Record<string, string> = {
+      font: 'font-src',
+      style: 'style-src',
+      script: 'script-src',
+      image: 'img-src',
+    };
+    const REL: Record<string, string> = {
+      stylesheet: 'style-src',
+      icon: 'img-src',
+      'apple-touch-icon': 'img-src',
+      manifest: 'manifest-src',
+      modulepreload: 'script-src',
+    };
+    // Relations that name a URL without the browser fetching it.
+    const NOT_FETCHED = new Set(['canonical', 'alternate']);
+
+    for (const path of ['/', '/es/', '/signe/leche/', '/el-projecte/', '/es/404.html']) {
+      await page.goto(path);
+      const links = await page.locator('link[href]').evaluateAll((els) =>
+        els.map((el) => ({
+          rel: el.getAttribute('rel') ?? '',
+          as: el.getAttribute('as') ?? '',
+          href: (el as HTMLLinkElement).href,
+        })),
+      );
+
+      for (const { rel, as, href } of links) {
+        if (NOT_FETCHED.has(rel)) continue;
+        const directive = (rel === 'preload' ? PRELOAD[as] : REL[rel]) ?? '';
+        expect(directive, `${path}: no directive is known for <link rel="${rel}">`).not.toBe('');
+
+        const origin = new URL(href).origin;
+        const source = origin === new URL(page.url()).origin ? "'self'" : origin;
+        expect(allows(directive), `${path}: ${directive} refuses ${href}`).toContain(source);
+      }
+    }
+  });
+
+  /**
    * The policy is only as good as its narrowest directive. This is the
    * assertion that would fail the day someone "fixes" a build problem by
    * loosening the policy instead of by adding the hash it was missing.

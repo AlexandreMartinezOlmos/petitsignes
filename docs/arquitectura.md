@@ -263,6 +263,24 @@ anula al primero. Una página canario con un defecto de cada tipo comprueba que 
 - Sin variables de entorno obligatorias. `SITE_URL` es opcional y solo afecta a las URLs
   absolutas (canonical, Open Graph).
 
+## Política de seguridad de contenido (CSP)
+
+Las cabeceras viven en `public/_headers`, revisables como cualquier otro cambio. La CSP no se
+escribe a mano: al terminar el build, `astro.config.mjs` recorre el HTML generado, calcula el hash
+de cada `<script>` y `<style>` en línea y sustituye con la política completa la línea de reserva
+(`frame-ancestors 'none'`) de `_headers`. El razonamiento de cada directiva está en
+`src/lib/csp.ts`.
+
+- Parte de `default-src 'none'`: cada tipo de recurso necesita su propia directiva. Un tipo que
+  nadie haya previsto se rechaza en vez de heredar permiso.
+- Sin `'unsafe-inline'` ni `'unsafe-eval'`. Solo se contactan los orígenes de `CSP_ORIGINS`
+  (GoatCounter y los del reproductor de YouTube, que solo se cargan al abrir un vídeo).
+- `manifest-src 'self'` existe porque el navegador solo pide el manifest al instalar el sitio, no
+  al cargar la página: sin ella la instalación fallaba y ningún test de carga lo veía.
+- `tests/e2e/csp.spec.ts` sirve cada página con la política que ha escrito el build y comprueba
+  que nada se bloquea al cargar, al abrir un vídeo ni al leer el manifest. También comprueba que
+  cada `<link>` que el navegador puede pedir tiene una directiva que lo admite.
+
 ## Entrega de vídeo: nada se aloja aquí
 
 Los vídeos **no son del proyecto** y ninguna de las dos fuentes permite descargarlos,

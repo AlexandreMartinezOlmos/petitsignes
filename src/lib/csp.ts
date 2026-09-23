@@ -95,6 +95,11 @@ export function buildCsp(hashes: { scripts: string[]; styles: string[] }): strin
     `style-src 'self' ${sorted(hashes.styles)}`,
     `img-src 'self' data:`,
     `font-src 'self'`,
+    // The web app manifest every page links, which is what "add to home screen"
+    // reads. Headless browsers never fetch it on their own, so leaving this out
+    // breaks installation for real visitors while a page-load test stays green;
+    // `tests/e2e/csp.spec.ts` asks Chromium for the manifest explicitly.
+    `manifest-src 'self'`,
     // GoatCounter reports a hit with a request from the page itself.
     `connect-src 'self' ${CSP_ORIGINS.analyticsEndpoint}`,
     // The only third party allowed to render inside this site.
