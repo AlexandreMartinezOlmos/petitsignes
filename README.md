@@ -58,6 +58,14 @@ La única medición es un recuento **anónimo y agregado** con
 [GoatCounter](https://www.goatcounter.com/): páginas vistas y cuántas veces se usa cada función.
 No usa cookies ni sigue a nadie entre visitas, por eso el sitio no necesita aviso de cookies.
 
+Además de GoatCounter, una visita puede llegar a otros tres servicios, y la página del proyecto
+los nombra a todos: **YouTube** (Google), solo al abrir un vídeo en LSC —el reproductor se carga
+desde `youtube-nocookie.com` y desde ese momento rigen sus condiciones—; el **DILSE**, solo si se
+sigue el enlace de un signo en LSE; y **Cloudflare**, que aloja el sitio. Los orígenes externos que
+el navegador puede contactar forman una lista cerrada, la de la política de seguridad de contenido
+([`src/lib/csp.ts`](src/lib/csp.ts)), y un test comprueba que el texto de privacidad nombra cada
+uno.
+
 Estos son **todos** los eventos que se cuentan — la lista completa está en
 [`src/lib/analytics.ts`](src/lib/analytics.ts):
 
@@ -65,7 +73,7 @@ Estos son **todos** los eventos que se cuentan — la lista completa está en
 | --------------------------- | ------------------------------------------------------------ |
 | `video-lsc`                 | Se ha reproducido un signo en LSC                            |
 | `enllac-lse`                | Se ha abierto un signo LSE en el diccionario de origen       |
-| `reproductor-no-disponible` | El reproductor no pudo cargar y se ofreció el enlace externo |
+| `reproductor-no-disponible` | El vídeo no pudo reproducirse y se ofreció el enlace externo |
 | `preferit-afegit`           | Se ha añadido un signo a favoritos                           |
 | `apres-marcat`              | Se ha marcado un signo como aprendido                        |
 | `progres-exportat`          | Se ha exportado el progreso a un fichero                     |
@@ -135,8 +143,10 @@ Al tratarse de un proyecto sobre lengua de signos, la accesibilidad no es un añ
 coherencia con el propósito. Hay una declaración de accesibilidad publicada en el propio sitio,
 en catalán y castellano.
 
-Cada cambio se comprueba con axe-core sobre **cada tipo de página, en los dos idiomas** —catálogo,
-categoría, ficha de signo, las tres páginas de texto y el 404— y en modo oscuro, más un test
+Cada cambio se comprueba con axe-core —reglas WCAG 2.0, 2.1 y 2.2 de nivel A y AA— sobre **cada
+tipo de página, en los dos idiomas y en los dos temas**: catálogo, categoría, ficha de signo, las
+tres páginas de texto y el 404. Una página de control con defectos puestos a propósito demuestra
+que la batería los detecta, para que un resultado vacío signifique algo. Hay además un test
 específico de que la cabecera fija nunca tapa el elemento con el foco. Si algo falla, el CI falla.
 
 ## Arquitectura en una pantalla
@@ -235,7 +245,8 @@ si trae ruta, query o fragmento.
 ## Calidad
 
 El CI (Ubuntu) es la fuente de verdad. Se ejecuta en cada push a `main`, a `develop` y a cualquier
-rama `feature/`, `release/` o `hotfix/`, además de en cada pull request: lint, typecheck, tests
+rama `feature/`, `release/` o `hotfix/`, además de en cada pull request: auditoría de las
+dependencias que se publican (`npm audit`, falla desde gravedad alta), lint, typecheck, tests
 unitarios, end-to-end, accesibilidad con axe y presupuestos de Lighthouse que **fallan el build**
 si bajan de 95 en cualquiera de las cuatro categorías (rendimiento, accesibilidad, buenas
 prácticas, SEO). Lighthouse mide el mismo artefacto que produce el trabajo de calidad, no una
@@ -246,7 +257,9 @@ tres trabajos del CI en verde, la rama tiene que estar al día con `main`, y no 
 force-push ni borrado. La regla se aplica también a quien administra el repositorio — de lo
 contrario, siendo un proyecto con un solo mantenedor, no protegería de nada.
 
-El flujo es Gitflow: `feature/*` → `develop` → pull request → `main`.
+El flujo es Gitflow: `feature/*` → `develop` → pull request → `main`. Las actualizaciones de
+dependencias también: Dependabot las abre cada semana contra `develop`, agrupadas
+([`.github/dependabot.yml`](.github/dependabot.yml)).
 
 ## Contacto
 

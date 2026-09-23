@@ -160,15 +160,15 @@ const reportUrl = newIssueUrl(
         coincidence. There is no poster and there cannot be one (§2.1), so this
         stays the concept marker; the day a source grants a still image the
         card's own `posterUrl` branch is what gets mirrored here, not this
-        placeholder.
+        placeholder. Decorative, like the card's: the heading and the chip
+        below already say what it depicts.
       */
       }
       <div class="sign-detail__media">
-        <div class="sign-card__placeholder">
-          <svg class="icon-lg" aria-hidden="true" focusable="false">
+        <div class="sign-card__placeholder" aria-hidden="true">
+          <svg class="icon-lg" focusable="false">
             <use href={`#i-${category.icon}`}></use>
           </svg>
-          <span class="sr-only">{t('card.posterPending')}</span>
         </div>
       </div>
 

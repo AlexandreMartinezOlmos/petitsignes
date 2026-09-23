@@ -52,7 +52,11 @@
   # progress data lives behind buttons, not a login — a framed page that fools
   # a click into resetting it is the whole risk `frame-ancestors` closes.
   # `X-Frame-Options` rides along for the handful of browsers that still read
-  # it instead of the CSP directive. Neither depends on the inline analytics
-  # script, so — unlike a full CSP — this is safe to ship today (§17.4).
+  # it instead of the CSP directive.
+  #
+  # The CSP line below is a fallback, not the policy. The build replaces it with
+  # the full policy, hashed from the pages it has just written (see
+  # `src/lib/csp.ts`). If that step ever stopped running, this weaker header
+  # would still ship instead of none.
   X-Frame-Options: DENY
   Content-Security-Policy: frame-ancestors 'none'

@@ -256,6 +256,30 @@ test.describe('a sign page is not a dead card', () => {
   });
 
   /**
+   * No source allows a poster, so the placeholder is permanent, not pending.
+   * It used to carry an `sr-only` "we do not have the image yet", which a
+   * screen reader read before every word of the catalogue — 194 times per
+   * page — promising an image that is never coming. The word and the category
+   * heading already say what the placeholder depicts.
+   */
+  test('the placeholder is decoration, and promises nothing', async ({ page }) => {
+    for (const path of ['/', '/es/', CA, ES]) {
+      await page.goto(path);
+      const placeholders = page.locator('.sign-card__placeholder');
+      expect(await placeholders.count(), `${path} has no placeholder to check`).toBeGreaterThan(0);
+
+      const exposed = await placeholders.evaluateAll(
+        (els) =>
+          els.filter(
+            (el) =>
+              el.closest('[aria-hidden="true"]') === null || (el.textContent ?? '').trim() !== '',
+          ).length,
+      );
+      expect(exposed, `${path}: placeholders reachable by a screen reader`).toBe(0);
+    }
+  });
+
+  /**
    * §4.3: the card never plays on its own, and browsing must not contact
    * YouTube. A page dedicated to one sign is exactly where that rule would be
    * quietly dropped, so it is checked here too — matched on hostname, because a
