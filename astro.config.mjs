@@ -173,24 +173,33 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
-    esbuild: {
-      /**
-       * Keep third-party licence banners in the bundle browsers download.
-       *
-       * esbuild strips every comment by default, licence notices included. This
-       * asks it to keep the legal ones — but it only recognises `/*!`,
-       * `@license` and `@preserve`, and **no current dependency uses any of
-       * them**. Measured: identical 292 KB of JS with and without this setting.
-       *
-       * So it is defence for later, not a fix for today. Fuse.js does ship a
-       * copyright banner, in a plain `/**` block esbuild does not treat as
-       * legal, and it is stripped either way; its attribution lives in
-       * THIRD-PARTY-NOTICES.md along with every dependency whose licence sits
-       * in a separate file rather than a banner. That file is what actually
-       * discharges the obligation — this line only stops a future dependency's
-       * notice from being deleted on arrival.
-       */
-      legalComments: 'inline',
+    build: {
+      rolldownOptions: {
+        output: {
+          /**
+           * Keep third-party licence banners in the bundle browsers download.
+           *
+           * The minifier strips comments, licence notices included, unless told
+           * to keep the legal ones — and it only recognises `/*!`, `@license`
+           * and `@preserve`. React marks its MIT notice `@license`, so this
+           * keeps five of them: 1,171 bytes, 445 with gzip.
+           *
+           * Fuse.js ships a copyright banner in a plain `/**` block that does
+           * not count as legal, and it is stripped either way; its attribution
+           * lives in THIRD-PARTY-NOTICES.md with every dependency whose licence
+           * sits in a separate file rather than a banner. That file is what
+           * discharges the obligation for all of them — this keeps the notices
+           * that can travel with the code travelling with it.
+           *
+           * It used to be `esbuild.legalComments`, with a comment claiming no
+           * dependency used these markers. Vite 8 bundles and minifies with
+           * Rolldown and oxc and ignores every `esbuild` option, so React's
+           * notices were being stripped all along. `licence.spec.ts` now reads
+           * the served JavaScript for them.
+           */
+          comments: { legal: true },
+        },
+      },
     },
   },
   build: {

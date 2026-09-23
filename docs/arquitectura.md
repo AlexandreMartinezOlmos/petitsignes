@@ -269,8 +269,14 @@ anula al primero. Una página canario con un defecto de cada tipo comprueba que 
 
 ## Portabilidad
 
-- Versión de Node fijada en `.nvmrc` y en `engines`.
+- Versión de Node fijada en `.nvmrc` y en `engines`, que empieza en esa misma versión: no se
+  anuncia compatibilidad con un Node que ni el CI ni nadie usa. `src/lib/toolchain.test.ts` lo
+  comprueba.
 - `package-lock.json` commiteado; el CI usa `npm ci`.
+- Las acciones de GitHub se ejecutan por **commit**, no por etiqueta (`@<sha> # v5.1.0`): una
+  etiqueta la puede mover su autor a otro código después de revisada, y un commit no. El token del
+  CI solo puede leer (`permissions: contents: read`). Dependabot propone las actualizaciones y el
+  mismo test rechaza un workflow que use una etiqueta o que no declare permisos.
 - El build no invoca binarios del sistema. Cualquier procesado de vídeo será un script de
   contenido cuyo resultado se commitea, nunca parte de `npm run build`.
 - Sin variables de entorno obligatorias. `SITE_URL` es opcional y solo afecta a las URLs

@@ -90,8 +90,10 @@ test('the credits page keeps the videos outside the licence', async ({ page }) =
  * The site redistributes other people's code — React, Nano Stores and Fuse.js
  * inside the bundle, Nunito Sans as .woff2 from this origin — and MIT and the
  * SIL Open Font Licence both ask their notice to travel with the copy. The
- * minifier strips comments, so the bundle cannot carry them: this link is the
- * only route from the site that serves the code to the notices that cover it.
+ * minifier keeps only the comments marked as legal, which React's are and
+ * Fuse.js's and Nano Stores' are not, so the bundle cannot carry every notice:
+ * this link is the only route from the site that serves the code to all of
+ * them.
  */
 test('the credits page reaches the third-party notices', async ({ page }) => {
   await page.goto('/credits/');
@@ -116,4 +118,26 @@ test('the project page links to the licences instead of restating them', async (
   // The anchor has to land on a heading that exists; a contents link pointing
   // at a renamed id fails by doing nothing at all.
   await expect(page.locator('#licences')).toBeVisible();
+});
+
+/**
+ * The notices the bundle can carry, it does. React marks its banner `@license`,
+ * and the build is configured to keep such comments (`astro.config.mjs`).
+ *
+ * That setting has already died once without a sound: Vite 8 moved to Rolldown
+ * and oxc, ignored the old `esbuild.legalComments`, and every React notice was
+ * stripped while the config still claimed otherwise. Only the bytes a browser
+ * receives can tell, so this reads them.
+ */
+test('the JavaScript a visitor downloads keeps React’s licence notice', async ({ page }) => {
+  const scripts: Promise<string>[] = [];
+  page.on('response', (response) => {
+    if (response.url().endsWith('.js')) scripts.push(response.text());
+  });
+
+  await page.goto('/');
+  await page.waitForFunction(() => !document.querySelector('astro-island[ssr]'));
+
+  const bodies = await Promise.all(scripts);
+  expect(bodies.some((body) => body.includes('@license React'))).toBe(true);
 });

@@ -51,6 +51,11 @@ ese vídeo pase a llevar la fecha de hoy, porque es una fuente nueva. Un concept
 la tabla **no se borra** automáticamente: el script lo avisa y lo borras a mano si es
 intencionado.
 
+Si una ficha existente no se puede leer (un JSON roto, por ejemplo con marcas de un conflicto de
+merge), el `import` **se detiene antes de escribir nada** y dice qué fichero es. Antes la trataba
+como un concepto nuevo y la reconstruía solo con la fila de la tabla, y así perdía el `sourceTerm`
+y las fechas, que no están en la tabla.
+
 La lógica del round-trip está en [`../scripts/lib/vocabulary.ts`](../scripts/lib/vocabulary.ts) y
 tiene tests unitarios; el `build` sigue validando cada ficha con Zod, así que un error en la tabla
 rompe el build igual que un error en el JSON.
@@ -99,6 +104,11 @@ favoritos que la gente tenga guardados.
 
 - `source` solo admite valores conocidos; añadir una fuente nueva implica añadir también su
   atribución en la página de créditos.
+- Cada fuente fija el resto: `Gencat-VocabulariLSC` es LSC, `youtube-embed`, un vídeo de YouTube y
+  un `sourceUrl` en `llengua.gencat.cat`; `CNSE-DILSE` es LSE, `external-link` y las dos URL en
+  `fundacioncnse-dilse.org`. Un enlace de DILSE archivado bajo la Generalitat, o un vídeo marcado
+  con la lengua de signos que no es, rompe el build. Las reglas están en
+  [`../src/lib/sources.ts`](../src/lib/sources.ts).
 - `sourceTerm` es el lema que usa el diccionario de origen para esta entrada (p. ej. `Llit` para
   nuestro `cama`). Es solo metadato de atribución, no un permiso para duplicar: el esquema nunca
   deja meter dos vídeos de la misma lengua en un mismo signo, tenga o no `sourceTerm`. Si el

@@ -69,7 +69,7 @@ Copyright 2020 Andrey Sitnik <andrey@sitnik.ru>
     http://www.apache.org/licenses/LICENSE-2.0
 
 Fuse.js ships this notice as a banner comment in its own distribution, but the
-minifier removes it: esbuild only preserves comments marked `/*!`, `@license` or
+minifier removes it: it only preserves comments marked `/*!`, `@license` or
 `@preserve`, and this one is a plain block comment. It cannot practically be kept
 in the bundle, which is precisely why this file exists and why it is linked from
 the site's credits page — the attribution has to be reachable somewhere, and if
