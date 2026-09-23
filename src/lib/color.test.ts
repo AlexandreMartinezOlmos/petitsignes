@@ -16,6 +16,8 @@ import {
   type Dichromacy,
   type Oklch,
 } from './color.ts';
+import { webManifest } from './manifest.ts';
+import { ROUTED_LOCALES } from './routing.ts';
 
 /**
  * The palette, checked against the stylesheet that ships.
@@ -259,7 +261,7 @@ describe('the card call to action', () => {
 /**
  * The copies of the brand colour that cannot read OKLCH.
  *
- * `site.webmanifest` sets the Android theme colour and the splash background;
+ * The web app manifest sets the Android theme colour and the splash background;
  * `favicon.svg` fills its tile. Neither can reference a CSS token, so both hold
  * a hex literal — and both had quietly drifted from `--brand`: the favicon was
  * `#b4552e` against a token that resolves to `#bc461e`. Nothing breaks when
@@ -267,9 +269,9 @@ describe('the card call to action', () => {
  * silent divergence into a failing build.
  */
 describe('the hex copies of the brand colour', () => {
-  const manifest = JSON.parse(
-    readFileSync(resolve(process.cwd(), 'public/site.webmanifest'), 'utf8'),
-  ) as { theme_color: string; background_color: string };
+  // Read from what the endpoint serves. Both locales, although they share the
+  // constants today, because it is each served file that has to be right.
+  const manifests = ROUTED_LOCALES.map(webManifest);
   // The favicon is generated now (`src/pages/favicon.svg.ts`), so this reads the
   // hex it is built from rather than a file that only exists after a build.
   const favicon = brandMarkSvg({ size: 32, background: BRAND_HEX });
@@ -278,8 +280,10 @@ describe('the hex copies of the brand colour', () => {
     const brand = toHex(color(lightBlock.body, '--brand'));
     const surface = toHex(color(lightBlock.body, '--surface'));
 
-    expect(manifest.theme_color).toBe(brand);
-    expect(manifest.background_color).toBe(surface);
+    for (const manifest of manifests) {
+      expect(manifest.theme_color, manifest.lang).toBe(brand);
+      expect(manifest.background_color, manifest.lang).toBe(surface);
+    }
     expect(favicon).toContain(brand);
   });
 
