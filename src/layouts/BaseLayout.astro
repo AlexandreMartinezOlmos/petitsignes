@@ -23,7 +23,12 @@ import {
   OG_IMAGE_HEIGHT,
   OG_IMAGE_WIDTH,
   WEB_MANIFEST,
+  breadcrumbJsonLd,
   documentTitle,
+  serializeJsonLd,
+  websiteJsonLd,
+  type Crumb,
+  type JsonLd,
 } from '../lib/seo.ts';
 
 interface Props {
@@ -43,9 +48,14 @@ interface Props {
    * claim thousands of addresses are the same page.
    */
   noindex?: boolean;
+  /**
+   * The trail the page's visible breadcrumb shows, so the same list reaches
+   * search engines as a `BreadcrumbList`. Pass the array `<Breadcrumb>` renders.
+   */
+  breadcrumb?: readonly Crumb[];
 }
 
-const { language, path, title, description, noindex = false } = Astro.props;
+const { language, path, title, description, noindex = false, breadcrumb } = Astro.props;
 const t = createTranslator(language);
 
 // The sign language is derived here, at build time, and baked into the markup.
@@ -60,6 +70,18 @@ const aboutHref = localeHref('/el-projecte/', language);
 const creditsHref = localeHref('/credits/', language);
 const accessibilityHref = localeHref('/accessibilitat/', language);
 const canonical = new URL(localeHref(path, language), Astro.site);
+
+// Keyed on `noindex` for the same reason the canonical link is: the 404 also
+// renders at `/`, and a page kept out of the index has nothing to declare.
+// Built against `Astro.site`, like the canonical, so a preview describes
+// itself rather than production.
+const origin = String(Astro.site);
+const structuredData: JsonLd[] = noindex
+  ? []
+  : [
+      ...(path === '/' ? [websiteJsonLd(t('site.title'), homeHref, language, origin)] : []),
+      ...(breadcrumb ? [breadcrumbJsonLd(breadcrumb, origin)] : []),
+    ];
 
 /** `aria-current="page"` on the header link for the page being viewed. */
 const isCurrent = (target: string): 'page' | undefined => (path === target ? 'page' : undefined);
@@ -138,6 +160,17 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
     <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
     <meta property="og:image:alt" content={pageDescription} />
     <meta name="twitter:card" content="summary_large_image" />
+    {
+      /*
+      Data, not code: the browser never runs these, which is why the CSP build
+      step leaves them unhashed (see `collectInlineHashes`).
+    */
+    }
+    {
+      structuredData.map((data) => (
+        <script is:inline type="application/ld+json" set:html={serializeJsonLd(data)} />
+      ))
+    }
 
     {
       /*

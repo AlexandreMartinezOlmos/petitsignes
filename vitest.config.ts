@@ -51,12 +51,16 @@ export default defineConfig({
        * had been sitting there the whole time for exactly this. Closing that gap
        * (33% → 97%) put every metric above where it started. Read the per-file
        * table before believing a drop is structural.
+       *
+       * Raised again when the page titles and structured data moved into
+       * `seo.ts` as pure functions with their own tests: 76.67 / 69.82 /
+       * 86.36 / 77.73 measured, each floor the whole number under it.
        */
       thresholds: {
-        statements: 75,
-        branches: 68,
-        functions: 85,
-        lines: 76,
+        statements: 76,
+        branches: 69,
+        functions: 86,
+        lines: 77,
       },
     },
   },
