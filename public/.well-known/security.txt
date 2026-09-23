@@ -1,8 +1,12 @@
 # RFC 9116. If you find a security problem in Petits Signes, this is where to
 # report it — the site holds no accounts and no personal data, but a report is
 # still worth more before it is public than after.
+#
+# Both contacts are private. Issues are not listed on purpose: anyone can read
+# an issue the moment it is opened.
+Contact: https://github.com/AlexandreMartinezOlmos/petitsignes/security/advisories/new
 Contact: mailto:petitsignes@petitsignes.cat
-Contact: https://github.com/AlexandreMartinezOlmos/petitsignes/issues
+Policy: https://github.com/AlexandreMartinezOlmos/petitsignes/blob/HEAD/SECURITY.md
 Expires: 2027-08-06T00:00:00.000Z
 Preferred-Languages: ca, es, en
 Canonical: https://petitsignes.cat/.well-known/security.txt

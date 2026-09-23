@@ -264,7 +264,10 @@ dependencias también: Dependabot las abre cada semana contra `develop`, agrupad
 ## Contacto
 
 ¿Dudas, sugerencias, o un signo que no parece correcto? Escribe a
-[petitsignes@petitsignes.cat](mailto:petitsignes@petitsignes.cat).
+[petitsignes@petitsignes.cat](mailto:petitsignes@petitsignes.cat). No hace falta cuenta de GitHub.
+
+Un problema de seguridad se avisa en privado, nunca en una incidencia: ver
+[`SECURITY.md`](SECURITY.md).
 
 ## Contribuir
 
