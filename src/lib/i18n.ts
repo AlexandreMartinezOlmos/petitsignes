@@ -73,6 +73,14 @@ const MESSAGES = {
     'filter.hideCategories': 'Amaga les categories',
     'filter.searchScope': 'La cerca mira tot el catàleg, no la categoria triada.',
 
+    // The link beside each group heading on the home. The visible part is
+    // short because the heading beside it already names the category; the
+    // rest is read by screen readers and crawlers, so the full name is the
+    // whole sentence and still begins with what is on screen (WCAG 2.5.3).
+    'catalogue.sectionAll': 'Veure els {count}',
+    'catalogue.sectionAllRest': 'signes {ofCategory}',
+    'catalogue.sectionAllOne': 'Veure el signe {ofCategory}',
+
     'card.watchSign': 'Veure el signe',
     'card.addFavorite': 'Afegeix a preferits',
     'card.removeFavorite': 'Treu de preferits',
@@ -222,6 +230,10 @@ const MESSAGES = {
     'filter.hideCategories': 'Ocultar las categorías',
     'filter.searchScope': 'La búsqueda mira todo el catálogo, no la categoría elegida.',
 
+    'catalogue.sectionAll': 'Ver los {count}',
+    'catalogue.sectionAllRest': 'signos de {ofCategory}',
+    'catalogue.sectionAllOne': 'Ver el signo de {ofCategory}',
+
     'card.watchSign': 'Ver el signo',
     'card.addFavorite': 'Añadir a favoritos',
     'card.removeFavorite': 'Quitar de favoritos',
@@ -369,6 +381,10 @@ const MESSAGES = {
     'filter.showCategoriesLabel': '+{count} more: show all categories',
     'filter.hideCategories': 'Hide categories',
     'filter.searchScope': 'Search looks at the whole catalogue, not the chosen category.',
+
+    'catalogue.sectionAll': 'See all {count}',
+    'catalogue.sectionAllRest': '{ofCategory} signs',
+    'catalogue.sectionAllOne': 'See the {ofCategory} sign',
 
     'card.watchSign': 'Watch the sign',
     'card.addFavorite': 'Add to favourites',
