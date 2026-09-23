@@ -235,7 +235,8 @@ si trae ruta, query o fragmento.
 ## Calidad
 
 El CI (Ubuntu) es la fuente de verdad. Se ejecuta en cada push a `main`, a `develop` y a cualquier
-rama `feature/`, `release/` o `hotfix/`, además de en cada pull request: lint, typecheck, tests
+rama `feature/`, `release/` o `hotfix/`, además de en cada pull request: auditoría de las
+dependencias que se publican (`npm audit`, falla desde gravedad alta), lint, typecheck, tests
 unitarios, end-to-end, accesibilidad con axe y presupuestos de Lighthouse que **fallan el build**
 si bajan de 95 en cualquiera de las cuatro categorías (rendimiento, accesibilidad, buenas
 prácticas, SEO). Lighthouse mide el mismo artefacto que produce el trabajo de calidad, no una
@@ -246,7 +247,9 @@ tres trabajos del CI en verde, la rama tiene que estar al día con `main`, y no 
 force-push ni borrado. La regla se aplica también a quien administra el repositorio — de lo
 contrario, siendo un proyecto con un solo mantenedor, no protegería de nada.
 
-El flujo es Gitflow: `feature/*` → `develop` → pull request → `main`.
+El flujo es Gitflow: `feature/*` → `develop` → pull request → `main`. Las actualizaciones de
+dependencias también: Dependabot las abre cada semana contra `develop`, agrupadas
+([`.github/dependabot.yml`](.github/dependabot.yml)).
 
 ## Contacto
 

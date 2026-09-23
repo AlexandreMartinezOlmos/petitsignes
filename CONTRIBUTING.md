@@ -50,8 +50,9 @@ Antes de abrir el PR:
 npm run lint && npm run typecheck && npm test && npm run test:e2e
 ```
 
-El CI ejecuta lo mismo en Ubuntu más los presupuestos de Lighthouse. Si falla ahí, está roto,
-aunque funcione en tu máquina.
+El CI ejecuta lo mismo en Ubuntu, más una auditoría de las dependencias que se publican
+(`npm audit --omit=dev --audit-level=high`) y los presupuestos de Lighthouse. Si falla ahí, está
+roto, aunque funcione en tu máquina.
 
 ### Lo que se revisa en un PR
 
