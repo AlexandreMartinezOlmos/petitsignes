@@ -330,3 +330,18 @@ test.describe('the social card', () => {
     }
   });
 });
+
+/**
+ * The build this suite runs against is a production build — it describes the
+ * canonical origin — so it is the one place the most expensive mistake here
+ * can be caught: a preview's `noindex` reaching the real site takes every page
+ * out of search on the next crawl, and nothing on screen changes.
+ */
+test('the production build invites indexing and says noindex nowhere', () => {
+  const headers = readFileSync(resolve(DIST, '_headers'), 'utf8');
+  const robots = readFileSync(resolve(DIST, 'robots.txt'), 'utf8');
+
+  expect(headers).not.toMatch(/x-robots-tag/i);
+  expect(robots).toContain('Sitemap: https://petitsignes.cat/sitemap.xml');
+  expect(robots).not.toContain('Disallow');
+});
