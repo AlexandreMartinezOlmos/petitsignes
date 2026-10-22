@@ -2,7 +2,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import astro from 'eslint-plugin-astro';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
+import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
 import reactHooks from 'eslint-plugin-react-hooks';
 import prettier from 'eslint-config-prettier';
 import globals from 'globals';
@@ -28,7 +28,7 @@ export default defineConfig([
   // cannot both define the same plugin.
   {
     files: ['**/*.{jsx,tsx,astro}'],
-    extends: [jsxA11y.flatConfigs.recommended],
+    extends: [jsxA11yX.configs.recommended],
   },
 
   {
