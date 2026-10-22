@@ -45,15 +45,15 @@ const category = categoryEntry.data as Category;
 
 <BaseLayout language={language} path="/" title={t('notFound.title')} noindex>
   <section class="not-found">
-    <p class="not-found__code" aria-hidden="true">404</p>
+    <p class="not-found__code" aria-hidden="true">
+      404
+    </p>
     <h1 class="not-found__title">{t('notFound.title')}</h1>
     <p class="not-found__lead">{t('notFound.lead')}</p>
 
     <div class="not-found__card">
-      {
-        /* Directly under this page's `h1`, so `h2` — the grid's `h3` would skip
-          a level here. */
-      }
+      {/* Directly under this page's `h1`, so `h2` — the grid's `h3` would skip
+          a level here. */}
       <SignCard
         sign={sign}
         category={category}
@@ -63,15 +63,15 @@ const category = categoryEntry.data as Category;
       />
     </div>
 
-    {
-      /*
+    {/*
       One route back, in the language the visitor was already reading. The
       language switch is in the header where it always is, so offering both here
       would answer a question nobody asked and make the real way out compete
       with a second button for attention.
-    */
-    }
-    <a class="not-found__route" href={localeHref('/', language)}>{t('notFound.back')}</a>
+    */}
+    <a class="not-found__route" href={localeHref('/', language)}>
+      {t('notFound.back')}
+    </a>
   </section>
 
   <SignVideoDialog messages={pickMessages(language, SIGN_VIDEO_DIALOG_MESSAGES)} client:idle />

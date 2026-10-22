@@ -158,20 +158,17 @@ const reportMailto = mailtoUrl(reportTitle);
   description={description}
   breadcrumb={trail}
 >
-  {
-    /*
+  {/*
     Three steps now, not two. The category in the middle is the route that
     makes its page reachable by a person rather than only by a crawler, and it
     is also the honest shape of where this page sits: a sign belongs to a
     category, which belongs to the catalogue. Outside the grid below, same as
     `PageShell`'s own breadcrumb: it is a way back, not part of what the two
     columns are dividing up.
-  */
-  }
+  */}
   <Breadcrumb language={language} trail={trail} />
 
-  {
-    /*
+  {/*
     416px sat empty to the right of this column on a 1280px screen — the
     same shape `global.css` already named and fixed on the text pages, with a
     second grid column that only appears from `lg`. Not reused verbatim:
@@ -183,19 +180,15 @@ const reportMailto = mailtoUrl(reportTitle);
     it, so the citation's *position* moves with the viewport but it is never
     removed, and related signs — the one way onward this page offers — never
     depend on a breakpoint to exist.
-  */
-  }
+  */}
   <div class:list={['sign-page', { 'sign-page--no-source': !video }]}>
-    {
-      /*
+    {/*
       `data-progress-for` is what wires the two toggles below to the same
       storage the catalogue writes: favouriting a sign here and going back to
       the grid has to show it favourited there.
-    */
-    }
+    */}
     <article class="sign-detail" data-progress-for={sign.id} data-category={sign.category}>
-      {
-        /*
+      {/*
         Reuses the card's own placeholder — same gradient, same halo, same
         icon colour — rather than a lookalike built from scratch. `data-category`
         moved up to the article so this and the chip below read the same custom
@@ -206,8 +199,7 @@ const reportMailto = mailtoUrl(reportTitle);
         card's own `posterUrl` branch is what gets mirrored here, not this
         placeholder. Decorative, like the card's: the heading and the chip
         below already say what it depicts.
-      */
-      }
+      */}
       <div class="sign-detail__media">
         <div class="sign-card__placeholder" aria-hidden="true">
           <svg class="icon-lg" focusable="false">
@@ -228,82 +220,73 @@ const reportMailto = mailtoUrl(reportTitle);
 
         <h1 class="sign-detail__title">{label}</h1>
         <p class="sign-detail__subtitle">{t('sign.subtitle', { signLanguage: fullName })}</p>
-        {
-          /*
+        {/*
           The word as it is written in the other languages. Words only: this
           says nothing about the other sign language, whose gesture never
           reaches this page. Each word is marked with its language, so a screen
           reader says "leche" in Spanish rather than in Catalan.
-        */
-        }
+        */}
         <p class="sign-detail__elsewhere">
           {t('sign.otherLanguages')}:{' '}
-          {
-            otherLanguages.map((other, index) => (
-              <Fragment>
-                {index > 0 && ' · '}
-                {t(LANGUAGE_NAME_KEY[other])} «<span lang={other}>{sign.labels[other]}</span>»
-              </Fragment>
-            ))
-          }
+          {otherLanguages.map((other, index) => (
+            <Fragment>
+              {index > 0 && ' · '}
+              {t(LANGUAGE_NAME_KEY[other])} «<span lang={other}>{sign.labels[other]}</span>»
+            </Fragment>
+          ))}
         </p>
       </div>
 
-      {
-        /*
+      {/*
         A third grid area rather than nested inside `body`: from 320px up the
         CTA needs the row's full width, not the narrow column beside a square
         media panel — the same reason the card keeps its actions out of the
         label wrapper in its own compact row. See the `.sign-detail` rule.
-      */
-      }
+      */}
       <div class="sign-detail__actions">
-        {
-          video === undefined ? (
-            /* A statement of fact, not a control — the same wording and the
+        {video === undefined ? (
+          /* A statement of fact, not a control — the same wording and the
                same reasoning as on the card: this sign language has no entry
                we may show, and we will not invent one. */
-            <p class="sign-card__novideo">
-              <svg class="icon-sm" aria-hidden="true" focusable="false">
-                <use href="#i-video-off" />
-              </svg>
-              {t('card.noVideo', { signLanguage: shortName })}
-            </p>
-          ) : video.delivery === 'youtube-embed' ? (
-            <button
-              type="button"
-              class="sign-card__cta sign-detail__cta"
-              data-action="play"
-              data-sign-id={sign.id}
-              data-label={label}
-              data-video-url={video.videoUrl}
-              data-source={video.source}
-              data-source-url={video.sourceUrl}
-            >
-              <svg class="icon-sm" aria-hidden="true" focusable="false">
-                <use href="#i-play" />
-              </svg>
-              {t('card.watchSign')}
-              <span class="sr-only">: {label}</span>
-            </button>
-          ) : (
-            <a
-              class="sign-card__cta sign-card__cta--external sign-detail__cta"
-              href={video.videoUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              {t('card.watchAtSource', { source: video.source })}
-              <span class="sr-only">: {label}</span>
-              <svg class="icon-sm" aria-hidden="true" focusable="false">
-                <use href="#i-external" />
-              </svg>
-            </a>
-          )
-        }
+          <p class="sign-card__novideo">
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href="#i-video-off" />
+            </svg>
+            {t('card.noVideo', { signLanguage: shortName })}
+          </p>
+        ) : video.delivery === 'youtube-embed' ? (
+          <button
+            type="button"
+            class="sign-card__cta sign-detail__cta"
+            data-action="play"
+            data-sign-id={sign.id}
+            data-label={label}
+            data-video-url={video.videoUrl}
+            data-source={video.source}
+            data-source-url={video.sourceUrl}
+          >
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href="#i-play" />
+            </svg>
+            {t('card.watchSign')}
+            <span class="sr-only">: {label}</span>
+          </button>
+        ) : (
+          <a
+            class="sign-card__cta sign-card__cta--external sign-detail__cta"
+            href={video.videoUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {t('card.watchAtSource', { source: video.source })}
+            <span class="sr-only">: {label}</span>
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href="#i-external" />
+            </svg>
+          </a>
+        )}
 
-        {
-          /*
+        {/*
           On the card the icon is the whole story — there is no room in a
           44px square for more. Here there is, and two unlabelled icons under
           a big CTA read as decoration rather than controls (the screenshot
@@ -314,8 +297,7 @@ const reportMailto = mailtoUrl(reportTitle);
           name already announces (WCAG 2.5.3) rather than replace it —
           `card.favoriteLabel`/`card.learnedLabel` are pinned in `i18n.test.ts`
           against both states of the name, in every language.
-        */
-        }
+        */}
         <div class="sign-detail__toggles">
           <div class="sign-detail__toggle-item">
             <button
@@ -360,8 +342,7 @@ const reportMailto = mailtoUrl(reportTitle);
       </div>
     </article>
 
-    {
-      /*
+    {/*
       The videos are not ours. Every one of them travels with its source, the
       licence it is used under and the date of that version — which is what the
       Vocabulari's terms require, not a courtesy. On the card this only fits
@@ -371,56 +352,52 @@ const reportMailto = mailtoUrl(reportTitle);
       article rather than under it (see the `.sign-page` rule), which is what
       the element is for. Below `lg` it reads as the next block down, same as
       it always did.
-    */
-    }
-    {
-      video && (
-        <aside class="sign-source" aria-labelledby="sign-source-title">
-          <h2 class="sign-source__title" id="sign-source-title">
-            {t('sign.sourceTitle')}
-          </h2>
-          <dl class="sign-source__list">
-            <dt>{t('sign.sourceName')}</dt>
-            <dd>{video.source}</dd>
+    */}
+    {video && (
+      <aside class="sign-source" aria-labelledby="sign-source-title">
+        <h2 class="sign-source__title" id="sign-source-title">
+          {t('sign.sourceTitle')}
+        </h2>
+        <dl class="sign-source__list">
+          <dt>{t('sign.sourceName')}</dt>
+          <dd>{video.source}</dd>
 
-            <dt>{t('sign.sourceEntry')}</dt>
-            <dd>
-              <a href={video.sourceUrl} target="_blank" rel="noreferrer noopener">
-                {video.sourceUrl}
-              </a>
-            </dd>
+          <dt>{t('sign.sourceEntry')}</dt>
+          <dd>
+            <a href={video.sourceUrl} target="_blank" rel="noreferrer noopener">
+              {video.sourceUrl}
+            </a>
+          </dd>
 
-            {video.sourceTerm && (
-              <Fragment>
-                <dt>{t('sign.sourceTerm')}</dt>
-                <dd>{video.sourceTerm}</dd>
-              </Fragment>
-            )}
+          {video.sourceTerm && (
+            <Fragment>
+              <dt>{t('sign.sourceTerm')}</dt>
+              <dd>{video.sourceTerm}</dd>
+            </Fragment>
+          )}
 
-            <dt>{t('sign.sourceUpdated')}</dt>
-            <dd>
-              <time datetime={video.updatedAt}>{updatedAt}</time>
-            </dd>
-          </dl>
-          {/*
+          <dt>{t('sign.sourceUpdated')}</dt>
+          <dd>
+            <time datetime={video.updatedAt}>{updatedAt}</time>
+          </dd>
+        </dl>
+        {/*
             The source's attribution is quoted in the source's language and
             marked as such, so it stays correct on a page in any other — the
             English interface, once routed, shows DILSE's. What the project
             does with the video is ours to say, so it is translated like the
             rest of the page. It used to be Catalan on all 194 Spanish pages.
           */}
-          <p class="sign-source__license" lang={SOURCE_LANGUAGE[video.source]}>
-            {video.license}
-          </p>
-          {video.delivery === 'external-link' && (
-            <p class="sign-source__license">{t('sign.sourceLinkOnly')}</p>
-          )}
-        </aside>
-      )
-    }
+        <p class="sign-source__license" lang={SOURCE_LANGUAGE[video.source]}>
+          {video.license}
+        </p>
+        {video.delivery === 'external-link' && (
+          <p class="sign-source__license">{t('sign.sourceLinkOnly')}</p>
+        )}
+      </aside>
+    )}
 
-    {
-      /*
+    {/*
       Right after the article in the DOM at every width, which is what keeps
       this reachable the moment someone finishes checking where the video came
       from — the wide layout only moved *where the citation sits on screen*,
@@ -432,8 +409,7 @@ const reportMailto = mailtoUrl(reportTitle);
       Deliberately quiet — a line of text, not a call to action. It competes with
       nothing on a page whose job is to show one sign, and someone who has
       spotted a mistake is already looking for a way to say so.
-    */
-    }
+    */}
     <p class="sign-report">
       <a class="sign-report__link" href={reportUrl} target="_blank" rel="noreferrer noopener">
         {t('sign.report')}
@@ -448,47 +424,43 @@ const reportMailto = mailtoUrl(reportTitle);
       </span>
     </p>
 
-    {
-      /*
+    {/*
       The way onward. A page with one word and one video is a dead end, and 194
       of them reachable only from the index is a catalogue a crawler walks once
       and never again. These are the same category the visitor is already in,
       which is the only relationship the data actually states.
-    */
-    }
-    {
-      related.length > 0 && (
-        <section class="sign-related" aria-labelledby="sign-related-title">
-          <h2 class="sign-related__title" id="sign-related-title">
-            {t('sign.relatedTitle', { ofCategory })}
-          </h2>
-          <p class="sign-related__intro">{category.intro[language]}</p>
-          <ul class="sign-related__list">
-            {related.map((other) => (
-              <li>
-                {/* Same reasoning as the card's title link: a list of bare
+    */}
+    {related.length > 0 && (
+      <section class="sign-related" aria-labelledby="sign-related-title">
+        <h2 class="sign-related__title" id="sign-related-title">
+          {t('sign.relatedTitle', { ofCategory })}
+        </h2>
+        <p class="sign-related__intro">{category.intro[language]}</p>
+        <ul class="sign-related__list">
+          {related.map((other) => (
+            <li>
+              {/* Same reasoning as the card's title link: a list of bare
                     words tells a screen reader nothing about where they go. */}
-                <a class="sign-related__link" href={localeHref(signPath(other.id), language)}>
-                  {other.labels[language]}
-                  <span class="sr-only">: {t('card.openEntry')}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          {/* Six of the category is a sample; this is where the rest of them
+              <a class="sign-related__link" href={localeHref(signPath(other.id), language)}>
+                {other.labels[language]}
+                <span class="sr-only">: {t('card.openEntry')}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        {/* Six of the category is a sample; this is where the rest of them
               are. It used to point at the whole catalogue, which was the only
               destination that existed — the breadcrumb above still offers it. */}
-          <p>
-            <a class="sign-related__all" href={localeHref(categoryPath(category.id), language)}>
-              {t('sign.relatedAll', {
-                count: categoryCount,
-                ofCategory,
-              })}
-            </a>
-          </p>
-        </section>
-      )
-    }
+        <p>
+          <a class="sign-related__all" href={localeHref(categoryPath(category.id), language)}>
+            {t('sign.relatedAll', {
+              count: categoryCount,
+              ofCategory,
+            })}
+          </a>
+        </p>
+      </section>
+    )}
   </div>
 
   <SignVideoDialog messages={pickMessages(language, SIGN_VIDEO_DIALOG_MESSAGES)} client:idle />

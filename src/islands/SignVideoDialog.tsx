@@ -224,7 +224,7 @@ export default function SignVideoDialog({ messages }: Props) {
     // the only way to catch it. No keyboard equivalent is needed — a native
     // <dialog> already closes on Escape, and the header has a labelled close
     // button.
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+    // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-noninteractive-element-interactions
     <dialog
       ref={dialogRef}
       tabIndex={-1}

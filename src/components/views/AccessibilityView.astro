@@ -127,39 +127,40 @@ const sections: PageSection[] = [
   <p slot="compliance">{c.statusBody}</p>
 
   <ul class="page-list" slot="measures">
-    {c.measures.map((item) => <li>{item}</li>)}
+    {c.measures.map((item) => (
+      <li>{item}</li>
+    ))}
   </ul>
 
   <p slot="testing">{c.testingBody}</p>
 
-  {
-    /* A panel rather than prose: this is the list a visitor checks against
-       what just happened to them, not something read top to bottom. */
-  }
+  {/* A panel rather than prose: this is the list a visitor checks against
+       what just happened to them, not something read top to bottom. */}
   <div class="page-callout" slot="limits">
     <ul class="page-list">
-      {c.limits.map((item) => <li>{item}</li>)}
+      {c.limits.map((item) => (
+        <li>{item}</li>
+      ))}
     </ul>
   </div>
 
-  {
-    /* The address first: it needs no account, and a barrier report should
-       not depend on having one. */
-  }
+  {/* The address first: it needs no account, and a barrier report should
+       not depend on having one. */}
   <Fragment slot="feedback">
     <p>{c.feedbackBody}</p>
-    <p><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
     <p>
-      <a href={REPO_ISSUES_URL} target="_blank" rel="noreferrer noopener">{c.feedbackCta}</a>
+      <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+    </p>
+    <p>
+      <a href={REPO_ISSUES_URL} target="_blank" rel="noreferrer noopener">
+        {c.feedbackCta}
+      </a>
     </p>
   </Fragment>
 
-  {
-    /* The space is explicit: Astro collapses the newline between an
-      expression and the tag after it, which ran the sentence into the date. */
-  }
+  {/* The space is explicit: Astro collapses the newline between an
+      expression and the tag after it, which ran the sentence into the date. */}
   <p class="text-ink-muted mt-10 text-sm">
-    {c.reviewed}{' '}
-    <time datetime={REVIEWED}>{REVIEWED_LABEL}</time>.
+    {c.reviewed} <time datetime={REVIEWED}>{REVIEWED_LABEL}</time>.
   </p>
 </PageShell>

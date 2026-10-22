@@ -145,21 +145,23 @@ const sections: PageSection[] = [
   <p slot="who">{c.whoBody}</p>
 
   <ul class="page-list" slot="principles">
-    {c.principles.map((item) => <li>{item}</li>)}
+    {c.principles.map((item) => (
+      <li>{item}</li>
+    ))}
   </ul>
 
   <Fragment slot="sources">
     <p>{c.sourcesBody}</p>
-    <p><a href={creditsHref}>{c.sourcesLink}</a></p>
+    <p>
+      <a href={creditsHref}>{c.sourcesLink}</a>
+    </p>
   </Fragment>
 
-  {
-    /* Directly after the "no accounts, nothing leaves your device" promise
+  {/* Directly after the "no accounts, nothing leaves your device" promise
        above: this is where that promise has to become something the visitor
        can act on. `client:visible` keeps it off the catalogue's JS budget.
        Its own section now, so it appears in the contents list — with no
-       accounts, this is the only way anyone keeps their progress. */
-  }
+       accounts, this is the only way anyone keeps their progress. */}
   <ProgressData
     slot="data"
     messages={pickMessages(language, PROGRESS_DATA_MESSAGES)}
@@ -167,31 +169,30 @@ const sections: PageSection[] = [
     client:visible
   />
 
-  {
-    /* Every party a visit can reach is named here, not only the one this
+  {/* Every party a visit can reach is named here, not only the one this
        project chose to measure with: a privacy section that mentions
        GoatCounter and stays silent about the video player would be accurate
        sentence by sentence and misleading as a whole. `tests/e2e/privacy.spec.ts`
        ties this list to the origins the CSP allows, so a new third party
-       cannot arrive without being named. */
-  }
+       cannot arrive without being named. */}
   <Fragment slot="privacy">
     <p>{c.privacyBody}</p>
     <p>{c.privacyVisit}</p>
     <p>
-      <a href={PRIVACY_README} hreflang="es" target="_blank" rel="noreferrer noopener"
-        >{c.privacyEventsCta}</a
-      >
+      <a href={PRIVACY_README} hreflang="es" target="_blank" rel="noreferrer noopener">
+        {c.privacyEventsCta}
+      </a>
     </p>
     <p>{c.thirdPartiesIntro}</p>
     <ul class="page-list">
-      {c.thirdParties.map((item) => <li>{item}</li>)}
+      {c.thirdParties.map((item) => (
+        <li>{item}</li>
+      ))}
     </ul>
     <p>{c.privacyEmail}</p>
   </Fragment>
 
-  {
-    /* The licence gets its own paragraph rather than a parenthesis in the one
+  {/* The licence gets its own paragraph rather than a parenthesis in the one
        above. "Software libre" and "AGPL-3.0" are not the same claim: the first
        is why someone might trust the project, the second is what binds anyone
        who copies it, and only the second answers "can I sell this?".
@@ -200,19 +201,24 @@ const sections: PageSection[] = [
        the site ships minified JavaScript, which is an object form of the
        program. The footer carries it on every page, which is what actually
        satisfies the licence; this one is here because a visitor reading about
-       the project should not have to scroll to the footer to find the code. */
-  }
+       the project should not have to scroll to the footer to find the code. */}
   <Fragment slot="open">
     <p>{c.openBody}</p>
     <p>{c.openLicence}</p>
-    <p><a href={`${creditsHref}#licences`}>{c.openLicenceCta}</a></p>
     <p>
-      <a href={REPO_URL} target="_blank" rel="noreferrer noopener">{c.openCta}</a>
+      <a href={`${creditsHref}#licences`}>{c.openLicenceCta}</a>
+    </p>
+    <p>
+      <a href={REPO_URL} target="_blank" rel="noreferrer noopener">
+        {c.openCta}
+      </a>
     </p>
   </Fragment>
 
   <Fragment slot="contact">
     <p>{c.contactBody}</p>
-    <p><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+    <p>
+      <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+    </p>
   </Fragment>
 </PageShell>
