@@ -148,35 +148,31 @@ for (const sign of signs) {
 
   <section class="hero">
     <h1 class="hero__title max-w-5xl">
-      {t('hero.title')}{' '}
-      <span class="hero__accent">{t('hero.titleAccent')}</span>
+      {t('hero.title')} <span class="hero__accent">{t('hero.titleAccent')}</span>
     </h1>
     <p class="hero__lead">{t('hero.lead')}</p>
   </section>
 
-  {
-    /*
+  {/*
     One column on phones on purpose. Two columns squeezed each card to 166px,
     which is what forced the word — the thing being looked up — into an
     ellipsis. Below `sm` the card switches to its compact row layout (see
     `.sign-card` in global.css), so a single column is also shorter per entry
     than the two-column card was: more of the catalogue fits on screen, not
     less.
-  */
-  }
-  {
-    /*
+  */}
+  {/*
     Bypass block (WCAG 2.4.1). The grid holds 776 of the page's 796 focus
     stops, so everything after it — the footer, and the only route to the
     other pages on a phone — sat 792 Tab presses away. This is the standard
     escape hatch: invisible until focused, and it lands on the footer nav
     itself so the next Tab is already the first link there.
-  */
-  }
-  <a class="bypass-link" href="#footer-nav">{t('nav.skipCatalogue')}</a>
+  */}
+  <a class="bypass-link" href="#footer-nav">
+    {t('nav.skipCatalogue')}
+  </a>
 
-  {
-    /*
+  {/*
     Stops the grid being shown unfiltered to someone who is coming back to a
     filtered one.
 
@@ -196,8 +192,7 @@ for (const sign of signs) {
 
     A cold first load has no state, so nothing is hidden and the Lighthouse
     budget measures exactly what it measured before.
-  */
-  }
+  */}
   <script is:inline define:vars={{ stateKey: CATALOGUE_STATE_KEY, attr: CATALOGUE_RESTORING_ATTR }}>
     try {
       const stored = window.history.state?.[stateKey];
@@ -216,44 +211,39 @@ for (const sign of signs) {
       // A document that refuses history access. Nothing to restore, nothing to hide.
     }
   </script>
-
   <div
     id="sign-grid"
     data-lang={language}
     class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
   >
-    {
-      /*
+    {/*
       `showCategory` is exactly "is this card under the first-signs heading":
       every other card sits under its own category, where the chip repeated the
       heading word for word — 217 of the 229. The condition is written against
       the same `isFirstSign` that decided the section above, so the chip and the
       heading cannot drift apart.
-    */
-    }
-    {
-      gridItems.map((item) =>
-        item.kind === 'section' ? (
-          <div class="grid-section" data-section={item.id}>
-            <h2 class="grid-section__title">{item.label}</h2>
-            {item.link && (
-              <a class="grid-section__all" href={item.link.href}>
-                {item.link.visible}
-                {item.link.rest && <span class="sr-only"> {item.link.rest}</span>}
-                <span aria-hidden="true">→</span>
-              </a>
-            )}
-          </div>
-        ) : (
-          <SignCard
-            sign={item.sign}
-            category={item.category}
-            language={language}
-            showCategory={item.sign.isFirstSign}
-          />
-        ),
-      )
-    }
+    */}
+    {gridItems.map((item) =>
+      item.kind === 'section' ? (
+        <div class="grid-section" data-section={item.id}>
+          <h2 class="grid-section__title">{item.label}</h2>
+          {item.link && (
+            <a class="grid-section__all" href={item.link.href}>
+              {item.link.visible}
+              {item.link.rest && <span class="sr-only"> {item.link.rest}</span>}
+              <span aria-hidden="true">→</span>
+            </a>
+          )}
+        </div>
+      ) : (
+        <SignCard
+          sign={item.sign}
+          category={item.category}
+          language={language}
+          showCategory={item.sign.isFirstSign}
+        />
+      ),
+    )}
   </div>
 
   <div id="no-results" class="empty-state" role="status" data-messages={emptyMessages}></div>

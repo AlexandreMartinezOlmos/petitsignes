@@ -29,23 +29,19 @@ const current = trail.at(-1);
 ---
 
 <nav class="breadcrumb" aria-label={t('nav.breadcrumb')}>
-  {
-    ancestors.map((crumb) => (
-      <Fragment>
-        <a class="breadcrumb__link" href={crumb.href}>
-          {crumb.name}
-        </a>
-        <span class="breadcrumb__sep" aria-hidden="true">
-          /
-        </span>
-      </Fragment>
-    ))
-  }
-  {
-    current && (
-      <span class="breadcrumb__current" aria-current="page">
-        {current.name}
+  {ancestors.map((crumb) => (
+    <Fragment>
+      <a class="breadcrumb__link" href={crumb.href}>
+        {crumb.name}
+      </a>
+      <span class="breadcrumb__sep" aria-hidden="true">
+        /
       </span>
-    )
-  }
+    </Fragment>
+  ))}
+  {current && (
+    <span class="breadcrumb__current" aria-current="page">
+      {current.name}
+    </span>
+  )}
 </nav>

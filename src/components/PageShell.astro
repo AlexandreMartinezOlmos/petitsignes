@@ -62,42 +62,38 @@ const trail: Crumb[] = [
         <p class="page-hero__lead">{lead}</p>
       </header>
 
-      {
-        sections.map((section) => (
-          <section class="page-section" aria-labelledby={section.id}>
-            <h2 class="page-section__title" id={section.id}>
-              {section.title}
-            </h2>
-            <slot name={section.id} />
-          </section>
-        ))
-      }
+      {sections.map((section) => (
+        <section class="page-section" aria-labelledby={section.id}>
+          <h2 class="page-section__title" id={section.id}>
+            {section.title}
+          </h2>
+          <slot name={section.id} />
+        </section>
+      ))}
 
       <slot />
     </article>
 
-    {
-      /*
+    {/*
       The contents list goes in the space that was empty anyway, and only from
       `lg`: narrower than that there is no spare column, and a list of links
       above the article would just be more to scroll past on a phone. Nothing
       lives here that is not also in the article below it, so hiding it costs
       no content — which is what makes it safe to hide at all.
-    */
-    }
+    */}
     <aside class="page-aside">
       <nav class="page-toc" aria-label={t('nav.onThisPage')}>
-        <p class="page-toc__title" aria-hidden="true">{t('nav.onThisPage')}</p>
+        <p class="page-toc__title" aria-hidden="true">
+          {t('nav.onThisPage')}
+        </p>
         <ul class="page-toc__list">
-          {
-            sections.map((section) => (
-              <li>
-                <a class="page-toc__link" href={`#${section.id}`}>
-                  {section.title}
-                </a>
-              </li>
-            ))
-          }
+          {sections.map((section) => (
+            <li>
+              <a class="page-toc__link" href={`#${section.id}`}>
+                {section.title}
+              </a>
+            </li>
+          ))}
         </ul>
       </nav>
     </aside>
