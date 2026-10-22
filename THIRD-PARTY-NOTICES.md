@@ -18,13 +18,13 @@ the full resolved tree is in `package-lock.json`.
 
 ## MIT
 
-### React — `react` 19.3.0, `react-dom` 19.3.0, `scheduler` 0.28.0
+### React — `react` 19.3.1, `react-dom` 19.3.1, `scheduler` 0.28.0
 
 Copyright (c) Meta Platforms, Inc. and affiliates.
 
 <https://github.com/facebook/react>
 
-### Nano Stores — `nanostores` 1.5.3
+### Nano Stores — `nanostores` 1.5.5
 
 Copyright 2020 Andrey Sitnik <andrey@sitnik.es>
 
