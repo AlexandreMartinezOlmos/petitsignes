@@ -102,26 +102,22 @@ const lead =
       <p class="category-hero__intro">{category.intro[language]}</p>
     </header>
 
-    {
-      /*
+    {/*
       The same grid classes as the catalogue, so a card is the same shape
       wherever it appears and the compact row still takes over on a phone.
       `showCategory` is false throughout: every card here is in the category the
       heading above already names.
-    */
-    }
+    */}
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-      {
-        signs.map((sign) => (
-          <SignCard
-            sign={sign}
-            category={category}
-            language={language}
-            showCategory={false}
-            headingLevel={2}
-          />
-        ))
-      }
+      {signs.map((sign) => (
+        <SignCard
+          sign={sign}
+          category={category}
+          language={language}
+          showCategory={false}
+          headingLevel={2}
+        />
+      ))}
     </div>
 
     <nav class="category-others" aria-labelledby="category-others-title">
@@ -129,21 +125,21 @@ const lead =
         {t('category.othersTitle')}
       </h2>
       <ul class="category-others__list">
-        {
-          others.map((other) => (
-            <li>
-              <a class="category-others__link" href={localeHref(categoryPath(other.id), language)}>
-                <svg class="icon-sm" aria-hidden="true" focusable="false">
-                  <use href={`#i-${other.icon}`} />
-                </svg>
-                {other.labels[language]}
-              </a>
-            </li>
-          ))
-        }
+        {others.map((other) => (
+          <li>
+            <a class="category-others__link" href={localeHref(categoryPath(other.id), language)}>
+              <svg class="icon-sm" aria-hidden="true" focusable="false">
+                <use href={`#i-${other.icon}`} />
+              </svg>
+              {other.labels[language]}
+            </a>
+          </li>
+        ))}
       </ul>
       <p>
-        <a class="category-others__all" href={catalogueHref}>{t('category.all')}</a>
+        <a class="category-others__all" href={catalogueHref}>
+          {t('category.all')}
+        </a>
       </p>
     </nav>
   </div>

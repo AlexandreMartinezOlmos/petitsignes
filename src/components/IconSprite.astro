@@ -36,13 +36,11 @@ const PATHS: Record<string, string> = {
 
 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="hidden">
   <defs>
-    {
-      Object.entries(PATHS).map(([id, d]) => (
-        <symbol id={`i-${id}`} viewBox="0 0 24 24">
-          <path d={d} />
-        </symbol>
-      ))
-    }
+    {Object.entries(PATHS).map(([id, d]) => (
+      <symbol id={`i-${id}`} viewBox="0 0 24 24">
+        <path d={d} />
+      </symbol>
+    ))}
     <symbol id="i-play" viewBox="0 0 24 24">
       <path d="M8 5v14l11-7L8 5Z" fill="currentColor"></path>
     </symbol>
