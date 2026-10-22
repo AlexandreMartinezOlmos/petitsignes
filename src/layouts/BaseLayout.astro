@@ -98,8 +98,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
     <meta name="color-scheme" content="light dark" />
-    {
-      /*
+    {/*
       Without this the browser paints in the system font, the web font arrives
       and every line of text reflows: a 0.167 layout shift on the text-only
       pages, which is a visible jump for the reader and the one metric that
@@ -109,40 +108,33 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
       `crossorigin` is not optional: fonts are fetched in CORS mode even from
       our own origin, and without it the preload is simply ignored and the file
       downloaded a second time.
-    */
-    }
+    */}
     <link rel="preload" href={nunitoSansLatin} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {
-      /*
+    {/*
       iOS ignores the manifest and reads this instead, so "add to home screen"
       needs a PNG: an SVG favicon alone leaves a generic screenshot on the
       home screen of the one device this site is designed for.
-    */
-    }
+    */}
     <link rel="apple-touch-icon" href={APPLE_TOUCH_ICON} />
     <link rel="manifest" href={manifestPath(language)} />
     {!noindex && <link rel="canonical" href={canonical} />}
     {/* Tell search engines about the other language versions of this page. */}
-    {
-      !noindex &&
-        ROUTED_LOCALES.map((locale) => (
-          <link
-            rel="alternate"
-            hreflang={locale}
-            href={new URL(localeHref(path, locale), Astro.site)}
-          />
-        ))
-    }
-    {
-      !noindex && (
+    {!noindex &&
+      ROUTED_LOCALES.map((locale) => (
         <link
           rel="alternate"
-          hreflang="x-default"
-          href={new URL(localeHref(path, DEFAULT_LOCALE), Astro.site)}
+          hreflang={locale}
+          href={new URL(localeHref(path, locale), Astro.site)}
         />
-      )
-    }
+      ))}
+    {!noindex && (
+      <link
+        rel="alternate"
+        hreflang="x-default"
+        href={new URL(localeHref(path, DEFAULT_LOCALE), Astro.site)}
+      />
+    )}
     {noindex && <meta name="robots" content="noindex, follow" />}
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
@@ -157,33 +149,26 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
     }
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={t('site.title')} />
-    {
-      /*
+    {/*
       Absolute, because a share sheet fetches this from its own servers and has
       no page to resolve a relative path against. Declaring the dimensions lets
       the card reserve its space before the image arrives instead of reflowing
       the preview.
-    */
-    }
+    */}
     <meta property="og:image" content={new URL(OG_IMAGES[language], Astro.site)} />
     <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
     <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
     <meta property="og:image:alt" content={pageDescription} />
     <meta name="twitter:card" content="summary_large_image" />
-    {
-      /*
+    {/*
       Data, not code: the browser never runs these, which is why the CSP build
       step leaves them unhashed (see `collectInlineHashes`).
-    */
-    }
-    {
-      structuredData.map((data) => (
-        <script is:inline type="application/ld+json" set:html={serializeJsonLd(data)} />
-      ))
-    }
+    */}
+    {structuredData.map((data) => (
+      <script is:inline type="application/ld+json" set:html={serializeJsonLd(data)} />
+    ))}
 
-    {
-      /*
+    {/*
       Anonymous, cookieless hit counting (see src/lib/analytics.ts).
 
       Loaded from a script rather than a plain <script> tag because the same
@@ -203,8 +188,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
       under review is both fixed and the leanest. GoatCounter documents this
       and keeps the `/count` endpoint compatible with every copy.
       `src/lib/analytics.test.ts` holds the copy to what the privacy text says.
-    */
-    }
+    */}
     <script
       is:inline
       define:vars={{ host: analyticsHost(), endpoint: ANALYTICS_ENDPOINT, src: counterScript }}
@@ -221,19 +205,19 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
 
   <body class="min-h-dvh">
     <IconSprite />
-    <a class="skip-link" href="#main">{t('nav.skipToContent')}</a>
+    <a class="skip-link" href="#main">
+      {t('nav.skipToContent')}
+    </a>
 
     <header class="app-header glass" id="app-header">
-      {
-        /*
+      {/*
         `app-header__row` wraps rather than overflows. At 320px — the width
         WCAG 1.4.10 asks the page to survive — the wordmark and the language
         selector together needed 315px of a 288px budget, so the document
         scrolled sideways. The tightened spacing below `sm` is what makes them
         fit; the wrap is what guarantees they always will, whatever a future
         translation does to the string lengths.
-      */
-      }
+      */}
       <div class="app-header__row shell flex items-center gap-3 py-3">
         <a href={homeHref} class="brand-mark shrink-0 text-base sm:text-lg">
           <span class="brand-mark__dot" aria-hidden="true">
@@ -242,8 +226,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
           {t('site.title')}
         </a>
 
-        {
-          /*
+        {/*
           The language selector doubles as the sign-language selector: each
           locale is coupled to one (ca → LSC, es → LSE). It is a plain set of
           links, so it works without JavaScript and its active state is
@@ -254,32 +237,28 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
           which sign language the whole catalogue teaches. It is also what lets
           the source order below be the same order the eye reads at every
           width — see `.site-nav`.
-        */
-        }
+        */}
         <nav class="lang-switch shrink-0" aria-label={t('nav.language')}>
-          {
-            ROUTED_LOCALES.map((locale) => {
-              const active = locale === language;
-              const localeSign = signLanguageOf(locale);
-              return (
-                <a
-                  href={localeHref(path, locale)}
-                  hreflang={locale}
-                  aria-current={active ? 'true' : undefined}
-                  class="lang-switch__option"
-                >
-                  <span class="lang-switch__name">{LOCALE_NAMES[locale]}</span>
-                  <span class="lang-switch__sign">
-                    {t(localeSign === 'lsc' ? 'signLanguage.lsc' : 'signLanguage.lse')}
-                  </span>
-                </a>
-              );
-            })
-          }
+          {ROUTED_LOCALES.map((locale) => {
+            const active = locale === language;
+            const localeSign = signLanguageOf(locale);
+            return (
+              <a
+                href={localeHref(path, locale)}
+                hreflang={locale}
+                aria-current={active ? 'true' : undefined}
+                class="lang-switch__option"
+              >
+                <span class="lang-switch__name">{LOCALE_NAMES[locale]}</span>
+                <span class="lang-switch__sign">
+                  {t(localeSign === 'lsc' ? 'signLanguage.lsc' : 'signLanguage.lse')}
+                </span>
+              </a>
+            );
+          })}
         </nav>
 
-        {
-          /*
+        {/*
           The rest of the site used to live only in the footer: 650 Tab presses
           and 38.6 screens of scroll past the catalogue, with the accessibility
           statement the EAA obliges us to publish at the far end of it.
@@ -296,8 +275,7 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
           without holding 44px of a sticky header for the whole visit. The
           wrapper exists only to give that fold something to animate; on wider
           screens it is `display: contents` and no box at all.
-        */
-        }
+        */}
         <div class="site-nav-fold">
           <nav class="site-nav" aria-label={t('nav.site')}>
             <a class="site-nav__link" href={aboutHref} aria-current={isCurrent('/el-projecte/')}>
@@ -326,18 +304,22 @@ const isCurrent = (target: string): 'page' | undefined => (path === target ? 'pa
 
     <footer class="border-border text-ink-muted mt-6 border-t">
       <div class="shell flex flex-col gap-3 py-10 text-sm">
-        {
-          /*
+        {/*
           `.footer-link` rather than the same four utility classes written out
           four times, and it carries the 44px target the design system promises
           for every control. These were 22px tall — under the 24px floor of
           WCAG 2.5.8 and the only controls on the site breaking our own rule.
-        */
-        }
+        */}
         <nav class="footer-nav" id="footer-nav" tabindex="-1" aria-label={t('nav.footer')}>
-          <a class="footer-link" href={aboutHref}>{t('nav.about')}</a>
-          <a class="footer-link" href={creditsHref}>{t('nav.credits')}</a>
-          <a class="footer-link" href={accessibilityHref}>{t('nav.accessibility')}</a>
+          <a class="footer-link" href={aboutHref}>
+            {t('nav.about')}
+          </a>
+          <a class="footer-link" href={creditsHref}>
+            {t('nav.credits')}
+          </a>
+          <a class="footer-link" href={accessibilityHref}>
+            {t('nav.accessibility')}
+          </a>
           <a class="footer-link" href={REPO_URL} target="_blank" rel="noreferrer noopener">
             {t('nav.sourceCode')}
           </a>

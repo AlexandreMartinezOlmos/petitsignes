@@ -130,19 +130,22 @@ const sections: PageSection[] = [
     <p>{c.lscBody}</p>
     <p class="text-ink-muted text-sm">{c.lscTerms}</p>
     <p>
-      <a href={LSC_URL} target="_blank" rel="noreferrer noopener">llengua.gencat.cat</a>
+      <a href={LSC_URL} target="_blank" rel="noreferrer noopener">
+        llengua.gencat.cat
+      </a>
     </p>
   </Fragment>
 
   <Fragment slot="lse">
     <p>{c.lseBody}</p>
     <p>
-      <a href={LSE_URL} target="_blank" rel="noreferrer noopener">fundacioncnse-dilse.org</a>
+      <a href={LSE_URL} target="_blank" rel="noreferrer noopener">
+        fundacioncnse-dilse.org
+      </a>
     </p>
   </Fragment>
 
-  {
-    /* The licences are what people come to this page to check rather than to
+  {/* The licences are what people come to this page to check rather than to
        read, so they get a surface. The update date sits here because it is not
        a footnote: the Generalitat's terms ask for the source *and its update
        date*, so it is part of the attribution itself.
@@ -153,8 +156,7 @@ const sections: PageSection[] = [
        — publish your source if you publish a modified version — is not
        guessable from the name. The brand line is here for the same reason: it
        is the one thing the licence does *not* grant, so leaving it to
-       TRADEMARK.md would hide it from everyone who never opens the repository. */
-  }
+       TRADEMARK.md would hide it from everyone who never opens the repository. */}
   <div class="page-callout" slot="licences">
     <p class="text-ink-muted text-sm">{c.licCopyright}</p>
     <ul class="page-list">
@@ -162,35 +164,40 @@ const sections: PageSection[] = [
         <strong>{c.licCode}</strong>:{' '}
         <a href={REPO_LICENSE_URL} target="_blank" rel="noreferrer noopener">
           AGPL-3.0-or-later
-        </a>. {c.licCodeNote}
+        </a>
+        . {c.licCodeNote}
       </li>
-      <li><strong>{c.licData}</strong>: CC BY-SA 4.0.</li>
+      <li>
+        <strong>{c.licData}</strong>: CC BY-SA 4.0.
+      </li>
       <li>{c.licVideos}</li>
       <li>{c.licBrand}</li>
       <li>
         {c.licThirdParty}{' '}
         <a href={REPO_THIRD_PARTY_URL} target="_blank" rel="noreferrer noopener">
           {c.licThirdPartyCta}
-        </a>.
+        </a>
+        .
       </li>
     </ul>
     <p>
-      <a href={REPO_NOTICE_URL} target="_blank" rel="noreferrer noopener">{c.licNotice}</a>
+      <a href={REPO_NOTICE_URL} target="_blank" rel="noreferrer noopener">
+        {c.licNotice}
+      </a>
     </p>
-    {
-      lastUpdated && (
-        <p class="text-ink-muted text-sm">
-          {c.updated} <time datetime={lastUpdated}>{lastUpdated}</time>.
-        </p>
-      )
-    }
+    {lastUpdated && (
+      <p class="text-ink-muted text-sm">
+        {c.updated} <time datetime={lastUpdated}>{lastUpdated}</time>.
+      </p>
+    )}
   </div>
 
   <p slot="respect">{c.respectBody}</p>
 
   <p class="text-ink-muted mt-10 text-sm">
-    {c.report}{' '}
-    <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> ·{' '}
-    <a href={REPO_ISSUES_URL} target="_blank" rel="noreferrer noopener">{c.reportCta}</a>
+    {c.report} <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> ·{' '}
+    <a href={REPO_ISSUES_URL} target="_blank" rel="noreferrer noopener">
+      {c.reportCta}
+    </a>
   </p>
 </PageShell>

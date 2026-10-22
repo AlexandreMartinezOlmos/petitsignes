@@ -90,35 +90,31 @@ const href = localeHref(signPath(sign.id), language);
 >
   <div class="sign-card__lang contents" data-sl={signLanguage}>
     <div class="sign-card__media">
-      {
-        video?.posterUrl ? (
-          <img
-            src={video.posterUrl}
-            alt={`${label} — ${fullName}`}
-            width="480"
-            height="360"
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <div class="sign-card__placeholder" aria-hidden="true">
-            <svg class="icon-lg" focusable="false">
-              <use href={`#i-${category.icon}`} />
-            </svg>
-          </div>
-        )
-      }
+      {video?.posterUrl ? (
+        <img
+          src={video.posterUrl}
+          alt={`${label} — ${fullName}`}
+          width="480"
+          height="360"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div class="sign-card__placeholder" aria-hidden="true">
+          <svg class="icon-lg" focusable="false">
+            <use href={`#i-${category.icon}`} />
+          </svg>
+        </div>
+      )}
     </div>
 
-    {
-      /*
+    {/*
       Second in source because on a wide card they sit on the image, above the
       word — so this is the order the eye reads them in too. They are a sibling
       of the media rather than a child of it: the compact row lays the card out
       with grid areas and needs them as a direct child, and overlaying does not
       need nesting, only `position: absolute` against the card.
-    */
-    }
+    */}
     <div class="sign-card__toggles">
       <button
         type="button"
@@ -152,22 +148,17 @@ const href = localeHref(signPath(sign.id), language);
     </div>
 
     <div class="sign-card__header">
-      {
-        /*
+      {/*
         The word and its category read as one block, and the wrapper is what
         lets the compact row put them side by side without either arrangement
         fighting the toggles for the same line.
-      */
-      }
+      */}
       <div class="sign-card__label">
-        {
-          /* The level comes from the caller: in the grid a card belongs to a
+        {/* The level comes from the caller: in the grid a card belongs to a
              section heading, on a category page it belongs to the page's own
-             title. See `headingLevel` above. */
-        }
+             title. See `headingLevel` above. */}
         <Heading class="sign-card__title">
-          {
-            /*
+          {/*
             The visually hidden half is the same pattern the CTAs use, and it is
             here for two reasons that happen to agree. A screen reader listing
             the links of this page would otherwise hear 194 bare words with no
@@ -178,72 +169,68 @@ const href = localeHref(signPath(sign.id), language);
             "veure el signe" on purpose: the play button on the same card is
             already called that, and two links a card apart with the same name
             and different destinations is the confusion this is meant to avoid.
-          */
-          }
+          */}
           <a class="sign-card__link" href={href}>
-            {label}<span class="sr-only">: {t('card.openEntry')}</span>
+            {label}
+            <span class="sr-only">: {t('card.openEntry')}</span>
           </a>
         </Heading>
-        {
-          showCategory && (
-            <span class="sign-card__chip" data-category={sign.category}>
-              <svg class="icon-sm" aria-hidden="true" focusable="false">
-                <use href={`#i-${category.icon}`} />
-              </svg>
-              {category.labels[language]}
-            </span>
-          )
-        }
+        {showCategory && (
+          <span class="sign-card__chip" data-category={sign.category}>
+            <svg class="icon-sm" aria-hidden="true" focusable="false">
+              <use href={`#i-${category.icon}`} />
+            </svg>
+            {category.labels[language]}
+          </span>
+        )}
       </div>
     </div>
 
     <div class="sign-card__actions">
-      {
-        video === undefined ? (
-          /* A statement of fact, not a control. It used to wear the CTA's
+      {video === undefined ? (
+        /* A statement of fact, not a control. It used to wear the CTA's
              silhouette — 44px tall, rounded, dashed outline — which reads as a
              disabled button, so it promised an action that does not exist and
              never will: with no official source, no sign is invented. */
-          <p class="sign-card__novideo">
-            <svg class="icon-sm" aria-hidden="true" focusable="false">
-              <use href="#i-video-off" />
-            </svg>
-            {t('card.noVideo', { signLanguage: shortName })}
-          </p>
-        ) : video.delivery === 'youtube-embed' ? (
-          <button
-            type="button"
-            class="sign-card__cta"
-            data-action="play"
-            data-sign-id={sign.id}
-            data-label={label}
-            data-video-url={video.videoUrl}
-            data-source={video.source}
-            data-source-url={video.sourceUrl}
-          >
-            <svg class="icon-sm" aria-hidden="true" focusable="false">
-              <use href="#i-play" />
-            </svg>
-            {t('card.watchSign')}
-            <span class="sr-only">: {label}</span>
-          </button>
-        ) : (
-          /* This source only allows linking to its original entry, never
+        <p class="sign-card__novideo">
+          <svg class="icon-sm" aria-hidden="true" focusable="false">
+            <use href="#i-video-off" />
+          </svg>
+          {t('card.noVideo', { signLanguage: shortName })}
+        </p>
+      ) : video.delivery === 'youtube-embed' ? (
+        <button
+          type="button"
+          class="sign-card__cta"
+          data-action="play"
+          data-sign-id={sign.id}
+          data-label={label}
+          data-video-url={video.videoUrl}
+          data-source={video.source}
+          data-source-url={video.sourceUrl}
+        >
+          <svg class="icon-sm" aria-hidden="true" focusable="false">
+            <use href="#i-play" />
+          </svg>
+          {t('card.watchSign')}
+          <span class="sr-only">: {label}</span>
+        </button>
+      ) : (
+        /* This source only allows linking to its original entry, never
              embedding or re-hosting. */
-          <a
-            class="sign-card__cta sign-card__cta--external"
-            href={video.videoUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            {t('card.watchAtSource', { source: video.source })}
-            <span class="sr-only">: {label}</span>
-            <svg class="icon-sm" aria-hidden="true" focusable="false">
-              <use href="#i-external" />
-            </svg>
-          </a>
-        )
-      }
+        <a
+          class="sign-card__cta sign-card__cta--external"
+          href={video.videoUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          {t('card.watchAtSource', { source: video.source })}
+          <span class="sr-only">: {label}</span>
+          <svg class="icon-sm" aria-hidden="true" focusable="false">
+            <use href="#i-external" />
+          </svg>
+        </a>
+      )}
     </div>
   </div>
 </article>

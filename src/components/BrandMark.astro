@@ -37,6 +37,8 @@ const { class: className } = Astro.props;
   focusable="false"
 >
   <g transform={BRAND_MARK_TRANSFORM}>
-    {BRAND_MARK_PATHS.map((d) => <path d={d} />)}
+    {BRAND_MARK_PATHS.map((d) => (
+      <path d={d} />
+    ))}
   </g>
 </svg>
