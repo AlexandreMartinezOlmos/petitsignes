@@ -22,6 +22,11 @@ updates:
       prefix: chore
       prefix-development: chore
       include: scope
+    # The Node type definitions describe the runtime in `.nvmrc`, not the newest
+    # Node: their major moves when `.nvmrc` does, by hand.
+    ignore:
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     # One pull request per week for everything that does not change a major
     # version, split by whether a visitor ever downloads it. A major is a
     # migration and gets its own pull request to be read on its own.
