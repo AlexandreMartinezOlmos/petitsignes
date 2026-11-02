@@ -30,9 +30,9 @@ Copyright 2020 Andrey Sitnik <andrey@sitnik.es>
 
 <https://github.com/nanostores/nanostores>
 
-### Nano Stores React — `@nanostores/react` 1.1.0
+### Nano Stores React — `@nanostores/react` 2.0.1
 
-Copyright 2020 Andrey Sitnik <andrey@sitnik.ru>
+Copyright 2020 Andrey Sitnik <andrey@sitnik.es>
 
 <https://github.com/nanostores/react>
 
