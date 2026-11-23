@@ -3,7 +3,7 @@
 > Document generat automàticament amb `npm run content:export`. **No l’editis a mà**: els
 > canvis es fan a `content/vocabulary.tsv` i s'apliquen amb `npm run content:import`.
 
-Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
+Actualitzat: 2026-11-23 · 327 conceptes · 327 amb LSC · 327 amb LSE.
 
 ## Menjar i beure
 
@@ -13,9 +13,11 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | aigua / agua / water | [▶ vídeo](https://www.youtube.com/watch?v=Zn4LCkuSuxY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=agua) |
 | arròs / arroz / rice | [▶ vídeo](https://www.youtube.com/watch?v=rq4dahAw6Jo) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=arroz) |
 | beure / beber / drink | [▶ vídeo](https://www.youtube.com/watch?v=1W3Y9fbwwpw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=beber) |
+| ampolla / botella / bottle | [▶ vídeo](https://www.youtube.com/watch?v=Cw3_i8tfw7U) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=botella) |
 | calent / caliente / hot | [▶ vídeo](https://www.youtube.com/watch?v=cUTqnHQveyk) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=caliente) |
 | carn / carne / meat | [▶ vídeo](https://www.youtube.com/watch?v=jwQaUk-n-UI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=carne) |
 | sopar / cena / dinner | [▶ vídeo](https://www.youtube.com/watch?v=85D26Wi89HY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=cena) |
+| cirera / cereza / cherry | [▶ vídeo](https://www.youtube.com/watch?v=QrREKA8a0y8) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=cereza) |
 | xocolata / chocolate / chocolate | [▶ vídeo](https://www.youtube.com/watch?v=1tj1L89QnJA) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=chocolate) |
 | menjar / comer / eat | [▶ vídeo](https://www.youtube.com/watch?v=naW8YFcVzmQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=comer) |
 | cullera / cuchara / spoon | [▶ vídeo](https://www.youtube.com/watch?v=cxP-g1Stv_s) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=cuchara) |
@@ -24,18 +26,28 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | fred / frío / cold | [▶ vídeo](https://www.youtube.com/watch?v=cjgYWVTxdHc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=fr%C3%ADo) |
 | fruita / fruta / fruit | [▶ vídeo](https://www.youtube.com/watch?v=vCujc88Sd9g) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=fruta) |
 | galeta / galleta / biscuit | [▶ vídeo](https://www.youtube.com/watch?v=ycBUa_nvfNo) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=galleta) |
+| pèsol / guisante / pea | [▶ vídeo](https://www.youtube.com/watch?v=nNkyEkJ3KLM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=guisante) |
 | gelat / helado / ice cream | [▶ vídeo](https://www.youtube.com/watch?v=lo5cwIWAQAs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=helado) |
 | ou / huevo / egg | [▶ vídeo](https://www.youtube.com/watch?v=LNP_PkXD30M) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=huevo) |
+| pernil / jamón / ham | [▶ vídeo](https://www.youtube.com/watch?v=28EOTq4qK_8) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=jam%C3%B3n) |
+| mongeta tendra / judía verde / green bean | [▶ vídeo](https://www.youtube.com/watch?v=kktTH3LJSk8) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=jud%C3%ADa) |
+| kiwi / kiwi / kiwi | [▶ vídeo](https://www.youtube.com/watch?v=8LRez71NUm4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=kiwi) |
 | llet / leche / milk | [▶ vídeo](https://www.youtube.com/watch?v=j7EYGZt-CJc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=leche) |
+| llimona / limón / lemon | [▶ vídeo](https://www.youtube.com/watch?v=jxfdZ4jBumM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=lim%C3%B3n) |
 | mandarina / mandarina / tangerine | [▶ vídeo](https://www.youtube.com/watch?v=c3RWeghvhkg) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mandarina) |
+| mantega / mantequilla / butter | [▶ vídeo](https://www.youtube.com/watch?v=cHs_tocpl3k) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mantequilla) |
 | poma / manzana / apple | [▶ vídeo](https://www.youtube.com/watch?v=iMukXk_4OBc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=manzana) |
+| préssec / melocotón / peach | [▶ vídeo](https://www.youtube.com/watch?v=SKI8TT1g51U) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=melocot%C3%B3n) |
 | meló / melón / melon | [▶ vídeo](https://www.youtube.com/watch?v=F84AYHuMCc0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mel%C3%B3n) |
+| berenar / merienda / afternoon snack | [▶ vídeo](https://www.youtube.com/watch?v=GsTQ7v14Bfc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=merienda) |
+| mel / miel / honey | [▶ vídeo](https://www.youtube.com/watch?v=DDx0bn1dtPc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=miel) |
 | taronja / naranja / orange | [▶ vídeo](https://www.youtube.com/watch?v=07sap41SBiI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=naranja) |
 | pa / pan / bread | [▶ vídeo](https://www.youtube.com/watch?v=7tfbhdSuvh0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pan) |
 | pasta / pasta / pasta | [▶ vídeo](https://www.youtube.com/watch?v=4qgH-pdGqIE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pasta) |
 | pastís / pastel / cake | [▶ vídeo](https://www.youtube.com/watch?v=ZBxgotg9j8M) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pastel) |
 | patata / patata / potato | [▶ vídeo](https://www.youtube.com/watch?v=yS0WBAhnMeM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=patata) |
 | pera / pera / pear | [▶ vídeo](https://www.youtube.com/watch?v=WYIyBC-ENuQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pera) |
+| pinya / piña / pineapple | [▶ vídeo](https://www.youtube.com/watch?v=xAWF2iBf2jE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pi%C3%B1a) |
 | plàtan / plátano / banana | [▶ vídeo](https://www.youtube.com/watch?v=meyCZJPVg18) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pl%C3%A1tano) |
 | plat / plato / plate | [▶ vídeo](https://www.youtube.com/watch?v=bMefr-AAMKc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=plato) |
 | pollastre / pollo / chicken | [▶ vídeo](https://www.youtube.com/watch?v=ib3QSB4nVhE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pollo) |
@@ -44,6 +56,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | síndria / sandía / watermelon | [▶ vídeo](https://www.youtube.com/watch?v=QweII3yAHvc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=sand%C3%ADa) |
 | sopa / sopa / soup | [▶ vídeo](https://www.youtube.com/watch?v=neZfK2YHlpQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=sopa) |
 | tassa / taza / mug | [▶ vídeo](https://www.youtube.com/watch?v=J8-tEQ8ZEj0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=taza) |
+| forquilla / tenedor / fork | [▶ vídeo](https://www.youtube.com/watch?v=WlRMH1tpHVM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tenedor) |
 | tomàquet / tomate / tomato | [▶ vídeo](https://www.youtube.com/watch?v=_cc-R8GvJes) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tomate) |
 | raïm / uva / grape | [▶ vídeo](https://www.youtube.com/watch?v=TLDeV9LkRBw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=uva) |
 | got / vaso / cup | [▶ vídeo](https://www.youtube.com/watch?v=8izbkyXZFhM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=vaso) |
@@ -64,10 +77,13 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | xumet / chupete / dummy | [▶ vídeo](https://www.youtube.com/watch?v=-Z8gMJqe7ns) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=chupete) |
 | dormir / dormir / sleep | [▶ vídeo](https://www.youtube.com/watch?v=lsWdkAX6eM0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=dormir) |
 | esperar / esperar / wait | [▶ vídeo](https://www.youtube.com/watch?v=iWUJoQvld4k) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=esperar) |
+| sabó / jabón / soap | [▶ vídeo](https://www.youtube.com/watch?v=HV3VYI0aR8Y) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=jab%C3%B3n) |
 | mans / manos / hands | [▶ vídeo](https://www.youtube.com/watch?v=6mwnqa528YE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mano) |
+| orinar / orinar / wee | [▶ vídeo](https://www.youtube.com/watch?v=mmbJO2mqFHk) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=orinar) |
 | bolquer / pañal / nappy | [▶ vídeo](https://www.youtube.com/watch?v=pufSfEPdt2k) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pa%C3%B1al) |
 | treure / quitar / take off | [▶ vídeo](https://www.youtube.com/watch?v=7neXRsTEDqk) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=quitar) |
 | tireta / tirita / plaster | [▶ vídeo](https://www.youtube.com/watch?v=9kKE4IpdxGs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tirita) |
+| tovallola / toalla / towel | [▶ vídeo](https://www.youtube.com/watch?v=sU2YRBk3PS8) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=toalla) |
 
 ## Persones i família
 
@@ -77,14 +93,19 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | avi / abuelo / grandpa | [▶ vídeo](https://www.youtube.com/watch?v=Td5FKtAOBXE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=abuelo) |
 | amic / amigo / friend | [▶ vídeo](https://www.youtube.com/watch?v=Vt_ACXcWAaQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=amigo) |
 | nadó / bebé / baby | [▶ vídeo](https://www.youtube.com/watch?v=9UHS-5tRBZg) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=beb%C3%A9) |
+| aniversari / cumpleaños / birthday | [▶ vídeo](https://www.youtube.com/watch?v=qltfr8XD8XU) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=cumplea%C3%B1os) |
 | família / familia / family | [▶ vídeo](https://www.youtube.com/watch?v=2qOFpO86KmM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=familia) |
 | germana / hermana / sister | [▶ vídeo](https://www.youtube.com/watch?v=aRs0XzzecEs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=hermana) |
 | germà / hermano / brother | [▶ vídeo](https://www.youtube.com/watch?v=aRs0XzzecEs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=hermano) |
+| fill/a / hijo/a / son, daughter | [▶ vídeo](https://www.youtube.com/watch?v=xeDJDhJu3DI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=hijo) |
+| home / hombre / man | [▶ vídeo](https://www.youtube.com/watch?v=tBiUzMbyaO4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=hombre) |
 | mama / mamá / mummy | [▶ vídeo](https://www.youtube.com/watch?v=O555o1oNPEk) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mam%C3%A1) |
 | metge / médico / doctor | [▶ vídeo](https://www.youtube.com/watch?v=JeJ5ns629Q0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=m%C3%A9dico) |
+| dona / mujer / woman | [▶ vídeo](https://www.youtube.com/watch?v=_bXlSicZuho) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mujer) |
 | nena / niña / girl | [▶ vídeo](https://www.youtube.com/watch?v=nPJVjJvOao4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=ni%C3%B1a) |
 | nen / niño / boy | [▶ vídeo](https://www.youtube.com/watch?v=9eMen2CxpZs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=ni%C3%B1o) |
 | papa / papá / daddy | [▶ vídeo](https://www.youtube.com/watch?v=ifP2NpnROhQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pap%C3%A1) |
+| cosí/cosina / primo/a / cousin | [▶ vídeo](https://www.youtube.com/watch?v=tqMkrqzFZ9A) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=primo) |
 | tieta / tía / aunt | [▶ vídeo](https://www.youtube.com/watch?v=78cDIdv8ER4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=t%C3%ADa) |
 | oncle / tío / uncle | [▶ vídeo](https://www.youtube.com/watch?v=CMBC5WLetUQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=t%C3%ADo) |
 | tu / tú / you | [▶ vídeo](https://www.youtube.com/watch?v=eG1EVlVfd2A) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=t%C3%BA) |
@@ -114,8 +135,11 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | Paraula (ca / es / en) | LSC | LSE |
 |---|---|---|
 | abella / abeja / bee | [▶ vídeo](https://www.youtube.com/watch?v=KKbriNZh4jU) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=abeja) |
+| animal / animal / animal | [▶ vídeo](https://www.youtube.com/watch?v=J7Ced-t5QNw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=animal) |
 | aranya / araña / spider | [▶ vídeo](https://www.youtube.com/watch?v=HbLDonPl6Yk) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=ara%C3%B1a) |
+| esquirol / ardilla / squirrel | [▶ vídeo](https://www.youtube.com/watch?v=EFs4dEXAvOY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=ardilla) |
 | balena / ballena / whale | [▶ vídeo](https://www.youtube.com/watch?v=RHSxzUkhK58) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=ballena) |
+| mussol / búho / owl | [▶ vídeo](https://www.youtube.com/watch?v=H89YgYwUgoI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=b%C3%BAho) |
 | ase / burro / donkey | [▶ vídeo](https://www.youtube.com/watch?v=FYyivmNVMLY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=burro) |
 | cavall / caballo / horse | [▶ vídeo](https://www.youtube.com/watch?v=1f0W7iFKXi8) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=caballo) |
 | cabra / cabra / goat | [▶ vídeo](https://www.youtube.com/watch?v=0J2Mhnl1smw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=cabra) |
@@ -129,6 +153,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | gallina / gallina / hen | [▶ vídeo](https://www.youtube.com/watch?v=F602q5Hxnu0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=gallina) |
 | gall / gallo / rooster | [▶ vídeo](https://www.youtube.com/watch?v=ci4jsbWLrTI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=gallo) |
 | gat / gato / cat | [▶ vídeo](https://www.youtube.com/watch?v=kXZylIjwSJI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=gato) |
+| cuc / gusano / worm | [▶ vídeo](https://www.youtube.com/watch?v=aCxQgHdICpE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=gusano) |
 | hipopòtam / hipopótamo / hippo | [▶ vídeo](https://www.youtube.com/watch?v=eYZfVwFFuRU) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=hipop%C3%B3tamo) |
 | lleó / león / lion | [▶ vídeo](https://www.youtube.com/watch?v=3tUfgIhY4No) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=le%C3%B3n) |
 | papallona / mariposa / butterfly | [▶ vídeo](https://www.youtube.com/watch?v=2_bBBR6kk9U) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mariposa) |
@@ -137,6 +162,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | ós / oso / bear | [▶ vídeo](https://www.youtube.com/watch?v=BJVznTQ3rog) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=oso) |
 | ovella / oveja / sheep | [▶ vídeo](https://www.youtube.com/watch?v=Ht9i9YKxdxM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=oveja) |
 | ocell / pájaro / bird | [▶ vídeo](https://www.youtube.com/watch?v=XgvobAcMsMk) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=p%C3%A1jaro) |
+| colom / paloma / pigeon | [▶ vídeo](https://www.youtube.com/watch?v=L9zEjulU1lE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=paloma) |
 | ànec / pato / duck | [▶ vídeo](https://www.youtube.com/watch?v=wqnY5tI-Wz8) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pato) |
 | gos / perro / dog | [▶ vídeo](https://www.youtube.com/watch?v=eHldrwqjZyE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=perro) |
 | peix / pez / fish | [▶ vídeo](https://www.youtube.com/watch?v=zLx-5aETEBY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pez) |
@@ -162,6 +188,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | cotxe / coche / car | [▶ vídeo](https://www.youtube.com/watch?v=5roKTBbIR8o) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=coche) |
 | gronxador / columpio / swing | [▶ vídeo](https://www.youtube.com/watch?v=dcGtVi8t7Fg) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=columpio) |
 | mirall / espejo / mirror | [▶ vídeo](https://www.youtube.com/watch?v=UujZLxRrSSI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=espejo) |
+| ulleres / gafas / glasses | [▶ vídeo](https://www.youtube.com/watch?v=5Sl4CBrw8GY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=gafa) |
 | llibre / libro / book | [▶ vídeo](https://www.youtube.com/watch?v=fNP0VVUgIdI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=libro) |
 | claus / llaves / keys | [▶ vídeo](https://www.youtube.com/watch?v=fbC66ugo2yc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=llave) |
 | manta / manta / blanket | [▶ vídeo](https://www.youtube.com/watch?v=7MTB8HGfLlU) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=manta) |
@@ -172,6 +199,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | porta / puerta / door | [▶ vídeo](https://www.youtube.com/watch?v=JQWeMVQq-jo) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=puerta) |
 | rellotge / reloj / clock | [▶ vídeo](https://www.youtube.com/watch?v=K3NA4Y3ODKc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=reloj) |
 | cadira / silla / chair | [▶ vídeo](https://www.youtube.com/watch?v=tAQK3KrWjVM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=silla) |
+| sofà / sofá / sofa | [▶ vídeo](https://www.youtube.com/watch?v=FEFoWvIiiyM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=sof%C3%A1) |
 | telèfon / teléfono / phone | [▶ vídeo](https://www.youtube.com/watch?v=jJKDcCo6ZTw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tel%C3%A9fono) |
 | tobogan / tobogán / slide | [▶ vídeo](https://www.youtube.com/watch?v=MjjjJ2guf3Y) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tobog%C3%A1n) |
 | tren / tren / train | [▶ vídeo](https://www.youtube.com/watch?v=SNhmawWKVGM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tren) |
@@ -182,6 +210,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | Paraula (ca / es / en) | LSC | LSE |
 |---|---|---|
 | obert/a / abierto/a / open | [▶ vídeo](https://www.youtube.com/watch?v=temHf9yd9YI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=abierto) |
+| apagar el llum / apagar la luz / turn the light off | [▶ vídeo](https://www.youtube.com/watch?v=1aP_Qvc8brs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=apagar) |
 | picar de mans / aplaudir / clap | [▶ vídeo](https://www.youtube.com/watch?v=U-vr9F0QFkY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=aplaudir) |
 | aplaudir (llengua de signes) / aplaudir (lengua de signos) / applaud (sign language) | [▶ vídeo](https://www.youtube.com/watch?v=6SOhxQtlN8w) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=aplaudir) |
 | baixar / bajar / go down | [▶ vídeo](https://www.youtube.com/watch?v=EB-5A5Wksig) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=bajar) |
@@ -193,6 +222,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | córrer / correr / run | [▶ vídeo](https://www.youtube.com/watch?v=lx_LxHBjvec) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=correr) |
 | donar / dar / give | [▶ vídeo](https://www.youtube.com/watch?v=BfPy92vjgNQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=dar) |
 | empènyer / empujar / push | [▶ vídeo](https://www.youtube.com/watch?v=FhB9YF2RDwA) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=empujar) |
+| encendre el llum / encender la luz / turn the light on | [▶ vídeo](https://www.youtube.com/watch?v=HnjOUjgMR5M) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=encender) |
 | trobar / encontrar / find | [▶ vídeo](https://www.youtube.com/watch?v=e0kWsi0gbYs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=encontrar) |
 | amagar / esconder / hide | [▶ vídeo](https://www.youtube.com/watch?v=irDkLoNlDvI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=esconder) |
 | escoltar / escuchar / listen | [▶ vídeo](https://www.youtube.com/watch?v=OBKbc0UyVsI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=escuchar) |
@@ -200,9 +230,11 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | parlar / hablar / talk | [▶ vídeo](https://www.youtube.com/watch?v=9n_x5blyNHE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=hablar) |
 | anar / ir / go | [▶ vídeo](https://www.youtube.com/watch?v=xEZ-kP3m17k) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=ir) |
 | jugar / jugar / play | [▶ vídeo](https://www.youtube.com/watch?v=s9x1SRPDOsA) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=jugar) |
+| llegir / leer / read | [▶ vídeo](https://www.youtube.com/watch?v=RQWYL-sWe30) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=leer) |
 | aixecar-se / levantarse / stand up | [▶ vídeo](https://www.youtube.com/watch?v=l8-fhIBHopc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=levantar) |
 | veure / ver / see | [▶ vídeo](https://www.youtube.com/watch?v=e2vWXXyKPbQ) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=ver) |
 | nedar / nadar / swim | [▶ vídeo](https://www.youtube.com/watch?v=j6siFKjtHK4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=nadar) |
+| passejar / pasear / go for a walk | [▶ vídeo](https://www.youtube.com/watch?v=XXF03iUqObk) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pasear) |
 | pintar / pintar / draw | [▶ vídeo](https://www.youtube.com/watch?v=h4Jh0M4DvKE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pintar) |
 | voler / querer / want | [▶ vídeo](https://www.youtube.com/watch?v=g3tN8hFcbvc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=querer) |
 | trencar / romper / break | [▶ vídeo](https://www.youtube.com/watch?v=e4CyaATnTYI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=romper) |
@@ -230,12 +262,14 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | malalt/a / enfermo/a / ill | [▶ vídeo](https://www.youtube.com/watch?v=R3DFcCn4l7M) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=enfermo) |
 | fora / fuera / outside | [▶ vídeo](https://www.youtube.com/watch?v=gI-TblzUaMw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=fuera) |
 | gran / grande / big | [▶ vídeo](https://www.youtube.com/watch?v=PFna7WnKGm8) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=grande) |
+| maco/a / guapo/a / lovely | [▶ vídeo](https://www.youtube.com/watch?v=tCVBSFCBmF4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=guapo) |
 | igual / igual / same | [▶ vídeo](https://www.youtube.com/watch?v=hMer1Msvhis) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=igual) |
 | lent / lento / slow | [▶ vídeo](https://www.youtube.com/watch?v=_hVOEIJ3afg) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=lento) |
 | net / limpio / clean | [▶ vídeo](https://www.youtube.com/watch?v=4vZM_Ji67t4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=limpio) |
 | ple / lleno / full | [▶ vídeo](https://www.youtube.com/watch?v=8gA06VlkOyM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=lleno) |
 | nou / nuevo / new | [▶ vídeo](https://www.youtube.com/watch?v=27vLdeBVQPI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=nuevo) |
 | petit / pequeño / small | [▶ vídeo](https://www.youtube.com/watch?v=xXjwnReKi84) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=peque%C3%B1o) |
+| a poc a poc / poco a poco / slowly | [▶ vídeo](https://www.youtube.com/watch?v=bZoo13ZpybU) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=poco) |
 | ràpid / rápido / fast | [▶ vídeo](https://www.youtube.com/watch?v=mdLJoa60EWs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=r%C3%A1pido) |
 | brut / sucio / dirty | [▶ vídeo](https://www.youtube.com/watch?v=vOkSj9mS9kc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=sucio) |
 | una mica / un poco / a little | [▶ vídeo](https://www.youtube.com/watch?v=Y6WfhdzFp8g) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=poco) |
@@ -249,6 +283,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | arc de Sant Martí / arcoíris / rainbow | [▶ vídeo](https://www.youtube.com/watch?v=HXGhgBUqTUY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=arco%C3%ADris) |
 | sorra / arena / sand | [▶ vídeo](https://www.youtube.com/watch?v=AijRWOkmPFg) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=arena) |
 | carrer / calle / street | [▶ vídeo](https://www.youtube.com/watch?v=eKhhbYCVo_Y) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=calle) |
+| calor / calor / heat | [▶ vídeo](https://www.youtube.com/watch?v=m-RGucgR_Dg) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=calor) |
 | casa / casa / home | [▶ vídeo](https://www.youtube.com/watch?v=JxWCiR61gUs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=casa) |
 | cel / cielo / sky | [▶ vídeo](https://www.youtube.com/watch?v=ScpCxIc-t-M) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=cielo) |
 | estrella / estrella / star | [▶ vídeo](https://www.youtube.com/watch?v=_Y196Z2wJg4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=estrella) |
@@ -275,6 +310,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 |---|---|---|
 | adéu / adiós / bye | [▶ vídeo](https://www.youtube.com/watch?v=p-4CdY_Za3M) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=adi%C3%B3s) |
 | bona nit / buenas noches / good night | [▶ vídeo](https://www.youtube.com/watch?v=BeJYKJzey5I) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=noche) |
+| bona tarda / buenas tardes / good afternoon | [▶ vídeo](https://www.youtube.com/watch?v=jMqbanYJCMo) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tarde) |
 | bon dia / buenos días / good morning | [▶ vídeo](https://www.youtube.com/watch?v=vVcEYElk72I) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=d%C3%ADa) |
 | d'acord / de acuerdo / okay | [▶ vídeo](https://www.youtube.com/watch?v=J9k4TbTfR5Q) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=acuerdo) |
 | de res / de nada / you're welcome | [▶ vídeo](https://www.youtube.com/watch?v=cRe7HfukEA4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=nada) |
@@ -299,6 +335,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | esquena / espalda / back | [▶ vídeo](https://www.youtube.com/watch?v=95Zo0gyoSc4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=espalda) |
 | febre / fiebre / fever | [▶ vídeo](https://www.youtube.com/watch?v=yn21lk-gGs4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=fiebre) |
 | cop / golpe / bump | [▶ vídeo](https://www.youtube.com/watch?v=t67SArkGPao) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=golpe) |
+| ferida / herida / wound | [▶ vídeo](https://www.youtube.com/watch?v=Rn6553oDJas) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=herida) |
 | galta / mejilla / cheek | [▶ vídeo](https://www.youtube.com/watch?v=yuZndSemmnM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mejilla) |
 | moc / moco / snot | [▶ vídeo](https://www.youtube.com/watch?v=SrsJLCibjjw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=moco) |
 | nas / nariz / nose | [▶ vídeo](https://www.youtube.com/watch?v=7ffS41ezjWA) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=nariz) |
@@ -323,6 +360,7 @@ Actualitzat: 2026-11-23 · 289 conceptes · 289 amb LSC · 289 amb LSE.
 | guants / guantes / gloves | [▶ vídeo](https://www.youtube.com/watch?v=tCGEq8FIyy4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=guante) |
 | pantalons / pantalón / trousers | [▶ vídeo](https://www.youtube.com/watch?v=or8e0nTkk_0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pantal%C3%B3n) |
 | pijama / pijama / pyjamas | [▶ vídeo](https://www.youtube.com/watch?v=sqAIeJdAcTM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pijama) |
+| roba / ropa / clothes | [▶ vídeo](https://www.youtube.com/watch?v=NkqVdSEYd4g) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=ropa) |
 | barret / sombrero / sun hat | [▶ vídeo](https://www.youtube.com/watch?v=5JUts30AB3g) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=sombrero) |
 | sabatilles / zapatillas / slippers | [▶ vídeo](https://www.youtube.com/watch?v=R8GWCMasoIo) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=zapatilla) |
 | sabates / zapatos / shoes | [▶ vídeo](https://www.youtube.com/watch?v=r4w7tHH0geY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=zapato) |

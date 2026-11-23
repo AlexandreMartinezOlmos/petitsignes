@@ -17,12 +17,15 @@ alto	qualities		alt	alto	tall	IfeQ8VBywig	alto
 amarillo	colors		groc	amarillo	yellow	Kr9Lx7x4-eE	amarillo
 ambulancia	objects		ambulància	ambulancia	ambulance	XXgZXBqC9EU	ambulancia
 amigo	family		amic	amigo	friend	Vt_ACXcWAaQ	amigo
+animal	animals		animal	animal	animal	J7Ced-t5QNw	animal
+apagar	actions		apagar el llum	apagar la luz	turn the light off	1aP_Qvc8brs	apagar
 aplaudir	actions		picar de mans	aplaudir	clap	U-vr9F0QFkY	aplaudir
 aplaudir-signants	actions		aplaudir (llengua de signes)	aplaudir (lengua de signos)	applaud (sign language)	6SOhxQtlN8w	aplaudir
 aqui	qualities		aquí	aquí	here	fgUrseH9hLY	aquí
 arana	animals		aranya	araña	spider	HbLDonPl6Yk	araña
 arbol	nature		arbre	árbol	tree	FQ0MELaFPvw	árbol
 arcoiris	nature		arc de Sant Martí	arcoíris	rainbow	HXGhgBUqTUY	arcoíris
+ardilla	animals		esquirol	ardilla	squirrel	EFs4dEXAvOY	ardilla
 arena	nature		sorra	arena	sand	AijRWOkmPFg	arena
 arriba	qualities		a dalt	arriba	up	kfe8Q-jeQP4	arriba
 arroz	food		arròs	arroz	rice	rq4dahAw6Jo	arroz
@@ -49,9 +52,12 @@ blando	qualities		tou/tova	blando/a	soft	aLQlTGVQN2k	blando
 boca	body		boca	boca	mouth	oyWiWPgsD3c	boca
 bonito	qualities		bonic	bonito	pretty	II_NkHHiADk	bonito
 botas	clothing		botes	botas	boots	Ay9VE0hpCWI	bota
+botella	food		ampolla	botella	bottle	Cw3_i8tfw7U	botella
 brazo	body		braç	brazo	arm	znxbbLrCw74	brazo
 buenas-noches	courtesy		bona nit	buenas noches	good night	BeJYKJzey5I	noche
+buenas-tardes	courtesy		bona tarda	buenas tardes	good afternoon	jMqbanYJCMo	tarde
 buenos-dias	courtesy		bon dia	buenos días	good morning	vVcEYElk72I	día
+buho	animals		mussol	búho	owl	H89YgYwUgoI	búho
 burro	animals		ase	burro	donkey	FYyivmNVMLY	burro
 caballo	animals		cavall	caballo	horse	1f0W7iFKXi8	caballo
 cabeza	body		cap	cabeza	head	shcaaEMwg2c	cabeza
@@ -60,6 +66,7 @@ caer	actions		caure	caer	fall	TmZUR8GKiko	caer
 calcetines	clothing		mitjons	calcetines	socks	MYwNLqgQiQY	calcetín
 caliente	food		calent	caliente	hot	cUTqnHQveyk	caliente
 calle	nature		carrer	calle	street	eKhhbYCVo_Y	calle
+calor	nature		calor	calor	heat	m-RGucgR_Dg	calor
 cama	objects		llit	cama	bed	GC8XdpBNhq8	cama
 caminar	actions		caminar	caminar	walk	ilIl-lINR9s	caminar
 camion	objects		camió	camión	lorry	4_V-C4kPlLs	camión
@@ -74,6 +81,7 @@ cebra	animals		zebra	cebra	zebra	uRpRQY_YW3Q	cebra
 cena	food		sopar	cena	dinner	85D26Wi89HY	cena
 cepillo-de-dientes	routines		raspall de dents	cepillo de dientes	toothbrush	ttk3b9YD7ig	cepillo
 cerdo	animals		porc	cerdo	pig	f3u9lGFm3eY	cerdo
+cereza	food		cirera	cereza	cherry	QrREKA8a0y8	cereza
 cerrar	actions		tancat/da	cerrado/a	closed	7V2XhdPC44E	cerrado
 chaqueta	clothing		jaqueta	chaqueta	jacket	MhO6MnH3_Lw	chaqueta
 chocolate	food		xocolata	chocolate	chocolate	1tj1L89QnJA	chocolate
@@ -92,6 +100,7 @@ correr	actions		córrer	correr	run	lx_LxHBjvec	correr
 cuatro	numbers		quatre	cuatro	four	4eT85kkbZXw	cuatro
 cuchara	food		cullera	cuchara	spoon	cxP-g1Stv_s	cuchara
 culo	body		cul	culo	bottom	DP0PUQ93jTU	culo
+cumpleanos	family		aniversari	cumpleaños	birthday	qltfr8XD8XU	cumpleaños
 dar	actions		donar	dar	give	BfPy92vjgNQ	dar
 de-acuerdo	courtesy		d'acord	de acuerdo	okay	J9k4TbTfR5Q	acuerdo
 de-nada	courtesy		de res	de nada	you're welcome	cRe7HfukEA4	nada
@@ -107,6 +116,7 @@ dormir	routines	5	dormir	dormir	sleep	lsWdkAX6eM0	dormir
 dos	numbers		dos	dos	two	1btxS7sZ7R4	dos
 elefante	animals		elefant	elefante	elephant	2tFebh2JrrE	elefante
 empujar	actions		empènyer	empujar	push	FhB9YF2RDwA	empujar
+encender	actions		encendre el llum	encender la luz	turn the light on	HnjOUjgMR5M	encender
 encontrar	actions		trobar	encontrar	find	e0kWsi0gbYs	encontrar
 enfado	emotions		enuig	enfado	anger	r3QsxplES08	enfado
 enfermo	qualities		malalt/a	enfermo/a	ill	R3DFcCn4l7M	enfermo
@@ -125,6 +135,7 @@ frio	food		fred	frío	cold	cjgYWVTxdHc	frío
 fruta	food		fruita	fruta	fruit	vCujc88Sd9g	fruta
 fuego	nature		foc	fuego	fire	QwyupFTPXU0	fuego
 fuera	qualities		fora	fuera	outside	gI-TblzUaMw	fuera
+gafas	objects		ulleres	gafas	glasses	5Sl4CBrw8GY	gafa
 galleta	food		galeta	galleta	biscuit	ycBUa_nvfNo	galleta
 gallina	animals		gallina	gallina	hen	F602q5Hxnu0	gallina
 gallo	animals		gall	gallo	rooster	ci4jsbWLrTI	gallo
@@ -134,24 +145,36 @@ gorro	clothing		gorra	gorro	hat	gwC40Wa7S14	gorro
 gracias	courtesy		gràcies	gracias	thank you	tPEkzI15pAw	agradecer
 grande	qualities		gran	grande	big	PFna7WnKGm8	grande
 guantes	clothing		guants	guantes	gloves	tCGEq8FIyy4	guante
+guapo	qualities		maco/a	guapo/a	lovely	tCVBSFCBmF4	guapo
+guisante	food		pèsol	guisante	pea	nNkyEkJ3KLM	guisante
+gusano	animals		cuc	gusano	worm	aCxQgHdICpE	gusano
 gustar	emotions		agradar	gustar	like	AoV3WzrZIVs	gustar
 hablar	actions		parlar	hablar	talk	9n_x5blyNHE	hablar
 helado	food		gelat	helado	ice cream	lo5cwIWAQAs	helado
+herida	body		ferida	herida	wound	Rn6553oDJas	herida
 hermana	family		germana	hermana	sister	aRs0XzzecEs	hermana
 hermano	family		germà	hermano	brother	aRs0XzzecEs	hermano
+hijo	family		fill/a	hijo/a	son, daughter	xeDJDhJu3DI	hijo
 hipopotamo	animals		hipopòtam	hipopótamo	hippo	eYZfVwFFuRU	hipopótamo
 hoja	nature		fulla	hoja	leaf	acyTckph1mw	hoja
 hola	courtesy		hola	hola	hello	BdEvUY_pEus	hola
+hombre	family		home	hombre	man	tBiUzMbyaO4	hombre
 hoy	time		avui	hoy	today	J4D3eZ31dJQ	hoy
 huevo	food		ou	huevo	egg	LNP_PkXD30M	huevo
 igual	qualities		igual	igual	same	hMer1Msvhis	igual
 ir	actions		anar	ir	go	xEZ-kP3m17k	ir
+jabon	routines		sabó	jabón	soap	HV3VYI0aR8Y	jabón
+jamon	food		pernil	jamón	ham	28EOTq4qK_8	jamón
+judia-verde	food		mongeta tendra	judía verde	green bean	kktTH3LJSk8	judía
 jugar	actions		jugar	jugar	play	s9x1SRPDOsA	jugar
+kiwi	food		kiwi	kiwi	kiwi	8LRez71NUm4	kiwi
 leche	food	1	llet	leche	milk	j7EYGZt-CJc	leche
+leer	actions		llegir	leer	read	RQWYL-sWe30	leer
 lento	qualities		lent	lento	slow	_hVOEIJ3afg	lento
 leon	animals		lleó	león	lion	3tUfgIhY4No	león
 levantarse	actions		aixecar-se	levantarse	stand up	l8-fhIBHopc	levantar
 libro	objects		llibre	libro	book	fNP0VVUgIdI	libro
+limon	food		llimona	limón	lemon	jxfdZ4jBumM	limón
 limpio	qualities		net	limpio	clean	4vZM_Ji67t4	limpio
 llaves	objects		claus	llaves	keys	fbC66ugo2yc	llave
 lleno	qualities		ple	lleno	full	8gA06VlkOyM	lleno
@@ -164,21 +187,26 @@ manana-parte-del-dia	time		matí	mañana (parte del día)	morning	7CvHNN3uKW0	ma
 mandarina	food		mandarina	mandarina	tangerine	c3RWeghvhkg	mandarina
 manos	routines		mans	manos	hands	6mwnqa528YE	mano
 manta	objects		manta	manta	blanket	7MTB8HGfLlU	manta
+mantequilla	food		mantega	mantequilla	butter	cHs_tocpl3k	mantequilla
 manzana	food		poma	manzana	apple	iMukXk_4OBc	manzana
 mar	nature		mar	mar	sea	HTdu_hf2Brc	mar
 mariposa	animals		papallona	mariposa	butterfly	2_bBBR6kk9U	mariposa
 marron	colors		marró	marrón	brown	zVNax6oi9OA	marrón
 medico	family		metge	médico	doctor	JeJ5ns629Q0	médico
 mejilla	body		galta	mejilla	cheek	yuZndSemmnM	mejilla
+melocoton	food		préssec	melocotón	peach	SKI8TT1g51U	melocotón
 melon	food		meló	melón	melon	F84AYHuMCc0	melón
+merienda	food		berenar	merienda	afternoon snack	GsTQ7v14Bfc	merienda
 mesa	objects		taula	mesa	table	sQoa6DHmBN4	mesa
 miedo	emotions		por	miedo	fear	L92ZPkaqKdU	miedo
+miel	food		mel	miel	honey	DDx0bn1dtPc	miel
 mirar	actions		veure	ver	see	e2vWXXyKPbQ	ver
 moco	body		moc	moco	snot	SrsJLCibjjw	moco
 mono	animals		mico	mono	monkey	d6Tw1kFP-To	mono
 montana	nature		muntanya	montaña	mountain	HfAPXpl7XJs	montaña
 mosca	animals		mosca	mosca	housefly	R6A0whudb6Y	mosca
 moto	objects		moto	moto	motorbike	a17ybPGbXnc	moto
+mujer	family		dona	mujer	woman	_bXlSicZuho	mujer
 musica	objects		música	música	music	hMJh4N0vLJA	música
 nadar	actions		nedar	nadar	swim	j6siFKjtHK4	nadar
 naranja	food		taronja	naranja	orange	07sap41SBiI	naranja
@@ -193,15 +221,18 @@ nube	nature		núvol	nube	cloud	70BF1QYbHik	nube
 nuevo	qualities		nou	nuevo	new	27vLdeBVQPI	nuevo
 ojos	body		ulls	ojos	eyes	3VQ5HwyDqZA	ojo
 orejas	body		orella	oreja	ear	TedMn5YUnXQ	oreja
+orinar	routines		orinar	orinar	wee	mmbJO2mqFHk	orinar
 oso	animals		ós	oso	bear	BJVznTQ3rog	oso
 otra-vez	time	12	una altra vegada	otra vez	again	cQbI-VC7Scs	repetir
 oveja	animals		ovella	oveja	sheep	Ht9i9YKxdxM	oveja
 pajaro	animals		ocell	pájaro	bird	XgvobAcMsMk	pájaro
+paloma	animals		colom	paloma	pigeon	L9zEjulU1lE	paloma
 pan	food		pa	pan	bread	7tfbhdSuvh0	pan
 panal	routines		bolquer	pañal	nappy	pufSfEPdt2k	pañal
 pantalon	clothing		pantalons	pantalón	trousers	or8e0nTkk_0	pantalón
 papa	family	7	papa	papá	daddy	ifP2NpnROhQ	papá
 parque	nature		parc	parque	park	bP3DE1jrYYI	parque
+pasear	actions		passejar	pasear	go for a walk	XXF03iUqObk	pasear
 pasta	food		pasta	pasta	pasta	4qgH-pdGqIE	pasta
 pastel	food		pastís	pastel	cake	ZBxgotg9j8M	pastel
 patata	food		patata	patata	potato	yS0WBAhnMeM	patata
@@ -217,14 +248,17 @@ piedra	nature		pedra	piedra	stone	8MeRL4ab_vU	piedra
 pierna	body		cama	pierna	leg	r7xIC-05Xuo	pierna
 pies	body		peus	pies	feet	72Lm98QaDuc	pie
 pijama	clothing		pijama	pijama	pyjamas	sqAIeJdAcTM	pijama
+pina	food		pinya	piña	pineapple	xAWF2iBf2jE	piña
 pinguino	animals		pingüí	pingüino	penguin	kiWFmctVA5c	pingüino
 pintar	actions		pintar	pintar	draw	h4Jh0M4DvKE	pintar
 piscina	nature		piscina	piscina	swimming pool	B6Vagj78xW4	piscina
 platano	food		plàtan	plátano	banana	meyCZJPVg18	plátano
 plato	food		plat	plato	plate	bMefr-AAMKc	plato
 playa	nature		platja	playa	beach	vyL3iwLVoVs	playa
+poco-a-poco	qualities		a poc a poc	poco a poco	slowly	bZoo13ZpybU	poco
 pollo	food		pollastre	pollo	chicken	ib3QSB4nVhE	pollo
 por-favor	courtesy		si us plau	por favor	please	ngYvoqorrFc	favor
+primo	family		cosí/cosina	primo/a	cousin	tqMkrqzFZ9A	primo
 puerta	objects		porta	puerta	door	JQWeMVQq-jo	puerta
 pure	food		puré	puré	purée	VduZcIrdLIU	puré
 que	time		què?	¿qué?	what?	XGE_64BB4Gk	qué
@@ -241,6 +275,7 @@ reloj	objects		rellotge	reloj	clock	K3NA4Y3ODKc	reloj
 rodillas	body		genolls	rodillas	knees	l3rsL_1Bn0Y	rodilla
 rojo	colors		vermell	rojo	red	ZzskMCqZaqg	rojo
 romper	actions		trencar	romper	break	e4CyaATnTYI	romper
+ropa	clothing		roba	ropa	clothes	NkqVdSEYd4g	ropa
 rosa	colors		rosa	rosa	pink	K-CC-hBN3Y4	rosa
 saltar	actions		saltar	saltar	jump	b7nhEULPuiI	saltar
 sandia	food		síndria	sandía	watermelon	QweII3yAHvc	sandía
@@ -248,6 +283,7 @@ sentarse	actions		seure	sentarse	sit	7f10uKg3Org	sentar
 serpiente	animals		serp	serpiente	snake	IRKNQWrBJrY	serpiente
 si	time	9	sí	sí	yes	kvla_7MCtAk	sí
 silla	objects		cadira	silla	chair	tAQK3KrWjVM	silla
+sofa	objects		sofà	sofá	sofa	FEFoWvIiiyM	sofá
 sol	nature		sol	sol	sun	U5IAa3M2uF8	sol
 sombrero	clothing		barret	sombrero	sun hat	5JUts30AB3g	sombrero
 sopa	food		sopa	sopa	soup	neZfK2YHlpQ	sopa
@@ -256,11 +292,13 @@ sucio	qualities		brut	sucio	dirty	vOkSj9mS9kc	sucio
 tarde	time		tarda	tarde	afternoon	jBPUKfL9Lgc	tarde
 taza	food		tassa	taza	mug	J8-tEQ8ZEj0	taza
 telefono	objects		telèfon	teléfono	phone	jJKDcCo6ZTw	teléfono
+tenedor	food		forquilla	tenedor	fork	WlRMH1tpHVM	tenedor
 tia	family		tieta	tía	aunt	78cDIdv8ER4	tía
 tigre	animals		tigre	tigre	tiger	Jw-Pe2vHn6U	tigre
 tio	family		oncle	tío	uncle	CMBC5WLetUQ	tío
 tirar	actions		llençar	tirar	throw	55lZI9UbdR0	tirar
 tirita	routines		tireta	tirita	plaster	9kKE4IpdxGs	tirita
+toalla	routines		tovallola	toalla	towel	sU2YRBk3PS8	toalla
 tobogan	objects		tobogan	tobogán	slide	MjjjJ2guf3Y	tobogán
 tomate	food		tomàquet	tomate	tomato	_cc-R8GvJes	tomate
 tos	body		tos	tos	cough	faF2NDzymlw	tos

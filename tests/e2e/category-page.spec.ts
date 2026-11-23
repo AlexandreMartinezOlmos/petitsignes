@@ -3,8 +3,8 @@ import { expect, test, type Page } from '@playwright/test';
 /**
  * One page per category.
  *
- * The step that was missing between a catalogue of 289 concepts at one address
- * and 289 addresses with one concept each. "Signes de menjar per a nadons" is as
+ * The step that was missing between a catalogue of 327 concepts at one address
+ * and 327 addresses with one concept each. "Signes de menjar per a nadons" is as
  * ordinary a search as "com es signa llet", and nothing answered it.
  *
  * They are also what makes the catalogue walkable: a sign links up to its
