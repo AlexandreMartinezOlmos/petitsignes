@@ -1,8 +1,8 @@
 {
   "labels": {
-    "ca": "clau",
-    "es": "llave",
-    "en": "key"
+    "ca": "claus",
+    "es": "llaves",
+    "en": "keys"
   },
   "category": "objects",
   "isFirstSign": false,
@@ -10,11 +10,12 @@
     {
       "signLanguage": "lsc",
       "delivery": "youtube-embed",
-      "videoUrl": "https://www.youtube.com/watch?v=WHl_A7Vztlw",
+      "videoUrl": "https://www.youtube.com/watch?v=fbC66ugo2yc",
       "source": "Gencat-VocabulariLSC",
       "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
       "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
-      "updatedAt": "2026-07-27"
+      "updatedAt": "2026-11-23",
+      "sourceTerm": "Claus (porta)"
     },
     {
       "signLanguage": "lse",

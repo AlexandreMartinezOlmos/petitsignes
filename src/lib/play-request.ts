@@ -22,7 +22,7 @@
 /**
  * What the dialog needs to open, read from the button that asked for it.
  *
- * Only what the player shows. The button is rendered once per card, 194 times
+ * Only what the player shows. The button is rendered once per card, 327 times
  * on the catalogue, so a field nobody reads is paid for in every one of them:
  * the licence, the sign language and an always-empty poster used to travel
  * here and were never read. The licence is shown, quoted, on the sign's own

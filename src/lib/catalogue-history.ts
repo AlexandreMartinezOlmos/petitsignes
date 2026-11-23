@@ -187,7 +187,7 @@ function applyCatalogueState(state: CatalogueState): void {
  * back as they change. Returns a cleanup function.
  *
  * Call it **before** mounting the grid: restoring first means the controller's
- * opening pass already filters to the right cards, instead of showing all 194
+ * opening pass already filters to the right cards, instead of showing all 327
  * and correcting itself a frame later.
  */
 export function mountCatalogueHistory(): () => void {

@@ -98,7 +98,7 @@ const page = (path: string): BuiltPage => {
 test.skip(({ isMobile }) => isMobile, 'the files on disk do not depend on the viewport');
 
 test('the build is the one this spec expects', () => {
-  // 2 × (4 text pages + 15 categories + 194 signs) + the two 404s. Not a
+  // 2 × (4 text pages + 15 categories + 327 signs) + the two 404s. Not a
   // number to keep in step with the catalogue: it is here so that a spec
   // reading an empty or stale dist/ fails loudly instead of passing on nothing.
   expect(INDEXABLE.length).toBeGreaterThan(400);
@@ -220,7 +220,7 @@ test.describe('descriptions', () => {
 
   /**
    * The promise a result makes has to match what the page delivers. A Catalan
-   * sign page embeds its video; a Spanish one links out to it at DILSE. All 194
+   * sign page embeds its video; a Spanish one links out to it at DILSE. All 327
    * Spanish descriptions said "con el vídeo de la fuente oficial" anyway.
    *
    * Read from the content rather than assumed per locale, so the day a sign

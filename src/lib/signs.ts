@@ -1,8 +1,8 @@
 /**
  * Where a sign lives when it lives on its own.
  *
- * The catalogue publishes 194 concepts on a single page, which is one address
- * for 194 things: a search engine cannot offer "how do you sign milk in LSC"
+ * The catalogue publishes 327 concepts on a single page, which is one address
+ * for 327 things: a search engine cannot offer "how do you sign milk in LSC"
  * because no page claims to be about milk. These helpers give each concept its
  * own URL and decide what surrounds it there.
  *
@@ -60,7 +60,7 @@ export const RELATED_SIGNS_LIMIT = 6;
  *
  * A page with one word and one video is a dead end: the visitor either goes back
  * or leaves. These are the cheapest honest way onward, and they are what turns
- * 194 orphan pages into a catalogue a crawler can actually walk — every sign
+ * 327 orphan pages into a catalogue a crawler can actually walk — every sign
  * ends up reachable from several others rather than only from the index.
  *
  * Sorted by the label in the interface language, so the Catalan and Spanish
