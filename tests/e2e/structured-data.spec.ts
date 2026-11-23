@@ -151,7 +151,7 @@ test('every breadcrumb a page shows is the breadcrumb it declares', () => {
     checked += 1;
   }
 
-  // 4 text pages, 15 categories and 289 signs, in two locales.
+  // 4 text pages, 15 categories and 327 signs, in two locales.
   expect(checked).toBeGreaterThan(400);
 });
 

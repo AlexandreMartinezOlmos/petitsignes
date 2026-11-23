@@ -147,7 +147,7 @@ por quien visita, así que no toca la privacidad.
 Está ahí porque el primer principio —«ningún signo inventado»— solo se sostiene si quien sabe LSC
 o LSE puede avisarnos, y la ficha es la única pantalla donde el error se ve. Prellenarlo es la mitad del valor:
 un aviso que identifica la entrada y la lengua es accionable; «el vídeo de leche está mal» obliga a
-buscar entre 289 ficheros.
+buscar entre 327 ficheros.
 
 El enlace de GitHub pide una cuenta, y la pista bajo el enlace lo dice antes de pulsarlo. Para
 quien no la tiene —muchas personas signantes, intérpretes y familias—, la misma pista ofrece el
@@ -216,7 +216,7 @@ real, nunca al revés**. Si no aparece ninguna fuente válida, el concepto no en
 
 ## Estado actual
 
-289 conceptos, **todos con vídeo LSC y enlace LSE**. El catálogo completo, con los enlaces
+327 conceptos, **todos con vídeo LSC y enlace LSE**. El catálogo completo, con los enlaces
 clicables, se genera en [`vocabulari.md`](vocabulari.md).
 
 Las condiciones de reutilización de cada fuente están analizadas en

@@ -6,7 +6,7 @@ Decisiones estructurales y por qué. Para construir interfaz que encaje, ver
 
 ## El problema de fondo
 
-El catálogo tiene 289 conceptos y crecerá. Un enfoque SPA clásico enviaría los 289 al
+El catálogo tiene 327 conceptos y crecerá. Un enfoque SPA clásico enviaría los 327 al
 navegador como JSON y los renderizaría en cliente: eso pone el coste de arranque en función
 del tamaño del catálogo, justo lo contrario de lo que necesita un móvil de gama media con
 conexión 4G — donde el objetivo es Lighthouse ≥ 95 en las cuatro categorías.
@@ -20,7 +20,7 @@ con el número de signos**.
 Build (Astro)                          Navegador
 ─────────────                          ─────────
 content/signs/*.json ──┐
-                       ├──> HTML estático con las 289 tarjetas
+                       ├──> HTML estático con las 327 tarjetas
 content/categories.json┘         │
                                  │  data-sign-id, data-category,
                                  │  data-label-ca/es/en, data-first-sign
@@ -142,7 +142,7 @@ contenido detrás.
 ### 4 bis. Tres niveles de dirección: catálogo, categoría y signo
 
 ```
-/                        289 conceptos, con búsqueda y filtros
+/                        327 conceptos, con búsqueda y filtros
 /categoria/<slug>/       los signos de una categoría          ← el escalón que faltaba
 /signe/<id>/             un signo, su vídeo y su atribución
 ```
@@ -229,7 +229,7 @@ y distinto según la pantalla; era lo que hacía converger tonos separados sobre
 una pantalla P3 sí puede mostrar se añade aparte, con `@media (color-gamut: p3)`, a igual
 luminosidad y tono.
 
-**El CSS repetido vive en CSS.** La tarjeta se repite 289 veces, así que las cadenas largas de
+**El CSS repetido vive en CSS.** La tarjeta se repite 327 veces, así que las cadenas largas de
 clases de utilidad se pagarían una vez por tarjeta en el DOM. Las partes repetidas
 (`.sign-card`, `.chip`, `.player-dialog`…) son clases de componente y el marcado solo lleva
 lo que varía. Lo mismo con los iconos: un sprite de `<symbol>` con referencias `<use>`, en vez
