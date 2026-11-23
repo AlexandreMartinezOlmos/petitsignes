@@ -83,7 +83,7 @@ Actualitzat: 2026-11-23 · 194 conceptes · 194 amb LSC · 194 amb LSE.
 | agradar / gustar / like | [▶ vídeo](https://www.youtube.com/watch?v=AoV3WzrZIVs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=gustar) |
 | plorar / llorar / cry | [▶ vídeo](https://www.youtube.com/watch?v=eRfW0RHmGI0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=llorar) |
 | por / miedo / fear | [▶ vídeo](https://www.youtube.com/watch?v=L92ZPkaqKdU) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=miedo) |
-| estimar / querer / love | [▶ vídeo](https://www.youtube.com/watch?v=Lucvf1cVssA) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=querer) |
+| estimar / amar / love | [▶ vídeo](https://www.youtube.com/watch?v=Lucvf1cVssA) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=amar) |
 | riure / reír / laugh | [▶ vídeo](https://www.youtube.com/watch?v=9C2bKhY828M) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=re%C3%ADr) |
 | tranquil / tranquilo / calm | [▶ vídeo](https://www.youtube.com/watch?v=96Nt44kHESc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=tranquilo) |
 | trist / triste / sad | [▶ vídeo](https://www.youtube.com/watch?v=hN4wl-aajGE) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=triste) |
