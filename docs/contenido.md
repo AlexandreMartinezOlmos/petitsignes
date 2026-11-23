@@ -3,9 +3,10 @@
 El contenido es la parte más delicada del proyecto. Un signo mal puesto enseña a un padre un
 gesto equivocado, y ese padre se lo enseña a su hijo. Por eso el listón es alto.
 
-**Regla que no se negocia: nunca se publica un signo sin fuente oficial verificable.** Si no
-tienes la fuente, deja la ficha sin vídeo. Una ficha sin vídeo es honesta; una con el vídeo
-equivocado, no.
+**Regla que no se negocia: nunca se publica un signo sin fuente oficial verificable.** Un
+concepto entra en el catálogo solo si tiene fuente, con el mismo sentido, en las dos lenguas; si
+falta en una, no entra. Una tarjeta sin signo no enseña nada; una con el vídeo equivocado enseña
+algo falso.
 
 ## Dónde vive el contenido
 
@@ -43,11 +44,12 @@ Columnas de `vocabulary.tsv`:
 | `first_sign_order` | Número → entra en la ruta "Primeros signos"; vacío → no. |
 | `ca` / `es` / `en` | Las tres etiquetas (obligatorias). |
 | `lsc_youtube` | Id de YouTube del Vocabulari bàsic. La columna admite varios separados por coma por herencia del formato, pero el esquema rechaza en el build más de un vídeo LSC por signo (ver «Carga masiva» más abajo) — pon solo uno. Vacío = sin LSC. |
-| `lse_dilse_term` | Término de búsqueda de DILSE (`?buscar=…`). Vacío = sin LSE. |
+| `lse_dilse_term` | Término de búsqueda de DILSE (`?buscar=…`). Vacío = sin LSE. Tiene que devolver la entrada de la acepción elegida, y no siempre es la etiqueta: `de acuerdo` y `arco iris` no devuelven nada, `acuerdo` y `arcoíris` sí. |
 
 El `import` **conserva** lo que no está en la tabla: el `sourceTerm` (el lema del diccionario de
 origen) y la fecha de origen sobreviven mientras el id/término no cambie. Cambiar un enlace hace que
-ese vídeo pase a llevar la fecha de hoy, porque es una fuente nueva. Un concepto que ya no esté en
+ese vídeo pase a llevar la fecha de hoy, porque es una fuente nueva, y llegue **sin** `sourceTerm`:
+añádeselo a mano en el JSON con el lema tal cual lo escribe el índice. Un concepto que ya no esté en
 la tabla **no se borra** automáticamente: el script lo avisa y lo borras a mano si es
 intencionado.
 
@@ -132,7 +134,9 @@ El build valida todo esto con Zod: si algo no cuadra, el build falla. Es intenci
    - *mamá* convive con `mama-pecho.mov`.
    Si dudas, **no lo pongas**. Abre una incidencia y que lo mire alguien con conocimiento de la
    lengua.
-3. **Mira el vídeo entero.** No basta con que el título coincida.
+3. **Mira el vídeo entero.** No basta con que el título coincida. Comprueba también que sigue
+   publicado: el índice de la Generalitat aún enlaza vídeos que se han retirado de YouTube (los
+   de *Ple*, *Clau* y *Aniversari (naixement)* devolvían 404).
 4. **Anota la fuente**: `sourceUrl` a la ficha original, `license` con las condiciones, y
    `updatedAt` con la fecha en que lo comprobaste.
 5. `npm run build` para validar y `npm test` antes de abrir el PR.
