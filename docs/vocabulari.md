@@ -3,7 +3,7 @@
 > Document generat automàticament amb `npm run content:export`. **No l’editis a mà**: els
 > canvis es fan a `content/vocabulary.tsv` i s'apliquen amb `npm run content:import`.
 
-Actualitzat: 2026-08-03 · 194 conceptes · 194 amb LSC · 194 amb LSE.
+Actualitzat: 2026-11-23 · 194 conceptes · 194 amb LSC · 194 amb LSE.
 
 ## Menjar i beure
 
@@ -120,7 +120,7 @@ Actualitzat: 2026-08-03 · 194 conceptes · 194 amb LSC · 194 amb LSE.
 | llit / cama / bed | [▶ vídeo](https://www.youtube.com/watch?v=GC8XdpBNhq8) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=cama) |
 | cotxe / coche / car | [▶ vídeo](https://www.youtube.com/watch?v=5roKTBbIR8o) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=coche) |
 | llibre / libro / book | [▶ vídeo](https://www.youtube.com/watch?v=fNP0VVUgIdI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=libro) |
-| clau / llave / key | [▶ vídeo](https://www.youtube.com/watch?v=WHl_A7Vztlw) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=llave) |
+| claus / llaves / keys | [▶ vídeo](https://www.youtube.com/watch?v=fbC66ugo2yc) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=llave) |
 | taula / mesa / table | [▶ vídeo](https://www.youtube.com/watch?v=sQoa6DHmBN4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=mesa) |
 | música / música / music | [▶ vídeo](https://www.youtube.com/watch?v=hMJh4N0vLJA) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=m%C3%BAsica) |
 | pilota / pelota / ball | [▶ vídeo](https://www.youtube.com/watch?v=7A_bA7HCKeo) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pelota) |
@@ -168,7 +168,7 @@ Actualitzat: 2026-08-03 · 194 conceptes · 194 amb LSC · 194 amb LSE.
 | igual / igual / same | [▶ vídeo](https://www.youtube.com/watch?v=hMer1Msvhis) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=igual) |
 | lent / lento / slow | [▶ vídeo](https://www.youtube.com/watch?v=_hVOEIJ3afg) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=lento) |
 | net / limpio / clean | [▶ vídeo](https://www.youtube.com/watch?v=4vZM_Ji67t4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=limpio) |
-| ple / lleno / full | [▶ vídeo](https://www.youtube.com/watch?v=X3zYLrUbm-A) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=lleno) |
+| ple / lleno / full | [▶ vídeo](https://www.youtube.com/watch?v=8gA06VlkOyM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=lleno) |
 | nou / nuevo / new | [▶ vídeo](https://www.youtube.com/watch?v=27vLdeBVQPI) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=nuevo) |
 | petit / pequeño / small | [▶ vídeo](https://www.youtube.com/watch?v=xXjwnReKi84) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=peque%C3%B1o) |
 | ràpid / rápido / fast | [▶ vídeo](https://www.youtube.com/watch?v=mdLJoa60EWs) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=r%C3%A1pido) |
@@ -234,7 +234,7 @@ Actualitzat: 2026-08-03 · 194 conceptes · 194 amb LSC · 194 amb LSE.
 | samarreta / camiseta / t-shirt | [▶ vídeo](https://www.youtube.com/watch?v=sMDfw78W-Ls) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=camiseta) |
 | gorra / gorro / hat | [▶ vídeo](https://www.youtube.com/watch?v=gwC40Wa7S14) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=gorro) |
 | guants / guantes / gloves | [▶ vídeo](https://www.youtube.com/watch?v=tCGEq8FIyy4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=guante) |
-| pantalons / pantalón / trousers | [▶ vídeo](https://www.youtube.com/watch?v=baJrTblaLl4) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pantal%C3%B3n) |
+| pantalons / pantalón / trousers | [▶ vídeo](https://www.youtube.com/watch?v=or8e0nTkk_0) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pantal%C3%B3n) |
 | pijama / pijama / pyjamas | [▶ vídeo](https://www.youtube.com/watch?v=sqAIeJdAcTM) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=pijama) |
 | sabates / zapatos / shoes | [▶ vídeo](https://www.youtube.com/watch?v=r4w7tHH0geY) | [↗ DILSE](https://fundacioncnse-dilse.org/?buscar=zapato) |
 
