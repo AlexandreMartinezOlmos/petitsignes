@@ -855,7 +855,7 @@ test('an anchor lands below the sticky header', async ({ page }) => {
 /**
  * At 2560px the grid stopped at 1120px and four columns: 56% of the screen
  * was margin. A maximum width is right for prose, which has a measure to
- * protect; a grid of 194 cards has none, and every extra pixel was going into
+ * protect; a grid of 289 cards has none, and every extra pixel was going into
  * wider cards instead of more of them.
  */
 test('a very wide screen gets more catalogue, not more margin', async ({ page }) => {

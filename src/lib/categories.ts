@@ -1,8 +1,8 @@
 /**
  * Where a category lives when it lives on its own.
  *
- * Between the catalogue and a sign there was nothing: 194 concepts at one
- * address, then 194 addresses with one concept each, and no step in between.
+ * Between the catalogue and a sign there was nothing: 289 concepts at one
+ * address, then 289 addresses with one concept each, and no step in between.
  * "Signes de menjar per a nadons" is as real a search as "com es signa llet",
  * and it had no page to answer it.
  *

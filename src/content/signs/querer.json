@@ -1,7 +1,7 @@
 {
   "labels": {
     "ca": "estimar",
-    "es": "querer",
+    "es": "amar",
     "en": "love"
   },
   "category": "emotions",
@@ -20,11 +20,11 @@
     {
       "signLanguage": "lse",
       "delivery": "external-link",
-      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=querer",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=amar",
       "source": "CNSE-DILSE",
-      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=querer",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=amar",
       "license": "DILSE — Diccionario normativo de la lengua de signos española (Fundación CNSE).",
-      "updatedAt": "2026-07-24"
+      "updatedAt": "2026-11-23"
     }
   ]
 }

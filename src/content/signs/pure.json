@@ -1,0 +1,30 @@
+{
+  "labels": {
+    "ca": "puré",
+    "es": "puré",
+    "en": "purée"
+  },
+  "category": "food",
+  "isFirstSign": false,
+  "videos": [
+    {
+      "signLanguage": "lsc",
+      "delivery": "youtube-embed",
+      "videoUrl": "https://www.youtube.com/watch?v=VduZcIrdLIU",
+      "source": "Gencat-VocabulariLSC",
+      "sourceUrl": "https://llengua.gencat.cat/ca/llengua_signes_catalana/recursos-i-activitats/vocabulari/",
+      "license": "Vocabulari bàsic de la LSC (Generalitat de Catalunya, Departament de Cultura, amb assessorament de la FESOCA). Reutilització segons la Llei 19/2014, art. 17.1, citant font i data.",
+      "updatedAt": "2026-11-23",
+      "sourceTerm": "Puré"
+    },
+    {
+      "signLanguage": "lse",
+      "delivery": "external-link",
+      "videoUrl": "https://fundacioncnse-dilse.org/?buscar=pur%C3%A9",
+      "source": "CNSE-DILSE",
+      "sourceUrl": "https://fundacioncnse-dilse.org/?buscar=pur%C3%A9",
+      "license": "DILSE — Diccionario normativo de la lengua de signos española (Fundación CNSE).",
+      "updatedAt": "2026-11-23"
+    }
+  ]
+}
