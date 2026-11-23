@@ -290,7 +290,7 @@ test.describe('video delivery', () => {
    * it the visitor was left on YouTube's own error screen with no way on.
    *
    * The stand-in player makes the refusal deterministic: which of the real
-   * 194 videos is broken today is not something a test can know, and a suite
+   * 289 videos is broken today is not something a test can know, and a suite
    * that depends on one breaking is a suite that fails when it is fixed.
    */
   test('a video YouTube refuses to play falls back to the source', async ({ page }) => {

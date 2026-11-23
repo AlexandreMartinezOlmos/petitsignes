@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test';
 /**
  * One page per sign.
  *
- * The catalogue publishes 194 concepts at a single address, which for a search
- * engine is one thing rather than 194 — while the question a parent types is
+ * The catalogue publishes 289 concepts at a single address, which for a search
+ * engine is one thing rather than 289 — while the question a parent types is
  * "how do you sign milk in LSC". These pages are the answer, and they are also
  * the link somebody can send.
  *
@@ -103,7 +103,7 @@ test.describe('what a sign page says', () => {
    * report a breach, and this page is the one screen where a mistake is
    * visible. Prefilling matters as much as the link: a report that arrives
    * naming the entry and the sign language is actionable, "the video for milk
-   * looks wrong" is a hunt through 194 files.
+   * looks wrong" is a hunt through 289 files.
    */
   test('lets someone report a wrong sign, with the entry already identified', async ({ page }) => {
     await page.goto(CA);
@@ -284,7 +284,7 @@ test.describe('a sign page is not a dead card', () => {
   /**
    * No source allows a poster, so the placeholder is permanent, not pending.
    * It used to carry an `sr-only` "we do not have the image yet", which a
-   * screen reader read before every word of the catalogue — 194 times per
+   * screen reader read before every word of the catalogue — 289 times per
    * page — promising an image that is never coming. The word and the category
    * heading already say what the placeholder depicts.
    */
@@ -421,7 +421,7 @@ test.describe('the citation repositions, never disappears', () => {
 
 test.describe('.sign-page--no-source: the layout when a sign has no video', () => {
   /**
-   * No sign in the catalogue lacks a video today — all 194 have both LSC and
+   * No sign in the catalogue lacks a video today — all 289 have both LSC and
    * LSE — so this state has never run against real content, only been
    * checked by hand in a browser. Rather than wait
    * for data that may never arrive, this simulates exactly what

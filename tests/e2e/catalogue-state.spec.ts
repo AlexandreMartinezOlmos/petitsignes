@@ -18,11 +18,11 @@ import { expect, test, type Page } from '@playwright/test';
 
 const SEARCH = 'llet';
 /**
- * Fuse's fuzzy threshold matches 12 signs against "llet", not only the ones
+ * Fuse's fuzzy threshold matches 15 signs against "llet", not only the ones
  * whose label contains it literally (`galeta`, `aplaudir (llengua de signes)`)
- * — well under 194 either way.
+ * — well under 289 either way.
  */
-const EXPECTED_MATCHES = 12;
+const EXPECTED_MATCHES = 15;
 
 /**
  * The module coalesces history writes for 300ms, because Safari refuses more
@@ -78,7 +78,7 @@ test.describe('coming back to the catalogue', () => {
     await page.locator('.chip--more').click();
     await page.locator('.toolbar__categories .chip', { hasText: 'Animals' }).first().click();
     const filtered = await visibleCards(page).count();
-    expect(filtered).toBeLessThan(194);
+    expect(filtered).toBeLessThan(289);
     await page.waitForTimeout(WRITE_DELAY_MS + 100);
 
     await page.reload();
@@ -94,14 +94,14 @@ test.describe('coming back to the catalogue', () => {
   test('arriving fresh shows the whole catalogue', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('searchbox')).toHaveValue('');
-    await expect(visibleCards(page)).toHaveCount(194);
+    await expect(visibleCards(page)).toHaveCount(289);
   });
 
   /**
    * The whole catalogue is never shown to someone who is coming back to a
    * filtered one.
    *
-   * The grid is static HTML with all 194 cards visible and the controller hides
+   * The grid is static HTML with all 289 cards visible and the controller hides
    * the excluded ones once its module runs, so restoring a search meant painting
    * the wrong answer first. Measured on the built site before the fix: two frames
    * at full CPU, and with the CPU throttled 20× — a cheap Android, the device

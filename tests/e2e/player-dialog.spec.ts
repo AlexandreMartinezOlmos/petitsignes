@@ -8,7 +8,7 @@ import { stubCalls, stubYouTubeApi, type StubBehaviour } from './youtube-stub.ts
  * The dialog is the one place in the site that takes focus away from the page,
  * so it is the one place that has to give it back. WCAG 2.4.3 (focus order)
  * is what a missed return breaks: close the player and the next Tab starts
- * from the top of a page of 194 cards, or from nowhere at all on a screen
+ * from the top of a page of 289 cards, or from nowhere at all on a screen
  * reader.
  *
  * Every test drives the stand-in player (see `youtube-stub.ts`): what is under
